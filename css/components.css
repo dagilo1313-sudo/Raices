@@ -288,3 +288,26 @@ body::before {
   from { opacity: 0; }
   to { opacity: 1; }
 }
+
+/* Ocultar scrollbar manteniendo scroll funcional */
+* {
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+*::-webkit-scrollbar {
+  display: none;
+}
+
+/* Evitar selección de texto al tocar */
+* {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Permitir selección en inputs */
+input, textarea {
+  -webkit-user-select: text;
+  user-select: text;
+}
