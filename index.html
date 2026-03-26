@@ -1,218 +1,73 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Raíces — Tus Hábitos</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/otplib@12.0.1/otplib-browser.js" crossorigin="anonymous"></script>
-<style>
-  :root {
-    --bg:#0d0f0a;--surface:#141710;--card:#1a1e14;--card2:#1f2419;
-    --border:#2a3020;--text:#d4d9c4;--muted:#6b7560;
-    --accent:#8fb339;--accent2:#c4a84f;--accent3:#5c8a3c;
-    --danger:#b35c4f;--glow:rgba(143,179,57,0.15);
-  }
-  *{margin:0;padding:0;box-sizing:border-box;}
-  body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden;}
-  body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 60% at 50% -20%,rgba(143,179,57,0.08) 0%,transparent 70%);pointer-events:none;z-index:0;}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Raíces">
+  <meta name="theme-color" content="#8fb339">
 
-  #loading-screen{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999;gap:16px;}
-  .loading-logo{font-family:'Playfair Display',serif;font-size:42px;color:var(--accent);}
-  .loading-sub{font-size:12px;color:var(--muted);letter-spacing:3px;text-transform:uppercase;}
-  .spinner{width:28px;height:28px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite;}
-  @keyframes spin{to{transform:rotate(360deg);}}
+  <title>Raíces — Tus Hábitos</title>
 
-  #auth-screen{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:998;padding:32px 24px;overflow-y:auto;}
-  .auth-logo{font-family:'Playfair Display',serif;font-size:48px;color:var(--accent);margin-bottom:4px;}
-  .auth-tagline{font-size:13px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:40px;}
-  .auth-box{width:100%;max-width:360px;background:var(--card);border:1px solid var(--border);border-radius:20px;padding:28px 24px;}
-  .auth-title{font-family:'Playfair Display',serif;font-size:22px;margin-bottom:20px;color:var(--text);}
-  .auth-input{width:100%;background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:13px 16px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;margin-bottom:12px;outline:none;transition:border-color 0.2s;}
-  .auth-input:focus{border-color:var(--accent);}
-  .auth-input::placeholder{color:var(--muted);}
-  .btn-primary{width:100%;background:var(--accent);color:var(--bg);border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all 0.2s;margin-bottom:12px;}
-  .btn-primary:hover{background:#a3cc47;transform:translateY(-1px);box-shadow:0 8px 20px rgba(143,179,57,0.3);}
-  .btn-primary:disabled{opacity:0.5;cursor:not-allowed;transform:none;}
-  .btn-secondary{width:100%;background:transparent;color:var(--muted);border:1px solid var(--border);border-radius:12px;padding:12px;font-size:14px;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all 0.2s;margin-bottom:10px;}
-  .btn-secondary:hover{border-color:var(--accent);color:var(--accent);}
-  .auth-switch{text-align:center;font-size:13px;color:var(--muted);}
-  .auth-switch span{color:var(--accent);cursor:pointer;text-decoration:underline;}
-  .auth-error{background:rgba(179,92,79,0.15);border:1px solid rgba(179,92,79,0.3);border-radius:10px;padding:10px 14px;font-size:13px;color:#e07060;margin-bottom:12px;display:none;}
-  .auth-success{background:rgba(143,179,57,0.15);border:1px solid rgba(143,179,57,0.3);border-radius:10px;padding:10px 14px;font-size:13px;color:var(--accent);margin-bottom:12px;display:none;}
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="assets/icon-192.png">
 
-  #mfa-screen{position:fixed;inset:0;background:var(--bg);display:none;flex-direction:column;align-items:center;justify-content:center;z-index:997;padding:32px 24px;}
-  #mfa-screen.open{display:flex;}
-  .mfa-box{width:100%;max-width:360px;background:var(--card);border:1px solid var(--border);border-radius:20px;padding:28px 24px;text-align:center;}
-  .mfa-title{font-family:'Playfair Display',serif;font-size:22px;margin-bottom:8px;color:var(--text);}
-  .mfa-sub{font-size:13px;color:var(--muted);margin-bottom:24px;line-height:1.5;}
-  .otp-input{width:100%;background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:16px;color:var(--text);font-family:monospace;font-size:24px;text-align:center;letter-spacing:8px;outline:none;margin-bottom:12px;transition:border-color 0.2s;}
-  .otp-input:focus{border-color:var(--accent);}
-  .secret-display{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-size:11px;color:var(--muted);margin-bottom:20px;word-break:break-all;font-family:monospace;}
-
-  .app{position:relative;z-index:1;max-width:480px;margin:0 auto;padding:0 0 100px;display:none;}
-  header{padding:40px 24px 24px;}
-  .header-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px;}
-  .logo{font-family:'Playfair Display',serif;font-size:32px;font-weight:700;color:var(--accent);letter-spacing:-1px;line-height:1;}
-  .logo-sub{font-size:11px;color:var(--muted);letter-spacing:3px;text-transform:uppercase;margin-top:4px;}
-  .header-right{display:flex;flex-direction:column;align-items:flex-end;gap:6px;}
-  .date-badge{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:6px 14px;font-size:12px;color:var(--muted);text-transform:capitalize;}
-  .user-chip{font-size:11px;color:var(--muted);background:var(--card);border:1px solid var(--border);border-radius:20px;padding:4px 10px;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-  .btn-logout{background:transparent;border:1px solid var(--border);border-radius:20px;padding:5px 12px;font-size:11px;color:var(--muted);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s;}
-  .btn-logout:hover{border-color:var(--danger);color:var(--danger);}
-
-  .streak-bar{margin:0 24px 28px;background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px 20px;display:flex;align-items:center;gap:16px;position:relative;overflow:hidden;}
-  .streak-bar::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(to bottom,var(--accent),var(--accent3));border-radius:3px 0 0 3px;}
-  .streak-icon{font-size:28px;}.streak-text{flex:1;}
-  .streak-number{font-size:22px;font-weight:500;color:var(--accent);line-height:1;}
-  .streak-label{font-size:12px;color:var(--muted);margin-top:2px;}
-  .streak-dots{display:flex;gap:5px;}
-  .dot{width:8px;height:8px;border-radius:50%;background:var(--border);transition:background 0.3s;}
-  .dot.active{background:var(--accent);box-shadow:0 0 6px var(--accent);}
-  .dot.today{background:var(--accent2);box-shadow:0 0 6px var(--accent2);}
-
-  .progress-section{margin:0 24px 28px;}
-  .progress-header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px;}
-  .progress-title{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
-  .progress-count{font-family:'Playfair Display',serif;font-size:18px;color:var(--text);}
-  .progress-track{height:6px;background:var(--card2);border-radius:6px;overflow:hidden;}
-  .progress-fill{height:100%;background:linear-gradient(to right,var(--accent3),var(--accent));border-radius:6px;transition:width 0.6s cubic-bezier(0.34,1.56,0.64,1);}
-
-  .insight-card{margin:0 24px 20px;background:linear-gradient(135deg,rgba(143,179,57,0.1),rgba(92,138,60,0.05));border:1px solid rgba(143,179,57,0.2);border-radius:16px;padding:16px 20px;display:flex;gap:12px;align-items:center;}
-  .insight-icon{font-size:22px;}
-  .insight-text{font-size:13px;color:var(--text);line-height:1.5;font-style:italic;}
-
-  .section{padding:0 24px;margin-bottom:8px;}
-  .section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
-  .section-label{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
-  .btn-add{background:var(--glow);border:1px solid var(--border);color:var(--accent);border-radius:20px;padding:5px 14px;font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s;display:flex;align-items:center;gap:5px;}
-  .btn-add:hover{background:rgba(143,179,57,0.2);border-color:var(--accent);transform:translateY(-1px);}
-
-  .habit-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px 18px;margin-bottom:10px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:all 0.25s;position:relative;overflow:hidden;animation:slideIn 0.3s ease;}
-  @keyframes slideIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-  .habit-card:hover{border-color:#3a4530;transform:translateX(2px);}
-  .habit-card.done{border-color:rgba(143,179,57,0.3);background:linear-gradient(135deg,var(--card) 0%,rgba(143,179,57,0.05) 100%);}
-  .habit-card.done::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent);border-radius:3px 0 0 3px;}
-  .habit-emoji{font-size:24px;width:42px;height:42px;display:flex;align-items:center;justify-content:center;background:var(--card2);border-radius:12px;flex-shrink:0;transition:transform 0.2s;}
-  .habit-card:hover .habit-emoji{transform:scale(1.1);}
-  .habit-info{flex:1;min-width:0;}
-  .habit-name{font-size:15px;font-weight:500;color:var(--text);margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-  .habit-card.done .habit-name{color:var(--accent);}
-  .habit-meta{display:flex;align-items:center;gap:8px;}
-  .habit-streak-mini{font-size:11px;color:var(--muted);}
-  .habit-time{font-size:11px;color:var(--muted);background:var(--card2);padding:2px 7px;border-radius:8px;}
-  .check-circle{width:28px;height:28px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1);color:transparent;font-size:14px;}
-  .habit-card.done .check-circle{background:var(--accent);border-color:var(--accent);color:white;box-shadow:0 0 12px rgba(143,179,57,0.4);}
-  .btn-icon{width:28px;height:28px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;transition:all 0.2s;}
-  .btn-icon:hover{color:var(--danger);border-color:var(--danger);background:rgba(179,92,79,0.1);}
-
-  .week-strip{display:flex;justify-content:space-between;margin:0 24px 20px;gap:6px;}
-  .day-cell{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;}
-  .day-name{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;}
-  .day-num{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:500;color:var(--muted);border:1px solid transparent;}
-  .day-num.today{border-color:var(--accent);color:var(--accent);font-weight:700;}
-  .day-num.past-done{background:var(--accent3);color:var(--bg);}
-  .day-dot{width:4px;height:4px;border-radius:50%;background:var(--border);}
-  .day-dot.filled{background:var(--accent);}
-
-  .empty-state{text-align:center;padding:40px 24px;color:var(--muted);}
-  .empty-icon{font-size:48px;margin-bottom:12px;opacity:0.5;}
-  .empty-text{font-size:14px;line-height:1.6;font-style:italic;}
-
-  .stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 24px 16px;}
-  .stat-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px;}
-  .stat-value{font-family:'Playfair Display',serif;font-size:28px;color:var(--accent);line-height:1;margin-bottom:4px;}
-  .stat-label{font-size:11px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;}
-
-  .profile-section{margin:0 24px 16px;}
-  .profile-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;margin-bottom:12px;}
-  .profile-card-title{font-size:11px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:16px;}
-  .mfa-status{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
-  .mfa-badge{display:flex;align-items:center;gap:8px;font-size:14px;}
-  .mfa-dot{width:8px;height:8px;border-radius:50%;background:var(--border);}
-  .mfa-dot.on{background:var(--accent);box-shadow:0 0 6px var(--accent);}
-  .toggle-btn{background:var(--glow);border:1px solid var(--border);color:var(--accent);border-radius:20px;padding:5px 14px;font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s;}
-  .toggle-btn:hover{background:rgba(143,179,57,0.2);border-color:var(--accent);}
-  .toggle-btn.danger{color:var(--danger);background:rgba(179,92,79,0.1);border-color:rgba(179,92,79,0.3);}
-
-  .nav-bar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:rgba(13,15,10,0.9);backdrop-filter:blur(12px);border-top:1px solid var(--border);display:flex;padding:12px 0 20px;}
-  .nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;color:var(--muted);font-size:10px;letter-spacing:1px;text-transform:uppercase;transition:color 0.2s;}
-  .nav-item.active{color:var(--accent);}
-  .nav-icon{font-size:20px;}
-  .view{display:none;}.view.active{display:block;}
-
-  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(4px);z-index:100;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.3s;}
-  .modal-overlay.open{opacity:1;pointer-events:all;}
-  .modal{background:var(--card2);border:1px solid var(--border);border-radius:24px 24px 0 0;padding:28px 24px 40px;width:100%;max-width:480px;transform:translateY(100%);transition:transform 0.4s cubic-bezier(0.34,1.2,0.64,1);}
-  .modal-overlay.open .modal{transform:translateY(0);}
-  .modal-handle{width:40px;height:4px;background:var(--border);border-radius:4px;margin:0 auto 24px;}
-  .modal-title{font-family:'Playfair Display',serif;font-size:22px;margin-bottom:20px;color:var(--text);}
-  .emoji-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-bottom:16px;}
-  .emoji-btn{aspect-ratio:1;border-radius:10px;border:1px solid var(--border);background:var(--card);font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;}
-  .emoji-btn:hover,.emoji-btn.selected{border-color:var(--accent);background:var(--glow);transform:scale(1.1);}
-  .input-field{width:100%;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 16px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;margin-bottom:12px;outline:none;transition:border-color 0.2s;}
-  .input-field:focus{border-color:var(--accent);}
-  .input-field::placeholder{color:var(--muted);}
-  .time-row{display:flex;gap:8px;margin-bottom:20px;}
-  .time-chip{flex:1;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:8px;color:var(--muted);font-size:12px;cursor:pointer;text-align:center;transition:all 0.2s;font-family:'DM Sans',sans-serif;}
-  .time-chip:hover,.time-chip.selected{border-color:var(--accent);color:var(--accent);background:var(--glow);}
-  .btn-create{width:100%;background:var(--accent);color:var(--bg);border:none;border-radius:14px;padding:14px;font-size:15px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all 0.2s;}
-  .btn-create:hover{background:#a3cc47;transform:translateY(-1px);box-shadow:0 8px 20px rgba(143,179,57,0.3);}
-  .btn-create:disabled{opacity:0.5;cursor:not-allowed;transform:none;}
-
-  @keyframes confetti-fall{0%{transform:translateY(-20px) rotate(0deg);opacity:1}100%{transform:translateY(60px) rotate(360deg);opacity:0}}
-  .confetti-piece{position:fixed;pointer-events:none;width:8px;height:8px;border-radius:2px;animation:confetti-fall 0.8s ease-out forwards;z-index:999;}
-  .toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--accent);color:var(--bg);padding:10px 20px;border-radius:20px;font-size:13px;font-weight:600;opacity:0;transition:all 0.3s;pointer-events:none;white-space:nowrap;z-index:200;}
-  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
-</style>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/layout.css">
 </head>
 <body>
 
+<!-- ── Loading ── -->
 <div id="loading-screen">
   <div class="loading-logo">🌿</div>
   <div class="loading-sub">Raíces</div>
   <div class="spinner"></div>
 </div>
 
+<!-- ── Auth ── -->
 <div id="auth-screen" style="display:none">
   <div class="auth-logo">🌿</div>
   <div class="auth-tagline">Tu jardín de hábitos</div>
   <div class="auth-box">
     <div class="auth-title" id="auth-title">Bienvenido de vuelta</div>
-    <div class="auth-error" id="auth-error"></div>
-    <div class="auth-success" id="auth-success"></div>
+
+    <div class="msg-error" id="auth-error"></div>
+    <div class="msg-success" id="auth-success"></div>
+
+    <!-- Login / Register -->
     <div id="auth-form">
-      <input class="auth-input" id="auth-email" type="email" placeholder="Email" autocomplete="email">
-      <input class="auth-input" id="auth-password" type="password" placeholder="Contraseña" autocomplete="current-password">
-      <button class="btn-primary" id="auth-btn" onclick="handleAuth()">Entrar</button>
-      <button class="btn-secondary" onclick="showForgotPassword()">¿Olvidaste tu contraseña?</button>
-      <div class="auth-switch" id="auth-switch">¿Sin cuenta? <span onclick="toggleAuthMode()">Regístrate</span></div>
+      <input class="input-field" id="auth-email" type="email" placeholder="Email" autocomplete="email">
+      <input class="input-field" id="auth-password" type="password" placeholder="Contraseña" autocomplete="current-password">
+      <button class="btn btn-primary" id="auth-btn" onclick="handleAuth()">Entrar</button>
+      <button class="btn btn-secondary" onclick="showForgotPassword()">¿Olvidaste tu contraseña?</button>
+      <div class="auth-switch" id="auth-switch">
+        ¿Sin cuenta? <span onclick="toggleAuthMode()">Regístrate</span>
+      </div>
     </div>
+
+    <!-- Recuperar contraseña -->
     <div id="forgot-form" style="display:none">
-      <input class="auth-input" id="forgot-email" type="email" placeholder="Tu email">
-      <button class="btn-primary" onclick="sendResetEmail()">Enviar enlace de recuperación</button>
-      <button class="btn-secondary" onclick="showLoginForm()">Volver al login</button>
+      <input class="input-field" id="forgot-email" type="email" placeholder="Tu email">
+      <button class="btn btn-primary" onclick="sendResetEmail()">Enviar enlace de recuperación</button>
+      <button class="btn btn-secondary" onclick="showLoginForm()">Volver al login</button>
     </div>
   </div>
 </div>
 
-<div id="mfa-screen">
-  <div class="mfa-box">
-    <div class="mfa-title">🔐 Verificación</div>
-    <div class="mfa-sub">Introduce el código de 6 dígitos de tu app autenticadora</div>
-    <input class="otp-input" id="mfa-verify-input" type="number" placeholder="000000">
-    <div class="auth-error" id="mfa-error"></div>
-    <button class="btn-primary" onclick="verifyMFALogin()">Verificar</button>
-    <button class="btn-secondary" onclick="cancelMFA()">Cancelar</button>
-  </div>
-</div>
-
+<!-- ── App ── -->
 <div class="app" id="app">
+
+  <!-- Vista: Hoy -->
   <div class="view active" id="view-hoy">
     <header>
       <div class="header-top">
-        <div><div class="logo">Raíces</div><div class="logo-sub">Tu jardín de hábitos</div></div>
+        <div>
+          <div class="logo">Raíces</div>
+          <div class="logo-sub">Tu jardín de hábitos</div>
+        </div>
         <div class="header-right">
           <div class="date-badge" id="date-display"></div>
           <div class="user-chip" id="user-chip"></div>
@@ -220,432 +75,185 @@
         </div>
       </div>
     </header>
+
     <div class="week-strip" id="week-strip"></div>
+
     <div class="streak-bar">
       <div class="streak-icon">🌿</div>
-      <div class="streak-text"><div class="streak-number" id="global-streak">0</div><div class="streak-label">días en racha</div></div>
+      <div class="streak-text">
+        <div class="streak-number" id="global-streak">0</div>
+        <div class="streak-label">días en racha</div>
+      </div>
       <div class="streak-dots" id="streak-dots"></div>
     </div>
-    <div class="progress-section">
-      <div class="progress-header"><span class="progress-title">Progreso de hoy</span><span class="progress-count" id="progress-text">0 / 0</span></div>
-      <div class="progress-track"><div class="progress-fill" id="progress-bar" style="width:0%"></div></div>
+
+    <div class="xp-bar">
+      <div class="xp-icon">⚡</div>
+      <div class="xp-text">
+        <div class="xp-number" id="total-xp">0</div>
+        <div class="xp-label">XP total <span class="xp-today" id="today-xp"></span></div>
+      </div>
     </div>
+
+    <div class="progress-section">
+      <div class="progress-header">
+        <span class="progress-title">Progreso de hoy</span>
+        <span class="progress-count" id="progress-text">0 / 0</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="progress-bar" style="width:0%"></div>
+      </div>
+    </div>
+
     <div class="insight-card">
       <div class="insight-icon" id="insight-icon">🌱</div>
       <div class="insight-text" id="insight-text">Los pequeños pasos de hoy son las raíces del mañana.</div>
     </div>
+
+    <!-- Filtros categoría -->
+    <div class="cat-tabs" id="cat-tabs"></div>
+
     <div class="section">
-      <div class="section-header"><span class="section-label">Hábitos de hoy</span><button class="btn-add" onclick="openModal()">+ Nuevo</button></div>
+      <div class="section-header">
+        <span class="section-label">Hábitos de hoy</span>
+        <button class="btn btn-primary btn-sm" onclick="openCreateModal()">+ Nuevo</button>
+      </div>
       <div id="habits-list"></div>
     </div>
   </div>
 
+  <!-- Vista: Cosecha (stats) -->
   <div class="view" id="view-stats">
-    <header><div class="header-top"><div><div class="logo" style="font-size:24px">Cosecha</div><div class="logo-sub">Tu progreso</div></div></div></header>
+    <header>
+      <div class="header-top">
+        <div>
+          <div class="logo" style="font-size:24px">Cosecha</div>
+          <div class="logo-sub">Tu progreso</div>
+        </div>
+      </div>
+    </header>
+
     <div class="stats-grid">
-      <div class="stat-card"><div class="stat-value" id="stat-total-done">0</div><div class="stat-label">Completados</div></div>
-      <div class="stat-card"><div class="stat-value" id="stat-best-streak">0</div><div class="stat-label">Racha actual</div></div>
-      <div class="stat-card"><div class="stat-value" id="stat-habits-count">0</div><div class="stat-label">Hábitos activos</div></div>
-      <div class="stat-card"><div class="stat-value" id="stat-rate">0%</div><div class="stat-label">Éxito hoy</div></div>
+      <div class="stat-card">
+        <div class="stat-value" id="stat-total-done">0</div>
+        <div class="stat-label">Completados</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="stat-total-xp">0</div>
+        <div class="stat-label">XP Total ⚡</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="stat-best-streak">0</div>
+        <div class="stat-label">Racha actual</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="stat-rate">0%</div>
+        <div class="stat-label">Éxito hoy</div>
+      </div>
     </div>
+
     <div class="section">
-      <div class="section-header"><span class="section-label">Rachas por hábito</span></div>
+      <div class="section-header">
+        <span class="section-label">Por categoría hoy</span>
+      </div>
+      <div id="cat-stats-list"></div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <span class="section-label">Rachas por hábito</span>
+      </div>
       <div id="stats-habits-list"></div>
     </div>
   </div>
 
+  <!-- Vista: Perfil -->
   <div class="view" id="view-perfil">
-    <header><div class="header-top"><div><div class="logo" style="font-size:24px">Perfil</div><div class="logo-sub">Tu cuenta</div></div></div></header>
+    <header>
+      <div class="header-top">
+        <div>
+          <div class="logo" style="font-size:24px">Perfil</div>
+          <div class="logo-sub">Tu cuenta</div>
+        </div>
+      </div>
+    </header>
+
     <div class="profile-section">
 
-      <div class="profile-card">
-        <div class="profile-card-title">Cuenta</div>
+      <div class="card">
+        <div class="card-title">Cuenta</div>
         <div style="font-size:14px;color:var(--muted);margin-bottom:16px" id="profile-email"></div>
-        <button class="btn-primary" style="margin-bottom:0" onclick="showChangePassword()">Cambiar contraseña</button>
+        <button class="btn btn-primary" style="margin-bottom:0" onclick="showChangePassword()">Cambiar contraseña</button>
       </div>
 
-      <div class="profile-card" id="change-password-card" style="display:none">
-        <div class="profile-card-title">Nueva contraseña</div>
-        <div class="auth-error" id="cp-error"></div>
-        <div class="auth-success" id="cp-success"></div>
+      <div class="card" id="change-password-card" style="display:none">
+        <div class="card-title">Nueva contraseña</div>
+        <div class="msg-error" id="cp-error"></div>
+        <div class="msg-success" id="cp-success"></div>
         <input class="input-field" id="cp-current" type="password" placeholder="Contraseña actual">
         <input class="input-field" id="cp-new" type="password" placeholder="Nueva contraseña">
         <input class="input-field" id="cp-confirm" type="password" placeholder="Confirmar nueva contraseña">
-        <button class="btn-primary" onclick="changePassword()" style="margin-bottom:8px">Guardar</button>
-        <button class="btn-secondary" onclick="hideChangePassword()" style="margin-bottom:0">Cancelar</button>
+        <button class="btn btn-primary" onclick="changePassword()" style="margin-bottom:8px">Guardar</button>
+        <button class="btn btn-secondary" onclick="hideChangePassword()" style="margin-bottom:0">Cancelar</button>
       </div>
 
-      <div class="profile-card">
-        <div class="profile-card-title">Seguridad — MFA</div>
-        <div class="mfa-status">
-          <div class="mfa-badge"><div class="mfa-dot" id="mfa-dot"></div><span id="mfa-label">MFA desactivado</span></div>
-          <button class="toggle-btn" id="mfa-toggle-btn" onclick="toggleMFA()">Activar</button>
-        </div>
-        <div style="font-size:12px;color:var(--muted);line-height:1.5">Añade verificación con Google Authenticator u otra app TOTP.</div>
+      <div class="card">
+        <button class="btn btn-danger" onclick="logout()" style="margin-bottom:0">Cerrar sesión</button>
       </div>
 
-      <div class="profile-card" id="mfa-setup-card" style="display:none">
-        <div class="profile-card-title">Configura tu autenticador</div>
-        <div style="font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.6">
-          1. Abre Google Authenticator<br>
-          2. Escanea el código QR<br>
-          3. Introduce el código para confirmar
-        </div>
-        <div id="setup-qr" style="display:flex;justify-content:center;margin-bottom:12px"></div>
-        <div class="secret-display" id="setup-secret"></div>
-        <div class="auth-error" id="setup-error"></div>
-        <input class="otp-input" id="setup-otp" type="number" placeholder="000000">
-        <button class="btn-primary" onclick="confirmMFASetup()" style="margin-top:12px;margin-bottom:8px">Verificar y activar</button>
-        <button class="btn-secondary" onclick="cancelMFASetup()" style="margin-bottom:0">Cancelar</button>
-      </div>
-
-      <div class="profile-card">
-        <button class="btn-secondary" onclick="logout()" style="margin-bottom:0;color:var(--danger);border-color:rgba(179,92,79,0.3)">Cerrar sesión</button>
-      </div>
     </div>
   </div>
 
+  <!-- Nav bar -->
   <nav class="nav-bar">
-    <div class="nav-item active" id="nav-hoy" onclick="switchView('hoy')"><div class="nav-icon">🌿</div>Hoy</div>
-    <div class="nav-item" id="nav-stats" onclick="switchView('stats')"><div class="nav-icon">📊</div>Cosecha</div>
-    <div class="nav-item" id="nav-perfil" onclick="switchView('perfil')"><div class="nav-icon">👤</div>Perfil</div>
+    <div class="nav-item active" id="nav-hoy" onclick="switchView('hoy')">
+      <div class="nav-icon">🌿</div>Hoy
+    </div>
+    <div class="nav-item" id="nav-stats" onclick="switchView('stats')">
+      <div class="nav-icon">⚡</div>Cosecha
+    </div>
+    <div class="nav-item" id="nav-perfil" onclick="switchView('perfil')">
+      <div class="nav-icon">👤</div>Perfil
+    </div>
   </nav>
-</div>
 
+</div><!-- /app -->
+
+<!-- ── Modal crear/editar hábito ── -->
 <div class="modal-overlay" id="modal" onclick="closeModalOutside(event)">
   <div class="modal">
     <div class="modal-handle"></div>
-    <div class="modal-title">Planta un nuevo hábito</div>
-    <div class="emoji-grid" id="emoji-grid"></div>
+    <div class="modal-title" id="modal-title">Planta un nuevo hábito</div>
+
+    <label class="modal-label">Nombre</label>
     <input class="input-field" id="habit-name-input" placeholder="Nombre del hábito..." maxlength="40">
-    <div class="time-row">
-      <div class="time-chip" data-time="Mañana" onclick="selectTime(this)">🌅 Mañana</div>
-      <div class="time-chip" data-time="Tarde" onclick="selectTime(this)">☀️ Tarde</div>
-      <div class="time-chip" data-time="Noche" onclick="selectTime(this)">🌙 Noche</div>
-      <div class="time-chip selected" data-time="Siempre" onclick="selectTime(this)">⏰ Siempre</div>
-    </div>
-    <button class="btn-create" id="btn-create" onclick="createHabit()">Plantar hábito 🌱</button>
+
+    <label class="modal-label">Icono</label>
+    <div class="emoji-grid" id="emoji-grid"></div>
+
+    <label class="modal-label">Categoría</label>
+    <div class="chips-row" id="cat-chips"></div>
+
+    <label class="modal-label">Dificultad · XP</label>
+    <div class="chips-row" id="xp-chips"></div>
+
+    <button class="btn btn-primary" id="btn-modal-submit" onclick="submitModal()">Plantar hábito 🌱</button>
+    <button class="btn btn-secondary" onclick="closeModal()" style="margin-bottom:0">Cancelar</button>
   </div>
 </div>
 
+<!-- Toast -->
 <div class="toast" id="toast"></div>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut,
-  onAuthStateChanged, sendPasswordResetEmail, updatePassword, reauthenticateWithCredential,
-  EmailAuthProvider } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, collection, doc, addDoc, getDocs, deleteDoc, setDoc, getDoc, orderBy, query }
-  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyBzvD2H3VFa_k985maDejBUUbMy65nzaKA",
-  authDomain: "habitos-5f3a3.firebaseapp.com",
-  projectId: "habitos-5f3a3",
-  storageBucket: "habitos-5f3a3.firebasestorage.app",
-  messagingSenderId: "605769214329",
-  appId: "1:605769214329:web:987ef36342a4c0c5f727a8"
-};
-
-const firebaseApp = initializeApp(firebaseConfig);
-const auth = getAuth(firebaseApp);
-const db = getFirestore(firebaseApp);
-
-const EMOJIS = ['🏃','💧','📚','🧘','🍎','💪','✍️','🎸','🌿','😴','🧠','🥗','☕','🎨','🚴','🏊','🧹','📝','💊','🌞','🎯','🤸','🏋️','🫁','❤️','🧴','🌳','🍵'];
-let habits=[], completions={}, selectedEmoji='🌿', selectedTime='Siempre';
-let currentUser=null, authMode='login', pendingUserForMFA=null, mfaSecret=null;
-
-const today = () => new Date().toISOString().split('T')[0];
-const getTotp = () => window.OTPLib?.totp || window.otplib?.totp;
-const habitsRef = () => collection(db,'users',currentUser.uid,'habits');
-const completionsRef = () => doc(db,'users',currentUser.uid,'completions','data');
-const profileRef = () => doc(db,'users',currentUser.uid,'profile','data');
-
-// ── AUTH ──
-window.toggleAuthMode = () => {
-  authMode = authMode==='login'?'register':'login';
-  document.getElementById('auth-title').textContent = authMode==='login'?'Bienvenido de vuelta':'Crea tu cuenta';
-  document.getElementById('auth-btn').textContent = authMode==='login'?'Entrar':'Registrarse';
-  document.getElementById('auth-switch').innerHTML = authMode==='login'
-    ?'¿Sin cuenta? <span onclick="toggleAuthMode()">Regístrate</span>'
-    :'¿Ya tienes cuenta? <span onclick="toggleAuthMode()">Entra</span>';
-  clearMsgs('auth-error','auth-success');
-};
-
-window.showForgotPassword = () => {
-  document.getElementById('auth-form').style.display='none';
-  document.getElementById('forgot-form').style.display='block';
-  document.getElementById('auth-title').textContent='Recuperar contraseña';
-};
-
-window.showLoginForm = () => {
-  document.getElementById('auth-form').style.display='block';
-  document.getElementById('forgot-form').style.display='none';
-  document.getElementById('auth-title').textContent='Bienvenido de vuelta';
-};
-
-window.sendResetEmail = async () => {
-  const email = document.getElementById('forgot-email').value.trim();
-  if(!email) return;
-  try {
-    await sendPasswordResetEmail(auth, email);
-    showEl('auth-success','✓ Email enviado. Revisa tu bandeja de entrada.');
-  } catch(e) { showEl('auth-error','No encontramos ese email.'); }
-};
-
-window.handleAuth = async () => {
-  const email=document.getElementById('auth-email').value.trim();
-  const password=document.getElementById('auth-password').value;
-  const btn=document.getElementById('auth-btn');
-  clearMsgs('auth-error','auth-success');
-  if(!email||!password){showEl('auth-error','Rellena todos los campos.');return;}
-  btn.disabled=true; btn.textContent='...';
-  try {
-    let cred;
-    if(authMode==='login') cred=await signInWithEmailAndPassword(auth,email,password);
-    else cred=await createUserWithEmailAndPassword(auth,email,password);
-    // Comprobar MFA
-    const pSnap=await getDoc(doc(db,'users',cred.user.uid,'profile','data'));
-    const profile=pSnap.exists()?pSnap.data():{};
-    if(profile.mfaEnabled&&profile.mfaSecret) {
-      pendingUserForMFA={user:cred.user,secret:profile.mfaSecret};
-      await signOut(auth);
-      document.getElementById('auth-screen').style.display='none';
-      document.getElementById('mfa-screen').classList.add('open');
-      document.getElementById('mfa-verify-input').value='';
-      document.getElementById('mfa-error').style.display='none';
-      btn.disabled=false; btn.textContent='Entrar';
-      return;
-    }
-  } catch(e) {
-    btn.disabled=false; btn.textContent=authMode==='login'?'Entrar':'Registrarse';
-    const msgs={'auth/user-not-found':'No existe cuenta con ese email.','auth/wrong-password':'Contraseña incorrecta.','auth/email-already-in-use':'Ese email ya está registrado.','auth/weak-password':'Mínimo 6 caracteres.','auth/invalid-email':'Email no válido.','auth/invalid-credential':'Email o contraseña incorrectos.'};
-    showEl('auth-error',msgs[e.code]||'Error: '+e.message);
+<!-- Service Worker -->
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('service-worker.js');
   }
-};
-
-window.verifyMFALogin = async () => {
-  if(!pendingUserForMFA) return;
-  const code=document.getElementById('mfa-verify-input').value.trim();
-  const totp=getTotp();
-  if(!totp){showEl('mfa-error','Error: librería TOTP no cargada.');return;}
-  const valid=totp.verify({token:code,secret:pendingUserForMFA.secret});
-  if(!valid){showEl('mfa-error','Código incorrecto. Inténtalo de nuevo.');return;}
-  document.getElementById('mfa-screen').classList.remove('open');
-  currentUser=pendingUserForMFA.user;
-  pendingUserForMFA=null;
-  await initApp();
-};
-
-window.cancelMFA = () => {
-  pendingUserForMFA=null;
-  document.getElementById('mfa-screen').classList.remove('open');
-  document.getElementById('auth-screen').style.display='flex';
-};
-
-window.logout = async () => { await signOut(auth); };
-
-onAuthStateChanged(auth, async (user) => {
-  document.getElementById('loading-screen').style.display='none';
-  if(user) {
-    currentUser=user;
-    document.getElementById('auth-screen').style.display='none';
-    await initApp();
-  } else {
-    if(pendingUserForMFA) return;
-    currentUser=null; habits=[]; completions={};
-    document.getElementById('app').style.display='none';
-    document.getElementById('auth-screen').style.display='flex';
-    document.getElementById('auth-btn').disabled=false;
-    document.getElementById('auth-btn').textContent='Entrar';
-  }
-});
-
-async function initApp() {
-  document.getElementById('app').style.display='block';
-  document.getElementById('user-chip').textContent=currentUser.email;
-  document.getElementById('profile-email').textContent=currentUser.email;
-  await loadData(); await loadMFAStatus(); renderAll();
-}
-
-async function loadData() {
-  const snap=await getDocs(query(habitsRef(),orderBy('created','asc')));
-  habits=snap.docs.map(d=>({id:d.id,...d.data()}));
-  const c=await getDoc(completionsRef());
-  completions=c.exists()?c.data():{};
-}
-
-async function saveCompletions(){await setDoc(completionsRef(),completions);}
-
-// ── CAMBIO CONTRASEÑA ──
-window.showChangePassword=()=>{document.getElementById('change-password-card').style.display='block';};
-window.hideChangePassword=()=>{
-  document.getElementById('change-password-card').style.display='none';
-  ['cp-current','cp-new','cp-confirm'].forEach(id=>document.getElementById(id).value='');
-  clearMsgs('cp-error','cp-success');
-};
-
-window.changePassword=async()=>{
-  const cur=document.getElementById('cp-current').value;
-  const nw=document.getElementById('cp-new').value;
-  const conf=document.getElementById('cp-confirm').value;
-  clearMsgs('cp-error','cp-success');
-  if(!cur||!nw||!conf){showEl('cp-error','Rellena todos los campos.');return;}
-  if(nw!==conf){showEl('cp-error','Las contraseñas no coinciden.');return;}
-  if(nw.length<6){showEl('cp-error','Mínimo 6 caracteres.');return;}
-  try {
-    const cred=EmailAuthProvider.credential(currentUser.email,cur);
-    await reauthenticateWithCredential(currentUser,cred);
-    await updatePassword(currentUser,nw);
-    showEl('cp-success','✓ Contraseña actualizada correctamente');
-    setTimeout(()=>hideChangePassword(),2000);
-  } catch(e) {
-    const msgs={'auth/wrong-password':'La contraseña actual es incorrecta.','auth/invalid-credential':'La contraseña actual es incorrecta.'};
-    showEl('cp-error',msgs[e.code]||'Error al cambiar contraseña.');
-  }
-};
-
-// ── MFA ──
-async function loadMFAStatus(){
-  const snap=await getDoc(profileRef());
-  const p=snap.exists()?snap.data():{};
-  const on=p.mfaEnabled&&p.mfaSecret;
-  document.getElementById('mfa-dot').className='mfa-dot'+(on?' on':'');
-  document.getElementById('mfa-label').textContent=on?'MFA activado 🔐':'MFA desactivado';
-  const btn=document.getElementById('mfa-toggle-btn');
-  btn.textContent=on?'Desactivar':'Activar';
-  btn.className='toggle-btn'+(on?' danger':'');
-}
-
-window.toggleMFA=async()=>{
-  const snap=await getDoc(profileRef());
-  const p=snap.exists()?snap.data():{};
-  if(p.mfaEnabled){
-    await setDoc(profileRef(),{...p,mfaEnabled:false,mfaSecret:null});
-    await loadMFAStatus(); showToast('MFA desactivado');
-  } else { startMFASetup(); }
-};
-
-function startMFASetup(){
-  const totp=getTotp();
-  if(!totp){showToast('Error: librería TOTP no disponible');return;}
-  mfaSecret=totp.generateSecret();
-  const label=encodeURIComponent(currentUser.email);
-  const issuer=encodeURIComponent('Raíces');
-  const url=`otpauth://totp/${issuer}:${label}?secret=${mfaSecret}&issuer=${issuer}`;
-  document.getElementById('mfa-setup-card').style.display='block';
-  document.getElementById('setup-secret').textContent=mfaSecret;
-  document.getElementById('setup-otp').value='';
-  document.getElementById('setup-error').style.display='none';
-  const qr=document.getElementById('setup-qr'); qr.innerHTML='';
-  new QRCode(qr,{text:url,width:160,height:160,colorDark:'#8fb339',colorLight:'#1a1e14'});
-}
-
-window.confirmMFASetup=async()=>{
-  const code=document.getElementById('setup-otp').value.trim();
-  const totp=getTotp();
-  if(!totp) return;
-  if(!totp.verify({token:code,secret:mfaSecret})){
-    showEl('setup-error','Código incorrecto. Asegúrate de haber escaneado bien el QR.');return;
-  }
-  await setDoc(profileRef(),{mfaEnabled:true,mfaSecret});
-  mfaSecret=null;
-  document.getElementById('mfa-setup-card').style.display='none';
-  await loadMFAStatus(); showToast('✓ MFA activado 🔐');
-};
-
-window.cancelMFASetup=()=>{
-  mfaSecret=null; document.getElementById('mfa-setup-card').style.display='none';
-};
-
-// ── HÁBITOS ──
-window.toggleHabit=async(id)=>{
-  const date=today();
-  if(!completions[date]) completions[date]=[];
-  const idx=completions[date].indexOf(id);
-  if(idx===-1){completions[date].push(id);showConfetti();showToast(getMsg());}
-  else completions[date].splice(idx,1);
-  renderAll(); await saveCompletions();
-};
-
-window.deleteHabit=async(id)=>{
-  habits=habits.filter(h=>h.id!==id);
-  Object.keys(completions).forEach(d=>{completions[d]=completions[d].filter(hid=>hid!==id);});
-  renderAll();
-  await deleteDoc(doc(db,'users',currentUser.uid,'habits',id));
-  await saveCompletions(); showToast('Hábito eliminado 🍂');
-};
-
-window.createHabit=async()=>{
-  const name=document.getElementById('habit-name-input').value.trim();
-  if(!name){document.getElementById('habit-name-input').style.borderColor='var(--danger)';setTimeout(()=>document.getElementById('habit-name-input').style.borderColor='',800);return;}
-  const btn=document.getElementById('btn-create'); btn.disabled=true; btn.textContent='Plantando...';
-  try {
-    const data={name,emoji:selectedEmoji,time:selectedTime,created:today()};
-    const ref=await addDoc(habitsRef(),data);
-    habits.push({id:ref.id,...data}); closeModal(); renderAll(); showToast('¡Hábito plantado! 🌱');
-  } finally {btn.disabled=false; btn.textContent='Plantar hábito 🌱';}
-};
-
-// ── HELPERS ──
-const isCompleted=(id,date)=>completions[date]&&completions[date].includes(id);
-const getMsg=()=>{const m=['¡Raíz más profunda! 🌿','¡Creciendo! 🌱','¡Brillante! ✨','¡Un paso más! 💚','¡Extraordinario! 🎯'];return m[Math.floor(Math.random()*m.length)];};
-
-function getHabitStreak(id){let s=0,d=new Date();while(true){const ds=d.toISOString().split('T')[0];if(completions[ds]&&completions[ds].includes(id)){s++;d.setDate(d.getDate()-1);}else break;}return s;}
-function getGlobalStreak(){if(!habits.length)return 0;let s=0,d=new Date();while(true){const ds=d.toISOString().split('T')[0];if(completions[ds]&&completions[ds].length>0){s++;d.setDate(d.getDate()-1);}else break;}return s;}
-function getInsight(){const total=habits.length,done=habits.filter(h=>isCompleted(h.id,today())).length;if(!total)return{icon:'🌱',text:'Los pequeños pasos de hoy son las raíces del mañana.'};if(done===total)return{icon:'🌳',text:'¡Increíble! Has completado todos tus hábitos hoy.'};if(!done)return{icon:'🌿',text:`Tienes ${total} hábito${total>1?'s':''} esperando.`};const pct=Math.round(done/total*100);return pct>=50?{icon:'🌻',text:`${pct}% completado. ¡Sigue!`}:{icon:'💧',text:`${done} de ${total} completados.`};}
-
-// ── RENDER ──
-function renderAll(){renderDate();renderWeek();renderHabits();renderProgress();renderStreak();renderInsight();renderStats();}
-function renderDate(){document.getElementById('date-display').textContent=new Date().toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'short'});}
-
-function renderWeek(){
-  const days=['D','L','M','X','J','V','S'],now=new Date();let html='';
-  for(let i=6;i>=0;i--){const d=new Date(now);d.setDate(d.getDate()-i);const ds=d.toISOString().split('T')[0],isT=ds===today(),hD=completions[ds]&&completions[ds].length>0,isP=d<now&&!isT;
-  html+=`<div class="day-cell"><div class="day-name">${days[d.getDay()]}</div><div class="day-num ${isT?'today':''} ${isP&&hD?'past-done':''}">${d.getDate()}</div><div class="day-dot ${hD?'filled':''}"></div></div>`;}
-  document.getElementById('week-strip').innerHTML=html;
-}
-
-function renderHabits(){
-  const list=document.getElementById('habits-list');
-  if(!habits.length){list.innerHTML=`<div class="empty-state"><div class="empty-icon">🌱</div><div class="empty-text">Tu jardín está vacío.<br>Planta tu primer hábito arriba.</div></div>`;return;}
-  list.innerHTML=habits.map(h=>{const done=isCompleted(h.id,today()),s=getHabitStreak(h.id);
-    return `<div class="habit-card ${done?'done':''}" onclick="toggleHabit('${h.id}')"><div class="habit-emoji">${h.emoji}</div><div class="habit-info"><div class="habit-name">${h.name}</div><div class="habit-meta">${s>0?`<span class="habit-streak-mini">🔥 ${s}d</span>`:''}<span class="habit-time">${h.time}</span></div></div><div onclick="event.stopPropagation()"><button class="btn-icon" onclick="deleteHabit('${h.id}')">✕</button></div><div class="check-circle">${done?'✓':''}</div></div>`;
-  }).join('');
-}
-
-function renderProgress(){const t=habits.length,d=habits.filter(h=>isCompleted(h.id,today())).length,p=t?Math.round(d/t*100):0;document.getElementById('progress-text').textContent=`${d} / ${t}`;document.getElementById('progress-bar').style.width=p+'%';}
-function renderStreak(){const s=getGlobalStreak();document.getElementById('global-streak').textContent=s;let h='';for(let i=0;i<7;i++){const f=i<Math.min(s,6),l=i===Math.min(s-1,5);h+=`<div class="dot ${f?(l?'today':'active'):''}"></div>`;}document.getElementById('streak-dots').innerHTML=h;}
-function renderInsight(){const i=getInsight();document.getElementById('insight-icon').textContent=i.icon;document.getElementById('insight-text').textContent=i.text;}
-
-function renderStats(){
-  let td=0;Object.values(completions).forEach(a=>td+=a.length);
-  const t=habits.length,d=habits.filter(h=>isCompleted(h.id,today())).length;
-  document.getElementById('stat-total-done').textContent=td;
-  document.getElementById('stat-best-streak').textContent=getGlobalStreak();
-  document.getElementById('stat-habits-count').textContent=t;
-  document.getElementById('stat-rate').textContent=t?Math.round(d/t*100)+'%':'0%';
-  const sl=document.getElementById('stats-habits-list');
-  if(!habits.length){sl.innerHTML=`<div class="empty-state"><div class="empty-icon">📊</div><div class="empty-text">Sin datos aún.</div></div>`;return;}
-  sl.innerHTML=habits.map(h=>{const s=getHabitStreak(h.id),p=Math.min(s/7*100,100);
-    return `<div class="habit-card" style="cursor:default"><div class="habit-emoji">${h.emoji}</div><div class="habit-info"><div class="habit-name">${h.name}</div><div style="margin-top:6px;height:4px;background:var(--border);border-radius:4px;overflow:hidden"><div style="height:100%;width:${p}%;background:var(--accent);border-radius:4px"></div></div></div><div style="font-family:'Playfair Display',serif;color:var(--accent);font-size:18px;flex-shrink:0">${s}d</div></div>`;
-  }).join('');
-}
-
-// ── MODAL ──
-window.openModal=()=>{selectedEmoji='🌿';selectedTime='Siempre';document.getElementById('habit-name-input').value='';document.getElementById('emoji-grid').innerHTML=EMOJIS.map(e=>`<div class="emoji-btn ${e===selectedEmoji?'selected':''}" onclick="selectEmoji(this,'${e}')">${e}</div>`).join('');document.querySelectorAll('.time-chip').forEach(c=>c.classList.remove('selected'));document.querySelector('[data-time="Siempre"]').classList.add('selected');document.getElementById('modal').classList.add('open');};
-window.closeModalOutside=(e)=>{if(e.target===document.getElementById('modal'))closeModal();};
-window.closeModal=()=>document.getElementById('modal').classList.remove('open');
-window.selectEmoji=(el,emoji)=>{selectedEmoji=emoji;document.querySelectorAll('.emoji-btn').forEach(b=>b.classList.remove('selected'));el.classList.add('selected');};
-window.selectTime=(el)=>{selectedTime=el.dataset.time;document.querySelectorAll('.time-chip').forEach(c=>c.classList.remove('selected'));el.classList.add('selected');};
-
-window.switchView=(view)=>{document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));document.getElementById('view-'+view).classList.add('active');document.getElementById('nav-'+view).classList.add('active');renderAll();};
-
-// ── UTILS ──
-function clearMsgs(...ids){ids.forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});}
-function showEl(id,msg){const el=document.getElementById(id);if(el){el.textContent=msg;el.style.display='block';}}
-function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200);}
-function showConfetti(){const c=['#8fb339','#c4a84f','#5c8a3c','#d4d9c4'];for(let i=0;i<12;i++)setTimeout(()=>{const el=document.createElement('div');el.className='confetti-piece';el.style.cssText=`left:${30+Math.random()*40}vw;top:40vh;background:${c[Math.floor(Math.random()*4)]};animation-delay:${Math.random()*0.3}s`;document.body.appendChild(el);setTimeout(()=>el.remove(),1000);},i*40);}
 </script>
+
+<!-- App (ES modules) -->
+<script type="module" src="js/app.js"></script>
+
 </body>
 </html>
