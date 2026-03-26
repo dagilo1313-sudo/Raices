@@ -1,19 +1,19 @@
 const CACHE = 'raices-v1';
 const ASSETS = [
-  '/',
-  '/index.html',
-  '/css/variables.css',
-  '/css/components.css',
-  '/css/layout.css',
-  '/js/app.js',
-  '/js/firebase.js',
-  '/js/state.js',
-  '/js/auth.js',
-  '/js/habits.js',
-  '/js/render.js',
-  '/js/modal.js',
-  '/js/ui.js',
-  '/manifest.json',
+  '/Raices/',
+  '/Raices/index.html',
+  '/Raices/css/variables.css',
+  '/Raices/css/components.css',
+  '/Raices/css/layout.css',
+  '/Raices/js/app.js',
+  '/Raices/js/firebase.js',
+  '/Raices/js/state.js',
+  '/Raices/js/auth.js',
+  '/Raices/js/habits.js',
+  '/Raices/js/render.js',
+  '/Raices/js/modal.js',
+  '/Raices/js/ui.js',
+  '/Raices/manifest.json',
 ];
 
 self.addEventListener('install', e => {
