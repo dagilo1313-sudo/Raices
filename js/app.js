@@ -61,7 +61,7 @@ window.onDeleteHabit = (id) => {
   overlay.innerHTML = `
     <div style="background:var(--card2);border:1px solid var(--border);border-radius:24px 24px 0 0;padding:28px 24px 40px;width:100%;max-width:480px;animation:slideIn 0.3s cubic-bezier(0.34,1.2,0.64,1)">
       <div style="width:40px;height:4px;background:var(--border);border-radius:4px;margin:0 auto 20px"></div>
-      <div style="font-family:var(--font-display);font-size:20px;color:var(--text);margin-bottom:10px">¿Eliminar hábito?</div>
+      <div style="font-family:var(--font-body);font-size:17px;font-weight:600;color:var(--text);margin-bottom:10px">¿Eliminar hábito?</div>
       <div style="font-size:14px;color:var(--muted);margin-bottom:24px;line-height:1.5">
         Vas a eliminar <strong style="color:var(--text)">"${habit.name}"</strong>.<br>Esta acción no se puede deshacer.
       </div>

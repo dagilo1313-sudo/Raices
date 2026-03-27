@@ -68,10 +68,23 @@ function renderStreak() {
 function renderXPBar() {
   const totalXP = getTotalXP();
   const todayXP = getTodayXP();
+  const todayStr = today();
+
+  // Máximo XP posible hoy (suma de todos los hábitos programados hoy)
+  const maxXPToday = state.habits
+    .filter(h => isScheduledForDate(h, todayStr))
+    .reduce((sum, h) => sum + (h.xp || 10), 0);
+
+  const pctToday = maxXPToday > 0 ? Math.round(todayXP / maxXPToday * 100) : 0;
+
   const total = document.getElementById('total-xp');
   const todayEl = document.getElementById('today-xp');
   if (total) total.textContent = totalXP;
-  if (todayEl) todayEl.textContent = todayXP > 0 ? `+${todayXP} hoy` : '';
+  if (todayEl) {
+    todayEl.textContent = todayXP > 0
+      ? `+${todayXP} hoy · ${pctToday}%`
+      : '';
+  }
 }
 
 // ── Progreso ──
@@ -344,7 +357,7 @@ function renderStatsDayHabits(dateStr, completedIds, scheduledHabits) {
     const cat = CATEGORIES[h.category] || CATEGORIES.disciplina;
     return `
       <div class="habit-card ${done ? 'done' : ''}" style="cursor:default">
-        <div class="habit-emoji">${h.emoji || '🌿'}</div>
+        ${habitIconHTML(h)}
         <div class="habit-info">
           <div class="habit-name">${h.name}</div>
           <div class="habit-meta">
@@ -363,23 +376,41 @@ function renderCatStats(dateStr) {
   const completedIds = state.completions[dateStr] || [];
   cl.innerHTML = Object.entries(CATEGORIES).map(([key, cat]) => {
     const catHabits = state.habits.filter(h => h.category === key && isScheduledForDate(h, dateStr));
+    if (!catHabits.length) return '';
     const done = catHabits.filter(h => completedIds.includes(h.id)).length;
     const total = catHabits.length;
     const pct = total ? Math.round(done / total * 100) : 0;
     const xpEarned = catHabits.filter(h => completedIds.includes(h.id)).reduce((s, h) => s + (h.xp || 10), 0);
-    return `
-      <div class="habit-card" style="cursor:default">
-        <div class="habit-info">
-          <div class="habit-name">${cat.label}</div>
-          <div class="habit-meta">
-            <span style="font-size:11px;color:var(--muted)">${done}/${total}</span>
-            ${xpEarned > 0 ? `<span class="xp-badge xp-50">+${xpEarned} XP</span>` : ''}
+
+    // Renderizar cada hábito de esta categoría
+    const habitsHTML = catHabits.map(h => {
+      const isDone = completedIds.includes(h.id);
+      return `
+        <div class="habit-card ${isDone ? 'done' : ''}" style="cursor:default;margin-bottom:6px">
+          ${habitIconHTML(h)}
+          <div class="habit-info">
+            <div class="habit-name">${h.name}</div>
+            <div class="habit-meta">
+              <span class="xp-badge xp-${h.xp}">+${h.xp} XP</span>
+            </div>
           </div>
-          <div style="margin-top:8px;height:4px;background:var(--border);border-radius:4px;overflow:hidden">
-            <div style="height:100%;width:${pct}%;background:var(--cat-${key});border-radius:4px;transition:width 0.6s"></div>
+          <div class="check-circle" style="flex-shrink:0">${isDone ? '✓' : ''}</div>
+        </div>`;
+    }).join('');
+
+    return `
+      <div style="margin-bottom:16px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;padding:0 2px">
+          <div class="cat-group-label cat-${key}" style="margin:0">${cat.label}</div>
+          <div style="display:flex;align-items:center;gap:8px">
+            ${xpEarned > 0 ? `<span class="xp-badge xp-50">+${xpEarned} XP</span>` : ''}
+            <span style="font-family:var(--font-body);font-size:16px;font-weight:700;color:var(--cat-${key})">${pct}%</span>
           </div>
         </div>
-        <div style="font-family:var(--font-body);font-size:18px;font-weight:700;color:var(--cat-${key});flex-shrink:0">${pct}%</div>
+        <div style="height:4px;background:var(--border);border-radius:4px;overflow:hidden;margin-bottom:10px">
+          <div style="height:100%;width:${pct}%;background:var(--cat-${key});border-radius:4px;transition:width 0.6s"></div>
+        </div>
+        ${habitsHTML}
       </div>`;
   }).join('');
 }
