@@ -7,21 +7,37 @@ import {
 export function renderAll() {
   renderDate();
   renderWeek();
+  renderViajero();
   renderStreak();
   renderXPBar();
   renderProgress();
   renderCatTabs();
   renderHabits();
-  renderHabitsList();  // vista hábitos (gestión)
+  renderHabitsList();
   renderStats();
 }
 
 // ── Fecha ──
 function renderDate() {
   const el = document.getElementById('date-display');
-  if (el) el.textContent = new Date().toLocaleDateString('es-ES', {
-    weekday: 'long', day: 'numeric', month: 'short',
-  });
+  if (!el) return;
+  const d = new Date();
+  const weekday = d.toLocaleDateString('es-ES', { weekday: 'long' });
+  const day = d.getDate();
+  const month = d.toLocaleDateString('es-ES', { month: 'short' });
+  const capitalized = weekday.charAt(0).toUpperCase() + weekday.slice(1);
+  const monthCap = month.charAt(0).toUpperCase() + month.slice(1).replace('.','');
+  el.textContent = `${capitalized}, ${day} ${monthCap}`;
+}
+
+// ── Viajero ──
+function renderViajero() {
+  const streak = getGlobalStreak();
+  const xpHoy = getTodayXP();
+  const streakEl = document.getElementById('viajero-streak');
+  const xpEl = document.getElementById('viajero-xp-hoy');
+  if (streakEl) streakEl.textContent = streak;
+  if (xpEl) xpEl.textContent = `+${xpHoy}`;
 }
 
 // ── Semana ──

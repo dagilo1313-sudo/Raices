@@ -23,9 +23,70 @@ header {
 .logo-sub { font-size: 11px; color: var(--muted); letter-spacing: 3px; text-transform: uppercase; margin-top: 4px; }
 .header-right { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
 .date-badge { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-full); padding: 6px 14px; font-size: 12px; color: var(--muted); text-transform: capitalize; }
-.user-chip { font-size: 11px; color: var(--muted); background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-full); padding: 4px 10px; max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.btn-logout { background: transparent; border: 1px solid var(--border); border-radius: var(--radius-full); padding: 5px 12px; font-size: 11px; color: var(--muted); cursor: pointer; font-family: var(--font-body); transition: all 0.2s; }
-.btn-logout:hover { border-color: var(--danger); color: var(--danger); }
+.user-avatar {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: var(--card2);
+  border: 1.5px solid var(--accent);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 600;
+  color: var(--accent);
+  cursor: pointer;
+  animation: avatarGlow 3s ease-in-out infinite;
+  flex-shrink: 0;
+}
+@keyframes avatarGlow {
+  0%,100% { box-shadow: 0 0 0 0 rgba(143,179,57,0); border-color: var(--accent); }
+  50%      { box-shadow: 0 0 0 4px rgba(143,179,57,0.15); border-color: var(--accent2); }
+}
+
+/* ── Viajero card ── */
+.viajero-card {
+  margin: 0 24px 16px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  position: relative;
+  overflow: hidden;
+}
+.viajero-card::before {
+  content: '';
+  position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+  background: linear-gradient(to bottom, var(--accent), var(--accent3));
+  border-radius: 0;
+}
+.viajero-left { display: flex; align-items: center; gap: 12px; }
+.viajero-avatar-wrap {
+  width: 40px; height: 40px; border-radius: 50%;
+  border: 1.5px solid var(--accent);
+  background: var(--card2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; flex-shrink: 0;
+  animation: avatarGlow 3s ease-in-out infinite;
+}
+.viajero-info { min-width: 0; }
+.viajero-clase { font-size: 9px; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 2px; }
+.viajero-nombre { font-family: var(--font-display); font-size: 15px; color: var(--text); font-weight: 400; line-height: 1.2; }
+.viajero-nivel { font-size: 10px; color: var(--accent); margin-top: 2px; }
+
+.viajero-right { display: flex; gap: 12px; flex-shrink: 0; }
+.viajero-stat { text-align: center; }
+.viajero-stat-num { font-family: var(--font-display); font-size: 18px; color: var(--accent); line-height: 1; }
+.viajero-stat-lbl { font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-top: 2px; }
+
+/* ── Separador ── */
+.seccion-separador {
+  text-align: center;
+  font-size: 10px;
+  color: var(--border);
+  letter-spacing: 6px;
+  margin: 0 0 8px;
+}
 
 /* ── Secciones ── */
 .section { padding: 0 24px; margin-bottom: 12px; margin-top: 30px}

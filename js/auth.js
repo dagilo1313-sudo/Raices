@@ -23,7 +23,9 @@ export function initAuth() {
       state.currentUser = user;
       document.getElementById('auth-screen').style.display = 'none';
       document.getElementById('app').style.display = 'block';
-      document.getElementById('user-chip').textContent = user.email;
+      // Avatar con inicial del email
+      const avatar = document.getElementById('user-avatar');
+      if (avatar) avatar.textContent = user.email.charAt(0).toUpperCase();
       document.getElementById('profile-email').textContent = user.email;
       await loadData();
       renderAll();
