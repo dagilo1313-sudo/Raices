@@ -70,13 +70,16 @@
     <div class="viajero-card">
       <div class="viajero-top-row">
         <div class="viajero-avatar-wrap">
-          <div class="viajero-avatar">🌿</div>
+          <div class="viajero-avatar" id="viajero-avatar-emoji">🌿</div>
         </div>
         <div class="viajero-info">
-          <div class="viajero-clase">Iniciado</div>
-          <div class="viajero-nombre">David</div>
+          <div class="viajero-clase" id="viajero-clase">Iniciado</div>
+          <div class="viajero-nombre">Viajero</div>
         </div>
-        <div class="viajero-nivel-badge">Nivel 1</div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div class="viajero-nivel-badge" id="viajero-nivel-badge">Nivel 1</div>
+          <button class="btn-rangos-info" onclick="openRangosPanel()" title="Ver rangos y niveles">ℹ</button>
+        </div>
       </div>
       <div class="viajero-stats-grid">
         <div class="viajero-stat">
@@ -352,6 +355,22 @@
 </div>
 
 <div class="toast" id="toast"></div>
+
+<!-- ── Panel Rangos ── -->
+<div class="modal-overlay" id="rangos-overlay" onclick="if(event.target===this)closeRangosPanel()">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+      <div class="modal-title" style="margin:0">Rangos y Niveles</div>
+      <button onclick="closeRangosPanel()" style="background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;padding:0">×</button>
+    </div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:20px;line-height:1.5">
+      Cada rango tiene 30 niveles. El XP necesario crece con cada nivel.<br>
+      Fórmula: <span style="color:var(--accent);font-family:monospace">XP(n) = 100 × n¹·⁸</span>
+    </div>
+    <div id="rangos-content"></div>
+  </div>
+</div>
 
 <script>
   if ('serviceWorker' in navigator) {
