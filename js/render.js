@@ -201,7 +201,7 @@ export function renderHabitsList() {
   sorted.forEach(h => {
     if (h.category !== lastCat) {
       const cat = CATEGORIES[h.category];
-      if (cat) html += `<div class="cat-group-label cat-${h.category}">${cat.emoji} ${cat.label}</div>`;
+      if (cat) html += `<div class="cat-group-label cat-${h.category}">${cat.label}</div>`;
       lastCat = h.category;
     }
     html += habitCardManageHTML(h);
