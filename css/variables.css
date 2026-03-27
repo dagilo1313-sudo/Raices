@@ -1,4 +1,6 @@
 :root {
+  --header-extra-top: 50px;
+
   /* Base */
   --bg: #0d0f0a;
   --surface: #141710;
