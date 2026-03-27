@@ -1,4 +1,4 @@
-import { state, CATEGORIES, XP_VALUES, EMOJIS } from './state.js';
+import { state, CATEGORIES, XP_VALUES, EMOJIS, DAYS_OF_WEEK } from './state.js';
 import { createHabit, editHabit } from './habits.js';
 import { renderAll } from './render.js';
 import { showToast } from './ui.js';
@@ -7,6 +7,7 @@ let editingId = null;
 let selectedEmoji = '🌿';
 let selectedCategory = 'disciplina';
 let selectedXP = 10;
+let selectedDays = []; // [] = todos los días
 
 // ── Abrir modal nuevo ──
 export function openCreateModal() {
@@ -14,6 +15,7 @@ export function openCreateModal() {
   selectedEmoji = '🌿';
   selectedCategory = 'disciplina';
   selectedXP = 10;
+  selectedDays = [];
   document.getElementById('modal-title').textContent = 'Planta un nuevo hábito';
   document.getElementById('habit-name-input').value = '';
   document.getElementById('btn-modal-submit').textContent = 'Plantar hábito 🌱';
@@ -29,6 +31,7 @@ export function openEditModal(id) {
   selectedEmoji = habit.emoji || '🌿';
   selectedCategory = habit.category || 'disciplina';
   selectedXP = habit.xp || 10;
+  selectedDays = habit.days ? [...habit.days] : [];
   document.getElementById('modal-title').textContent = 'Editar hábito';
   document.getElementById('habit-name-input').value = habit.name;
   document.getElementById('btn-modal-submit').textContent = 'Guardar cambios ✓';
@@ -61,10 +64,10 @@ export async function submitModal() {
 
   try {
     if (editingId) {
-      await editHabit(editingId, { name, emoji: selectedEmoji, category: selectedCategory, xp: selectedXP });
+      await editHabit(editingId, { name, emoji: selectedEmoji, category: selectedCategory, xp: selectedXP, days: selectedDays });
       showToast('Hábito actualizado ✓');
     } else {
-      await createHabit({ name, emoji: selectedEmoji, category: selectedCategory, xp: selectedXP });
+      await createHabit({ name, emoji: selectedEmoji, category: selectedCategory, xp: selectedXP, days: selectedDays });
       showToast('¡Hábito plantado! 🌱');
     }
     closeModal();
@@ -84,9 +87,7 @@ export function selectEmoji(el, emoji) {
 
 export function selectCategory(el, cat) {
   selectedCategory = cat;
-  document.querySelectorAll('.cat-chip').forEach(c => {
-    c.className = `chip cat-chip`;
-  });
+  document.querySelectorAll('.cat-chip').forEach(c => { c.className = 'chip cat-chip'; });
   el.classList.add(`selected-${cat}`);
 }
 
@@ -94,6 +95,20 @@ export function selectXP(el, xp) {
   selectedXP = xp;
   document.querySelectorAll('.xp-chip').forEach(c => c.classList.remove('selected'));
   el.classList.add('selected');
+}
+
+export function toggleDay(el, dayKey) {
+  const idx = selectedDays.indexOf(dayKey);
+  if (idx === -1) {
+    selectedDays.push(dayKey);
+    el.classList.add('selected');
+  } else {
+    selectedDays.splice(idx, 1);
+    el.classList.remove('selected');
+  }
+  // Actualizar label
+  const label = document.getElementById('days-label');
+  if (label) label.textContent = selectedDays.length === 0 ? 'Todos los días' : '';
 }
 
 // ── Render internals ──
@@ -115,6 +130,14 @@ function renderModalInternals() {
       <span style="font-size:11px;color:var(--muted);margin-left:4px">${xpLabel(xp)}</span>
     </div>`
   ).join('');
+
+  // Días de semana
+  document.getElementById('days-chips').innerHTML = DAYS_OF_WEEK.map(d =>
+    `<div class="chip day-chip ${selectedDays.includes(d.key) ? 'selected' : ''}" onclick="window.onToggleDay(this,'${d.key}')">${d.label}</div>`
+  ).join('');
+
+  const label = document.getElementById('days-label');
+  if (label) label.textContent = selectedDays.length === 0 ? 'Todos los días' : '';
 }
 
 function xpLabel(xp) {

@@ -4,6 +4,7 @@ export const state = {
   habits: [],
   completions: {},      // { 'YYYY-MM-DD': [habitId, ...] }
   activeFilter: 'all',  // 'all' | categoria
+  selectedDate: null,   // fecha seleccionada en estadísticas (null = hoy)
 };
 
 // ── Constantes ──
@@ -17,6 +18,19 @@ export const CATEGORIES = {
 
 export const XP_VALUES = [10, 25, 50];
 
+export const DAYS_OF_WEEK = [
+  { key: 'lun', label: 'L' },
+  { key: 'mar', label: 'M' },
+  { key: 'mie', label: 'X' },
+  { key: 'jue', label: 'J' },
+  { key: 'vie', label: 'V' },
+  { key: 'sab', label: 'S' },
+  { key: 'dom', label: 'D' },
+];
+
+// Mapeo JS getDay() → key (0=domingo)
+export const JS_DAY_TO_KEY = ['dom', 'lun', 'mar', 'mie', 'jue', 'vie', 'sab'];
+
 export const EMOJIS = [
   '🏃','💧','📚','🧘','🍎','💪','✍️','🎸',
   '🌿','😴','🧠','🥗','☕','🎨','🚴','🏊',
@@ -26,6 +40,15 @@ export const EMOJIS = [
 
 // ── Helpers de fecha ──
 export const today = () => new Date().toISOString().split('T')[0];
+export const getActiveDate = () => state.selectedDate || today();
+
+// Comprueba si un hábito está programado para una fecha
+export const isScheduledForDate = (habit, dateStr) => {
+  if (!habit.days || habit.days.length === 0) return true;
+  const d = new Date(dateStr + 'T12:00:00');
+  const dayKey = JS_DAY_TO_KEY[d.getDay()];
+  return habit.days.includes(dayKey);
+};
 
 export const isCompleted = (habitId, date) =>
   state.completions[date] && state.completions[date].includes(habitId);
@@ -57,13 +80,14 @@ export const getGlobalStreak = () => {
   return streak;
 };
 
-export const getTodayXP = () => {
-  const todayStr = today();
-  const completedIds = state.completions[todayStr] || [];
+export const getXPForDate = (dateStr) => {
+  const completedIds = state.completions[dateStr] || [];
   return state.habits
     .filter(h => completedIds.includes(h.id))
     .reduce((sum, h) => sum + (h.xp || 10), 0);
 };
+
+export const getTodayXP = () => getXPForDate(today());
 
 export const getTotalXP = () => {
   let total = 0;
@@ -79,8 +103,9 @@ export const getTotalXP = () => {
 
 export const getInsight = () => {
   const todayStr = today();
-  const total = state.habits.length;
-  const done = state.habits.filter(h => isCompleted(h.id, todayStr)).length;
+  const todayHabits = state.habits.filter(h => isScheduledForDate(h, todayStr));
+  const total = todayHabits.length;
+  const done = todayHabits.filter(h => isCompleted(h.id, todayStr)).length;
   const xp = getTodayXP();
 
   if (!total) return { icon: '🌱', text: 'Los pequeños pasos de hoy son las raíces del mañana. ¡Empieza tu primer hábito!' };
@@ -93,12 +118,6 @@ export const getInsight = () => {
 };
 
 export const getCompletionMessage = () => {
-  const msgs = [
-    '¡Raíz más profunda! 🌿',
-    '¡Creciendo! 🌱',
-    '¡Brillante! ✨',
-    '¡Un paso más! 💚',
-    '¡Extraordinario! 🎯',
-  ];
+  const msgs = ['¡Raíz más profunda! 🌿','¡Creciendo! 🌱','¡Brillante! ✨','¡Un paso más! 💚','¡Extraordinario! 🎯'];
   return msgs[Math.floor(Math.random() * msgs.length)];
 };

@@ -7,12 +7,9 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Raíces">
   <meta name="theme-color" content="#8fb339">
-
   <title>Raíces — Tus Hábitos</title>
-
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="assets/icon-192.png">
-
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/variables.css">
   <link rel="stylesheet" href="css/components.css">
@@ -33,22 +30,15 @@
   <div class="auth-tagline">Tu jardín de hábitos</div>
   <div class="auth-box">
     <div class="auth-title" id="auth-title">Bienvenido de vuelta</div>
-
     <div class="msg-error" id="auth-error"></div>
     <div class="msg-success" id="auth-success"></div>
-
-    <!-- Login / Register -->
     <div id="auth-form">
       <input class="input-field" id="auth-email" type="email" placeholder="Email" autocomplete="email">
       <input class="input-field" id="auth-password" type="password" placeholder="Contraseña" autocomplete="current-password">
       <button class="btn btn-primary" id="auth-btn" onclick="handleAuth()">Entrar</button>
       <button class="btn btn-secondary" onclick="showForgotPassword()">¿Olvidaste tu contraseña?</button>
-      <div class="auth-switch" id="auth-switch">
-        ¿Sin cuenta? <span onclick="toggleAuthMode()">Regístrate</span>
-      </div>
+      <div class="auth-switch" id="auth-switch">¿Sin cuenta? <span onclick="toggleAuthMode()">Regístrate</span></div>
     </div>
-
-    <!-- Recuperar contraseña -->
     <div id="forgot-form" style="display:none">
       <input class="input-field" id="forgot-email" type="email" placeholder="Tu email">
       <button class="btn btn-primary" onclick="sendResetEmail()">Enviar enlace de recuperación</button>
@@ -60,7 +50,7 @@
 <!-- ── App ── -->
 <div class="app" id="app">
 
-  <!-- Vista: Hoy -->
+  <!-- ══ Vista: HOY ══ -->
   <div class="view active" id="view-hoy">
     <header>
       <div class="header-top">
@@ -110,29 +100,48 @@
       <div class="insight-text" id="insight-text">Los pequeños pasos de hoy son las raíces del mañana.</div>
     </div>
 
-    <!-- Filtros categoría -->
     <div class="cat-tabs" id="cat-tabs"></div>
 
     <div class="section">
       <div class="section-header">
         <span class="section-label">Hábitos de hoy</span>
-        <button class="btn btn-primary btn-sm" onclick="openCreateModal()">+ Nuevo</button>
       </div>
       <div id="habits-list"></div>
     </div>
   </div>
 
-  <!-- Vista: Estadísticas -->
+  <!-- ══ Vista: HÁBITOS (gestión) ══ -->
+  <div class="view" id="view-habitos">
+    <header>
+      <div class="header-top">
+        <div>
+          <div class="logo" style="font-size:26px">Hábitos</div>
+          <div class="logo-sub">Gestiona tus hábitos</div>
+        </div>
+      </div>
+    </header>
+
+    <div class="section">
+      <div class="section-header">
+        <span class="section-label">Todos los hábitos</span>
+        <button class="btn btn-primary btn-sm" onclick="openCreateModal()">+ Nuevo</button>
+      </div>
+      <div id="all-habits-list"></div>
+    </div>
+  </div>
+
+  <!-- ══ Vista: ESTADÍSTICAS ══ -->
   <div class="view" id="view-stats">
     <header>
       <div class="header-top">
         <div>
-          <div class="logo" style="font-size:24px">Estadísticas</div>
+          <div class="logo" style="font-size:26px">Estadísticas</div>
           <div class="logo-sub">Tu progreso</div>
         </div>
       </div>
     </header>
 
+    <!-- Globales -->
     <div class="stats-grid">
       <div class="stat-card">
         <div class="stat-value" id="stat-total-done">0</div>
@@ -147,32 +156,76 @@
         <div class="stat-label">Racha actual</div>
       </div>
       <div class="stat-card">
-        <div class="stat-value" id="stat-rate">0%</div>
-        <div class="stat-label">Éxito hoy</div>
+        <div class="stat-value" id="stat-habits-count">0</div>
+        <div class="stat-label">Hábitos activos</div>
+      </div>
+    </div>
+
+    <!-- Calendario -->
+    <div class="cal-wrapper">
+      <div class="cal-header">
+        <div class="cal-nav">
+          <button class="cal-nav-btn" onclick="calPrevMonth()">‹</button>
+          <button class="cal-nav-btn" onclick="calNextMonth()">›</button>
+        </div>
+        <div class="cal-title" id="cal-title"></div>
+        <button class="cal-today-btn" onclick="calGoToday()">Hoy</button>
+      </div>
+      <div class="cal-weekdays">
+        <div class="cal-weekday">L</div>
+        <div class="cal-weekday">M</div>
+        <div class="cal-weekday">X</div>
+        <div class="cal-weekday">J</div>
+        <div class="cal-weekday">V</div>
+        <div class="cal-weekday">S</div>
+        <div class="cal-weekday">D</div>
+      </div>
+      <div class="cal-grid" id="cal-grid"></div>
+    </div>
+
+    <!-- Resumen del día seleccionado -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-label" id="stats-date-label">Hoy</span>
+      </div>
+    </div>
+
+    <div class="stats-day-summary">
+      <div class="stats-day-card">
+        <div class="stats-day-value" id="stat-day-done">0/0</div>
+        <div class="stats-day-label">Completados</div>
+      </div>
+      <div class="stats-day-card">
+        <div class="stats-day-value" id="stat-day-xp">+0 XP</div>
+        <div class="stats-day-label">XP ganado</div>
+      </div>
+      <div class="stats-day-card">
+        <div class="stats-day-value" id="stat-day-pct">0%</div>
+        <div class="stats-day-label">Éxito</div>
       </div>
     </div>
 
     <div class="section">
       <div class="section-header">
-        <span class="section-label">Por categoría hoy</span>
+        <span class="section-label">Por categoría</span>
       </div>
       <div id="cat-stats-list"></div>
     </div>
 
     <div class="section">
       <div class="section-header">
-        <span class="section-label">Rachas por hábito</span>
+        <span class="section-label">Hábitos del día</span>
       </div>
-      <div id="stats-habits-list"></div>
+      <div id="stats-day-habits"></div>
     </div>
   </div>
 
-  <!-- Vista: Perfil -->
+  <!-- ══ Vista: PERFIL ══ -->
   <div class="view" id="view-perfil">
     <header>
       <div class="header-top">
         <div>
-          <div class="logo" style="font-size:24px">Perfil</div>
+          <div class="logo" style="font-size:26px">Perfil</div>
           <div class="logo-sub">Tu cuenta</div>
         </div>
       </div>
@@ -197,6 +250,26 @@
         <button class="btn btn-secondary" onclick="hideChangePassword()" style="margin-bottom:0">Cancelar</button>
       </div>
 
+      <!-- Reset de datos -->
+      <div class="card">
+        <div class="card-title">Zona peligrosa</div>
+
+        <div id="reset-confirm-1">
+          <div style="font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.5">
+            Borra todos tus hábitos y progreso de forma permanente. Solo afecta a tu cuenta.
+          </div>
+          <button class="btn btn-danger" style="margin-bottom:0" onclick="showResetConfirm1()">Reiniciar todos los datos</button>
+        </div>
+
+        <div id="reset-confirm-2">
+          <div class="reset-warning">
+            ⚠️ Esta acción es <strong>irreversible</strong>. Se borrarán todos tus hábitos, rachas y progreso. ¿Estás seguro?
+          </div>
+          <button class="btn btn-danger" id="btn-confirm-reset" style="margin-bottom:8px" onclick="confirmReset()">Sí, borrar todo</button>
+          <button class="btn btn-secondary" style="margin-bottom:0" onclick="cancelReset()">Cancelar</button>
+        </div>
+      </div>
+
       <div class="card">
         <button class="btn btn-danger" onclick="logout()" style="margin-bottom:0">Cerrar sesión</button>
       </div>
@@ -204,13 +277,16 @@
     </div>
   </div>
 
-  <!-- Nav bar -->
+  <!-- ── Nav bar (4 pestañas) ── -->
   <nav class="nav-bar">
     <div class="nav-item active" id="nav-hoy" onclick="switchView('hoy')">
       <div class="nav-icon">🌿</div>Hoy
     </div>
+    <div class="nav-item" id="nav-habitos" onclick="switchView('habitos')">
+      <div class="nav-icon">📋</div>Hábitos
+    </div>
     <div class="nav-item" id="nav-stats" onclick="switchView('stats')">
-      <div class="nav-icon">⚡</div>Estadísticas
+      <div class="nav-icon">⚡</div>Stats
     </div>
     <div class="nav-item" id="nav-perfil" onclick="switchView('perfil')">
       <div class="nav-icon">👤</div>Perfil
@@ -237,22 +313,22 @@
     <label class="modal-label">Dificultad · XP</label>
     <div class="chips-row" id="xp-chips"></div>
 
+    <label class="modal-label">Días de la semana</label>
+    <div class="modal-hint" id="days-label">Todos los días</div>
+    <div class="chips-row" id="days-chips"></div>
+
     <button class="btn btn-primary" id="btn-modal-submit" onclick="submitModal()">Plantar hábito 🌱</button>
     <button class="btn btn-secondary" onclick="closeModal()" style="margin-bottom:0">Cancelar</button>
   </div>
 </div>
 
-<!-- Toast -->
 <div class="toast" id="toast"></div>
 
-<!-- Service Worker -->
 <script>
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/Raices/service-worker.js');
+    navigator.serviceWorker.register('/service-worker.js');
   }
 </script>
-
-<!-- App (ES modules) -->
 <script type="module" src="js/app.js"></script>
 
 </body>
