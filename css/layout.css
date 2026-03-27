@@ -14,7 +14,7 @@
 .auth-switch span { color: var(--accent); cursor: pointer; text-decoration: underline; }
 
 /* ── Header ── */
-header { padding: 60px 24px 16px; } /* margen superior aumentado */
+header { padding: 90px 24px 16px; } /* margen superior aumentado */
 
 .header-top { display: flex; align-items: flex-start; justify-content: space-between; }
 .logo { font-family: var(--font-body); font-size: 32px; font-weight: 700; color: var(--accent); letter-spacing: -1px; line-height: 1; }
