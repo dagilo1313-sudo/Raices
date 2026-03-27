@@ -81,12 +81,14 @@ body::before {
 .confetti-piece { position: fixed; pointer-events: none; width: 8px; height: 8px; border-radius: 2px; animation: confetti-fall 0.8s ease-out forwards; z-index: 999; }
 
 /* ── Categorías badges ── */
+/*
 .cat-badge { font-size: 10px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; padding: 3px 8px; border-radius: var(--radius-full); flex-shrink: 0; }
 .cat-fisico       { color: var(--cat-fisico);       background: var(--cat-fisico-bg);       border: 1px solid var(--cat-fisico-border); }
 .cat-disciplina   { color: var(--cat-disciplina);   background: var(--cat-disciplina-bg);   border: 1px solid var(--cat-disciplina-border); }
 .cat-energia      { color: var(--cat-energia);      background: var(--cat-energia-bg);      border: 1px solid var(--cat-energia-border); }
 .cat-inteligencia { color: var(--cat-inteligencia); background: var(--cat-inteligencia-bg); border: 1px solid var(--cat-inteligencia-border); }
 .cat-identidad    { color: var(--cat-identidad);    background: var(--cat-identidad-bg);    border: 1px solid var(--cat-identidad-border); }
+*/
 
 /* ── Group label por categoría ── */
 .cat-group-label {
