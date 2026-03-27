@@ -383,7 +383,7 @@ function renderCatStats(dateStr) {
             <div style="height:100%;width:${pct}%;background:var(--cat-${key});border-radius:4px;transition:width 0.6s"></div>
           </div>
         </div>
-        <div style="font-family:var(--font-display);font-size:18px;font-weight:700;color:var(--cat-${key});flex-shrink:0">${pct}%</div>
+        <div style="font-family:var(--font-body);font-size:18px;font-weight:700;color:var(--cat-${key});flex-shrink:0">${pct}%</div>
       </div>`;
   }).join('');
 }

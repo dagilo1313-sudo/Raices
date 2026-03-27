@@ -6,10 +6,10 @@
 
 #auth-screen { position: fixed; inset: 0; background: var(--bg); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 998; padding: 32px 24px; overflow-y: auto; }
 
-.auth-logo { font-family: var(--font-display); font-size: 48px; color: var(--accent); margin-bottom: 4px; }
+.auth-logo { font-family: var(--font-body); font-size: 48px; color: var(--accent); margin-bottom: 4px; }
 .auth-tagline { font-size: 13px; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 40px; }
 .auth-box { width: 100%; max-width: 360px; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-xl); padding: 28px 24px; }
-.auth-title { font-family: var(--font-display); font-size: 22px; margin-bottom: 20px; color: var(--text); }
+.auth-title { font-family: var(--font-body); font-size: 22px; margin-bottom: 20px; color: var(--text); }
 .auth-switch { text-align: center; font-size: 13px; color: var(--muted); }
 .auth-switch span { color: var(--accent); cursor: pointer; text-decoration: underline; }
 
@@ -17,7 +17,7 @@
 header { padding: 52px 24px 16px; } /* margen superior aumentado */
 
 .header-top { display: flex; align-items: flex-start; justify-content: space-between; }
-.logo { font-family: var(--font-display); font-size: 32px; font-weight: 700; color: var(--accent); letter-spacing: -1px; line-height: 1; }
+.logo { font-family: var(--font-body); font-size: 32px; font-weight: 700; color: var(--accent); letter-spacing: -1px; line-height: 1; }
 .logo-sub { font-size: 11px; color: var(--muted); letter-spacing: 3px; text-transform: uppercase; margin-top: 4px; }
 .header-right { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
 .date-badge { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-full); padding: 6px 14px; font-size: 12px; color: var(--muted); text-transform: capitalize; }
@@ -111,7 +111,7 @@ header { padding: 52px 24px 16px; } /* margen superior aumentado */
 .cat-tabs::-webkit-scrollbar { display: none; }
 .cat-tab { flex-shrink: 0; padding: 6px 14px; border-radius: var(--radius-full); border: 1px solid var(--border); background: var(--card); color: var(--muted); font-size: 12px; font-weight: 500; cursor: pointer; transition: all 0.2s; font-family: var(--font-body); }
 .cat-tab.active-all { border-color: var(--accent); color: var(--accent); background: var(--glow); }
-.cat-tab.active-cuerpo       { border-color: var(--cat-cuerpo);       color: var(--cat-cuerpo);       background: var(--cat-cuerpo-bg); }
+.cat-tab.active-fisico       { border-color: var(--cat-fisico);       color: var(--cat-fisico);       background: var(--cat-fisico-bg); }
 .cat-tab.active-disciplina   { border-color: var(--cat-disciplina);   color: var(--cat-disciplina);   background: var(--cat-disciplina-bg); }
 .cat-tab.active-energia      { border-color: var(--cat-energia);      color: var(--cat-energia);      background: var(--cat-energia-bg); }
 .cat-tab.active-inteligencia { border-color: var(--cat-inteligencia); color: var(--cat-inteligencia); background: var(--cat-inteligencia-bg); }
@@ -123,7 +123,7 @@ header { padding: 52px 24px 16px; } /* margen superior aumentado */
 .modal { background: var(--card2); border: 1px solid var(--border); border-radius: 24px 24px 0 0; padding: 28px 24px 40px; width: 100%; max-width: 480px; transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.34, 1.2, 0.64, 1); max-height: 90vh; overflow-y: auto; }
 .modal-overlay.open .modal { transform: translateY(0); }
 .modal-handle { width: 40px; height: 4px; background: var(--border); border-radius: 4px; margin: 0 auto 24px; }
-.modal-title { font-family: var(--font-display); font-size: 22px; margin-bottom: 20px; color: var(--text); }
+.modal-title { font-family: var(--font-body); font-size: 22px; margin-bottom: 20px; color: var(--text); }
 .modal-label { font-size: 11px; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px; display: block; }
 .modal-hint { font-size: 11px; color: var(--muted); margin-bottom: 12px; font-style: italic; }
 

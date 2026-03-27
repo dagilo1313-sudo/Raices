@@ -9,7 +9,7 @@ export const state = {
 
 // ── Constantes ──
 export const CATEGORIES = {
-  cuerpo:       { label: 'Cuerpo',        emoji: '💪', color: 'var(--cat-cuerpo)' },
+  fisico:       { label: 'Físico',        emoji: '💪', color: 'var(--cat-fisico)' },
   disciplina:   { label: 'Disciplina',    emoji: '🎯', color: 'var(--cat-disciplina)' },
   energia:      { label: 'Energía',       emoji: '⚡', color: 'var(--cat-energia)' },
   inteligencia: { label: 'Inteligencia',  emoji: '🧠', color: 'var(--cat-inteligencia)' },

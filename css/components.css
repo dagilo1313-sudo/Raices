@@ -82,7 +82,7 @@ body::before {
 
 /* ── Categorías badges ── */
 .cat-badge { font-size: 10px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; padding: 3px 8px; border-radius: var(--radius-full); flex-shrink: 0; }
-.cat-cuerpo       { color: var(--cat-cuerpo);       background: var(--cat-cuerpo-bg);       border: 1px solid var(--cat-cuerpo-border); }
+.cat-fisico       { color: var(--cat-fisico);       background: var(--cat-fisico-bg);       border: 1px solid var(--cat-fisico-border); }
 .cat-disciplina   { color: var(--cat-disciplina);   background: var(--cat-disciplina-bg);   border: 1px solid var(--cat-disciplina-border); }
 .cat-energia      { color: var(--cat-energia);      background: var(--cat-energia-bg);      border: 1px solid var(--cat-energia-border); }
 .cat-inteligencia { color: var(--cat-inteligencia); background: var(--cat-inteligencia-bg); border: 1px solid var(--cat-inteligencia-border); }
@@ -96,12 +96,12 @@ body::before {
   border-radius: var(--radius-full);
   margin-bottom: 8px;
 }
-.cat-group-label.cat-cuerpo       { background: var(--cat-cuerpo-bg);       border: 1px solid var(--cat-cuerpo-border); }
+.cat-group-label.cat-fisico       { background: var(--cat-fisico-bg);       border: 1px solid var(--cat-fisico-border); }
 .cat-group-label.cat-disciplina   { background: var(--cat-disciplina-bg);   border: 1px solid var(--cat-disciplina-border); }
 .cat-group-label.cat-energia      { background: var(--cat-energia-bg);      border: 1px solid var(--cat-energia-border); }
 .cat-group-label.cat-inteligencia { background: var(--cat-inteligencia-bg); border: 1px solid var(--cat-inteligencia-border); }
 .cat-group-label.cat-identidad    { background: var(--cat-identidad-bg);    border: 1px solid var(--cat-identidad-border); }
-.cat-group-label.cat-cuerpo       { color: var(--cat-cuerpo); }
+.cat-group-label.cat-fisico       { color: var(--cat-fisico); }
 .cat-group-label.cat-disciplina   { color: var(--cat-disciplina); }
 .cat-group-label.cat-energia      { color: var(--cat-energia); }
 .cat-group-label.cat-inteligencia { color: var(--cat-inteligencia); }
@@ -118,7 +118,7 @@ body::before {
 .chip { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-full); padding: 7px 14px; color: var(--muted); font-size: 13px; cursor: pointer; transition: all 0.2s; font-family: var(--font-body); white-space: nowrap; }
 .chip:hover { border-color: var(--accent); color: var(--accent); }
 .chip.selected { border-color: var(--accent); color: var(--accent); background: var(--glow); }
-.chip.cat-chip.selected-cuerpo       { border-color: var(--cat-cuerpo);       color: var(--cat-cuerpo);       background: var(--cat-cuerpo-bg); }
+.chip.cat-chip.selected-fisico       { border-color: var(--cat-fisico);       color: var(--cat-fisico);       background: var(--cat-fisico-bg); }
 .chip.cat-chip.selected-disciplina   { border-color: var(--cat-disciplina);   color: var(--cat-disciplina);   background: var(--cat-disciplina-bg); }
 .chip.cat-chip.selected-energia      { border-color: var(--cat-energia);      color: var(--cat-energia);      background: var(--cat-energia-bg); }
 .chip.cat-chip.selected-inteligencia { border-color: var(--cat-inteligencia); color: var(--cat-inteligencia); background: var(--cat-inteligencia-bg); }
@@ -138,7 +138,7 @@ body::before {
 /* ── Calendario stats ── */
 .cal-wrapper { margin: 0 24px 20px; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; }
 .cal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
-.cal-title { font-family: var(--font-display); font-size: 16px; color: var(--text); text-transform: capitalize; }
+.cal-title { font-family: var(--font-body); font-size: 16px; color: var(--text); text-transform: capitalize; }
 .cal-nav { display: flex; gap: 8px; align-items: center; }
 .cal-nav-btn { background: var(--card2); border: 1px solid var(--border); border-radius: var(--radius-sm); width: 28px; height: 28px; color: var(--muted); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px; transition: all 0.2s; }
 .cal-nav-btn:hover { border-color: var(--accent); color: var(--accent); }

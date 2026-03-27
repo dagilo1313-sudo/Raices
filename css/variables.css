@@ -14,9 +14,9 @@
   --glow: rgba(143, 179, 57, 0.15);
 
   /* Categorías */
-  --cat-cuerpo: #e05c5c;
-  --cat-cuerpo-bg: rgba(224, 92, 92, 0.12);
-  --cat-cuerpo-border: rgba(224, 92, 92, 0.3);
+  --cat-fisico: #e05c5c;
+  --cat-fisico-bg: rgba(224, 92, 92, 0.12);
+  --cat-fisico-border: rgba(224, 92, 92, 0.3);
 
   --cat-disciplina: #5c8ae0;
   --cat-disciplina-bg: rgba(92, 138, 224, 0.12);
