@@ -120,7 +120,7 @@ function renderModalInternals() {
 
   // Categorías
   document.getElementById('cat-chips').innerHTML = Object.entries(CATEGORIES).map(([key, cat]) =>
-    `<div class="chip cat-chip ${selectedCategory === key ? `selected-${key}` : ''}" onclick="window.onSelectCategory(this,'${key}')">${cat.emoji} ${cat.label}</div>`
+    `<div class="chip cat-chip ${selectedCategory === key ? `selected-${key}` : ''}" onclick="window.onSelectCategory(this,'${key}')">${cat.label}</div>`
   ).join('');
 
   // XP
