@@ -143,5 +143,6 @@ function renderModalInternals() {
 function xpLabel(xp) {
   if (xp === 10) return '· Fácil';
   if (xp === 25) return '· Medio';
-  return '· Difícil';
+  if (xp === 50) return '· Difícil';
+  return '· Legendario';
 }

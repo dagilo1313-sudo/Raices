@@ -16,7 +16,7 @@ export const CATEGORIES = {
   identidad:    { label: 'Identidad',     color: 'var(--cat-identidad)' },
 };
 
-export const XP_VALUES = [10, 25, 50];
+export const XP_VALUES = [10, 25, 50, 100];
 
 export const DAYS_OF_WEEK = [
   { key: 'lun', label: 'L' },
