@@ -4,10 +4,12 @@ import { renderAll } from './render.js';
 import { showToast } from './ui.js';
 
 let editingId = null;
-let selectedEmoji = '🌿';
+let selectedEmoji = '🌿';   // null = sin icono
 let selectedCategory = 'disciplina';
 let selectedXP = 10;
-let selectedDays = []; // [] = todos los días
+let selectedDays = [];
+
+const NO_ICON = '__none__';
 
 // ── Abrir modal nuevo ──
 export function openCreateModal() {
@@ -57,17 +59,17 @@ export async function submitModal() {
     setTimeout(() => input.classList.remove('error'), 800);
     return;
   }
-
   const btn = document.getElementById('btn-modal-submit');
   btn.disabled = true;
   btn.textContent = '...';
-
+  // Guardar null si no hay icono
+  const emojiToSave = selectedEmoji === NO_ICON ? null : selectedEmoji;
   try {
     if (editingId) {
-      await editHabit(editingId, { name, emoji: selectedEmoji, category: selectedCategory, xp: selectedXP, days: selectedDays });
+      await editHabit(editingId, { name, emoji: emojiToSave, category: selectedCategory, xp: selectedXP, days: selectedDays });
       showToast('Hábito actualizado ✓');
     } else {
-      await createHabit({ name, emoji: selectedEmoji, category: selectedCategory, xp: selectedXP, days: selectedDays });
+      await createHabit({ name, emoji: emojiToSave, category: selectedCategory, xp: selectedXP, days: selectedDays });
       showToast('¡Hábito plantado! 🌱');
     }
     closeModal();
@@ -81,6 +83,12 @@ export async function submitModal() {
 // ── Selecciones ──
 export function selectEmoji(el, emoji) {
   selectedEmoji = emoji;
+  document.querySelectorAll('.emoji-btn').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+export function selectNoIcon(el) {
+  selectedEmoji = NO_ICON;
   document.querySelectorAll('.emoji-btn').forEach(b => b.classList.remove('selected'));
   el.classList.add('selected');
 }
@@ -106,17 +114,27 @@ export function toggleDay(el, dayKey) {
     selectedDays.splice(idx, 1);
     el.classList.remove('selected');
   }
-  // Actualizar label
   const label = document.getElementById('days-label');
   if (label) label.textContent = selectedDays.length === 0 ? 'Todos los días' : '';
 }
 
 // ── Render internals ──
 function renderModalInternals() {
-  // Emojis
-  document.getElementById('emoji-grid').innerHTML = EMOJIS.map(e =>
-    `<div class="emoji-btn ${e === selectedEmoji ? 'selected' : ''}" onclick="window.onSelectEmoji(this,'${e}')">${e}</div>`
+  const isNone = selectedEmoji === NO_ICON || selectedEmoji === null;
+
+  // Botón "Sin icono" primero
+  const noneSelected = isNone ? 'selected' : '';
+  let emojiHTML = `
+    <div class="emoji-btn emoji-btn-none ${noneSelected}" onclick="window.onSelectNoIcon(this)" title="Sin icono">
+      <span style="font-size:11px;font-weight:700;color:var(--muted)">—</span>
+    </div>`;
+
+  // Emojis normales
+  emojiHTML += EMOJIS.map(e =>
+    `<div class="emoji-btn ${(!isNone && e === selectedEmoji) ? 'selected' : ''}" onclick="window.onSelectEmoji(this,'${e}')">${e}</div>`
   ).join('');
+
+  document.getElementById('emoji-grid').innerHTML = emojiHTML;
 
   // Categorías
   document.getElementById('cat-chips').innerHTML = Object.entries(CATEGORIES).map(([key, cat]) =>
@@ -146,3 +164,5 @@ function xpLabel(xp) {
   if (xp === 50) return '· Difícil';
   return '· Legendario';
 }
+
+export { NO_ICON };
