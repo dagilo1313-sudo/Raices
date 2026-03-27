@@ -10,10 +10,10 @@ export const state = {
 // ── Constantes ──
 export const CATEGORIES = {
   fisico:       { label: 'Físico',        color: 'var(--cat-fisico)' },
-  disciplina:   { label: 'Disciplina',    emoji: '🎯', color: 'var(--cat-disciplina)' },
-  energia:      { label: 'Energía',       emoji: '⚡', color: 'var(--cat-energia)' },
-  inteligencia: { label: 'Inteligencia',  emoji: '🧠', color: 'var(--cat-inteligencia)' },
-  identidad:    { label: 'Identidad',     emoji: '🌿', color: 'var(--cat-identidad)' },
+  disciplina:   { label: 'Disciplina',    color: 'var(--cat-disciplina)' },
+  energia:      { label: 'Energía',       color: 'var(--cat-energia)' },
+  inteligencia: { label: 'Inteligencia',  color: 'var(--cat-inteligencia)' },
+  identidad:    { label: 'Identidad',     color: 'var(--cat-identidad)' },
 };
 
 export const XP_VALUES = [10, 25, 50];

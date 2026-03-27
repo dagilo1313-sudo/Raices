@@ -104,7 +104,7 @@ function renderCatTabs() {
   const active = state.activeFilter;
   let html = `<div class="cat-tab ${active === 'all' ? 'active-all' : ''}" onclick="window.setFilter('all')">Todos</div>`;
   Object.entries(CATEGORIES).forEach(([key, cat]) => {
-    html += `<div class="cat-tab ${active === key ? `active-${key}` : ''}" onclick="window.setFilter('${key}')">${cat.emoji} ${cat.label}</div>`;
+    html += `<div class="cat-tab ${active === key ? `active-${key}` : ''}" onclick="window.setFilter('${key}')">${cat.label}</div>`;
   });
   tabs.innerHTML = html;
 }
@@ -152,7 +152,7 @@ function renderHabits() {
     if (h.category !== lastCat) {
       const cat = CATEGORIES[h.category];
       if (cat) {
-        html += `<div class="cat-group-label cat-${h.category}">${cat.emoji} ${cat.label}</div>`;
+        html += `<div class="cat-group-label cat-${h.category}">${cat.label}</div>`;
       }
       lastCat = h.category;
     }
@@ -372,7 +372,6 @@ function renderCatStats(dateStr) {
     const xpEarned = catHabits.filter(h => completedIds.includes(h.id)).reduce((s, h) => s + (h.xp || 10), 0);
     return `
       <div class="habit-card" style="cursor:default">
-        <div class="habit-emoji" style="font-size:20px">${cat.emoji}</div>
         <div class="habit-info">
           <div class="habit-name">${cat.label}</div>
           <div class="habit-meta">
