@@ -33,11 +33,27 @@ function renderDate() {
 // ── Viajero ──
 function renderViajero() {
   const streak = getGlobalStreak();
-  const xpHoy = getTodayXP();
-  const streakEl = document.getElementById('viajero-streak');
-  const xpEl = document.getElementById('viajero-xp-hoy');
-  if (streakEl) streakEl.textContent = streak;
-  if (xpEl) xpEl.textContent = `+${xpHoy}`;
+  const totalXP = getTotalXP();
+  const XP_NEXT = 500; // nivel fijo por ahora
+
+  // Éxito global (completados / programados histórico)
+  let totalDone = 0;
+  let totalScheduled = 0;
+  Object.keys(state.completions).forEach(date => {
+    const ids = state.completions[date] || [];
+    totalDone += ids.length;
+    totalScheduled += state.habits.filter(h => isScheduledForDate(h, date)).length;
+  });
+  const exito = totalScheduled > 0 ? Math.round(totalDone / totalScheduled * 100) : 0;
+  const xpPct = Math.min(100, Math.round(totalXP / XP_NEXT * 100));
+
+  const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+  set('viajero-streak', streak);
+  set('viajero-xp-total', totalXP);
+  set('viajero-exito', exito + '%');
+  set('viajero-xp-label', `${totalXP} / ${XP_NEXT}`);
+  const fill = document.getElementById('viajero-xp-fill');
+  if (fill) fill.style.width = xpPct + '%';
 }
 
 // ── Semana ──
