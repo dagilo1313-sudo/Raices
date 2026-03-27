@@ -26,7 +26,7 @@ header { padding: 52px 24px 16px; } /* margen superior aumentado */
 .btn-logout:hover { border-color: var(--danger); color: var(--danger); }
 
 /* ── Secciones ── */
-.section { padding: 0 24px; margin-bottom: 12px; }
+.section { padding: 0 24px; margin-bottom: 30px; }
 .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
 .section-label { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); }
 
