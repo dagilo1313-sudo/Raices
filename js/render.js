@@ -165,7 +165,6 @@ function habitCardTodayHTML(h, dateStr) {
       <div class="habit-info">
         <div class="habit-name">${h.name}</div>
         <div class="habit-meta">
-          //<span class="cat-badge cat-${h.category || 'disciplina'}">${cat.label}</span>
           <span class="xp-badge ${xpClass}">+${h.xp || 10} XP</span>
           ${streak > 0 ? `<span class="habit-streak-mini">🔥 ${streak}d</span>` : ''}
         </div>
