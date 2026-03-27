@@ -159,9 +159,20 @@ body::before {
 /* ── Stats día ── */
 .stats-day-summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 0 24px 16px; }
 .stats-day-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 12px; text-align: center; }
-.stats-day-value { font-family: var(--font-display); font-size: 20px; color: var(--accent); line-height: 1; margin-bottom: 4px; }
 .stats-day-label { font-size: 10px; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; }
 
 /* ── Animaciones ── */
 @keyframes slideIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
 @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+
+/* -- Números -- */
+.stat-value,
+.stats-day-value,
+.streak-number,
+.xp-number {
+  font-family: var(--font-display);
+  font-size: 28px;
+  color: var(--accent);
+  line-height: 1;
+  margin-bottom: 4px;
+}
