@@ -91,9 +91,16 @@ body::before {
 /* ── Group label por categoría ── */
 .cat-group-label {
   font-size: 11px; font-weight: 700; letter-spacing: 2px;
-  text-transform: uppercase; padding: 6px 4px 8px;
-  display: flex; align-items: center; gap: 6px;
+  text-transform: uppercase; padding: 6px 12px;
+  display: inline-flex; align-items: center; gap: 6px;
+  border-radius: var(--radius-full);
+  margin-bottom: 8px;
 }
+.cat-group-label.cat-cuerpo       { background: var(--cat-cuerpo-bg);       border: 1px solid var(--cat-cuerpo-border); }
+.cat-group-label.cat-disciplina   { background: var(--cat-disciplina-bg);   border: 1px solid var(--cat-disciplina-border); }
+.cat-group-label.cat-energia      { background: var(--cat-energia-bg);      border: 1px solid var(--cat-energia-border); }
+.cat-group-label.cat-inteligencia { background: var(--cat-inteligencia-bg); border: 1px solid var(--cat-inteligencia-border); }
+.cat-group-label.cat-identidad    { background: var(--cat-identidad-bg);    border: 1px solid var(--cat-identidad-border); }
 .cat-group-label.cat-cuerpo       { color: var(--cat-cuerpo); }
 .cat-group-label.cat-disciplina   { color: var(--cat-disciplina); }
 .cat-group-label.cat-energia      { color: var(--cat-energia); }
