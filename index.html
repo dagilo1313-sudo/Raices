@@ -60,13 +60,39 @@
         </div>
         <div class="header-right">
           <div class="date-badge" id="date-display"></div>
-          <div class="user-chip" id="user-chip"></div>
-          <button class="btn-logout" onclick="logout()">Salir</button>
+          <div class="user-avatar" id="user-avatar" onclick="switchView('perfil')"></div>
         </div>
       </div>
     </header>
 
     <div class="week-strip" id="week-strip"></div>
+
+    <!-- Viajero -->
+    <div class="viajero-card" id="viajero-card">
+      <div class="viajero-left">
+        <div class="viajero-avatar-wrap">
+          <div class="viajero-avatar">🌿</div>
+        </div>
+        <div class="viajero-info">
+          <div class="viajero-clase">Iniciado</div>
+          <div class="viajero-nombre">Viajero</div>
+          <div class="viajero-nivel">Nivel <span id="viajero-nivel-num">1</span></div>
+        </div>
+      </div>
+      <div class="viajero-right">
+        <div class="viajero-stat">
+          <div class="viajero-stat-num" id="viajero-streak">0</div>
+          <div class="viajero-stat-lbl">Racha</div>
+        </div>
+        <div class="viajero-stat">
+          <div class="viajero-stat-num" id="viajero-xp-hoy">0</div>
+          <div class="viajero-stat-lbl">XP hoy</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Separador -->
+    <div class="seccion-separador">✦</div>
 
     <div class="streak-bar">
       <div class="streak-icon">🌿</div>
