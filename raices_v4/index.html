@@ -10,24 +10,26 @@
   <title>Raíces — Tus Hábitos</title>
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="assets/icon-192.png">
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <!-- Fuentes (se sobreescriben por tema en app.js) -->
+  <link id="theme-fonts" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/variables.css">
   <link rel="stylesheet" href="css/components.css">
   <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/theme-fantasy.css">
 </head>
 <body>
 
 <!-- ── Loading ── -->
 <div id="loading-screen">
-  <div class="loading-logo">🌿</div>
+  <div class="loading-logo" id="loading-logo">🌿</div>
   <div class="loading-sub">Raíces</div>
   <div class="spinner"></div>
 </div>
 
 <!-- ── Auth ── -->
 <div id="auth-screen" style="display:none">
-  <div class="auth-logo">🌿</div>
-  <div class="auth-tagline">Tu jardín de hábitos</div>
+  <div class="auth-logo" id="auth-logo-el">🌿</div>
+  <div class="auth-tagline" id="auth-tagline-el">Tu jardín de hábitos</div>
   <div class="auth-box">
     <div class="auth-title" id="auth-title">Bienvenido de vuelta</div>
     <div class="msg-error" id="auth-error"></div>
@@ -55,8 +57,8 @@
     <header>
       <div class="header-top">
         <div>
-          <div class="logo">Raíces</div>
-          <div class="logo-sub">Tu jardín de hábitos</div>
+          <div class="logo" id="logo-text">Raíces</div>
+          <div class="logo-sub" id="logo-sub-text">Tu jardín de hábitos</div>
         </div>
         <div class="header-right">
           <div class="date-badge" id="date-display"></div>
@@ -68,8 +70,11 @@
 
     <div class="week-strip" id="week-strip"></div>
 
+    <!-- Viajero card (visible solo en tema fantasy via CSS) -->
+    <div class="viajero-card" id="viajero-card"></div>
+
     <div class="streak-bar">
-      <div class="streak-icon">🌿</div>
+      <div class="streak-icon" id="streak-icon">🌿</div>
       <div class="streak-text">
         <div class="streak-number" id="global-streak">0</div>
         <div class="streak-label">días en racha</div>
@@ -100,6 +105,9 @@
       <div class="insight-text" id="insight-text">Los pequeños pasos de hoy son las raíces del mañana.</div>
     </div>
 
+    <!-- Ornamento decorativo (visible solo en fantasy via CSS) -->
+    <div class="ornament-divider">— ✦ —</div>
+
     <div class="cat-tabs" id="cat-tabs"></div>
 
     <div class="section">
@@ -110,17 +118,16 @@
     </div>
   </div>
 
-  <!-- ══ Vista: HÁBITOS (gestión) ══ -->
+  <!-- ══ Vista: HÁBITOS ══ -->
   <div class="view" id="view-habitos">
     <header>
       <div class="header-top">
         <div>
-          <div class="logo" style="font-size:26px">Hábitos</div>
+          <div class="logo" style="font-size:26px" id="habitos-view-title">Hábitos</div>
           <div class="logo-sub">Gestiona tus hábitos</div>
         </div>
       </div>
     </header>
-
     <div class="section">
       <div class="section-header">
         <span class="section-label">Todos los hábitos</span>
@@ -135,33 +142,17 @@
     <header>
       <div class="header-top">
         <div>
-          <div class="logo" style="font-size:26px">Estadísticas</div>
+          <div class="logo" style="font-size:26px" id="stats-view-title">Estadísticas</div>
           <div class="logo-sub">Tu progreso</div>
         </div>
       </div>
     </header>
-
-    <!-- Globales -->
     <div class="stats-grid">
-      <div class="stat-card">
-        <div class="stat-value" id="stat-total-done">0</div>
-        <div class="stat-label">Completados</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-value" id="stat-total-xp">0</div>
-        <div class="stat-label">XP Total ⚡</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-value" id="stat-best-streak">0</div>
-        <div class="stat-label">Racha actual</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-value" id="stat-habits-count">0</div>
-        <div class="stat-label">Hábitos activos</div>
-      </div>
+      <div class="stat-card"><div class="stat-value" id="stat-total-done">0</div><div class="stat-label">Completados</div></div>
+      <div class="stat-card"><div class="stat-value" id="stat-total-xp">0</div><div class="stat-label">XP Total ⚡</div></div>
+      <div class="stat-card"><div class="stat-value" id="stat-best-streak">0</div><div class="stat-label">Racha actual</div></div>
+      <div class="stat-card"><div class="stat-value" id="stat-habits-count">0</div><div class="stat-label">Hábitos activos</div></div>
     </div>
-
-    <!-- Calendario -->
     <div class="cal-wrapper">
       <div class="cal-header">
         <div class="cal-nav">
@@ -172,50 +163,27 @@
         <button class="cal-today-btn" onclick="calGoToday()">Hoy</button>
       </div>
       <div class="cal-weekdays">
-        <div class="cal-weekday">L</div>
-        <div class="cal-weekday">M</div>
-        <div class="cal-weekday">X</div>
-        <div class="cal-weekday">J</div>
-        <div class="cal-weekday">V</div>
-        <div class="cal-weekday">S</div>
+        <div class="cal-weekday">L</div><div class="cal-weekday">M</div>
+        <div class="cal-weekday">X</div><div class="cal-weekday">J</div>
+        <div class="cal-weekday">V</div><div class="cal-weekday">S</div>
         <div class="cal-weekday">D</div>
       </div>
       <div class="cal-grid" id="cal-grid"></div>
     </div>
-
-    <!-- Resumen del día seleccionado -->
     <div class="section">
-      <div class="section-header">
-        <span class="section-label" id="stats-date-label">Hoy</span>
-      </div>
+      <div class="section-header"><span class="section-label" id="stats-date-label">Hoy</span></div>
     </div>
-
     <div class="stats-day-summary">
-      <div class="stats-day-card">
-        <div class="stats-day-value" id="stat-day-done">0/0</div>
-        <div class="stats-day-label">Completados</div>
-      </div>
-      <div class="stats-day-card">
-        <div class="stats-day-value" id="stat-day-xp">+0 XP</div>
-        <div class="stats-day-label">XP ganado</div>
-      </div>
-      <div class="stats-day-card">
-        <div class="stats-day-value" id="stat-day-pct">0%</div>
-        <div class="stats-day-label">Éxito</div>
-      </div>
+      <div class="stats-day-card"><div class="stats-day-value" id="stat-day-done">0/0</div><div class="stats-day-label">Completados</div></div>
+      <div class="stats-day-card"><div class="stats-day-value" id="stat-day-xp">+0 XP</div><div class="stats-day-label">XP ganado</div></div>
+      <div class="stats-day-card"><div class="stats-day-value" id="stat-day-pct">0%</div><div class="stats-day-label">Éxito</div></div>
     </div>
-
     <div class="section">
-      <div class="section-header">
-        <span class="section-label">Por categoría</span>
-      </div>
+      <div class="section-header"><span class="section-label">Por categoría</span></div>
       <div id="cat-stats-list"></div>
     </div>
-
     <div class="section">
-      <div class="section-header">
-        <span class="section-label">Hábitos del día</span>
-      </div>
+      <div class="section-header"><span class="section-label">Hábitos del día</span></div>
       <div id="stats-day-habits"></div>
     </div>
   </div>
@@ -225,20 +193,17 @@
     <header>
       <div class="header-top">
         <div>
-          <div class="logo" style="font-size:26px">Perfil</div>
-          <div class="logo-sub">Tu cuenta</div>
+          <div class="logo" style="font-size:26px" id="nav-perfil-title">Perfil</div>
+          <div class="logo-sub" id="perfil-sub-text">Tu cuenta</div>
         </div>
       </div>
     </header>
-
     <div class="profile-section">
-
       <div class="card">
         <div class="card-title">Cuenta</div>
         <div style="font-size:14px;color:var(--muted);margin-bottom:16px" id="profile-email"></div>
         <button class="btn btn-primary" style="margin-bottom:0" onclick="showChangePassword()">Cambiar contraseña</button>
       </div>
-
       <div class="card" id="change-password-card" style="display:none">
         <div class="card-title">Nueva contraseña</div>
         <div class="msg-error" id="cp-error"></div>
@@ -249,74 +214,58 @@
         <button class="btn btn-primary" onclick="changePassword()" style="margin-bottom:8px">Guardar</button>
         <button class="btn btn-secondary" onclick="hideChangePassword()" style="margin-bottom:0">Cancelar</button>
       </div>
-
-      <!-- Reset de datos -->
       <div class="card">
         <div class="card-title">Zona peligrosa</div>
-
         <div id="reset-confirm-1">
-          <div style="font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.5">
-            Borra todos tus hábitos y progreso de forma permanente. Solo afecta a tu cuenta.
-          </div>
+          <div style="font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.5">Borra todos tus hábitos y progreso de forma permanente.</div>
           <button class="btn btn-danger" style="margin-bottom:0" onclick="showResetConfirm1()">Reiniciar todos los datos</button>
         </div>
-
-        <div id="reset-confirm-2">
-          <div class="reset-warning">
-            ⚠️ Esta acción es <strong>irreversible</strong>. Se borrarán todos tus hábitos, rachas y progreso. ¿Estás seguro?
-          </div>
+        <div id="reset-confirm-2" style="display:none">
+          <div class="reset-warning">⚠️ Esta acción es <strong>irreversible</strong>. ¿Estás seguro?</div>
           <button class="btn btn-danger" id="btn-confirm-reset" style="margin-bottom:8px" onclick="confirmReset()">Sí, borrar todo</button>
           <button class="btn btn-secondary" style="margin-bottom:0" onclick="cancelReset()">Cancelar</button>
         </div>
       </div>
-
       <div class="card">
         <button class="btn btn-danger" onclick="logout()" style="margin-bottom:0">Cerrar sesión</button>
       </div>
-
     </div>
   </div>
 
-  <!-- ── Nav bar (4 pestañas) ── -->
+  <!-- Nav bar -->
   <nav class="nav-bar">
     <div class="nav-item active" id="nav-hoy" onclick="switchView('hoy')">
       <div class="nav-icon">🌿</div>Hoy
     </div>
     <div class="nav-item" id="nav-habitos" onclick="switchView('habitos')">
-      <div class="nav-icon">📗</div>Hábitos
+      <div class="nav-icon">📋</div><span id="nav-habitos-label">Hábitos</span>
     </div>
     <div class="nav-item" id="nav-stats" onclick="switchView('stats')">
-      <div class="nav-icon">⚡</div>Stats
+      <div class="nav-icon">⚡</div><span id="nav-stats-label">Stats</span>
     </div>
     <div class="nav-item" id="nav-perfil" onclick="switchView('perfil')">
-      <div class="nav-icon">👤</div>Perfil
+      <div class="nav-icon">👤</div><span id="nav-perfil-label">Perfil</span>
     </div>
   </nav>
 
-</div><!-- /app -->
+</div>
 
-<!-- ── Modal crear/editar hábito ── -->
+<!-- ── Modal ── -->
 <div class="modal-overlay" id="modal" onclick="closeModalOutside(event)">
   <div class="modal">
     <div class="modal-handle"></div>
     <div class="modal-title" id="modal-title">Planta un nuevo hábito</div>
-
     <label class="modal-label">Nombre</label>
     <input class="input-field" id="habit-name-input" placeholder="Nombre del hábito..." maxlength="40">
-
     <label class="modal-label">Icono</label>
     <div class="emoji-grid" id="emoji-grid"></div>
-
     <label class="modal-label">Categoría</label>
     <div class="chips-row" id="cat-chips"></div>
-
     <label class="modal-label">Dificultad · XP</label>
     <div class="chips-row" id="xp-chips"></div>
-
     <label class="modal-label">Días de la semana</label>
     <div class="modal-hint" id="days-label">Todos los días</div>
     <div class="chips-row" id="days-chips"></div>
-
     <button class="btn btn-primary" id="btn-modal-submit" onclick="submitModal()">Plantar hábito 🌱</button>
     <button class="btn btn-secondary" onclick="closeModal()" style="margin-bottom:0">Cancelar</button>
   </div>

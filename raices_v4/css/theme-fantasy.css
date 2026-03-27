@@ -1,0 +1,281 @@
+/* ══════════════════════════════════════════
+   TEMA: fantasy
+   Uso: ?theme=fantasy
+   ══════════════════════════════════════════ */
+
+[data-theme="fantasy"] {
+  --bg: #08060e;
+  --surface: #0d0b18;
+  --card: #0d0b18;
+  --card2: #120f20;
+  --border: #2a2245;
+  --text: #d4c9f0;
+  --muted: #6b6090;
+  --accent: #c9a84c;
+  --accent2: #f0d080;
+  --accent3: #a87030;
+  --danger: #8b1a1a;
+  --glow: rgba(201, 168, 76, 0.15);
+
+  --cat-fisico: #e05c5c;
+  --cat-fisico-bg: rgba(224, 92, 92, 0.12);
+  --cat-fisico-border: rgba(224, 92, 92, 0.3);
+  --cat-disciplina: #7b4fcf;
+  --cat-disciplina-bg: rgba(123, 79, 207, 0.12);
+  --cat-disciplina-border: rgba(123, 79, 207, 0.3);
+  --cat-energia: #c9782a;
+  --cat-energia-bg: rgba(201, 120, 42, 0.12);
+  --cat-energia-border: rgba(201, 120, 42, 0.3);
+  --cat-inteligencia: #4a8fa8;
+  --cat-inteligencia-bg: rgba(74, 143, 168, 0.12);
+  --cat-inteligencia-border: rgba(74, 143, 168, 0.3);
+  --cat-identidad: #a87fe8;
+  --cat-identidad-bg: rgba(168, 127, 232, 0.12);
+  --cat-identidad-border: rgba(168, 127, 232, 0.3);
+
+  --xp-10: #6b6090;
+  --xp-25: #c9a84c;
+  --xp-50: #a87fe8;
+
+  --font-display: 'Cinzel Decorative', serif;
+  --font-body: 'Crimson Pro', serif;
+
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 10px;
+  --radius-full: 999px;
+
+  --bg-radial: rgba(123, 79, 207, 0.08);
+  --theme-color: #c9a84c;
+
+  /* Viajero — card visible en tema fantasy */
+  --viajero-card-display: block;
+}
+
+/* Fondo del tema fantasy */
+[data-theme="fantasy"] body::before {
+  background:
+    radial-gradient(ellipse 60% 40% at 50% 0%, rgba(123,79,207,0.1) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 30% at 20% 80%, rgba(139,26,26,0.06) 0%, transparent 50%);
+}
+
+/* Logo con fuente fantasy */
+[data-theme="fantasy"] .logo {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 26px;
+  font-weight: 900;
+}
+
+[data-theme="fantasy"] .logo-sub {
+  font-family: 'Crimson Pro', serif;
+  font-style: italic;
+  letter-spacing: 2px;
+}
+
+/* Auth logo */
+[data-theme="fantasy"] .auth-logo {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 42px;
+}
+
+[data-theme="fantasy"] .auth-tagline {
+  font-family: 'Crimson Pro', serif;
+  font-style: italic;
+}
+
+[data-theme="fantasy"] .auth-title {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 18px;
+}
+
+/* Loading */
+[data-theme="fantasy"] .loading-sub {
+  font-family: 'Cinzel Decorative', serif;
+  letter-spacing: 4px;
+}
+
+/* Secciones y labels */
+[data-theme="fantasy"] .section-label,
+[data-theme="fantasy"] .card-title,
+[data-theme="fantasy"] .modal-label {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 9px;
+  letter-spacing: 1px;
+}
+
+/* Nombres de hábitos en Crimson */
+[data-theme="fantasy"] .habit-name {
+  font-family: 'Crimson Pro', serif;
+  font-size: 16px;
+}
+
+/* Separador ornamental antes de hábitos */
+[data-theme="fantasy"] .ornament-divider {
+  display: block;
+  text-align: center;
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 11px;
+  color: var(--border);
+  letter-spacing: 8px;
+  margin: 4px 0 12px;
+}
+
+/* Nav fantasy */
+[data-theme="fantasy"] .nav-item {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 7px;
+  letter-spacing: 0.5px;
+}
+
+/* Stat values */
+[data-theme="fantasy"] .stat-value,
+[data-theme="fantasy"] .stats-day-value,
+[data-theme="fantasy"] .streak-number,
+[data-theme="fantasy"] .xp-number {
+  font-family: 'Cinzel Decorative', serif;
+}
+
+/* Chips y botones en Crimson */
+[data-theme="fantasy"] .chip,
+[data-theme="fantasy"] .btn,
+[data-theme="fantasy"] .btn-sm,
+[data-theme="fantasy"] .btn-logout,
+[data-theme="fantasy"] .btn-add,
+[data-theme="fantasy"] .forge-btn {
+  font-family: 'Crimson Pro', serif;
+}
+
+/* Cal title */
+[data-theme="fantasy"] .cal-title {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 14px;
+}
+
+/* Fecha badge */
+[data-theme="fantasy"] .date-badge {
+  font-family: 'Crimson Pro', serif;
+  font-style: italic;
+}
+
+/* Borders más oscuros / angulosos */
+[data-theme="fantasy"] .habit-card {
+  border-radius: var(--radius-md);
+}
+
+[data-theme="fantasy"] .char-card {
+  border: 1px solid #3d3460;
+}
+
+/* Viajero card */
+.viajero-card {
+  display: var(--viajero-card-display);
+  margin: 0 24px 16px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+.viajero-card::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+  background: var(--cat-disciplina);
+  border-radius: 0;
+}
+
+.viajero-top {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.viajero-avatar {
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  border: 1.5px solid var(--accent);
+  background: var(--bg);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+}
+
+.viajero-clase {
+  font-family: var(--font-display);
+  font-size: 9px;
+  color: var(--cat-disciplina);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 3px;
+}
+
+.viajero-nombre {
+  font-family: var(--font-display);
+  font-size: 16px;
+  color: var(--text);
+  font-weight: 500;
+}
+
+.viajero-xp-text {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.viajero-xp-text span { color: var(--accent); }
+
+.viajero-nivel {
+  margin-left: auto;
+  font-family: var(--font-display);
+  font-size: 9px;
+  color: var(--accent);
+  background: var(--glow);
+  border: 1px solid rgba(201,168,76,0.3);
+  border-radius: var(--radius-full);
+  padding: 3px 10px;
+  align-self: flex-start;
+  white-space: nowrap;
+}
+
+.viajero-bars { display: flex; flex-direction: column; gap: 6px; }
+
+.viajero-bar-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.viajero-bar-icon { font-size: 12px; width: 16px; text-align: center; }
+
+.viajero-bar-track {
+  flex: 1;
+  height: 5px;
+  background: rgba(0,0,0,0.3);
+  border-radius: 3px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+
+.viajero-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.6s ease;
+}
+
+.viajero-bar-fill.xp     { background: var(--cat-disciplina); }
+.viajero-bar-fill.streak { background: var(--accent3); }
+
+.viajero-bar-val {
+  font-size: 10px;
+  color: var(--muted);
+  width: 30px;
+  text-align: right;
+}
+
+/* Ornamento separador (solo visible en fantasy) */
+.ornament-divider { display: none; }
