@@ -49,6 +49,19 @@ header { padding: 52px 24px 16px; } /* margen superior aumentado */
 .xp-label { font-size: 12px; color: var(--muted); margin-top: 2px; }
 .xp-today { font-size: 12px; color: var(--accent); font-weight: 600; }
 
+/* -- Numbers -- */
+.stat-value,
+.stats-day-value,
+.streak-number,
+.xp-number {
+  font-family: var(--font-body);
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--accent);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
 /* ── Progress ── */
 .progress-section { margin: 0 24px 16px; }
 .progress-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; }
