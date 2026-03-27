@@ -78,11 +78,6 @@ header { padding: 52px 24px 16px; } /* margen superior aumentado */
 .progress-track { height: 6px; background: var(--card2); border-radius: 6px; overflow: hidden; }
 .progress-fill { height: 100%; background: linear-gradient(to right, var(--accent3), var(--accent)); border-radius: 6px; transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); }
 
-/* ── Insight ── */
-.insight-card { margin: 0 24px 16px; background: linear-gradient(135deg, rgba(143,179,57,0.1), rgba(92,138,60,0.05)); border: 1px solid rgba(143,179,57,0.2); border-radius: var(--radius-lg); padding: 16px 20px; display: flex; gap: 12px; align-items: center; }
-.insight-icon { font-size: 22px; }
-.insight-text { font-size: 13px; color: var(--text); line-height: 1.5; font-style: italic; }
-
 /* ── Week strip ── */
 .week-strip { display: flex; justify-content: space-between; margin: 0 24px 16px; gap: 6px; }
 .day-cell { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }

@@ -1,6 +1,6 @@
 import {
   state, today, isCompleted, isScheduledForDate, getHabitStreak,
-  getGlobalStreak, getTodayXP, getTotalXP, getXPForDate, getInsight,
+  getGlobalStreak, getTodayXP, getTotalXP, getXPForDate,
   CATEGORIES, JS_DAY_TO_KEY,
 } from './state.js';
 
@@ -10,7 +10,6 @@ export function renderAll() {
   renderStreak();
   renderXPBar();
   renderProgress();
-  renderInsight();
   renderCatTabs();
   renderHabits();
   renderHabitsList();  // vista hábitos (gestión)
@@ -86,15 +85,6 @@ function renderProgress() {
   const bar = document.getElementById('progress-bar');
   if (text) text.textContent = `${done} / ${total}`;
   if (bar) bar.style.width = pct + '%';
-}
-
-// ── Insight ──
-function renderInsight() {
-  const ins = getInsight();
-  const icon = document.getElementById('insight-icon');
-  const text = document.getElementById('insight-text');
-  if (icon) icon.textContent = ins.icon;
-  if (text) text.textContent = ins.text;
 }
 
 // ── Category tabs (vista HOY) ──
