@@ -95,6 +95,7 @@ body::before {
   display: inline-flex; align-items: center; gap: 6px;
   border-radius: var(--radius-full);
   margin-bottom: 8px;
+  margin-top: 15px;
 }
 .cat-group-label.cat-fisico       { background: var(--cat-fisico-bg);       border: 1px solid var(--cat-fisico-border); }
 .cat-group-label.cat-disciplina   { background: var(--cat-disciplina-bg);   border: 1px solid var(--cat-disciplina-border); }
