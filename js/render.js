@@ -12,24 +12,8 @@ export function renderAll() {
   renderProgress();
   renderCatTabs();
   renderHabits();
-  renderHabitsList();
+  renderHabitsList();  // vista hábitos (gestión)
   renderStats();
-}
-
-// ── Helper: renderiza el icono de un hábito ──
-// Si no tiene emoji, muestra un círculo con la inicial de la categoría
-function habitIconHTML(h, size = 'normal') {
-  const boxClass = size === 'small' ? 'habit-emoji habit-emoji-sm' : 'habit-emoji';
-  if (h.emoji) {
-    return `<div class="${boxClass}">${h.emoji}</div>`;
-  }
-  // Sin icono: círculo con color de categoría e inicial
-  const cat = CATEGORIES[h.category] || CATEGORIES.disciplina;
-  const initial = cat.label.charAt(0).toUpperCase();
-  const color = `var(--cat-${h.category || 'disciplina'})`;
-  const bg = `var(--cat-${h.category || 'disciplina'}-bg)`;
-  const border = `var(--cat-${h.category || 'disciplina'}-border)`;
-  return `<div class="${boxClass} habit-emoji-cat" style="background:${bg};border:1px solid ${border};color:${color};font-weight:700;font-size:15px;letter-spacing:0">${initial}</div>`;
 }
 
 // ── Fecha ──
@@ -115,15 +99,21 @@ function renderCatTabs() {
   tabs.innerHTML = html;
 }
 
-// ── Hábitos de HOY ──
+// ── Hábitos de HOY (solo completar, ordenados por categoría) ──
 function renderHabits() {
   const list = document.getElementById('habits-list');
   if (!list) return;
+
   const todayStr = today();
+
+  // Solo hábitos programados para hoy
   let scheduled = state.habits.filter(h => isScheduledForDate(h, todayStr));
+
+  // Filtro de categoría
   if (state.activeFilter !== 'all') {
     scheduled = scheduled.filter(h => h.category === state.activeFilter);
   }
+
   if (!scheduled.length) {
     list.innerHTML = `
       <div class="empty-state">
@@ -136,29 +126,49 @@ function renderHabits() {
       </div>`;
     return;
   }
+
+  // Ordenar por categoría
   const catOrder = Object.keys(CATEGORIES);
   scheduled.sort((a, b) => {
     const ai = catOrder.indexOf(a.category);
     const bi = catOrder.indexOf(b.category);
     return (ai === -1 ? 99 : ai) - (bi === -1 ? 99 : bi);
   });
+
+  // Agrupar por categoría y renderizar con separadores
   let html = '';
   let lastCat = null;
   scheduled.forEach(h => {
     if (h.category !== lastCat) {
       const cat = CATEGORIES[h.category];
-      if (cat) html += `<div class="cat-group-label cat-${h.category}">${cat.label}</div>`;
+      if (cat) {
+        html += `<div class="cat-group-label cat-${h.category}">${cat.label}</div>`;
+      }
       lastCat = h.category;
     }
     html += habitCardTodayHTML(h, todayStr);
   });
+
   list.innerHTML = html;
 }
 
+// Helper: icono del hábito (emoji o círculo con inicial de categoría)
+function habitIconHTML(h) {
+  if (h.emoji) return `<div class="habit-emoji">${h.emoji}</div>`;
+  const cat = CATEGORIES[h.category] || CATEGORIES.disciplina;
+  const initial = cat.label.charAt(0).toUpperCase();
+  return `<div class="habit-emoji habit-emoji-cat"
+    style="background:var(--cat-${h.category || 'disciplina'}-bg);border:1px solid var(--cat-${h.category || 'disciplina'}-border);color:var(--cat-${h.category || 'disciplina'})">
+    ${initial}
+  </div>`;
+}
+
+// Tarjeta de hábito en HOY (solo completar, sin editar/borrar)
 function habitCardTodayHTML(h, dateStr) {
   const done = isCompleted(h.id, dateStr);
   const streak = getHabitStreak(h.id);
   const xpClass = `xp-${h.xp || 10}`;
+
   return `
     <div class="habit-card ${done ? 'done' : ''}" onclick="window.onToggleHabit('${h.id}')">
       ${habitIconHTML(h)}
@@ -173,10 +183,11 @@ function habitCardTodayHTML(h, dateStr) {
     </div>`;
 }
 
-// ── Vista HÁBITOS (gestión) ──
+// ── Vista HÁBITOS (gestión: editar, borrar) ──
 export function renderHabitsList() {
   const list = document.getElementById('all-habits-list');
   if (!list) return;
+
   if (!state.habits.length) {
     list.innerHTML = `
       <div class="empty-state">
@@ -185,12 +196,15 @@ export function renderHabitsList() {
       </div>`;
     return;
   }
+
+  // Ordenar por categoría
   const catOrder = Object.keys(CATEGORIES);
   const sorted = [...state.habits].sort((a, b) => {
     const ai = catOrder.indexOf(a.category);
     const bi = catOrder.indexOf(b.category);
     return (ai === -1 ? 99 : ai) - (bi === -1 ? 99 : bi);
   });
+
   let html = '';
   let lastCat = null;
   sorted.forEach(h => {
@@ -201,6 +215,7 @@ export function renderHabitsList() {
     }
     html += habitCardManageHTML(h);
   });
+
   list.innerHTML = html;
 }
 
@@ -209,6 +224,7 @@ function habitCardManageHTML(h) {
   const days = h.days && h.days.length > 0
     ? h.days.map(d => ({ lun:'L',mar:'M',mie:'X',jue:'J',vie:'V',sab:'S',dom:'D' }[d] || d)).join(' ')
     : 'Todos los días';
+
   return `
     <div class="habit-card" style="cursor:default">
       ${habitIconHTML(h)}
@@ -229,11 +245,14 @@ function habitCardManageHTML(h) {
 // ── Stats con calendario ──
 export function renderStats() {
   const activeDate = state.selectedDate || today();
+
+  // Actualizar título del calendario
   const calTitle = document.getElementById('cal-title');
   if (calTitle) {
     const d = new Date(activeDate + 'T12:00:00');
     calTitle.textContent = d.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' });
   }
+
   renderCalendar(activeDate);
   renderStatsForDate(activeDate);
 }
@@ -241,29 +260,39 @@ export function renderStats() {
 function renderCalendar(activeDate) {
   const grid = document.getElementById('cal-grid');
   if (!grid) return;
+
   const d = new Date(activeDate + 'T12:00:00');
   const year = d.getFullYear();
   const month = d.getMonth();
+
+  // Primer día del mes
   const firstDay = new Date(year, month, 1);
   const lastDay = new Date(year, month + 1, 0);
   const todayStr = today();
+
+  // Día de la semana del primer día (lunes = 0)
   let startDow = firstDay.getDay() - 1;
   if (startDow < 0) startDow = 6;
+
   let html = '';
+  // Días vacíos al inicio
   for (let i = 0; i < startDow; i++) html += '<div></div>';
+
   for (let day = 1; day <= lastDay.getDate(); day++) {
-    const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+    const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
     const isToday = dateStr === todayStr;
     const isSelected = dateStr === activeDate;
     const hasDone = state.completions[dateStr] && state.completions[dateStr].length > 0;
     const isFuture = dateStr > todayStr;
+
     html += `
-      <div class="cal-day ${isToday?'cal-today':''} ${isSelected?'cal-selected':''} ${hasDone&&!isFuture?'cal-has-done':''} ${isFuture?'cal-future':''}"
-           onclick="${isFuture?'':` window.selectDate('${dateStr}')`}">
+      <div class="cal-day ${isToday ? 'cal-today' : ''} ${isSelected ? 'cal-selected' : ''} ${hasDone && !isFuture ? 'cal-has-done' : ''} ${isFuture ? 'cal-future' : ''}"
+           onclick="${isFuture ? '' : `window.selectDate('${dateStr}')`}">
         ${day}
-        ${hasDone&&!isFuture?'<div class="cal-dot"></div>':''}
+        ${hasDone && !isFuture ? '<div class="cal-dot"></div>' : ''}
       </div>`;
   }
+
   grid.innerHTML = html;
 }
 
@@ -271,9 +300,11 @@ function renderStatsForDate(dateStr) {
   const isToday = dateStr === today();
   const d = new Date(dateStr + 'T12:00:00');
   const dateLabel = d.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' });
+
   const statsDateLabel = document.getElementById('stats-date-label');
   if (statsDateLabel) statsDateLabel.textContent = isToday ? 'Hoy' : dateLabel;
 
+  // Hábitos completados ese día
   const completedIds = state.completions[dateStr] || [];
   const scheduledHabits = state.habits.filter(h => isScheduledForDate(h, dateStr));
   const done = scheduledHabits.filter(h => completedIds.includes(h.id)).length;
@@ -281,6 +312,7 @@ function renderStatsForDate(dateStr) {
   const xp = getXPForDate(dateStr);
   const pct = total ? Math.round(done / total * 100) : 0;
 
+  // Totales globales
   let totalDone = 0;
   Object.values(state.completions).forEach(arr => totalDone += arr.length);
 
@@ -293,6 +325,7 @@ function renderStatsForDate(dateStr) {
   set('stat-day-xp', `+${xp} XP`);
   set('stat-day-pct', `${pct}%`);
 
+  // Lista de hábitos de ese día
   renderStatsDayHabits(dateStr, completedIds, scheduledHabits);
   renderCatStats(dateStr);
 }
@@ -300,16 +333,18 @@ function renderStatsForDate(dateStr) {
 function renderStatsDayHabits(dateStr, completedIds, scheduledHabits) {
   const sl = document.getElementById('stats-day-habits');
   if (!sl) return;
+
   if (!scheduledHabits.length) {
     sl.innerHTML = `<div class="empty-state"><div class="empty-icon">📅</div><div class="empty-text">Sin hábitos programados para este día.</div></div>`;
     return;
   }
+
   sl.innerHTML = scheduledHabits.map(h => {
     const done = completedIds.includes(h.id);
     const cat = CATEGORIES[h.category] || CATEGORIES.disciplina;
     return `
-      <div class="habit-card ${done?'done':''}" style="cursor:default">
-        ${habitIconHTML(h)}
+      <div class="habit-card ${done ? 'done' : ''}" style="cursor:default">
+        <div class="habit-emoji">${h.emoji || '🌿'}</div>
         <div class="habit-info">
           <div class="habit-name">${h.name}</div>
           <div class="habit-meta">
@@ -317,7 +352,7 @@ function renderStatsDayHabits(dateStr, completedIds, scheduledHabits) {
             <span class="xp-badge xp-${h.xp}">+${h.xp} XP</span>
           </div>
         </div>
-        <div class="check-circle" style="flex-shrink:0">${done?'✓':''}</div>
+        <div class="check-circle" style="flex-shrink:0">${done ? '✓' : ''}</div>
       </div>`;
   }).join('');
 }
@@ -331,7 +366,7 @@ function renderCatStats(dateStr) {
     const done = catHabits.filter(h => completedIds.includes(h.id)).length;
     const total = catHabits.length;
     const pct = total ? Math.round(done / total * 100) : 0;
-    const xpEarned = catHabits.filter(h => completedIds.includes(h.id)).reduce((s, h) => s + (h.xp||10), 0);
+    const xpEarned = catHabits.filter(h => completedIds.includes(h.id)).reduce((s, h) => s + (h.xp || 10), 0);
     return `
       <div class="habit-card" style="cursor:default">
         <div class="habit-info">

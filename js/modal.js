@@ -4,10 +4,10 @@ import { renderAll } from './render.js';
 import { showToast } from './ui.js';
 
 let editingId = null;
-let selectedEmoji = '🌿';   // null = sin icono
+let selectedEmoji = '🌿';
 let selectedCategory = 'disciplina';
 let selectedXP = 10;
-let selectedDays = [];
+let selectedDays = []; // [] = todos los días
 
 const NO_ICON = '__none__';
 
@@ -30,7 +30,7 @@ export function openEditModal(id) {
   const habit = state.habits.find(h => h.id === id);
   if (!habit) return;
   editingId = id;
-  selectedEmoji = habit.emoji || '🌿';
+  selectedEmoji = habit.emoji || NO_ICON;
   selectedCategory = habit.category || 'disciplina';
   selectedXP = habit.xp || 10;
   selectedDays = habit.days ? [...habit.days] : [];
@@ -59,12 +59,13 @@ export async function submitModal() {
     setTimeout(() => input.classList.remove('error'), 800);
     return;
   }
+
   const btn = document.getElementById('btn-modal-submit');
   btn.disabled = true;
   btn.textContent = '...';
-  // Guardar null si no hay icono
-  const emojiToSave = selectedEmoji === NO_ICON ? null : selectedEmoji;
+
   try {
+    const emojiToSave = selectedEmoji === NO_ICON ? null : selectedEmoji;
     if (editingId) {
       await editHabit(editingId, { name, emoji: emojiToSave, category: selectedCategory, xp: selectedXP, days: selectedDays });
       showToast('Hábito actualizado ✓');
@@ -114,27 +115,19 @@ export function toggleDay(el, dayKey) {
     selectedDays.splice(idx, 1);
     el.classList.remove('selected');
   }
+  // Actualizar label
   const label = document.getElementById('days-label');
   if (label) label.textContent = selectedDays.length === 0 ? 'Todos los días' : '';
 }
 
 // ── Render internals ──
 function renderModalInternals() {
-  const isNone = selectedEmoji === NO_ICON || selectedEmoji === null;
-
-  // Botón "Sin icono" primero
-  const noneSelected = isNone ? 'selected' : '';
-  let emojiHTML = `
-    <div class="emoji-btn emoji-btn-none ${noneSelected}" onclick="window.onSelectNoIcon(this)" title="Sin icono">
-      <span style="font-size:11px;font-weight:700;color:var(--muted)">—</span>
-    </div>`;
-
-  // Emojis normales
-  emojiHTML += EMOJIS.map(e =>
+  // Emojis (con botón Sin Icono al principio)
+  const isNone = !selectedEmoji || selectedEmoji === NO_ICON;
+  const noneBtn = `<div class="emoji-btn emoji-btn-none ${isNone ? 'selected' : ''}" onclick="window.onSelectNoIcon(this)" title="Sin icono">—</div>`;
+  document.getElementById('emoji-grid').innerHTML = noneBtn + EMOJIS.map(e =>
     `<div class="emoji-btn ${(!isNone && e === selectedEmoji) ? 'selected' : ''}" onclick="window.onSelectEmoji(this,'${e}')">${e}</div>`
   ).join('');
-
-  document.getElementById('emoji-grid').innerHTML = emojiHTML;
 
   // Categorías
   document.getElementById('cat-chips').innerHTML = Object.entries(CATEGORIES).map(([key, cat]) =>
@@ -164,5 +157,3 @@ function xpLabel(xp) {
   if (xp === 50) return '· Difícil';
   return '· Legendario';
 }
-
-export { NO_ICON };
