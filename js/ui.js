@@ -21,22 +21,53 @@ export function showToast(msg) {
 
 // ── Confetti ──
 export function showConfetti() {
-  const colors = ['#8fb339', '#c4a84f', '#5c8a3c', '#d4d9c4', '#e05c5c', '#5c8ae0'];
-  for (let i = 0; i < 14; i++) {
-    setTimeout(() => {
-      const el = document.createElement('div');
-      el.className = 'confetti-piece';
-      el.style.cssText = `
-        left: ${25 + Math.random() * 50}vw;
-        top: 40vh;
-        background: ${colors[Math.floor(Math.random() * colors.length)]};
-        animation-delay: ${Math.random() * 0.3}s;
-        transform: rotate(${Math.random() * 360}deg);
-      `;
-      document.body.appendChild(el);
-      setTimeout(() => el.remove(), 1000);
-    }, i * 35);
+  const cv = document.createElement('canvas');
+  cv.style.cssText = 'position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:9999';
+  cv.width = window.innerWidth; cv.height = window.innerHeight;
+  document.body.appendChild(cv);
+  const ctx = cv.getContext('2d');
+  const ps = [];
+  const cx = cv.width/2, cy = cv.height * 0.42;
+  for (let i = 0; i < 32; i++) {
+    const a = (Math.random() * Math.PI * 2);
+    const speed = 1.5 + Math.random() * 3.5;
+    ps.push({
+      x: cx + (Math.random()-.5)*80,
+      y: cy + (Math.random()-.5)*30,
+      vx: Math.cos(a)*speed,
+      vy: Math.sin(a)*speed - 1.5,
+      life: 1, decay: 0.012+Math.random()*0.01,
+      r: 1.5+Math.random()*2.5,
+      hue: 38+Math.random()*20,
+    });
   }
+  let t = 0;
+  function frame() {
+    t++; ctx.clearRect(0,0,cv.width,cv.height);
+    let alive = false;
+    ps.forEach(p => {
+      p.x+=p.vx; p.y+=p.vy; p.vy+=0.06; p.vx*=0.98;
+      p.life-=p.decay;
+      if(p.life<=0) return;
+      alive = true;
+      ctx.save();
+      ctx.globalAlpha = p.life*p.life*0.85;
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.r*p.life,0,Math.PI*2);
+      const g = ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r*2.5);
+      g.addColorStop(0,`hsla(${p.hue+8},100%,80%,1)`);
+      g.addColorStop(.5,`hsla(${p.hue},95%,60%,.8)`);
+      g.addColorStop(1,`hsla(${p.hue-8},80%,38%,0)`);
+      ctx.fillStyle=g; ctx.fill();
+      // tail
+      ctx.globalAlpha=p.life*.3;
+      ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(p.x-p.vx*2.5,p.y-p.vy*2.5);
+      ctx.strokeStyle=`hsla(${p.hue},95%,65%,1)`; ctx.lineWidth=p.r*.5; ctx.lineCap='round'; ctx.stroke();
+      ctx.restore();
+    });
+    if(alive && t<120) requestAnimationFrame(frame);
+    else cv.remove();
+  }
+  frame();
 }
 
 // ── Router de vistas ──

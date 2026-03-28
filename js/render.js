@@ -120,6 +120,7 @@ function renderViajero() {
 
   // Título canvas: partículas lentas normales, rápidas en día perfecto
   if (typeof window._titlePerfect !== 'undefined') window._titlePerfect = isPerfectToday;
+  window._isPerfectToday = isPerfectToday;
 
   // Tareas — bordes, wording y botón nueva tarea en gold
   const tareasSpan = document.getElementById('tareas-titulo');

@@ -95,9 +95,10 @@
         <div class="viajero-nivel-badge" id="viajero-nivel-badge" onclick="openRangosPanel()" title="Ver rangos y niveles">Nivel 1</div>
       </div>
       <div class="viajero-stats-grid">
-        <div class="viajero-stat">
-          <div class="viajero-stat-num" id="viajero-stat-perfectos" style="color:var(--accent2);font-weight:700">0</div>
-          <div class="viajero-stat-lbl">Días ✦</div>
+        <div class="viajero-stat" style="position:relative;overflow:visible">
+          <canvas id="sparks-hoy" width="72" height="72" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-52%);pointer-events:none;z-index:0"></canvas>
+          <div class="viajero-stat-num" id="viajero-stat-perfectos" style="color:var(--accent2);font-weight:700;position:relative;z-index:1">0</div>
+          <div class="viajero-stat-lbl" style="position:relative;z-index:1">Días ✦</div>
         </div>
         <div class="viajero-stat">
           <div class="viajero-stat-num" id="viajero-stat-xphoy">+0</div>
@@ -165,7 +166,7 @@
 
     <!-- Última sync discreta -->
     <div id="last-sync" style="text-align:center;font-size:10px;color:var(--border);padding:4px 0 2px"></div>
-    <div style="text-align:center;font-size:9px;color:var(--border);padding:0 0 12px;letter-spacing:1px">v24.5</div>
+    <div style="text-align:center;font-size:9px;color:var(--border);padding:0 0 12px;letter-spacing:1px">v26</div>
   </div>
 
   <!-- ══ HÁBITOS ══ -->
@@ -199,9 +200,10 @@
     </header>
 
     <div class="stats-grid">
-      <div class="stat-card">
-        <div class="stat-value" id="stat-dias-perfectos" style="color:var(--accent2);font-weight:700">0</div>
-        <div class="stat-label">Días perfectos ✦</div>
+      <div class="stat-card" style="position:relative;overflow:visible">
+        <canvas id="sparks-stats" width="72" height="72" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-54%);pointer-events:none;z-index:0"></canvas>
+        <div class="stat-value" id="stat-dias-perfectos" style="color:var(--accent2);font-weight:700;position:relative;z-index:1">0</div>
+        <div class="stat-label" style="position:relative;z-index:1">Días perfectos ✦</div>
       </div>
       <div class="stat-card">
         <div class="stat-value" id="stat-total-xp">0</div>
@@ -453,5 +455,66 @@
 })();
 </script>
 <script type="module" src="js/app.js"></script>
+<script>
+(function(){
+  function makeOrbitalSparks(canvasId, getActive) {
+    const cv = document.getElementById(canvasId);
+    if (!cv) return;
+    const ctx = cv.getContext('2d');
+    const W = cv.width, H = cv.height, cx = W/2, cy = H/2;
+    let t = 0;
+    function frame() {
+      t += 0.022;
+      ctx.clearRect(0, 0, W, H);
+      const active = getActive();
+      if (active) {
+        const n = 6;
+        const rad = 22;
+        for (let i = 0; i < n; i++) {
+          const baseA = (i/n) * Math.PI * 2;
+          const a = baseA + t * (1 + i * 0.06);
+          const pulse = Math.sin(t * 2.2 + i * 1.1) * 0.5 + 0.5;
+          const r = rad + Math.sin(t * 1.4 + i) * 1.2;
+          const x = cx + Math.cos(a) * r;
+          const y = cy + Math.sin(a) * r * 0.75;
+          const hue = 40 + i * 5 + pulse * 14;
+          const size = 1.2 + pulse * 1.4;
+          // glow
+          ctx.save();
+          ctx.globalAlpha = pulse * 0.18;
+          ctx.beginPath(); ctx.arc(x, y, size * 3.5, 0, Math.PI * 2);
+          ctx.fillStyle = `hsl(${hue},100%,62%)`; ctx.fill();
+          // core
+          ctx.globalAlpha = 0.35 + pulse * 0.6;
+          ctx.beginPath(); ctx.arc(x, y, size, 0, Math.PI * 2);
+          const g = ctx.createRadialGradient(x, y, 0, x, y, size * 2.5);
+          g.addColorStop(0, `hsla(${hue+6},100%,84%,1)`);
+          g.addColorStop(0.5, `hsla(${hue},95%,64%,.8)`);
+          g.addColorStop(1, `hsla(${hue-8},80%,42%,0)`);
+          ctx.fillStyle = g; ctx.fill();
+          ctx.restore();
+        }
+      }
+      requestAnimationFrame(frame);
+    }
+    frame();
+  }
+
+  // HOY — solo cuando isPerfectToday
+  setTimeout(() => {
+    makeOrbitalSparks('sparks-hoy', () => {
+      const el = document.getElementById('viajero-stat-perfectos');
+      const val = parseInt(el?.textContent || '0');
+      // activo si hay días perfectos Y el día actual es perfecto
+      return val > 0 && window._isPerfectToday === true;
+    });
+    // Stats — siempre que haya días perfectos
+    makeOrbitalSparks('sparks-stats', () => {
+      const el = document.getElementById('stat-dias-perfectos');
+      return parseInt(el?.textContent || '0') > 0;
+    });
+  }, 800);
+})();
+</script>
 </body>
 </html>
