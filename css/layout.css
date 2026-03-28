@@ -15,7 +15,7 @@
 
 /* ── Header ── */
 header {
-  padding: calc(52px + env(safe-area-inset-top, 0px)) 24px 16px;
+  padding: calc(52px + env(safe-area-inset-top, 0px)) 24px 8px;
 }
 
 .header-top { display: flex; align-items: flex-start; justify-content: space-between; }
@@ -317,6 +317,7 @@ header {
 .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer; color: var(--muted); font-size: 12px; letter-spacing: 1px; text-transform: uppercase; transition: color 0.2s; font-family: var(--font-body); }
 .nav-item.active { color: var(--accent); }
 .nav-icon { font-size: 20px; }
+.nav-icon-lg { font-size: 26px; }
 
 /* ── Views ── */
 .view { display: none; animation: fadeIn 0.2s ease; }

@@ -79,10 +79,8 @@
       ⚠️ Modo testing — sistema cree que hoy es <strong id="debug-banner-date"></strong>
     </div>
 
-    <div class="week-strip" id="week-strip"></div>
-
     <!-- Viajero card -->
-    <div class="viajero-card" style="transition:opacity 0.3s,transform 0.3s">
+    <div class="viajero-card" style="transition:opacity 0.3s,transform 0.3s;margin-top:10px">
       <div class="viajero-top-row">
         <!-- Avatar clickable → va al perfil -->
         <div class="viajero-avatar-wrap" onclick="switchView('perfil')" style="cursor:pointer" title="Ver perfil">
@@ -119,6 +117,8 @@
         </div>
       </div>
     </div>
+
+    <div class="week-strip" id="week-strip" style="margin-top:8px"></div>
 
     <!-- Separador superior tareas -->
     <div style="display:flex;align-items:center;gap:10px;margin:10px 20px 10px">
@@ -166,7 +166,7 @@
 
     <!-- Última sync discreta -->
     <div id="last-sync" style="text-align:center;font-size:10px;color:var(--border);padding:4px 0 2px"></div>
-    <div style="text-align:center;font-size:9px;color:var(--border);padding:0 0 12px;letter-spacing:1px">v27</div>
+    <div style="text-align:center;font-size:9px;color:var(--border);padding:0 0 12px;letter-spacing:1px">v28</div>
   </div>
 
   <!-- ══ HÁBITOS ══ -->
@@ -200,10 +200,9 @@
     </header>
 
     <div class="stats-grid">
-      <div class="stat-card" style="position:relative;overflow:visible">
-        <canvas id="sparks-stats" width="72" height="72" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-54%);pointer-events:none;z-index:0"></canvas>
-        <div class="stat-value" id="stat-dias-perfectos" style="color:var(--accent2);font-weight:700;position:relative;z-index:1">0</div>
-        <div class="stat-label" style="position:relative;z-index:1">Días perfectos ✦</div>
+      <div class="stat-card">
+        <div class="stat-value" id="stat-dias-perfectos" style="color:var(--accent2);font-weight:700">0</div>
+        <div class="stat-label">Días perfectos ✦</div>
       </div>
       <div class="stat-card">
         <div class="stat-value" id="stat-total-xp">0</div>
@@ -328,13 +327,13 @@
       <div class="nav-icon">☉</div>Hoy
     </div>
     <div class="nav-item" id="nav-stats" onclick="switchView('stats')">
-      <div class="nav-icon">⚡︎</div>Stats
+      <div class="nav-icon nav-icon-lg">⚡︎</div>Stats
     </div>
     <div class="nav-item" id="nav-habitos" onclick="switchView('habitos')">
-      <div class="nav-icon">⚙︎</div>Hábitos
+      <div class="nav-icon nav-icon-lg">⚙︎</div>Hábitos
     </div>
     <div class="nav-item" id="nav-perfil" onclick="switchView('perfil')">
-      <div class="nav-icon">♛</div>Perfil
+      <div class="nav-icon nav-icon-lg">♛</div>Perfil
     </div>
   </nav>
 
@@ -521,11 +520,7 @@
       // activo si hay días perfectos Y el día actual es perfecto
       return val > 0 && window._isPerfectToday === true;
     });
-    // Stats — siempre que haya días perfectos
-    makeOrbitalSparks('sparks-stats', () => {
-      const el = document.getElementById('stat-dias-perfectos');
-      return parseInt(el?.textContent || '0') > 0;
-    });
+
   }, 800);
 })();
 </script>

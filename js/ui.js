@@ -32,9 +32,10 @@ export function showConfetti() {
   const cx = CW/2, cy = CH * 0.42;
   // Burst orbital: 3 anillos de partículas que explotan hacia afuera
   const rings = [
-    { n:8,  r1:60, speed:3.5, delay:0,  hue:44 },
-    { n:12, r1:88, speed:2.6, delay:50, hue:38 },
-    { n:6,  r1:42, speed:4.2, delay:15, hue:50 },
+    { n:10, r1:110, speed:5.0, delay:0,  hue:44 },
+    { n:14, r1:160, speed:3.8, delay:40, hue:38 },
+    { n:7,  r1:75,  speed:6.2, delay:10, hue:50 },
+    { n:5,  r1:200, speed:2.8, delay:70, hue:42 },
   ];
   const ps = [];
   rings.forEach(ring => {
