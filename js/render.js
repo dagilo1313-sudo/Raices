@@ -48,7 +48,11 @@ function renderViajero() {
   if (claseEl) { claseEl.textContent = claseData.nombre; claseEl.style.color = claseData.color; }
   set('viajero-nivel-badge', `Nivel ${calc.nivel}`);
   const nivelBadgeEl = document.getElementById('viajero-nivel-badge');
-  if (nivelBadgeEl) nivelBadgeEl.style.color = claseData.color;
+  if (nivelBadgeEl) {
+    nivelBadgeEl.style.color = claseData.color;
+    nivelBadgeEl.style.borderColor = claseData.color + '44';
+    nivelBadgeEl.style.background = claseData.color + '18';
+  }
   set('viajero-stat-perfectos', diasPerfectos);
   set('viajero-stat-xphoy', `+${xpHoy}`);
   set('viajero-stat-exito', exitoPct + '%');
@@ -601,7 +605,13 @@ export function renderRangosPanel() {
         const isCurrent = isCurrentClase && n === calc.nivel;
         html += `
           <div class="rango-nivel-row ${isPast?'nivel-past':''} ${isCurrent?'nivel-current':''}">
-            <span class="nivel-tag" style="${isCurrent?`background:${clase.color};color:#0d0f0a`:isPast?`color:${clase.color}`:''}">
+            <span class="nivel-tag" style="${
+              isCurrent
+                ? `background:${clase.color}28;color:${clase.color};border:1px solid ${clase.color}55`
+                : isPast
+                  ? `background:${clase.color}18;color:${clase.color};border:1px solid ${clase.color}33`
+                  : ''
+            }">
               ${isCurrent?'▹ ':isPast?'✓ ':''}Nv.${n}
             </span>
             <span>${xpEste.toLocaleString()} XP</span>
