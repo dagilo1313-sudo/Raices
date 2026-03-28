@@ -289,6 +289,12 @@ header {
 #stats-day-habits.perfect-day .habit-card.done::before { background: var(--accent2); }
 #stats-day-habits.perfect-day .habit-card.done .habit-name { color: var(--accent2); }
 #stats-day-habits.perfect-day .habit-card.done .check-circle { background: var(--accent2); border-color: var(--accent2); color: #0d0f0a; box-shadow: 0 0 12px rgba(196,168,79,0.4); }
+
+/* Perfect-day en renderCatStats */
+#cat-stats-list.perfect-day-cats .habit-card.done { border-color: rgba(196,168,79,0.35); background: linear-gradient(135deg, var(--card) 0%, rgba(196,168,79,0.07) 100%); }
+#cat-stats-list.perfect-day-cats .habit-card.done::before { background: var(--accent2); }
+#cat-stats-list.perfect-day-cats .habit-card.done .habit-name { color: var(--accent2); }
+#cat-stats-list.perfect-day-cats .habit-card.done .check-circle { background: var(--accent2); border-color: var(--accent2); color: #0d0f0a; box-shadow: 0 0 12px rgba(196,168,79,0.4); }
 .cat-tab.active-fisico       { border-color: var(--cat-fisico);       color: var(--cat-fisico);       background: var(--cat-fisico-bg); }
 .cat-tab.active-disciplina   { border-color: var(--cat-disciplina);   color: var(--cat-disciplina);   background: var(--cat-disciplina-bg); }
 .cat-tab.active-energia      { border-color: var(--cat-energia);      color: var(--cat-energia);      background: var(--cat-energia-bg); }

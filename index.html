@@ -51,7 +51,7 @@
     <header>
       <div class="header-top">
         <div>
-          <canvas id="title-canvas" width="160" height="52" style="display:block"></canvas>
+          <canvas id="title-canvas" width="140" height="46" style="display:block"></canvas>
         </div>
         <div class="header-right">
           <div class="date-badge" id="date-display"></div>
@@ -430,8 +430,8 @@
       if(p.life<=0){particles.splice(i,1);continue;}
       ctx.save();ctx.globalAlpha=p.life*.7;ctx.beginPath();ctx.arc(p.x,p.y,p.size*p.life,0,Math.PI*2);ctx.fillStyle=p.col;ctx.fill();ctx.restore();
     }
-    ctx.font='700 38px Syne,sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
-    const grad=ctx.createLinearGradient(20,0,140,0);
+    ctx.font='700 32px DM Sans,sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
+    const grad=ctx.createLinearGradient(15,0,125,0);
     grad.addColorStop(0,G2);grad.addColorStop(.35,G);grad.addColorStop(.65,GO);grad.addColorStop(1,GO2);
     ctx.fillStyle=grad;ctx.fillText('Raíces',W/2,H/2+2);
     ctx.globalAlpha=Math.sin(t)*.04+.04;ctx.fillStyle='#f0d060';ctx.fillText('Raíces',W/2,H/2+2);ctx.globalAlpha=1;

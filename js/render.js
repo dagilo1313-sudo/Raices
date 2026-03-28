@@ -102,9 +102,30 @@ function renderViajero() {
   const viajeroCard = document.querySelector('.viajero-card');
   if (viajeroCard) viajeroCard.style.setProperty('--bar-color', isPerfectToday ? 'var(--accent2)' : 'var(--accent)');
 
-  // Tareas wording
+  // Tareas — bordes, wording y botón nueva tarea en gold
   const tareasSpan = document.querySelector('#tareas-toggle span');
   if (tareasSpan) tareasSpan.style.color = isPerfectToday ? 'var(--accent2)' : 'var(--accent)';
+  const tareasToggle = document.getElementById('tareas-toggle');
+  if (tareasToggle) {
+    tareasToggle.style.borderColor = isPerfectToday ? 'rgba(196,168,79,0.5)' : '';
+  }
+  const tareasPanel = document.getElementById('tareas-panel');
+  if (tareasPanel) {
+    tareasPanel.style.borderColor = isPerfectToday ? 'rgba(196,168,79,0.5)' : '';
+    tareasPanel.style.borderTopColor = isPerfectToday ? 'var(--border)' : '';
+  }
+  const btnNueva = document.querySelector('.btn-nueva-tarea, .btn.btn-primary.btn-sm');
+  if (btnNueva) {
+    btnNueva.style.background = isPerfectToday ? 'rgba(196,168,79,0.15)' : '';
+    btnNueva.style.borderColor = isPerfectToday ? 'rgba(196,168,79,0.4)' : '';
+    btnNueva.style.color = isPerfectToday ? 'var(--accent2)' : '';
+  }
+  // Navbar HOY gold
+  const navHoy = document.getElementById('nav-hoy');
+  if (navHoy) navHoy.style.color = isPerfectToday ? 'var(--accent2)' : '';
+  // XP label gold
+  const xpLabelEl = document.getElementById('viajero-xp-label');
+  if (xpLabelEl) xpLabelEl.style.color = isPerfectToday ? 'var(--accent2)' : '';
 
   // Sincronizar viajero compacto
   const setC = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
@@ -569,6 +590,9 @@ function renderCatStats(dateStr, habitsSource) {
   if (!cl) return;
   const isToday = dateStr === today();
   const completedIds = getCompletadosForDate(dateStr);
+  // Día perfecto en stats: añadir clase al contenedor de categorías
+  const allDoneStats = habitsSource.length > 0 && habitsSource.every(h => completedIds.includes(h.id));
+  cl.classList.toggle('perfect-day-cats', allDoneStats);
   // Snapshot XP por categoría para días pasados
   const snapGanado = !isToday ? getXPGanadoPorCat(dateStr) : null;
   const snapMax    = !isToday ? getXPMaxPorCat(dateStr)    : null;
@@ -618,7 +642,7 @@ function renderCatStats(dateStr, habitsSource) {
             <div class="habit-name">${h.name}</div>
             <div class="habit-meta">
               <span class="cat-badge cat-${h.category}">${cat.label}</span>
-              <span class="xp-badge xp-${h.xp}">+${h.xp} XP</span>
+              ${isToday ? `<span class="xp-badge xp-${h.xp}">+${h.xp} XP</span>` : ''}
             </div>
           </div>
           <div class="check-circle" style="flex-shrink:0">${isDone?'✓':''}</div>
