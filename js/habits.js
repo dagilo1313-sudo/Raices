@@ -135,6 +135,29 @@ function recalcularXPSnapshot(date) {
   dayData.xpMaxPorCat = xpMaxPorCat;
 }
 
+// ── Recalcular XP snapshot del día actual ──
+function recalcularXPSnapshot(date) {
+  const dayData = state.completions[date];
+  if (!dayData || Array.isArray(dayData)) return;
+  const completados = dayData.completados || [];
+  const scheduled = state.habits.filter(h => !h.archivado && isScheduledForDate(h, date));
+  const xpGanadoPorCat = {};
+  const xpMaxPorCat = {};
+  let xpTotal = 0;
+  scheduled.forEach(h => {
+    const cat = h.category || 'disciplina';
+    const xp = h.xp || 10;
+    xpMaxPorCat[cat] = (xpMaxPorCat[cat] || 0) + xp;
+    if (completados.includes(h.id)) {
+      xpGanadoPorCat[cat] = (xpGanadoPorCat[cat] || 0) + xp;
+      xpTotal += xp;
+    }
+  });
+  dayData.xpTotal = xpTotal;
+  dayData.xpGanadoPorCat = xpGanadoPorCat;
+  dayData.xpMaxPorCat = xpMaxPorCat;
+}
+
 // ── Guardar completions ──
 export async function saveCompletions() {
   await setDoc(compsRef(), state.completions);

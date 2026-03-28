@@ -184,52 +184,50 @@ window.calNextMonth = () => {
 window.calGoToday = () => { state.selectedDate = null; renderAll(); };
 
 // ── Reset solo progreso ──
-window.showResetProgressConfirm = () => {
-  document.getElementById('reset-progress-1').style.display = 'none';
-  document.getElementById('reset-progress-2').style.display = 'block';
-  document.getElementById('confirm-progress-input').value = '';
-};
-window.cancelResetProgress = () => {
-  document.getElementById('reset-progress-1').style.display = 'block';
-  document.getElementById('reset-progress-2').style.display = 'none';
-};
-window.confirmResetProgress = async () => {
-  const val = document.getElementById('confirm-progress-input').value.trim();
-  if (val !== 'Confirmar') { showToast('Escribe "Confirmar" exactamente'); return; }
-  const btn = document.getElementById('btn-confirm-progress-reset');
-  btn.disabled = true; btn.textContent = 'Borrando...';
-  try {
-    await resetProgress();
-    renderAll();
-    showToast('Progreso eliminado 🍂');
-    document.getElementById('reset-progress-1').style.display = 'block';
-    document.getElementById('reset-progress-2').style.display = 'none';
-  } finally { btn.disabled = false; btn.textContent = 'Borrar progreso'; }
-};
+function showConfirmPopup({ title, desc, btnLabel, btnClass, onConfirm }) {
+  const ov = document.createElement('div');
+  ov.style.cssText = 'position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.65);display:flex;align-items:center;justify-content:center;padding:24px;animation:fadeIn 0.2s ease';
+  ov.innerHTML = `
+    <div style="background:var(--card2);border:1px solid var(--border);border-radius:20px;padding:28px 24px;max-width:320px;width:100%;text-align:center;animation:popIn 0.35s cubic-bezier(0.34,1.56,0.64,1)">
+      <div style="font-size:16px;font-weight:700;color:var(--text);margin-bottom:8px">${title}</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:6px;line-height:1.5">${desc}</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:16px">Para continuar escribe <em style="color:var(--text)">"Confirmar"</em></div>
+      <input id="popup-confirm-input" class="input-field" placeholder="Confirmar" style="margin-bottom:14px;text-align:center">
+      <div style="display:flex;gap:8px">
+        <button id="popup-cancel-btn" style="flex:1;background:transparent;border:1px solid var(--border);border-radius:var(--radius-md);padding:10px;font-size:13px;color:var(--muted);font-family:var(--font-body);cursor:pointer">Cancelar</button>
+        <button id="popup-ok-btn" class="${btnClass}" style="flex:1;border-radius:var(--radius-md);padding:10px;font-size:13px;font-weight:700;font-family:var(--font-body);cursor:pointer">${btnLabel}</button>
+      </div>
+    </div>
+    <style>@keyframes popIn{from{transform:scale(0.8);opacity:0}to{transform:scale(1);opacity:1}}</style>`;
+  ov.querySelector('#popup-cancel-btn').onclick = () => ov.remove();
+  ov.querySelector('#popup-ok-btn').onclick = async () => {
+    const val = ov.querySelector('#popup-confirm-input').value.trim();
+    if (val !== 'Confirmar') { showToast('Escribe "Confirmar" exactamente'); return; }
+    const btn = ov.querySelector('#popup-ok-btn');
+    btn.disabled = true; btn.textContent = '...';
+    await onConfirm();
+    ov.remove();
+  };
+  ov.addEventListener('click', e => { if (e.target === ov) ov.remove(); });
+  document.body.appendChild(ov);
+  setTimeout(() => ov.querySelector('#popup-confirm-input').focus(), 100);
+}
 
-// ── Reset todo ──
-window.showResetConfirm1 = () => {
-  document.getElementById('reset-confirm-1').style.display = 'none';
-  document.getElementById('reset-confirm-2').style.display = 'block';
-  document.getElementById('confirm-all-input').value = '';
-};
-window.cancelReset = () => {
-  document.getElementById('reset-confirm-1').style.display = 'block';
-  document.getElementById('reset-confirm-2').style.display = 'none';
-};
-window.confirmReset = async () => {
-  const val = document.getElementById('confirm-all-input').value.trim();
-  if (val !== 'Confirmar') { showToast('Escribe "Confirmar" exactamente'); return; }
-  const btn = document.getElementById('btn-confirm-reset');
-  btn.disabled = true; btn.textContent = 'Borrando...';
-  try {
-    await resetAllData();
-    renderAll();
-    showToast('Datos eliminados 🍂');
-    document.getElementById('reset-confirm-1').style.display = 'block';
-    document.getElementById('reset-confirm-2').style.display = 'none';
-  } finally { btn.disabled = false; btn.textContent = 'Sí, borrar todo'; }
-};
+window.showResetProgressConfirm = () => showConfirmPopup({
+  title: 'Reiniciar progreso',
+  desc: 'Se borrará tu XP, nivel y días perfectos. Los hábitos se conservan.',
+  btnLabel: 'Borrar progreso',
+  btnClass: 'btn btn-danger',
+  onConfirm: async () => { await resetProgress(); renderAll(); showToast('Progreso eliminado 🍂'); }
+});
+
+window.showResetConfirm1 = () => showConfirmPopup({
+  title: 'Reiniciar todo',
+  desc: 'Se borrarán todos tus hábitos y progreso de forma permanente. Esta acción es irreversible.',
+  btnLabel: 'Sí, borrar todo',
+  btnClass: 'btn btn-danger',
+  onConfirm: async () => { await resetAllData(); renderAll(); showToast('Datos eliminados 🍂'); }
+});
 
 // ── Tareas ──
 window.onToggleTareas = () => {

@@ -100,19 +100,34 @@ export async function sendResetEmail() {
 }
 
 export function showChangePassword() {
-  document.getElementById('change-password-card').style.display = 'block';
+  const ov = document.createElement('div');
+  ov.id = 'change-password-overlay';
+  ov.style.cssText = 'position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.65);display:flex;align-items:center;justify-content:center;padding:24px;animation:fadeIn 0.2s ease';
+  ov.innerHTML = `
+    <div style="background:var(--card2);border:1px solid var(--border);border-radius:20px;padding:28px 24px;max-width:320px;width:100%;animation:popIn 0.35s cubic-bezier(0.34,1.56,0.64,1)">
+      <div style="font-size:16px;font-weight:700;color:var(--text);margin-bottom:18px;text-align:center">Cambiar contraseña</div>
+      <div class="msg-error" id="cp-error" style="margin-bottom:8px"></div>
+      <div class="msg-success" id="cp-success" style="margin-bottom:8px"></div>
+      <input class="input-field" id="cp-current" type="password" placeholder="Contraseña actual">
+      <input class="input-field" id="cp-new" type="password" placeholder="Nueva contraseña">
+      <input class="input-field" id="cp-confirm" type="password" placeholder="Confirmar nueva contraseña">
+      <button class="btn btn-primary" onclick="changePassword()" style="width:100%;margin-bottom:8px">Guardar</button>
+      <button class="btn btn-secondary" onclick="hideChangePassword()" style="width:100%;margin-bottom:0">Cancelar</button>
+    </div>
+    <style>@keyframes popIn{from{transform:scale(0.8);opacity:0}to{transform:scale(1);opacity:1}}@keyframes fadeIn{from{opacity:0}to{opacity:1}}</style>`;
+  ov.addEventListener('click', e => { if (e.target === ov) hideChangePassword(); });
+  document.body.appendChild(ov);
 }
 
 export function hideChangePassword() {
-  document.getElementById('change-password-card').style.display = 'none';
-  ['cp-current', 'cp-new', 'cp-confirm'].forEach(id => document.getElementById(id).value = '');
-  clearMsg('cp-error'); clearMsg('cp-success');
+  const ov = document.getElementById('change-password-overlay');
+  if (ov) ov.remove();
 }
 
 export async function changePassword() {
-  const cur = document.getElementById('cp-current').value;
-  const nw = document.getElementById('cp-new').value;
-  const conf = document.getElementById('cp-confirm').value;
+  const cur = document.getElementById('cp-current')?.value;
+  const nw = document.getElementById('cp-new')?.value;
+  const conf = document.getElementById('cp-confirm')?.value;
   clearMsg('cp-error'); clearMsg('cp-success');
   if (!cur || !nw || !conf) { showMsg('cp-error', 'Rellena todos los campos.'); return; }
   if (nw !== conf) { showMsg('cp-error', 'Las contraseñas no coinciden.'); return; }

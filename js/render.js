@@ -120,9 +120,10 @@ function renderViajero() {
     btnNueva.style.borderColor = isPerfectToday ? 'rgba(196,168,79,0.4)' : '';
     btnNueva.style.color = isPerfectToday ? 'var(--accent2)' : '';
   }
-  // Navbar HOY gold
+  // Navbar HOY gold solo cuando estamos en la vista hoy
   const navHoy = document.getElementById('nav-hoy');
-  if (navHoy) navHoy.style.color = isPerfectToday ? 'var(--accent2)' : '';
+  const enHoy = document.getElementById('view-hoy')?.classList.contains('active');
+  if (navHoy) navHoy.style.color = (isPerfectToday && enHoy) ? 'var(--accent2)' : '';
   // XP label gold
   const xpLabelEl = document.getElementById('viajero-xp-label');
   if (xpLabelEl) xpLabelEl.style.color = isPerfectToday ? 'var(--accent2)' : '';
@@ -525,7 +526,7 @@ function renderStatsForDate(dateStr) {
     }
     if (noReg) {
       noReg.style.display = 'block';
-      noReg.innerHTML = '<div style="font-size:32px;margin-bottom:8px">🌱</div><div style="font-size:14px;color:var(--muted)">Día no registrado</div>';
+      noReg.innerHTML = '<div style="font-size:32px;margin-bottom:8px">🌱</div><div style="font-size:14px;color:var(--muted);font-style:italic">Día no registrado</div>';
     }
     return;
   }

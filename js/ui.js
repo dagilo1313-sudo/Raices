@@ -45,4 +45,10 @@ export function switchView(view) {
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   document.getElementById('view-' + view).classList.add('active');
   document.getElementById('nav-' + view).classList.add('active');
+  // Resetear color gold del nav-hoy si salimos de hoy
+  if (view !== 'hoy') {
+    const navHoy = document.getElementById('nav-hoy');
+    if (navHoy) navHoy.style.color = '';
+  }
+}
 }

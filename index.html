@@ -165,7 +165,7 @@
 
     <!-- Última sync discreta -->
     <div id="last-sync" style="text-align:center;font-size:10px;color:var(--border);padding:4px 0 2px"></div>
-    <div style="text-align:center;font-size:9px;color:var(--border);padding:0 0 12px;letter-spacing:1px">v22</div>
+    <div style="text-align:center;font-size:9px;color:var(--border);padding:0 0 12px;letter-spacing:1px">v23</div>
   </div>
 
   <!-- ══ HÁBITOS ══ -->
@@ -285,16 +285,7 @@
         <div style="font-size:14px;color:var(--muted);margin-bottom:16px" id="profile-email"></div>
         <button class="btn btn-primary" style="margin-bottom:0" onclick="showChangePassword()">Cambiar contraseña</button>
       </div>
-      <div class="card" id="change-password-card" style="display:none">
-        <div class="card-title">Nueva contraseña</div>
-        <div class="msg-error" id="cp-error"></div>
-        <div class="msg-success" id="cp-success"></div>
-        <input class="input-field" id="cp-current" type="password" placeholder="Contraseña actual">
-        <input class="input-field" id="cp-new" type="password" placeholder="Nueva contraseña">
-        <input class="input-field" id="cp-confirm" type="password" placeholder="Confirmar nueva contraseña">
-        <button class="btn btn-primary" onclick="changePassword()" style="margin-bottom:8px">Guardar</button>
-        <button class="btn btn-secondary" onclick="hideChangePassword()" style="margin-bottom:0">Cancelar</button>
-      </div>
+
       <!-- Testing -->
       <div class="card" id="debug-card">
         <div class="card-title">Modo testing</div>
@@ -316,31 +307,13 @@
       <div class="card">
         <div class="card-title">Zona peligrosa</div>
 
-        <!-- Reset solo progreso -->
-        <div id="reset-progress-1">
-          <div style="font-size:13px;color:var(--muted);margin-bottom:12px;line-height:1.5">Borra tu XP, nivel y días perfectos, pero mantiene todos tus hábitos.</div>
-          <button class="btn btn-secondary" style="margin-bottom:0" onclick="showResetProgressConfirm()">Reiniciar solo el progreso</button>
-        </div>
-        <div id="reset-progress-2" style="display:none">
-          <div class="reset-warning">⚠️ Se borrará tu XP, nivel y días perfectos. Los hábitos se conservan. Escribe <strong>Confirmar</strong> para continuar.</div>
-          <input class="input-field" id="confirm-progress-input" placeholder="Escribe Confirmar" style="margin-top:12px">
-          <button class="btn btn-danger" id="btn-confirm-progress-reset" style="margin-bottom:8px" onclick="confirmResetProgress()">Borrar progreso</button>
-          <button class="btn btn-secondary" style="margin-bottom:0" onclick="cancelResetProgress()">Cancelar</button>
-        </div>
+        <div style="font-size:13px;color:var(--muted);margin-bottom:12px;line-height:1.5">Borra tu XP, nivel y días perfectos, pero mantiene todos tus hábitos.</div>
+        <button class="btn btn-secondary" style="margin-bottom:0" onclick="showResetProgressConfirm()">Reiniciar solo el progreso</button>
 
         <div style="height:1px;background:var(--border);margin:16px 0"></div>
 
-        <!-- Reset todo -->
-        <div id="reset-confirm-1">
-          <div style="font-size:13px;color:var(--muted);margin-bottom:12px;line-height:1.5">Borra todos tus hábitos y progreso de forma permanente.</div>
-          <button class="btn btn-danger" style="margin-bottom:0" onclick="showResetConfirm1()">Reiniciar todo</button>
-        </div>
-        <div id="reset-confirm-2" style="display:none">
-          <div class="reset-warning">⚠️ Esta acción es <strong>irreversible</strong>. Se borrarán todos tus hábitos y progreso. Escribe <strong>Confirmar</strong> para continuar.</div>
-          <input class="input-field" id="confirm-all-input" placeholder="Escribe Confirmar" style="margin-top:12px">
-          <button class="btn btn-danger" id="btn-confirm-reset" style="margin-bottom:8px" onclick="confirmReset()">Sí, borrar todo</button>
-          <button class="btn btn-secondary" style="margin-bottom:0" onclick="cancelReset()">Cancelar</button>
-        </div>
+        <div style="font-size:13px;color:var(--muted);margin-bottom:12px;line-height:1.5">Borra todos tus hábitos y progreso de forma permanente.</div>
+        <button class="btn btn-danger" style="margin-bottom:0" onclick="showResetConfirm1()">Reiniciar todo</button>
       </div>
       <div class="card">
         <button class="btn btn-danger" onclick="logout()" style="margin-bottom:0">Cerrar sesión</button>
