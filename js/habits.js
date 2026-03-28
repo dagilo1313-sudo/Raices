@@ -3,18 +3,32 @@ import {
   collection, doc, addDoc, getDocs, deleteDoc,
   setDoc, getDoc, updateDoc, orderBy, query, writeBatch,
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-import { state, today } from './state.js';
+import { state, today, calcularNivel } from './state.js';
 
 // ── Refs ──
 const habitsRef  = () => collection(db, 'users', state.currentUser.uid, 'habits');
 const compsRef   = () => doc(db, 'users', state.currentUser.uid, 'completions', 'data');
+const profileRef = () => doc(db, 'users', state.currentUser.uid, 'profile', 'data');
 
 // ── Cargar datos ──
 export async function loadData() {
   const snap = await getDocs(query(habitsRef(), orderBy('created', 'asc')));
   state.habits = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+
   const c = await getDoc(compsRef());
   state.completions = c.exists() ? c.data() : {};
+
+  // Cargar perfil del viajero
+  const p = await getDoc(profileRef());
+  if (p.exists()) {
+    const data = p.data();
+    state.perfil.xpTotal = data.xpTotal || 0;
+    state.perfil.nivel   = data.nivel   || 1;
+    state.perfil.clase   = data.clase   || 0;
+  } else {
+    // Primera vez — crear perfil
+    await setDoc(profileRef(), { xpTotal: 0, nivel: 1, clase: 0 });
+  }
 }
 
 // ── Guardar completions ──
@@ -22,17 +36,50 @@ export async function saveCompletions() {
   await setDoc(compsRef(), state.completions);
 }
 
-// ── Toggle completado ──
+// ── Guardar perfil ──
+export async function saveProfile() {
+  await setDoc(profileRef(), {
+    xpTotal: state.perfil.xpTotal,
+    nivel:   state.perfil.nivel,
+    clase:   state.perfil.clase,
+  }, { merge: true });
+}
+
+// ── Toggle completado ── (devuelve xpGanado o 0 si se desmarca)
 export async function toggleHabit(id) {
   const date = today();
   if (!state.completions[date]) state.completions[date] = [];
   const idx = state.completions[date].indexOf(id);
+
   if (idx === -1) {
+    // Completar — sumar XP
     state.completions[date].push(id);
-    return true;
+    const habit = state.habits.find(h => h.id === id);
+    const xpGanado = habit ? (habit.xp || 10) : 10;
+
+    const calcAntes = calcularNivel(state.perfil.xpTotal);
+    state.perfil.xpTotal += xpGanado;
+    const calcDespues = calcularNivel(state.perfil.xpTotal);
+
+    const subioNivel = calcDespues.nivel > calcAntes.nivel || calcDespues.clase > calcAntes.clase;
+    const subioRango = calcDespues.clase > calcAntes.clase;
+
+    state.perfil.nivel = calcDespues.nivel;
+    state.perfil.clase = calcDespues.clase;
+    await saveProfile();
+
+    return { xpGanado, subioNivel, subioRango, calcDespues };
   } else {
+    // Desmarcar — restar XP
     state.completions[date].splice(idx, 1);
-    return false;
+    const habit = state.habits.find(h => h.id === id);
+    const xpGanado = habit ? (habit.xp || 10) : 10;
+    state.perfil.xpTotal = Math.max(0, state.perfil.xpTotal - xpGanado);
+    const calc = calcularNivel(state.perfil.xpTotal);
+    state.perfil.nivel = calc.nivel;
+    state.perfil.clase = calc.clase;
+    await saveProfile();
+    return { xpGanado: 0, subioNivel: false, subioRango: false, calcDespues: calc };
   }
 }
 
@@ -62,18 +109,15 @@ export async function deleteHabit(id) {
   await saveCompletions();
 }
 
-// ── Resetear todos los datos del usuario ──
+// ── Resetear todos los datos ──
 export async function resetAllData() {
-  // Borrar todos los hábitos
   const snap = await getDocs(habitsRef());
   const batch = writeBatch(db);
   snap.docs.forEach(d => batch.delete(d.ref));
   await batch.commit();
-
-  // Borrar completions
   await setDoc(compsRef(), {});
-
-  // Limpiar estado local
+  await setDoc(profileRef(), { xpTotal: 0, nivel: 1, clase: 0 });
   state.habits = [];
   state.completions = {};
+  state.perfil = { xpTotal: 0, nivel: 1, clase: 0 };
 }

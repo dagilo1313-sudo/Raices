@@ -112,8 +112,7 @@ body::before {
 .xp-badge { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: var(--radius-full); background: var(--card2); border: 1px solid var(--border); flex-shrink: 0; }
 .xp-10 { color: var(--xp-10); }
 .xp-25 { color: var(--xp-25); }
-.xp-50 { color: var(--xp-50); }
-.xp-100 { color: var(--xp-100); }
+.xp-50 { color: var(--xp-50); border-color: rgba(143,179,57,0.3); background: rgba(143,179,57,0.08); }
 
 
 /* ── Chips ── */
@@ -205,4 +204,158 @@ body::before {
   font-weight: 700;
   color: var(--muted);
   letter-spacing: 0;
+}
+
+/* ── Botón info rangos ── */
+.btn-rangos-info {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s;
+  flex-shrink: 0;
+  font-family: serif;
+}
+.btn-rangos-info:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--glow);
+}
+
+/* ── Panel rangos ── */
+.rango-bloque {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 14px;
+  margin-bottom: 12px;
+  background: var(--card);
+}
+.rango-bloque.rango-activo {
+  border-color: var(--accent);
+  background: linear-gradient(135deg, var(--card) 0%, rgba(143,179,57,0.04) 100%);
+}
+.rango-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.rango-emoji { font-size: 22px; flex-shrink: 0; }
+.rango-info { flex: 1; }
+.rango-nombre { font-family: var(--font-display); font-size: 16px; font-weight: 500; }
+.rango-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.rango-badge-actual {
+  font-size: 10px; font-weight: 600;
+  color: var(--accent);
+  background: var(--glow);
+  border: 1px solid rgba(143,179,57,0.3);
+  border-radius: var(--radius-full);
+  padding: 3px 10px;
+}
+.rango-badge-completado {
+  font-size: 13px; color: var(--accent3);
+}
+.rango-niveles { display: flex; flex-direction: column; gap: 6px; }
+.nivel-fila {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.nivel-num {
+  font-size: 11px;
+  color: var(--muted);
+  width: 40px;
+  flex-shrink: 0;
+}
+.nivel-bar-wrap {
+  flex: 1;
+  height: 3px;
+  background: var(--border);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.nivel-bar {
+  height: 100%;
+  width: 0%;
+  border-radius: 3px;
+  background: var(--border);
+}
+.nivel-fila.nivel-past .nivel-bar { width: 100%; }
+.nivel-fila.nivel-current .nivel-bar { width: 50%; }
+.nivel-fila.nivel-past .nivel-num,
+.nivel-fila.nivel-current .nivel-num { color: var(--text); }
+.nivel-xp {
+  font-size: 11px;
+  color: var(--muted);
+  width: 70px;
+  text-align: right;
+  flex-shrink: 0;
+}
+.nivel-fila.nivel-current .nivel-xp { color: var(--accent); font-weight: 600; }
+
+/* ── Panel rangos v2 ── */
+.rango-bloque.rango-completado { opacity: 0.7; }
+.rango-badge-completado {
+  font-size: 10px; font-weight: 600;
+  color: var(--accent3);
+  background: rgba(92,138,60,0.1);
+  border: 1px solid rgba(92,138,60,0.3);
+  border-radius: var(--radius-full);
+  padding: 3px 10px;
+}
+.rango-niveles-tabla {
+  margin-top: 10px;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+.rango-tabla-header {
+  display: grid;
+  grid-template-columns: 80px 1fr 1fr;
+  padding: 6px 12px;
+  background: var(--card2);
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  gap: 8px;
+}
+.rango-nivel-row {
+  display: grid;
+  grid-template-columns: 80px 1fr 1fr;
+  padding: 7px 12px;
+  font-size: 12px;
+  color: var(--muted);
+  border-top: 1px solid var(--border);
+  gap: 8px;
+  align-items: center;
+}
+.rango-nivel-row.nivel-past { color: var(--text); }
+.rango-nivel-row.nivel-current {
+  background: rgba(143,179,57,0.06);
+  color: var(--text);
+  font-weight: 600;
+}
+.nivel-tag {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  background: var(--card2);
+  display: inline-block;
+}
+.rango-futuro-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 8px;
+  padding: 8px 4px;
+  font-size: 12px;
+  color: var(--muted);
+  border-top: 1px solid var(--border);
 }

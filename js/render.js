@@ -1,7 +1,7 @@
 import {
   state, today, isCompleted, isScheduledForDate, getHabitStreak,
-  getGlobalStreak, getTodayXP, getTotalXP, getXPForDate,
-  CATEGORIES, JS_DAY_TO_KEY,
+  getGlobalStreak, getTodayXP, getXPForDate,
+  CATEGORIES, CLASES, calcularNivel, xpParaNivel, NIVELES_POR_CLASE,
 } from './state.js';
 
 export function renderAll() {
@@ -26,34 +26,44 @@ function renderDate() {
   const day = d.getDate();
   const month = d.toLocaleDateString('es-ES', { month: 'short' });
   const capitalized = weekday.charAt(0).toUpperCase() + weekday.slice(1);
-  const monthCap = month.charAt(0).toUpperCase() + month.slice(1).replace('.','');
+  const monthCap = month.charAt(0).toUpperCase() + month.slice(1).replace('.', '');
   el.textContent = `${capitalized}, ${day} ${monthCap}`;
 }
 
 // ── Viajero ──
 function renderViajero() {
+  const { xpTotal, nivel, clase } = state.perfil;
+  const calc = calcularNivel(xpTotal);
+  const claseData = CLASES[calc.clase] || CLASES[0];
   const streak = getGlobalStreak();
-  const totalXP = getTotalXP();
-  const XP_NEXT = 500; // nivel fijo por ahora
 
-  // Éxito global (completados / programados histórico)
-  let totalDone = 0;
-  let totalScheduled = 0;
+  // Éxito global
+  let totalDone = 0, totalScheduled = 0;
   Object.keys(state.completions).forEach(date => {
-    const ids = state.completions[date] || [];
-    totalDone += ids.length;
+    totalDone += (state.completions[date] || []).length;
     totalScheduled += state.habits.filter(h => isScheduledForDate(h, date)).length;
   });
   const exito = totalScheduled > 0 ? Math.round(totalDone / totalScheduled * 100) : 0;
-  const xpPct = Math.min(100, Math.round(totalXP / XP_NEXT * 100));
 
   const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+  set('viajero-clase', claseData.nombre);
+  set('viajero-nivel-badge', `Nivel ${calc.nivel}`);
   set('viajero-streak', streak);
-  set('viajero-xp-total', totalXP);
+  set('viajero-xp-total', `+${getTodayXP()}`);
   set('viajero-exito', exito + '%');
-  set('viajero-xp-label', `${totalXP} / ${XP_NEXT}`);
+
+  if (calc.esMaximo) {
+    set('viajero-xp-label', 'Nivel máximo');
+  } else {
+    set('viajero-xp-label', `${calc.xpActual} / ${calc.xpSiguiente}`);
+  }
+
   const fill = document.getElementById('viajero-xp-fill');
-  if (fill) fill.style.width = xpPct + '%';
+  if (fill) fill.style.width = calc.pct + '%';
+
+  // Avatar emoji de la clase
+  const avatarEl = document.getElementById('viajero-avatar-emoji');
+  if (avatarEl) avatarEl.textContent = claseData.emoji;
 }
 
 // ── Semana ──
@@ -98,25 +108,18 @@ function renderStreak() {
 
 // ── XP Bar ──
 function renderXPBar() {
-  const totalXP = getTotalXP();
+  const xpTotal = state.perfil.xpTotal;
   const todayXP = getTodayXP();
   const todayStr = today();
-
-  // Máximo XP posible hoy (suma de todos los hábitos programados hoy)
   const maxXPToday = state.habits
     .filter(h => isScheduledForDate(h, todayStr))
     .reduce((sum, h) => sum + (h.xp || 10), 0);
-
   const pctToday = maxXPToday > 0 ? Math.round(todayXP / maxXPToday * 100) : 0;
 
   const total = document.getElementById('total-xp');
   const todayEl = document.getElementById('today-xp');
-  if (total) total.textContent = totalXP;
-  if (todayEl) {
-    todayEl.textContent = todayXP > 0
-      ? `+${todayXP} hoy · ${pctToday}%`
-      : '';
-  }
+  if (total) total.textContent = xpTotal;
+  if (todayEl) todayEl.textContent = todayXP > 0 ? `+${todayXP} hoy · ${pctToday}%` : '';
 }
 
 // ── Progreso ──
@@ -132,7 +135,7 @@ function renderProgress() {
   if (bar) bar.style.width = pct + '%';
 }
 
-// ── Category tabs (vista HOY) ──
+// ── Category tabs ──
 function renderCatTabs() {
   const tabs = document.getElementById('cat-tabs');
   if (!tabs) return;
@@ -144,20 +147,24 @@ function renderCatTabs() {
   tabs.innerHTML = html;
 }
 
-// ── Hábitos de HOY (solo completar, ordenados por categoría) ──
+// Helper: icono del hábito
+function habitIconHTML(h) {
+  if (h.emoji) return `<div class="habit-emoji">${h.emoji}</div>`;
+  const cat = CATEGORIES[h.category] || CATEGORIES.disciplina;
+  const initial = cat.label.charAt(0).toUpperCase();
+  return `<div class="habit-emoji habit-emoji-cat"
+    style="background:var(--cat-${h.category || 'disciplina'}-bg);border:1px solid var(--cat-${h.category || 'disciplina'}-border);color:var(--cat-${h.category || 'disciplina'})">
+    ${initial}
+  </div>`;
+}
+
+// ── Hábitos HOY ──
 function renderHabits() {
   const list = document.getElementById('habits-list');
   if (!list) return;
-
   const todayStr = today();
-
-  // Solo hábitos programados para hoy
   let scheduled = state.habits.filter(h => isScheduledForDate(h, todayStr));
-
-  // Filtro de categoría
-  if (state.activeFilter !== 'all') {
-    scheduled = scheduled.filter(h => h.category === state.activeFilter);
-  }
+  if (state.activeFilter !== 'all') scheduled = scheduled.filter(h => h.category === state.activeFilter);
 
   if (!scheduled.length) {
     list.innerHTML = `
@@ -172,86 +179,46 @@ function renderHabits() {
     return;
   }
 
-  // Ordenar por categoría
   const catOrder = Object.keys(CATEGORIES);
-  scheduled.sort((a, b) => {
-    const ai = catOrder.indexOf(a.category);
-    const bi = catOrder.indexOf(b.category);
-    return (ai === -1 ? 99 : ai) - (bi === -1 ? 99 : bi);
-  });
+  scheduled.sort((a, b) => (catOrder.indexOf(a.category) ?? 99) - (catOrder.indexOf(b.category) ?? 99));
 
-  // Agrupar por categoría y renderizar con separadores
-  let html = '';
-  let lastCat = null;
+  let html = '', lastCat = null;
   scheduled.forEach(h => {
     if (h.category !== lastCat) {
       const cat = CATEGORIES[h.category];
-      if (cat) {
-        html += `<div class="cat-group-label cat-${h.category}">${cat.label}</div>`;
-      }
+      if (cat) html += `<div class="cat-group-label cat-${h.category}">${cat.label}</div>`;
       lastCat = h.category;
     }
-    html += habitCardTodayHTML(h, todayStr);
+    const done = isCompleted(h.id, todayStr);
+    const streak = getHabitStreak(h.id);
+    const xpClass = `xp-${h.xp || 10}`;
+    html += `
+      <div class="habit-card ${done ? 'done' : ''}" onclick="window.onToggleHabit('${h.id}')">
+        ${habitIconHTML(h)}
+        <div class="habit-info">
+          <div class="habit-name">${h.name}</div>
+          <div class="habit-meta">
+            <span class="xp-badge ${xpClass}">+${h.xp || 10} XP</span>
+            ${streak > 0 ? `<span class="habit-streak-mini">🔥 ${streak}d</span>` : ''}
+          </div>
+        </div>
+        <div class="check-circle">${done ? '✓' : ''}</div>
+      </div>`;
   });
-
   list.innerHTML = html;
 }
 
-// Helper: icono del hábito (emoji o círculo con inicial de categoría)
-function habitIconHTML(h) {
-  if (h.emoji) return `<div class="habit-emoji">${h.emoji}</div>`;
-  const cat = CATEGORIES[h.category] || CATEGORIES.disciplina;
-  const initial = cat.label.charAt(0).toUpperCase();
-  return `<div class="habit-emoji habit-emoji-cat"
-    style="background:var(--cat-${h.category || 'disciplina'}-bg);border:1px solid var(--cat-${h.category || 'disciplina'}-border);color:var(--cat-${h.category || 'disciplina'})">
-    ${initial}
-  </div>`;
-}
-
-// Tarjeta de hábito en HOY (solo completar, sin editar/borrar)
-function habitCardTodayHTML(h, dateStr) {
-  const done = isCompleted(h.id, dateStr);
-  const streak = getHabitStreak(h.id);
-  const xpClass = `xp-${h.xp || 10}`;
-
-  return `
-    <div class="habit-card ${done ? 'done' : ''}" onclick="window.onToggleHabit('${h.id}')">
-      ${habitIconHTML(h)}
-      <div class="habit-info">
-        <div class="habit-name">${h.name}</div>
-        <div class="habit-meta">
-          <span class="xp-badge ${xpClass}">+${h.xp || 10} XP</span>
-          ${streak > 0 ? `<span class="habit-streak-mini">🔥 ${streak}d</span>` : ''}
-        </div>
-      </div>
-      <div class="check-circle">${done ? '✓' : ''}</div>
-    </div>`;
-}
-
-// ── Vista HÁBITOS (gestión: editar, borrar) ──
+// ── Vista HÁBITOS (gestión) ──
 export function renderHabitsList() {
   const list = document.getElementById('all-habits-list');
   if (!list) return;
-
   if (!state.habits.length) {
-    list.innerHTML = `
-      <div class="empty-state">
-        <div class="empty-icon">🌱</div>
-        <div class="empty-text">Sin hábitos aún.<br>Pulsa + para crear el primero.</div>
-      </div>`;
+    list.innerHTML = `<div class="empty-state"><div class="empty-icon">🌱</div><div class="empty-text">Sin hábitos aún.<br>Pulsa + para crear el primero.</div></div>`;
     return;
   }
-
-  // Ordenar por categoría
   const catOrder = Object.keys(CATEGORIES);
-  const sorted = [...state.habits].sort((a, b) => {
-    const ai = catOrder.indexOf(a.category);
-    const bi = catOrder.indexOf(b.category);
-    return (ai === -1 ? 99 : ai) - (bi === -1 ? 99 : bi);
-  });
-
-  let html = '';
-  let lastCat = null;
+  const sorted = [...state.habits].sort((a, b) => (catOrder.indexOf(a.category) ?? 99) - (catOrder.indexOf(b.category) ?? 99));
+  let html = '', lastCat = null;
   sorted.forEach(h => {
     if (h.category !== lastCat) {
       const cat = CATEGORIES[h.category];
@@ -260,7 +227,6 @@ export function renderHabitsList() {
     }
     html += habitCardManageHTML(h);
   });
-
   list.innerHTML = html;
 }
 
@@ -269,15 +235,12 @@ function habitCardManageHTML(h) {
   const days = h.days && h.days.length > 0
     ? h.days.map(d => ({ lun:'L',mar:'M',mie:'X',jue:'J',vie:'V',sab:'S',dom:'D' }[d] || d)).join(' ')
     : 'Todos los días';
-
   return `
     <div class="habit-card" style="cursor:default">
       ${habitIconHTML(h)}
       <div class="habit-info">
         <div class="habit-name">${h.name}</div>
-        <div class="habit-meta">
-          <span class="xp-badge ${xpClass}">+${h.xp || 10} XP</span>
-        </div>
+        <div class="habit-meta"><span class="xp-badge ${xpClass}">+${h.xp || 10} XP</span></div>
         <div class="habit-days-display">${days}</div>
       </div>
       <div class="habit-actions">
@@ -287,17 +250,14 @@ function habitCardManageHTML(h) {
     </div>`;
 }
 
-// ── Stats con calendario ──
+// ── Stats ──
 export function renderStats() {
   const activeDate = state.selectedDate || today();
-
-  // Actualizar título del calendario
   const calTitle = document.getElementById('cal-title');
   if (calTitle) {
     const d = new Date(activeDate + 'T12:00:00');
     calTitle.textContent = d.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' });
   }
-
   renderCalendar(activeDate);
   renderStatsForDate(activeDate);
 }
@@ -305,39 +265,27 @@ export function renderStats() {
 function renderCalendar(activeDate) {
   const grid = document.getElementById('cal-grid');
   if (!grid) return;
-
   const d = new Date(activeDate + 'T12:00:00');
-  const year = d.getFullYear();
-  const month = d.getMonth();
-
-  // Primer día del mes
+  const year = d.getFullYear(), month = d.getMonth();
   const firstDay = new Date(year, month, 1);
   const lastDay = new Date(year, month + 1, 0);
   const todayStr = today();
-
-  // Día de la semana del primer día (lunes = 0)
   let startDow = firstDay.getDay() - 1;
   if (startDow < 0) startDow = 6;
-
   let html = '';
-  // Días vacíos al inicio
   for (let i = 0; i < startDow; i++) html += '<div></div>';
-
   for (let day = 1; day <= lastDay.getDate(); day++) {
-    const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
     const isToday = dateStr === todayStr;
     const isSelected = dateStr === activeDate;
     const hasDone = state.completions[dateStr] && state.completions[dateStr].length > 0;
     const isFuture = dateStr > todayStr;
-
     html += `
-      <div class="cal-day ${isToday ? 'cal-today' : ''} ${isSelected ? 'cal-selected' : ''} ${hasDone && !isFuture ? 'cal-has-done' : ''} ${isFuture ? 'cal-future' : ''}"
-           onclick="${isFuture ? '' : `window.selectDate('${dateStr}')`}">
-        ${day}
-        ${hasDone && !isFuture ? '<div class="cal-dot"></div>' : ''}
+      <div class="cal-day ${isToday?'cal-today':''} ${isSelected?'cal-selected':''} ${hasDone&&!isFuture?'cal-has-done':''} ${isFuture?'cal-future':''}"
+           onclick="${isFuture?'':` window.selectDate('${dateStr}')`}">
+        ${day}${hasDone&&!isFuture?'<div class="cal-dot"></div>':''}
       </div>`;
   }
-
   grid.innerHTML = html;
 }
 
@@ -345,11 +293,9 @@ function renderStatsForDate(dateStr) {
   const isToday = dateStr === today();
   const d = new Date(dateStr + 'T12:00:00');
   const dateLabel = d.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' });
-
   const statsDateLabel = document.getElementById('stats-date-label');
   if (statsDateLabel) statsDateLabel.textContent = isToday ? 'Hoy' : dateLabel;
 
-  // Hábitos completados ese día
   const completedIds = state.completions[dateStr] || [];
   const scheduledHabits = state.habits.filter(h => isScheduledForDate(h, dateStr));
   const done = scheduledHabits.filter(h => completedIds.includes(h.id)).length;
@@ -357,7 +303,6 @@ function renderStatsForDate(dateStr) {
   const xp = getXPForDate(dateStr);
   const pct = total ? Math.round(done / total * 100) : 0;
 
-  // Totales globales
   let totalDone = 0;
   Object.values(state.completions).forEach(arr => totalDone += arr.length);
 
@@ -365,12 +310,11 @@ function renderStatsForDate(dateStr) {
   set('stat-total-done', totalDone);
   set('stat-best-streak', getGlobalStreak());
   set('stat-habits-count', state.habits.length);
-  set('stat-total-xp', getTotalXP());
+  set('stat-total-xp', state.perfil.xpTotal);
   set('stat-day-done', `${done}/${total}`);
   set('stat-day-xp', `+${xp} XP`);
   set('stat-day-pct', `${pct}%`);
 
-  // Lista de hábitos de ese día
   renderStatsDayHabits(dateStr, completedIds, scheduledHabits);
   renderCatStats(dateStr);
 }
@@ -378,17 +322,15 @@ function renderStatsForDate(dateStr) {
 function renderStatsDayHabits(dateStr, completedIds, scheduledHabits) {
   const sl = document.getElementById('stats-day-habits');
   if (!sl) return;
-
   if (!scheduledHabits.length) {
     sl.innerHTML = `<div class="empty-state"><div class="empty-icon">📅</div><div class="empty-text">Sin hábitos programados para este día.</div></div>`;
     return;
   }
-
   sl.innerHTML = scheduledHabits.map(h => {
     const done = completedIds.includes(h.id);
     const cat = CATEGORIES[h.category] || CATEGORIES.disciplina;
     return `
-      <div class="habit-card ${done ? 'done' : ''}" style="cursor:default">
+      <div class="habit-card ${done?'done':''}" style="cursor:default">
         ${habitIconHTML(h)}
         <div class="habit-info">
           <div class="habit-name">${h.name}</div>
@@ -397,7 +339,7 @@ function renderStatsDayHabits(dateStr, completedIds, scheduledHabits) {
             <span class="xp-badge xp-${h.xp}">+${h.xp} XP</span>
           </div>
         </div>
-        <div class="check-circle" style="flex-shrink:0">${done ? '✓' : ''}</div>
+        <div class="check-circle" style="flex-shrink:0">${done?'✓':''}</div>
       </div>`;
   }).join('');
 }
@@ -412,24 +354,19 @@ function renderCatStats(dateStr) {
     const done = catHabits.filter(h => completedIds.includes(h.id)).length;
     const total = catHabits.length;
     const pct = total ? Math.round(done / total * 100) : 0;
-    const xpEarned = catHabits.filter(h => completedIds.includes(h.id)).reduce((s, h) => s + (h.xp || 10), 0);
-
-    // Renderizar cada hábito de esta categoría
+    const xpEarned = catHabits.filter(h => completedIds.includes(h.id)).reduce((s, h) => s + (h.xp||10), 0);
     const habitsHTML = catHabits.map(h => {
       const isDone = completedIds.includes(h.id);
       return `
-        <div class="habit-card ${isDone ? 'done' : ''}" style="cursor:default;margin-bottom:6px">
+        <div class="habit-card ${isDone?'done':''}" style="cursor:default;margin-bottom:6px">
           ${habitIconHTML(h)}
           <div class="habit-info">
             <div class="habit-name">${h.name}</div>
-            <div class="habit-meta">
-              <span class="xp-badge xp-${h.xp}">+${h.xp} XP</span>
-            </div>
+            <div class="habit-meta"><span class="xp-badge xp-${h.xp}">+${h.xp} XP</span></div>
           </div>
-          <div class="check-circle" style="flex-shrink:0">${isDone ? '✓' : ''}</div>
+          <div class="check-circle" style="flex-shrink:0">${isDone?'✓':''}</div>
         </div>`;
     }).join('');
-
     return `
       <div style="margin-bottom:16px">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;padding:0 2px">
@@ -445,4 +382,74 @@ function renderCatStats(dateStr) {
         ${habitsHTML}
       </div>`;
   }).join('');
+}
+
+// ── Panel de rangos ──
+export function renderRangosPanel() {
+  const el = document.getElementById('rangos-content');
+  if (!el) return;
+
+  const { xpTotal } = state.perfil;
+  const calc = calcularNivel(xpTotal);
+
+  // Calcular XP acumulado para llegar a cada nivel dentro de un rango
+  const xpAcumuladoHastaHito = (n) => {
+    let total = 0;
+    for (let i = 1; i < n; i++) total += xpParaNivel(i);
+    return total;
+  };
+
+  let html = '';
+
+  CLASES.forEach((clase, ci) => {
+    const isCurrentClase = ci === calc.clase;
+    const isPastClase = ci < calc.clase;
+
+    html += `
+      <div class="rango-bloque ${isCurrentClase ? 'rango-activo' : ''} ${isPastClase ? 'rango-completado' : ''}">
+        <div class="rango-header">
+          <span class="rango-emoji">${clase.emoji}</span>
+          <div class="rango-info">
+            <div class="rango-nombre" style="color:${clase.color}">${clase.nombre}</div>
+            <div class="rango-sub">Niveles 1 — 30</div>
+          </div>
+          ${isCurrentClase ? `<div class="rango-badge-actual">Nivel ${calc.nivel}</div>` : ''}
+          ${isPastClase ? '<div class="rango-badge-completado">✓ Completado</div>' : ''}
+        </div>`;
+
+    // Solo expandir la clase actual o anteriores
+    if (isCurrentClase || isPastClase) {
+      html += `<div class="rango-niveles-tabla">
+        <div class="rango-tabla-header">
+          <span>Nivel</span><span>XP para subir</span><span>XP acumulado</span>
+        </div>`;
+
+      for (let n = 1; n <= 30; n++) {
+        const xpEsteNivel = xpParaNivel(n);
+        const xpAcum = xpAcumuladoHastaHito(n);
+        const isPast = isPastClase || (isCurrentClase && n < calc.nivel);
+        const isCurrent = isCurrentClase && n === calc.nivel;
+        html += `
+          <div class="rango-nivel-row ${isPast ? 'nivel-past' : ''} ${isCurrent ? 'nivel-current' : ''}">
+            <span class="nivel-tag" style="${isCurrent ? `background:${clase.color};color:#0d0f0a;` : isPast ? `color:${clase.color}` : ''}">
+              ${isCurrent ? '▶ ' : isPast ? '✓ ' : ''}Nv.${n}
+            </span>
+            <span>${xpEsteNivel.toLocaleString()} XP</span>
+            <span style="color:var(--muted)">${xpAcum.toLocaleString()} XP</span>
+          </div>`;
+      }
+      html += `</div>`;
+    } else {
+      // Rango futuro: mostrar solo resumen
+      html += `
+        <div class="rango-futuro-info">
+          <span>Nivel 1 → Nv.30</span>
+          <span style="color:var(--muted)">XP nivel 1→2: 100 · XP nivel 29→30: ${xpParaNivel(29).toLocaleString()}</span>
+        </div>`;
+    }
+
+    html += `</div>`;
+  });
+
+  el.innerHTML = html;
 }
