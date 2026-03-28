@@ -1,9 +1,9 @@
 import { db } from './firebase.js';
 import {
   collection, doc, addDoc, getDocs, deleteDoc,
-  setDoc, getDoc, updateDoc, orderBy, query, writeBatch,
+  setDoc, getDoc, updateDoc, orderBy, query, writeBatch, increment,
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-import { state, today, calcularNivel } from './state.js';
+import { state, today, calcularNivel, isScheduledForDate, getDiasPerfectos } from './state.js';
 
 // ── Refs ──
 const habitsRef  = () => collection(db, 'users', state.currentUser.uid, 'habits');
@@ -12,22 +12,30 @@ const profileRef = () => doc(db, 'users', state.currentUser.uid, 'profile', 'dat
 
 // ── Cargar datos ──
 export async function loadData() {
-  const snap = await getDocs(query(habitsRef(), orderBy('created', 'asc')));
-  state.habits = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  try {
+    const snap = await getDocs(query(habitsRef(), orderBy('created', 'asc')));
+    state.habits = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  } catch(e) { console.error('Error cargando hábitos:', e); }
 
-  const c = await getDoc(compsRef());
-  state.completions = c.exists() ? c.data() : {};
+  try {
+    const c = await getDoc(compsRef());
+    state.completions = c.exists() ? c.data() : {};
+  } catch(e) { console.error('Error cargando completions:', e); }
 
-  // Cargar perfil del viajero
-  const p = await getDoc(profileRef());
-  if (p.exists()) {
-    const data = p.data();
-    state.perfil.xpTotal = data.xpTotal || 0;
-    state.perfil.nivel   = data.nivel   || 1;
-    state.perfil.clase   = data.clase   || 0;
-  } else {
-    // Primera vez — crear perfil
-    await setDoc(profileRef(), { xpTotal: 0, nivel: 1, clase: 0 });
+  try {
+    const p = await getDoc(profileRef());
+    if (p.exists()) {
+      const data = p.data();
+      state.perfil.xpTotal       = data.xpTotal       || 0;
+      state.perfil.nivel         = data.nivel         || 1;
+      state.perfil.clase         = data.clase         || 0;
+      state.perfil.diasPerfectos = data.diasPerfectos || 0;
+    } else {
+      await setDoc(profileRef(), { xpTotal: 0, nivel: 1, clase: 0, diasPerfectos: 0 });
+      state.perfil = { xpTotal: 0, nivel: 1, clase: 0, diasPerfectos: 0 };
+    }
+  } catch(e) {
+    console.error('Error con perfil:', e);
   }
 }
 
@@ -36,23 +44,14 @@ export async function saveCompletions() {
   await setDoc(compsRef(), state.completions);
 }
 
-// ── Guardar perfil ──
-export async function saveProfile() {
-  await setDoc(profileRef(), {
-    xpTotal: state.perfil.xpTotal,
-    nivel:   state.perfil.nivel,
-    clase:   state.perfil.clase,
-  }, { merge: true });
-}
-
-// ── Toggle completado ── (devuelve xpGanado o 0 si se desmarca)
+// ── Toggle completado ──
 export async function toggleHabit(id) {
   const date = today();
   if (!state.completions[date]) state.completions[date] = [];
   const idx = state.completions[date].indexOf(id);
 
   if (idx === -1) {
-    // Completar — sumar XP
+    // Completar — sumar XP con increment atómico
     state.completions[date].push(id);
     const habit = state.habits.find(h => h.id === id);
     const xpGanado = habit ? (habit.xp || 10) : 10;
@@ -66,19 +65,50 @@ export async function toggleHabit(id) {
 
     state.perfil.nivel = calcDespues.nivel;
     state.perfil.clase = calcDespues.clase;
-    await saveProfile();
+
+    // Comprobar si hoy es día perfecto tras completar
+    const scheduled = state.habits.filter(h => isScheduledForDate(h, date));
+    const todayIsPerfect = scheduled.length > 0 && scheduled.every(h => state.completions[date].includes(h.id));
+
+    // Guardar: XP con increment atómico, nivel/clase y diasPerfectos
+    const updates = {
+      xpTotal: increment(xpGanado),
+      nivel: calcDespues.nivel,
+      clase: calcDespues.clase,
+    };
+
+    // Recalcular días perfectos desde el historial y guardar
+    // (solo cuando cambia — al terminar todos los hábitos del día)
+    if (todayIsPerfect) {
+      state.perfil.diasPerfectos = getDiasPerfectos();
+      updates.diasPerfectos = state.perfil.diasPerfectos;
+    }
+
+    await updateDoc(profileRef(), updates);
 
     return { xpGanado, subioNivel, subioRango, calcDespues };
+
   } else {
-    // Desmarcar — restar XP
+    // Desmarcar — restar XP con increment negativo
     state.completions[date].splice(idx, 1);
     const habit = state.habits.find(h => h.id === id);
     const xpGanado = habit ? (habit.xp || 10) : 10;
+
     state.perfil.xpTotal = Math.max(0, state.perfil.xpTotal - xpGanado);
     const calc = calcularNivel(state.perfil.xpTotal);
     state.perfil.nivel = calc.nivel;
     state.perfil.clase = calc.clase;
-    await saveProfile();
+
+    // Recalcular días perfectos (puede que hoy ya no sea perfecto)
+    state.perfil.diasPerfectos = getDiasPerfectos();
+
+    await updateDoc(profileRef(), {
+      xpTotal: increment(-xpGanado),
+      nivel: calc.nivel,
+      clase: calc.clase,
+      diasPerfectos: state.perfil.diasPerfectos,
+    });
+
     return { xpGanado: 0, subioNivel: false, subioRango: false, calcDespues: calc };
   }
 }
@@ -116,8 +146,8 @@ export async function resetAllData() {
   snap.docs.forEach(d => batch.delete(d.ref));
   await batch.commit();
   await setDoc(compsRef(), {});
-  await setDoc(profileRef(), { xpTotal: 0, nivel: 1, clase: 0 });
+  await setDoc(profileRef(), { xpTotal: 0, nivel: 1, clase: 0, diasPerfectos: 0 });
   state.habits = [];
   state.completions = {};
-  state.perfil = { xpTotal: 0, nivel: 1, clase: 0 };
+  state.perfil = { xpTotal: 0, nivel: 1, clase: 0, diasPerfectos: 0 };
 }

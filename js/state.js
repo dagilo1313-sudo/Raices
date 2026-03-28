@@ -5,11 +5,11 @@ export const state = {
   completions: {},
   activeFilter: 'all',
   selectedDate: null,
-  // Perfil del viajero (se carga/guarda en Firestore)
   perfil: {
     xpTotal: 0,
     nivel: 1,
-    clase: 0, // índice en CLASES
+    clase: 0,
+    diasPerfectos: 0,
   },
 };
 
@@ -25,14 +25,15 @@ export const CLASES = [
 
 export const NIVELES_POR_CLASE = 30;
 
-// XP necesario para pasar del nivel n al n+1
-export const xpParaNivel = (n) => Math.round(100 * Math.pow(n, 1.8));
+// Nueva fórmula: 100 * n^1.025 → suma total ~50.000 en 30 niveles
+// Nivel 1→2: 100 XP, Nivel 29→30: 3.155 XP
+export const xpParaNivel = (n) => Math.round(100 * Math.pow(n, 1.025));
 
 // XP total para completar una clase entera (niveles 1→30)
 export const xpTotalClase = () => {
   let total = 0;
   for (let n = 1; n <= NIVELES_POR_CLASE; n++) total += xpParaNivel(n);
-  return total;
+  return total; // ~50.023
 };
 
 // Calcula clase, nivel y xp actual a partir del xpTotal acumulado
@@ -121,17 +122,32 @@ export const getHabitStreak = (habitId) => {
   return streak;
 };
 
-export const getGlobalStreak = () => {
-  if (!state.habits.length) return 0;
-  let streak = 0;
-  const d = new Date();
-  while (true) {
-    const ds = d.toISOString().split('T')[0];
-    if (state.completions[ds] && state.completions[ds].length > 0) {
-      streak++; d.setDate(d.getDate() - 1);
-    } else break;
-  }
-  return streak;
+// ── Días perfectos: días donde se completaron TODOS los hábitos programados ──
+export const getDiasPerfectos = () => {
+  let perfectos = 0;
+  Object.keys(state.completions).forEach(dateStr => {
+    const completedIds = state.completions[dateStr] || [];
+    const scheduled = state.habits.filter(h => isScheduledForDate(h, dateStr));
+    if (scheduled.length > 0 && scheduled.every(h => completedIds.includes(h.id))) {
+      perfectos++;
+    }
+  });
+  return perfectos;
+};
+
+// ── Éxito por XP: XP recogido / XP máximo posible (proporcional por peso) ──
+export const getExitoXP = () => {
+  let xpRecogido = 0;
+  let xpMaximo = 0;
+  Object.keys(state.completions).forEach(dateStr => {
+    const completedIds = state.completions[dateStr] || [];
+    const scheduled = state.habits.filter(h => isScheduledForDate(h, dateStr));
+    scheduled.forEach(h => {
+      xpMaximo += h.xp || 10;
+      if (completedIds.includes(h.id)) xpRecogido += h.xp || 10;
+    });
+  });
+  return xpMaximo > 0 ? Math.round(xpRecogido / xpMaximo * 100) : 0;
 };
 
 export const getXPForDate = (dateStr) => {
@@ -143,6 +159,12 @@ export const getXPForDate = (dateStr) => {
 
 export const getTodayXP = () => getXPForDate(today());
 
+export const getMaxXPForDate = (dateStr) => {
+  return state.habits
+    .filter(h => isScheduledForDate(h, dateStr))
+    .reduce((sum, h) => sum + (h.xp || 10), 0);
+};
+
 export const getInsight = () => {
   const todayStr = today();
   const todayHabits = state.habits.filter(h => isScheduledForDate(h, todayStr));
@@ -150,7 +172,7 @@ export const getInsight = () => {
   const done = todayHabits.filter(h => isCompleted(h.id, todayStr)).length;
   const xp = getTodayXP();
   if (!total) return { icon: '🌱', text: 'Los pequeños pasos de hoy son las raíces del mañana. ¡Empieza tu primer hábito!' };
-  if (done === total) return { icon: '🌳', text: `¡Perfecto! +${xp} XP ganados hoy. Tus raíces crecen profundo.` };
+  if (done === total) return { icon: '🌳', text: `¡Día perfecto! +${xp} XP ganados hoy. Tus raíces crecen profundo.` };
   if (!done) return { icon: '🌿', text: `Tienes ${total} hábito${total > 1 ? 's' : ''} esperando. ¡Cada acción suma XP!` };
   return { icon: '💧', text: `${done} de ${total} completados · +${xp} XP. Riega tus hábitos.` };
 };

@@ -1,6 +1,6 @@
 import {
   state, today, isCompleted, isScheduledForDate, getHabitStreak,
-  getGlobalStreak, getTodayXP, getXPForDate,
+  getTodayXP, getXPForDate, getMaxXPForDate, getDiasPerfectos, getExitoXP,
   CATEGORIES, CLASES, calcularNivel, xpParaNivel, NIVELES_POR_CLASE,
 } from './state.js';
 
@@ -8,7 +8,6 @@ export function renderAll() {
   renderDate();
   renderWeek();
   renderViajero();
-  renderStreak();
   renderXPBar();
   renderProgress();
   renderCatTabs();
@@ -32,25 +31,20 @@ function renderDate() {
 
 // ── Viajero ──
 function renderViajero() {
-  const { xpTotal, nivel, clase } = state.perfil;
+  const { xpTotal } = state.perfil;
   const calc = calcularNivel(xpTotal);
   const claseData = CLASES[calc.clase] || CLASES[0];
-  const streak = getGlobalStreak();
 
-  // Éxito global
-  let totalDone = 0, totalScheduled = 0;
-  Object.keys(state.completions).forEach(date => {
-    totalDone += (state.completions[date] || []).length;
-    totalScheduled += state.habits.filter(h => isScheduledForDate(h, date)).length;
-  });
-  const exito = totalScheduled > 0 ? Math.round(totalDone / totalScheduled * 100) : 0;
+  const diasPerfectos = getDiasPerfectos();
+  const exitoPct = getExitoXP();
+  const xpHoy = getTodayXP();
 
   const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
   set('viajero-clase', claseData.nombre);
   set('viajero-nivel-badge', `Nivel ${calc.nivel}`);
-  set('viajero-streak', streak);
-  set('viajero-xp-total', `+${getTodayXP()}`);
-  set('viajero-exito', exito + '%');
+  set('viajero-stat-perfectos', diasPerfectos);
+  set('viajero-stat-xphoy', `+${xpHoy}`);
+  set('viajero-stat-exito', exitoPct + '%');
 
   if (calc.esMaximo) {
     set('viajero-xp-label', 'Nivel máximo');
@@ -61,9 +55,10 @@ function renderViajero() {
   const fill = document.getElementById('viajero-xp-fill');
   if (fill) fill.style.width = calc.pct + '%';
 
-  // Avatar emoji de la clase
   const avatarEl = document.getElementById('viajero-avatar-emoji');
   if (avatarEl) avatarEl.textContent = claseData.emoji;
+  const avatarHeader = document.getElementById('viajero-avatar-emoji-header');
+  if (avatarHeader) avatarHeader.textContent = claseData.emoji;
 }
 
 // ── Semana ──
@@ -80,30 +75,17 @@ function renderWeek() {
     const isToday = ds === today();
     const hasDone = state.completions[ds] && state.completions[ds].length > 0;
     const isPast = d < now && !isToday;
+    // Día perfecto: todos los hábitos programados completados
+    const scheduled = state.habits.filter(h => isScheduledForDate(h, ds));
+    const isPerfect = scheduled.length > 0 && scheduled.every(h => (state.completions[ds] || []).includes(h.id));
     html += `
       <div class="day-cell">
         <div class="day-name">${days[d.getDay()]}</div>
-        <div class="day-num ${isToday ? 'today' : ''} ${isPast && hasDone ? 'past-done' : ''}">${d.getDate()}</div>
-        <div class="day-dot ${hasDone ? 'filled' : ''}"></div>
+        <div class="day-num ${isToday ? 'today' : ''} ${isPast && isPerfect ? 'past-perfect' : isPast && hasDone ? 'past-done' : ''}">${d.getDate()}</div>
+        <div class="day-dot ${isPerfect ? 'perfect' : hasDone ? 'filled' : ''}"></div>
       </div>`;
   }
   strip.innerHTML = html;
-}
-
-// ── Racha ──
-function renderStreak() {
-  const streak = getGlobalStreak();
-  const el = document.getElementById('global-streak');
-  if (el) el.textContent = streak;
-  const dots = document.getElementById('streak-dots');
-  if (!dots) return;
-  let html = '';
-  for (let i = 0; i < 7; i++) {
-    const filled = i < Math.min(streak, 6);
-    const isLast = i === Math.min(streak - 1, 5);
-    html += `<div class="dot ${filled ? (isLast ? 'today' : 'active') : ''}"></div>`;
-  }
-  dots.innerHTML = html;
 }
 
 // ── XP Bar ──
@@ -111,9 +93,7 @@ function renderXPBar() {
   const xpTotal = state.perfil.xpTotal;
   const todayXP = getTodayXP();
   const todayStr = today();
-  const maxXPToday = state.habits
-    .filter(h => isScheduledForDate(h, todayStr))
-    .reduce((sum, h) => sum + (h.xp || 10), 0);
+  const maxXPToday = getMaxXPForDate(todayStr);
   const pctToday = maxXPToday > 0 ? Math.round(todayXP / maxXPToday * 100) : 0;
 
   const total = document.getElementById('total-xp');
@@ -147,7 +127,7 @@ function renderCatTabs() {
   tabs.innerHTML = html;
 }
 
-// Helper: icono del hábito
+// ── Helper icono hábito ──
 function habitIconHTML(h) {
   if (h.emoji) return `<div class="habit-emoji">${h.emoji}</div>`;
   const cat = CATEGORIES[h.category] || CATEGORIES.disciplina;
@@ -191,14 +171,13 @@ function renderHabits() {
     }
     const done = isCompleted(h.id, todayStr);
     const streak = getHabitStreak(h.id);
-    const xpClass = `xp-${h.xp || 10}`;
     html += `
       <div class="habit-card ${done ? 'done' : ''}" onclick="window.onToggleHabit('${h.id}')">
         ${habitIconHTML(h)}
         <div class="habit-info">
           <div class="habit-name">${h.name}</div>
           <div class="habit-meta">
-            <span class="xp-badge ${xpClass}">+${h.xp || 10} XP</span>
+            <span class="xp-badge xp-${h.xp || 10}">+${h.xp || 10} XP</span>
             ${streak > 0 ? `<span class="habit-streak-mini">🔥 ${streak}d</span>` : ''}
           </div>
         </div>
@@ -225,29 +204,24 @@ export function renderHabitsList() {
       if (cat) html += `<div class="cat-group-label cat-${h.category}">${cat.label}</div>`;
       lastCat = h.category;
     }
-    html += habitCardManageHTML(h);
+    const days = h.days && h.days.length > 0
+      ? h.days.map(d => ({ lun:'L',mar:'M',mie:'X',jue:'J',vie:'V',sab:'S',dom:'D' }[d] || d)).join(' ')
+      : 'Todos los días';
+    html += `
+      <div class="habit-card" style="cursor:default">
+        ${habitIconHTML(h)}
+        <div class="habit-info">
+          <div class="habit-name">${h.name}</div>
+          <div class="habit-meta"><span class="xp-badge xp-${h.xp || 10}">+${h.xp || 10} XP</span></div>
+          <div class="habit-days-display">${days}</div>
+        </div>
+        <div class="habit-actions">
+          <button class="btn-editar" onclick="window.onEditHabit('${h.id}')">Editar</button>
+          <button class="btn-icon" onclick="window.onDeleteHabit('${h.id}')">✕</button>
+        </div>
+      </div>`;
   });
   list.innerHTML = html;
-}
-
-function habitCardManageHTML(h) {
-  const xpClass = `xp-${h.xp || 10}`;
-  const days = h.days && h.days.length > 0
-    ? h.days.map(d => ({ lun:'L',mar:'M',mie:'X',jue:'J',vie:'V',sab:'S',dom:'D' }[d] || d)).join(' ')
-    : 'Todos los días';
-  return `
-    <div class="habit-card" style="cursor:default">
-      ${habitIconHTML(h)}
-      <div class="habit-info">
-        <div class="habit-name">${h.name}</div>
-        <div class="habit-meta"><span class="xp-badge ${xpClass}">+${h.xp || 10} XP</span></div>
-        <div class="habit-days-display">${days}</div>
-      </div>
-      <div class="habit-actions">
-        <button class="btn-editar" onclick="window.onEditHabit('${h.id}')">Editar</button>
-        <button class="btn-icon" onclick="window.onDeleteHabit('${h.id}')">✕</button>
-      </div>
-    </div>`;
 }
 
 // ── Stats ──
@@ -278,12 +252,16 @@ function renderCalendar(activeDate) {
     const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
     const isToday = dateStr === todayStr;
     const isSelected = dateStr === activeDate;
-    const hasDone = state.completions[dateStr] && state.completions[dateStr].length > 0;
     const isFuture = dateStr > todayStr;
+    const completedIds = state.completions[dateStr] || [];
+    const scheduled = state.habits.filter(h => isScheduledForDate(h, dateStr));
+    const hasDone = completedIds.length > 0;
+    const isPerfect = scheduled.length > 0 && scheduled.every(h => completedIds.includes(h.id));
     html += `
-      <div class="cal-day ${isToday?'cal-today':''} ${isSelected?'cal-selected':''} ${hasDone&&!isFuture?'cal-has-done':''} ${isFuture?'cal-future':''}"
+      <div class="cal-day ${isToday?'cal-today':''} ${isSelected?'cal-selected':''} ${isPerfect&&!isFuture?'cal-perfect':hasDone&&!isFuture?'cal-has-done':''} ${isFuture?'cal-future':''}"
            onclick="${isFuture?'':` window.selectDate('${dateStr}')`}">
-        ${day}${hasDone&&!isFuture?'<div class="cal-dot"></div>':''}
+        ${day}
+        ${(hasDone||isPerfect)&&!isFuture?'<div class="cal-dot"></div>':''}
       </div>`;
   }
   grid.innerHTML = html;
@@ -303,12 +281,12 @@ function renderStatsForDate(dateStr) {
   const xp = getXPForDate(dateStr);
   const pct = total ? Math.round(done / total * 100) : 0;
 
-  let totalDone = 0;
-  Object.values(state.completions).forEach(arr => totalDone += arr.length);
+  const diasPerfectos = getDiasPerfectos();
+  const exitoPct = getExitoXP();
 
   const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
-  set('stat-total-done', totalDone);
-  set('stat-best-streak', getGlobalStreak());
+  set('stat-dias-perfectos', diasPerfectos);
+  set('stat-exito-xp', exitoPct + '%');
   set('stat-habits-count', state.habits.length);
   set('stat-total-xp', state.perfil.xpTotal);
   set('stat-day-done', `${done}/${total}`);
@@ -353,8 +331,9 @@ function renderCatStats(dateStr) {
     if (!catHabits.length) return '';
     const done = catHabits.filter(h => completedIds.includes(h.id)).length;
     const total = catHabits.length;
-    const pct = total ? Math.round(done / total * 100) : 0;
     const xpEarned = catHabits.filter(h => completedIds.includes(h.id)).reduce((s, h) => s + (h.xp||10), 0);
+    const xpMax = catHabits.reduce((s, h) => s + (h.xp||10), 0);
+    const pct = xpMax > 0 ? Math.round(xpEarned / xpMax * 100) : 0;
     const habitsHTML = catHabits.map(h => {
       const isDone = completedIds.includes(h.id);
       return `
@@ -373,7 +352,7 @@ function renderCatStats(dateStr) {
           <div class="cat-group-label cat-${key}" style="margin:0">${cat.label}</div>
           <div style="display:flex;align-items:center;gap:8px">
             ${xpEarned > 0 ? `<span class="xp-badge xp-50">+${xpEarned} XP</span>` : ''}
-            <span style="font-family:var(--font-body);font-size:16px;font-weight:700;color:var(--cat-${key})">${pct}%</span>
+            <span style="font-size:16px;font-weight:700;color:var(--cat-${key})">${pct}%</span>
           </div>
         </div>
         <div style="height:4px;background:var(--border);border-radius:4px;overflow:hidden;margin-bottom:10px">
@@ -392,15 +371,13 @@ export function renderRangosPanel() {
   const { xpTotal } = state.perfil;
   const calc = calcularNivel(xpTotal);
 
-  // Calcular XP acumulado para llegar a cada nivel dentro de un rango
-  const xpAcumuladoHastaHito = (n) => {
+  const xpAcumuladoHasta = (n) => {
     let total = 0;
     for (let i = 1; i < n; i++) total += xpParaNivel(i);
     return total;
   };
 
   let html = '';
-
   CLASES.forEach((clase, ci) => {
     const isCurrentClase = ci === calc.clase;
     const isPastClase = ci < calc.clase;
@@ -411,43 +388,39 @@ export function renderRangosPanel() {
           <span class="rango-emoji">${clase.emoji}</span>
           <div class="rango-info">
             <div class="rango-nombre" style="color:${clase.color}">${clase.nombre}</div>
-            <div class="rango-sub">Niveles 1 — 30</div>
+            <div class="rango-sub">30 niveles · ~50.000 XP</div>
           </div>
           ${isCurrentClase ? `<div class="rango-badge-actual">Nivel ${calc.nivel}</div>` : ''}
           ${isPastClase ? '<div class="rango-badge-completado">✓ Completado</div>' : ''}
         </div>`;
 
-    // Solo expandir la clase actual o anteriores
     if (isCurrentClase || isPastClase) {
       html += `<div class="rango-niveles-tabla">
         <div class="rango-tabla-header">
-          <span>Nivel</span><span>XP para subir</span><span>XP acumulado</span>
+          <span>Nivel</span><span>XP p/ subir</span><span>XP acum.</span>
         </div>`;
-
       for (let n = 1; n <= 30; n++) {
-        const xpEsteNivel = xpParaNivel(n);
-        const xpAcum = xpAcumuladoHastaHito(n);
+        const xpEste = xpParaNivel(n);
+        const xpAcum = xpAcumuladoHasta(n);
         const isPast = isPastClase || (isCurrentClase && n < calc.nivel);
         const isCurrent = isCurrentClase && n === calc.nivel;
         html += `
-          <div class="rango-nivel-row ${isPast ? 'nivel-past' : ''} ${isCurrent ? 'nivel-current' : ''}">
-            <span class="nivel-tag" style="${isCurrent ? `background:${clase.color};color:#0d0f0a;` : isPast ? `color:${clase.color}` : ''}">
-              ${isCurrent ? '▶ ' : isPast ? '✓ ' : ''}Nv.${n}
+          <div class="rango-nivel-row ${isPast?'nivel-past':''} ${isCurrent?'nivel-current':''}">
+            <span class="nivel-tag" style="${isCurrent?`background:${clase.color};color:#0d0f0a`:isPast?`color:${clase.color}`:''}">
+              ${isCurrent?'▶ ':isPast?'✓ ':''}Nv.${n}
             </span>
-            <span>${xpEsteNivel.toLocaleString()} XP</span>
+            <span>${xpEste.toLocaleString()} XP</span>
             <span style="color:var(--muted)">${xpAcum.toLocaleString()} XP</span>
           </div>`;
       }
       html += `</div>`;
     } else {
-      // Rango futuro: mostrar solo resumen
       html += `
         <div class="rango-futuro-info">
-          <span>Nivel 1 → Nv.30</span>
-          <span style="color:var(--muted)">XP nivel 1→2: 100 · XP nivel 29→30: ${xpParaNivel(29).toLocaleString()}</span>
+          <span>Nv.1 → Nv.30</span>
+          <span>100 XP → ${xpParaNivel(29).toLocaleString()} XP</span>
         </div>`;
     }
-
     html += `</div>`;
   });
 

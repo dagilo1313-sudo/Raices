@@ -30,6 +30,7 @@ export function initAuth() {
       state.currentUser = null;
       state.habits = [];
       state.completions = {};
+      state.perfil = { xpTotal: 0, nivel: 1, clase: 0 };
       document.getElementById('app').style.display = 'none';
       document.getElementById('auth-screen').style.display = 'flex';
       const btn = document.getElementById('auth-btn');
