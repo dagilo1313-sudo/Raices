@@ -1,7 +1,7 @@
 import {
   state, today, isCompleted, isScheduledForDate, getHabitStreak,
   getTodayXP, getXPForDate, getMaxXPForDate, getDiasPerfectos, getExitoXP,
-  CATEGORIES, CLASES, calcularNivel, xpParaNivel, NIVELES_POR_CLASE,
+  CATEGORIES, CLASES, calcularNivel, xpParaNivel, xpTotalClase, NIVELES_POR_CLASE,
 } from './state.js';
 
 export function renderAll() {
@@ -376,22 +376,30 @@ export function renderRangosPanel() {
     return total;
   };
 
+  const xpTotalReal = xpTotalClase();
+  const xpTotalStr = (Math.round(xpTotalReal / 1000) * 1000).toLocaleString();
+
   let html = '';
   CLASES.forEach((clase, ci) => {
     const isCurrentClase = ci === calc.clase;
     const isPastClase = ci < calc.clase;
+    const isOpen = isCurrentClase;
 
     html += `
       <div class="rango-bloque ${isCurrentClase ? 'rango-activo' : ''} ${isPastClase ? 'rango-completado' : ''}">
-        <div class="rango-header">
+        <div class="rango-header rango-toggle" onclick="toggleRango(this)" style="cursor:pointer">
           <span class="rango-emoji">${clase.emoji}</span>
           <div class="rango-info">
             <div class="rango-nombre" style="color:${clase.color}">${clase.nombre}</div>
-            <div class="rango-sub">30 niveles · ~50.000 XP</div>
+            <div class="rango-sub">30 niveles · ~${xpTotalStr} XP</div>
           </div>
-          ${isCurrentClase ? `<div class="rango-badge-actual">Nivel ${calc.nivel}</div>` : ''}
-          ${isPastClase ? '<div class="rango-badge-completado">✓ Completado</div>' : ''}
-        </div>`;
+          <div style="display:flex;align-items:center;gap:8px;margin-left:auto">
+            ${isCurrentClase ? `<div class="rango-badge-actual">Nivel ${calc.nivel}</div>` : ''}
+            ${isPastClase ? '<div class="rango-badge-completado">✓</div>' : ''}
+            <span class="rango-chevron" style="color:var(--muted);font-size:11px;transition:transform 0.25s;display:inline-block;${isOpen ? 'transform:rotate(180deg)' : ''}">▼</span>
+          </div>
+        </div>
+        <div class="rango-body" style="display:${isOpen ? 'block' : 'none'}">`;
 
     if (isCurrentClase || isPastClase) {
       html += `<div class="rango-niveles-tabla">
@@ -417,10 +425,11 @@ export function renderRangosPanel() {
       html += `
         <div class="rango-futuro-info">
           <span>Nv.1 → Nv.30</span>
-          <span>100 XP → ${xpParaNivel(29).toLocaleString()} XP</span>
+          <span>100 XP → ${xpParaNivel(30).toLocaleString()} XP</span>
         </div>`;
     }
-    html += `</div>`;
+
+    html += `</div></div>`;
   });
 
   el.innerHTML = html;

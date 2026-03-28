@@ -137,6 +137,15 @@ window.onDeleteHabit = (id) => {
   document.body.appendChild(overlay);
 };
 
+// ── Toggle colapso de rangos ──
+window.toggleRango = (headerEl) => {
+  const body = headerEl.nextElementSibling;
+  const chevron = headerEl.querySelector('.rango-chevron');
+  const isOpen = body.style.display !== 'none';
+  body.style.display = isOpen ? 'none' : 'block';
+  if (chevron) chevron.style.transform = isOpen ? '' : 'rotate(180deg)';
+};
+
 // ── Panel de rangos — se abre desde el badge de nivel ──
 window.openRangosPanel = () => {
   renderRangosPanel();
