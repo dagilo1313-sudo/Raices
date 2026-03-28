@@ -10,6 +10,7 @@ export function renderAll() {
   renderViajero();
   renderXPBar();
   renderProgress();
+  renderTareas();
   renderCatTabs();
   renderHabits();
   renderHabitsList();
@@ -57,6 +58,15 @@ function renderViajero() {
 
   const avatarEl = document.getElementById('viajero-avatar-emoji');
   if (avatarEl) avatarEl.textContent = claseData.emoji;
+
+  // Sincronizar viajero compacto
+  const setC = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+  setC('viajero-compact-emoji', claseData.emoji);
+  setC('viajero-compact-clase', claseData.nombre);
+  setC('viajero-compact-nivel', `Nivel ${calc.nivel}`);
+  setC('viajero-compact-xp', `${calc.xpActual} / ${calc.xpSiguiente} XP`);
+  const compactBar = document.getElementById('viajero-compact-bar');
+  if (compactBar) compactBar.style.width = calc.pct + '%';
 }
 
 // ── Semana ──
@@ -111,6 +121,48 @@ function renderProgress() {
   const bar = document.getElementById('progress-bar');
   if (text) text.textContent = total ? `${done} / ${total} · ${pct}%` : '0 / 0';
   if (bar) bar.style.width = pct + '%';
+}
+
+// ── Tareas ──
+export function renderTareas() {
+  const lista = document.getElementById('tareas-lista');
+  if (!lista) return;
+
+  const tareas = state.tareas;
+  const pendientes = tareas.filter(t => !t.done);
+  const completadas = tareas.filter(t => t.done);
+
+  // Actualizar contador en el toggle
+  const counter = document.getElementById('tareas-count');
+  if (counter) {
+    const txt = tareas.length === 0
+      ? 'Sin tareas'
+      : `${pendientes.length} pendiente${pendientes.length !== 1 ? 's' : ''}${completadas.length > 0 ? ` · ${completadas.length} hecha${completadas.length !== 1 ? 's' : ''}` : ''}`;
+    counter.textContent = txt;
+  }
+
+  if (tareas.length === 0) {
+    lista.innerHTML = `<div style="padding:14px 12px;font-size:13px;color:var(--muted);font-style:italic;text-align:center">Sin tareas pendientes</div>`;
+    return;
+  }
+
+  // Urgentes primero, luego normales, completadas al final
+  const ordenadas = [
+    ...tareas.filter(t => !t.done && t.urgente),
+    ...tareas.filter(t => !t.done && !t.urgente),
+    ...tareas.filter(t => t.done),
+  ];
+
+  lista.innerHTML = ordenadas.map(t => `
+    <div class="tarea-item ${t.done ? 'done' : ''}" onclick="window.onToggleTarea('${t.id}')">
+      <div class="tarea-check">${t.done ? '✓' : ''}</div>
+      <div class="tarea-nombre">${t.nombre}</div>
+      ${t.urgente && !t.done ? '<div class="tarea-urgente">Urgente</div>' : ''}
+    </div>`).join('') +
+    `<div class="tarea-add" onclick="window.onAddTarea()">
+      <div class="tarea-add-icon">+</div>
+      <div class="tarea-add-txt">Añadir tarea...</div>
+    </div>`;
 }
 
 // ── Category tabs ──

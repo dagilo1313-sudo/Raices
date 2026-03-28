@@ -1,6 +1,6 @@
 import { initAuth, toggleAuthMode, handleAuth, showForgotPassword, showLoginForm, sendResetEmail, showChangePassword, hideChangePassword, changePassword, logout } from './auth.js';
-import { toggleHabit, deleteHabit, saveCompletions, resetAllData, resetProgress } from './habits.js';
-import { renderAll, renderHabitsList, renderRangosPanel } from './render.js';
+import { toggleHabit, deleteHabit, saveCompletions, resetAllData, resetProgress, createTarea, toggleTarea, borrarTareasCompletadas } from './habits.js';
+import { renderAll, renderHabitsList, renderRangosPanel, renderTareas } from './render.js';
 import { showToast, showConfetti, switchView } from './ui.js';
 import { openCreateModal, openEditModal, closeModal, closeModalOutside, submitModal, selectEmoji, selectNoIcon, selectCategory, selectXP, toggleDay } from './modal.js';
 import { state, getCompletionMessage, today, CLASES } from './state.js';
@@ -223,5 +223,111 @@ window.confirmReset = async () => {
   } finally { btn.disabled = false; btn.textContent = 'Sí, borrar todo'; }
 };
 
+// ── Tareas ──
+window.onToggleTareas = () => {
+  const panel = document.getElementById('tareas-panel');
+  const chevron = document.getElementById('tareas-chevron');
+  const toggle = document.getElementById('tareas-toggle');
+  if (!panel) return;
+  const isOpen = panel.style.display !== 'none';
+  panel.style.display = isOpen ? 'none' : 'block';
+  if (chevron) chevron.style.transform = isOpen ? '' : 'rotate(180deg)';
+  if (toggle) toggle.classList.toggle('open', !isOpen);
+};
+
+window.onToggleTarea = async (id) => {
+  await toggleTarea(id);
+  renderTareas();
+};
+
+window.onAddTarea = () => {
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.6);display:flex;align-items:flex-end;justify-content:center;animation:fadeIn 0.2s ease';
+  overlay.innerHTML = `
+    <div style="background:var(--card2);border:1px solid var(--border);border-radius:24px 24px 0 0;padding:24px 24px 40px;width:100%;max-width:480px;animation:slideIn 0.3s cubic-bezier(0.34,1.2,0.64,1)">
+      <div style="width:40px;height:4px;background:var(--border);border-radius:4px;margin:0 auto 20px"></div>
+      <div style="font-size:16px;font-weight:600;color:var(--text);margin-bottom:16px">Nueva tarea</div>
+      <input class="input-field" id="nueva-tarea-input" placeholder="Nombre de la tarea..." maxlength="80" style="margin-bottom:12px">
+      <div style="display:flex;gap:8px;margin-bottom:20px">
+        <button id="btn-normal" onclick="setUrgencia(false)" style="flex:1;padding:10px;border-radius:var(--radius-md);border:1px solid var(--border);background:var(--glow);color:var(--accent);font-family:var(--font-body);font-size:13px;cursor:pointer;font-weight:600">Normal</button>
+        <button id="btn-urgente" onclick="setUrgencia(true)" style="flex:1;padding:10px;border-radius:var(--radius-md);border:1px solid rgba(179,92,79,0.3);background:transparent;color:var(--muted);font-family:var(--font-body);font-size:13px;cursor:pointer">Urgente</button>
+      </div>
+      <button onclick="submitTarea()" style="width:100%;background:var(--accent);color:var(--bg);border:none;border-radius:var(--radius-md);padding:14px;font-size:15px;font-weight:600;font-family:var(--font-body);cursor:pointer;margin-bottom:10px">Añadir tarea</button>
+      <button onclick="this.closest('[data-overlay]').remove()" style="width:100%;background:transparent;color:var(--muted);border:1px solid var(--border);border-radius:var(--radius-md);padding:14px;font-size:15px;font-family:var(--font-body);cursor:pointer">Cancelar</button>
+    </div>`;
+  overlay.dataset.overlay = '1';
+  let esUrgente = false;
+  window.setUrgencia = (u) => {
+    esUrgente = u;
+    document.getElementById('btn-normal').style.cssText = `flex:1;padding:10px;border-radius:var(--radius-md);border:1px solid ${u?'var(--border)':'rgba(143,179,57,0.3)'};background:${u?'transparent':'var(--glow)'};color:${u?'var(--muted)':'var(--accent)'};font-family:var(--font-body);font-size:13px;cursor:pointer;font-weight:${u?'400':'600'}`;
+    document.getElementById('btn-urgente').style.cssText = `flex:1;padding:10px;border-radius:var(--radius-md);border:1px solid ${u?'rgba(179,92,79,0.5)':'rgba(179,92,79,0.3)'};background:${u?'rgba(179,92,79,0.1)':'transparent'};color:${u?'#b35c4f':'var(--muted)'};font-family:var(--font-body);font-size:13px;cursor:pointer;font-weight:${u?'600':'400'}`;
+  };
+  window.submitTarea = async () => {
+    const nombre = document.getElementById('nueva-tarea-input').value.trim();
+    if (!nombre) return;
+    await createTarea(nombre, esUrgente);
+    overlay.remove();
+    // Asegurar panel abierto
+    const panel = document.getElementById('tareas-panel');
+    if (panel && panel.style.display === 'none') window.onToggleTareas();
+    renderTareas();
+  };
+  overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
+  // Enter para confirmar
+  overlay.querySelector('input').addEventListener('keydown', e => { if (e.key === 'Enter') window.submitTarea(); });
+  document.body.appendChild(overlay);
+  setTimeout(() => overlay.querySelector('input').focus(), 100);
+};
+
+window.onBorrarCompletadas = () => {
+  const completadas = state.tareas.filter(t => t.done).length;
+  if (!completadas) { showToast('No hay tareas completadas'); return; }
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;padding:24px;animation:fadeIn 0.2s ease';
+  overlay.innerHTML = `
+    <div style="background:var(--card2);border:1px solid var(--border);border-radius:16px;padding:24px;max-width:300px;width:100%;text-align:center">
+      <div style="font-size:16px;font-weight:600;color:var(--text);margin-bottom:8px">¿Borrar completadas?</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.5">Se eliminarán ${completadas} tarea${completadas>1?'s':''} completada${completadas>1?'s':''}. Las pendientes se conservan.</div>
+      <div style="display:flex;gap:8px">
+        <button onclick="this.closest('[data-overlay]').remove()" style="flex:1;background:transparent;border:1px solid var(--border);border-radius:var(--radius-md);padding:10px;font-size:13px;color:var(--muted);font-family:var(--font-body);cursor:pointer">Cancelar</button>
+        <button id="btn-ok-borrar" style="flex:1;background:rgba(179,92,79,0.15);border:1px solid rgba(179,92,79,0.4);border-radius:var(--radius-md);padding:10px;font-size:13px;font-weight:600;color:#b35c4f;font-family:var(--font-body);cursor:pointer">Borrar</button>
+      </div>
+    </div>`;
+  overlay.dataset.overlay = '1';
+  overlay.querySelector('#btn-ok-borrar').addEventListener('click', async () => {
+    await borrarTareasCompletadas();
+    overlay.remove();
+    renderTareas();
+    showToast('Tareas eliminadas 🍂');
+  });
+  overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
+  document.body.appendChild(overlay);
+};
+
+// ── Viajero compacto al scroll ──
+function initScrollCompact() {
+  const view = document.getElementById('view-hoy');
+  if (!view) return;
+  const viajeroCard = view.querySelector('.viajero-card');
+  const viajeroCompact = document.getElementById('viajero-compact');
+  if (!viajeroCard || !viajeroCompact) return;
+
+  view.addEventListener('scroll', () => {
+    const scrollY = view.scrollTop;
+    if (scrollY > 60) {
+      viajeroCard.style.opacity = Math.max(0, 1 - (scrollY - 60) / 40) + '';
+      viajeroCard.style.transform = `translateY(-${Math.min(scrollY - 60, 20)}px)`;
+      viajeroCompact.style.opacity = Math.min(1, (scrollY - 80) / 30) + '';
+      viajeroCompact.style.pointerEvents = scrollY > 100 ? 'auto' : 'none';
+    } else {
+      viajeroCard.style.opacity = '1';
+      viajeroCard.style.transform = '';
+      viajeroCompact.style.opacity = '0';
+      viajeroCompact.style.pointerEvents = 'none';
+    }
+  }, { passive: true });
+}
+
 // ── Arrancar ──
 initAuth();
+setTimeout(initScrollCompact, 500);

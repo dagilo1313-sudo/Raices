@@ -11,6 +11,7 @@ export const state = {
     clase: 0,
     diasPerfectos: 0,
   },
+  tareas: [], // { id, nombre, urgente, done }
 };
 
 // ── Sistema de niveles ──

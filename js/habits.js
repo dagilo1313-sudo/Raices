@@ -8,6 +8,7 @@ import { state, today, calcularNivel, isScheduledForDate, getDiasPerfectos } fro
 // ── Refs ──
 const habitsRef  = () => collection(db, 'users', state.currentUser.uid, 'habits');
 const compsRef   = () => doc(db, 'users', state.currentUser.uid, 'completions', 'data');
+const tareasRef  = () => doc(db, 'users', state.currentUser.uid, 'tareas', 'data');
 const profileRef = () => doc(db, 'users', state.currentUser.uid, 'profile', 'data');
 
 // ── Cargar datos ──
@@ -34,9 +35,11 @@ export async function loadData() {
       await setDoc(profileRef(), { xpTotal: 0, nivel: 1, clase: 0, diasPerfectos: 0 });
       state.perfil = { xpTotal: 0, nivel: 1, clase: 0, diasPerfectos: 0 };
     }
-  } catch(e) {
-    console.error('Error con perfil:', e);
-  }
+  // Cargar tareas
+  try {
+    const t = await getDoc(tareasRef());
+    state.tareas = t.exists() ? (t.data().lista || []) : [];
+  } catch(e) { console.error('Error cargando tareas:', e); state.tareas = []; }
 }
 
 // ── Guardar completions ──
@@ -139,7 +142,32 @@ export async function deleteHabit(id) {
   await saveCompletions();
 }
 
-// ── Resetear solo el progreso (XP, nivel, clase, días perfectos) ──
+// ── Guardar tareas ──
+async function saveTareas() {
+  await setDoc(tareasRef(), { lista: state.tareas });
+}
+
+// ── Crear tarea ──
+export async function createTarea(nombre, urgente = false) {
+  const tarea = { id: Date.now().toString(), nombre, urgente, done: false };
+  state.tareas.push(tarea);
+  await saveTareas();
+  return tarea;
+}
+
+// ── Toggle tarea ──
+export async function toggleTarea(id) {
+  const t = state.tareas.find(t => t.id === id);
+  if (t) { t.done = !t.done; await saveTareas(); }
+}
+
+// ── Borrar tareas completadas ──
+export async function borrarTareasCompletadas() {
+  state.tareas = state.tareas.filter(t => !t.done);
+  await saveTareas();
+}
+
+// ── Resetear solo el progreso ──
 export async function resetProgress() {
   await setDoc(compsRef(), {});
   await setDoc(profileRef(), { xpTotal: 0, nivel: 1, clase: 0, diasPerfectos: 0 });
