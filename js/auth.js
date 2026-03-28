@@ -29,6 +29,7 @@ export function initAuth() {
     } else {
       state.currentUser = null;
       state.habits = [];
+      state.allHabits = [];
       state.completions = {};
       state.perfil = { xpTotal: 0, nivel: 1, clase: 0 };
       document.getElementById('app').style.display = 'none';

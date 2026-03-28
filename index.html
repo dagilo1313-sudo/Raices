@@ -76,6 +76,11 @@
       </div>
     </div>
 
+    <!-- Banner debug (visible solo en modo testing) -->
+    <div id="debug-banner" class="debug-header-banner" style="display:none">
+      ⚠️ Modo testing — sistema cree que hoy es <strong id="debug-banner-date"></strong>
+    </div>
+
     <div class="week-strip" id="week-strip"></div>
 
     <!-- Viajero card -->
@@ -289,6 +294,24 @@
         <button class="btn btn-primary" onclick="changePassword()" style="margin-bottom:8px">Guardar</button>
         <button class="btn btn-secondary" onclick="hideChangePassword()" style="margin-bottom:0">Cancelar</button>
       </div>
+      <!-- Testing -->
+      <div class="card" id="debug-card">
+        <div class="card-title">Modo testing</div>
+        <div style="font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.5">Simula que hoy es una fecha pasada. Útil para testear días perfectos, XP y stats.</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+          <span style="font-size:14px;color:var(--text)">Activar modo testing</span>
+          <div class="toggle-switch" id="debug-toggle" onclick="onToggleDebug()">
+            <div class="toggle-knob"></div>
+          </div>
+        </div>
+        <div id="debug-date-wrap" style="display:none">
+          <input type="date" class="input-field" id="debug-date-input" style="margin-bottom:8px" onchange="onDebugDateChange(this.value)">
+          <div id="debug-active-banner" style="display:none;background:rgba(196,168,79,0.15);border:1px solid rgba(196,168,79,0.4);border-radius:var(--radius-md);padding:10px 14px;font-size:12px;color:var(--accent2);line-height:1.5">
+            ⚠️ Modo testing activo — el sistema cree que hoy es <strong id="debug-date-label"></strong>
+          </div>
+        </div>
+      </div>
+
       <div class="card">
         <div class="card-title">Zona peligrosa</div>
 

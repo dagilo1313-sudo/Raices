@@ -328,6 +328,53 @@ function initScrollCompact() {
   }, { passive: true });
 }
 
+// ── Modo testing ──
+window.onToggleDebug = () => {
+  const toggle = document.getElementById('debug-toggle');
+  const wrap = document.getElementById('debug-date-wrap');
+  const isOn = toggle.classList.contains('on');
+
+  if (isOn) {
+    // Desactivar
+    toggle.classList.remove('on');
+    wrap.style.display = 'none';
+    state.debugDate = null;
+    document.getElementById('debug-active-banner').style.display = 'none';
+    document.getElementById('debug-banner').style.display = 'none';
+    document.getElementById('debug-date-input').value = '';
+    renderAll();
+  } else {
+    // Activar — mostrar selector de fecha
+    toggle.classList.add('on');
+    wrap.style.display = 'block';
+    // Poner fecha de ayer por defecto
+    const ayer = new Date();
+    ayer.setDate(ayer.getDate() - 1);
+    const ayerStr = ayer.toISOString().split('T')[0];
+    document.getElementById('debug-date-input').value = ayerStr;
+    window.onDebugDateChange(ayerStr);
+  }
+};
+
+window.onDebugDateChange = (dateStr) => {
+  if (!dateStr) return;
+  state.debugDate = dateStr;
+
+  // Formatear fecha para mostrar
+  const d = new Date(dateStr + 'T12:00:00');
+  const label = d.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+
+  // Banner en perfil
+  document.getElementById('debug-active-banner').style.display = 'block';
+  document.getElementById('debug-date-label').textContent = label;
+
+  // Banner en vista HOY
+  document.getElementById('debug-banner').style.display = 'block';
+  document.getElementById('debug-banner-date').textContent = label;
+
+  renderAll();
+};
+
 // ── Arrancar ──
 initAuth();
 setTimeout(initScrollCompact, 500);

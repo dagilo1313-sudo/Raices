@@ -1,10 +1,12 @@
 // ── Estado global ──
 export const state = {
   currentUser: null,
-  habits: [],
+  habits: [],       // solo activos (no archivados) — vista Hoy y gestión
+  allHabits: [],    // todos incluyendo archivados — stats e historial
   completions: {},
   activeFilter: 'all',
   selectedDate: null,
+  debugDate: null,  // null = fecha real; string 'YYYY-MM-DD' = modo testing
   perfil: {
     xpTotal: 0,
     nivel: 1,
@@ -98,7 +100,7 @@ export const EMOJIS = [
 ];
 
 // ── Helpers de fecha ──
-export const today = () => new Date().toISOString().split('T')[0];
+export const today = () => state.debugDate || new Date().toISOString().split('T')[0];
 export const getActiveDate = () => state.selectedDate || today();
 
 export const isScheduledForDate = (habit, dateStr) => {
@@ -123,24 +125,12 @@ export const getHabitStreak = (habitId) => {
   return streak;
 };
 
-// ── Días perfectos: días donde se completaron TODOS los hábitos programados ──
-export const getDiasPerfectos = () => {
-  let perfectos = 0;
-  Object.keys(state.completions).forEach(dateStr => {
-    const completedIds = state.completions[dateStr] || [];
-    const scheduled = state.habits.filter(h => isScheduledForDate(h, dateStr));
-    if (scheduled.length > 0 && scheduled.every(h => completedIds.includes(h.id))) {
-      perfectos++;
-    }
-  });
-  return perfectos;
-};
 
 
 export const getXPForDate = (dateStr) => {
   const completedIds = state.completions[dateStr] || [];
   return state.habits
-    .filter(h => completedIds.includes(h.id))
+    .filter(h => !h.archivado && completedIds.includes(h.id))
     .reduce((sum, h) => sum + (h.xp || 10), 0);
 };
 
@@ -148,13 +138,13 @@ export const getTodayXP = () => getXPForDate(today());
 
 export const getMaxXPForDate = (dateStr) => {
   return state.habits
-    .filter(h => isScheduledForDate(h, dateStr))
+    .filter(h => !h.archivado && isScheduledForDate(h, dateStr))
     .reduce((sum, h) => sum + (h.xp || 10), 0);
 };
 
 export const getInsight = () => {
   const todayStr = today();
-  const todayHabits = state.habits.filter(h => isScheduledForDate(h, todayStr));
+  const todayHabits = state.habits.filter(h => !h.archivado && isScheduledForDate(h, todayStr));
   const total = todayHabits.length;
   const done = todayHabits.filter(h => isCompleted(h.id, todayStr)).length;
   const xp = getTodayXP();

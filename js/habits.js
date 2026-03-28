@@ -3,7 +3,7 @@ import {
   collection, doc, addDoc, getDocs, deleteDoc,
   setDoc, getDoc, updateDoc, orderBy, query, writeBatch, increment,
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-import { state, today, calcularNivel, isScheduledForDate, getDiasPerfectos } from './state.js';
+import { state, today, calcularNivel, isScheduledForDate } from './state.js';
 
 // ── Refs ──
 const habitsRef  = () => collection(db, 'users', state.currentUser.uid, 'habits');
@@ -15,7 +15,8 @@ const profileRef = () => doc(db, 'users', state.currentUser.uid, 'profile', 'dat
 export async function loadData() {
   try {
     const snap = await getDocs(query(habitsRef(), orderBy('created', 'asc')));
-    state.habits = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    state.allHabits = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    state.habits = state.allHabits.filter(h => !h.archivado);
   } catch(e) { console.error('Error cargando hábitos:', e); }
 
   try {
@@ -74,7 +75,7 @@ export async function toggleHabit(id) {
     state.perfil.clase = calcDespues.clase;
 
     // Comprobar si hoy es día perfecto tras completar
-    const scheduled = state.habits.filter(h => isScheduledForDate(h, date));
+    const scheduled = state.habits.filter(h => !h.archivado && isScheduledForDate(h, date));
     const todayIsPerfect = scheduled.length > 0 && scheduled.every(h => state.completions[date].includes(h.id));
 
     // Guardar: XP con increment atómico, nivel/clase y diasPerfectos
@@ -84,11 +85,10 @@ export async function toggleHabit(id) {
       clase: calcDespues.clase,
     };
 
-    // Recalcular días perfectos desde el historial y guardar
-    // (solo cuando cambia — al terminar todos los hábitos del día)
+    // Si hoy acaba de ser día perfecto, sumar 1 sin tocar historial
     if (todayIsPerfect) {
-      state.perfil.diasPerfectos = getDiasPerfectos();
-      updates.diasPerfectos = state.perfil.diasPerfectos;
+      state.perfil.diasPerfectos += 1;
+      updates.diasPerfectos = increment(1);
     }
 
     await updateDoc(profileRef(), updates);
@@ -106,14 +106,20 @@ export async function toggleHabit(id) {
     state.perfil.nivel = calc.nivel;
     state.perfil.clase = calc.clase;
 
-    // Recalcular días perfectos (puede que hoy ya no sea perfecto)
-    state.perfil.diasPerfectos = getDiasPerfectos();
+    // Si hoy deja de ser día perfecto, restar 1 sin tocar historial
+    const scheduledDes = state.habits.filter(h => !h.archivado && isScheduledForDate(h, date));
+    const eraPerfecto = scheduledDes.length > 0 && scheduledDes.every(h => state.completions[date].includes(h.id));
+    const dpUpdates = {};
+    if (!eraPerfecto && state.perfil.diasPerfectos > 0) {
+      state.perfil.diasPerfectos -= 1;
+      dpUpdates.diasPerfectos = increment(-1);
+    }
 
     await updateDoc(profileRef(), {
       xpTotal: increment(-xpGanado),
       nivel: calc.nivel,
       clase: calc.clase,
-      diasPerfectos: state.perfil.diasPerfectos,
+      ...dpUpdates,
     });
 
     return { xpGanado: 0, subioNivel: false, subioRango: false, calcDespues: calc };
@@ -124,7 +130,9 @@ export async function toggleHabit(id) {
 export async function createHabit({ name, emoji, category, xp, days }) {
   const data = { name, emoji, category, xp, days: days || [], created: today() };
   const ref = await addDoc(habitsRef(), data);
-  state.habits.push({ id: ref.id, ...data });
+  const newHabit = { id: ref.id, ...data };
+  state.habits.push(newHabit);
+  state.allHabits.push(newHabit);
 }
 
 // ── Editar hábito ──
@@ -133,17 +141,17 @@ export async function editHabit(id, { name, emoji, category, xp, days }) {
   if (idx === -1) return;
   const updates = { name, emoji, category, xp, days: days || [] };
   state.habits[idx] = { ...state.habits[idx], ...updates };
+  const idxAll = state.allHabits.findIndex(h => h.id === id);
+  if (idxAll !== -1) state.allHabits[idxAll] = { ...state.allHabits[idxAll], ...updates };
   await updateDoc(doc(db, 'users', state.currentUser.uid, 'habits', id), updates);
 }
 
-// ── Eliminar hábito ──
+// ── Archivar hábito (soft delete — conserva historial) ──
 export async function deleteHabit(id) {
   state.habits = state.habits.filter(h => h.id !== id);
-  Object.keys(state.completions).forEach(date => {
-    state.completions[date] = state.completions[date].filter(hid => hid !== id);
-  });
-  await deleteDoc(doc(db, 'users', state.currentUser.uid, 'habits', id));
-  await saveCompletions();
+  const idxAll = state.allHabits.findIndex(h => h.id === id);
+  if (idxAll !== -1) state.allHabits[idxAll].archivado = true;
+  await updateDoc(doc(db, 'users', state.currentUser.uid, 'habits', id), { archivado: true });
 }
 
 // ── Guardar tareas ──
@@ -188,6 +196,7 @@ export async function resetAllData() {
   await setDoc(compsRef(), {});
   await setDoc(profileRef(), { xpTotal: 0, nivel: 1, clase: 0, diasPerfectos: 0 });
   state.habits = [];
+  state.allHabits = [];
   state.completions = {};
   state.perfil = { xpTotal: 0, nivel: 1, clase: 0, diasPerfectos: 0 };
 }
