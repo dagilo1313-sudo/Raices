@@ -137,7 +137,8 @@
 
       <!-- Panel desplegable -->
       <div id="tareas-panel" class="tareas-panel" style="display:none">
-        <div style="padding:8px 12px;border-bottom:0.5px solid var(--border);display:flex;justify-content:flex-end">
+        <div style="padding:8px 12px;border-bottom:0.5px solid var(--border);display:flex;justify-content:space-between;align-items:center">
+          <button class="btn-nueva-tarea" onclick="onAddTarea()">+ Nueva tarea</button>
           <button class="btn-borrar-tareas" onclick="onBorrarCompletadas()">Borrar completadas</button>
         </div>
         <div id="tareas-lista"></div>
