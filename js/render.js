@@ -47,6 +47,8 @@ function renderViajero() {
   const claseEl = document.getElementById('viajero-clase');
   if (claseEl) { claseEl.textContent = claseData.nombre; claseEl.style.color = claseData.color; }
   set('viajero-nivel-badge', `Nivel ${calc.nivel}`);
+  const nivelBadgeEl = document.getElementById('viajero-nivel-badge');
+  if (nivelBadgeEl) nivelBadgeEl.style.color = claseData.color;
   set('viajero-stat-perfectos', diasPerfectos);
   set('viajero-stat-xphoy', `+${xpHoy}`);
   set('viajero-stat-exito', exitoPct + '%');
