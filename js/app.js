@@ -313,30 +313,6 @@ window.onBorrarCompletadas = () => {
   document.body.appendChild(overlay);
 };
 
-// ── Viajero compacto al scroll ──
-function initScrollCompact() {
-  const view = document.getElementById('view-hoy');
-  if (!view) return;
-  const viajeroCard = view.querySelector('.viajero-card');
-  const viajeroCompact = document.getElementById('viajero-compact');
-  if (!viajeroCard || !viajeroCompact) return;
-
-  view.addEventListener('scroll', () => {
-    const scrollY = view.scrollTop;
-    if (scrollY > 60) {
-      viajeroCard.style.opacity = Math.max(0, 1 - (scrollY - 60) / 40) + '';
-      viajeroCard.style.transform = `translateY(-${Math.min(scrollY - 60, 20)}px)`;
-      viajeroCompact.style.opacity = Math.min(1, (scrollY - 80) / 30) + '';
-      viajeroCompact.style.pointerEvents = scrollY > 100 ? 'auto' : 'none';
-    } else {
-      viajeroCard.style.opacity = '1';
-      viajeroCard.style.transform = '';
-      viajeroCompact.style.opacity = '0';
-      viajeroCompact.style.pointerEvents = 'none';
-    }
-  }, { passive: true });
-}
-
 // ── Nombre perfil ──
 window.guardarNombrePerfil = async () => {
   const input = document.getElementById('perfil-nombre-input');

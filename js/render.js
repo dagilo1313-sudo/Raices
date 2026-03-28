@@ -160,16 +160,6 @@ function renderViajero() {
   const xpLabelEl = document.getElementById('viajero-xp-label');
   if (xpLabelEl) xpLabelEl.style.color = isPerfectToday ? 'var(--accent2)' : '';
 
-  // Sincronizar viajero compacto
-  const setC = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
-  setC('viajero-compact-emoji', claseData.emoji);
-  setC('viajero-compact-clase', claseData.nombre);
-  setC('viajero-compact-nivel', `Nivel ${calc.nivel}`);
-  setC('viajero-compact-xp', `${calc.xpActual} / ${calc.xpSiguiente} XP`);
-  const compactBar = document.getElementById('viajero-compact-bar');
-  if (compactBar) compactBar.style.width = calc.pct + '%';
-}
-
 // ── Última sync ──
 function renderLastSync() {
   const el = document.getElementById('last-sync');
