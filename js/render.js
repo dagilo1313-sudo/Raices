@@ -411,9 +411,35 @@ function renderCatStats(dateStr) {
         <div style="height:4px;background:var(--border);border-radius:4px;overflow:hidden;margin-bottom:4px">
           <div style="height:100%;width:${pct}%;background:var(--cat-${key});border-radius:4px;transition:width 0.6s"></div>
         </div>
-        <div style="font-size:11px;color:var(--muted);padding:0 2px">${done} / ${total} hábitos</div>
+        <div style="font-size:11px;color:var(--muted);padding:0 2px;margin-bottom:8px">${done} / ${total} hábitos</div>
       </div>`;
   }).join('');
+
+  // Todos los hábitos del día debajo: completados primero, luego pendientes, con cat-badge
+  const allScheduled = state.habits.filter(h => isScheduledForDate(h, dateStr));
+  const allOrdenados = [
+    ...allScheduled.filter(h => (state.completions[dateStr]||[]).includes(h.id)),
+    ...allScheduled.filter(h => !(state.completions[dateStr]||[]).includes(h.id)),
+  ];
+  const completedIds2 = state.completions[dateStr] || [];
+  if (allOrdenados.length) {
+    cl.innerHTML += allOrdenados.map(h => {
+      const isDone = completedIds2.includes(h.id);
+      const cat = CATEGORIES[h.category] || CATEGORIES.disciplina;
+      return `
+        <div class="habit-card ${isDone?'done':''}" style="cursor:default;margin-bottom:6px">
+          ${habitIconHTML(h)}
+          <div class="habit-info">
+            <div class="habit-name">${h.name}</div>
+            <div class="habit-meta">
+              <span class="cat-badge cat-${h.category}">${cat.label}</span>
+              <span class="xp-badge xp-${h.xp}">+${h.xp} XP</span>
+            </div>
+          </div>
+          <div class="check-circle" style="flex-shrink:0">${isDone?'✓':''}</div>
+        </div>`;
+    }).join('');
+  }
 }
 
 // ── Panel de rangos ──
