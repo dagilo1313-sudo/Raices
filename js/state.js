@@ -136,21 +136,6 @@ export const getDiasPerfectos = () => {
   return perfectos;
 };
 
-// ── Éxito por XP: XP recogido / XP máximo posible (proporcional por peso) ──
-export const getExitoXP = () => {
-  let xpRecogido = 0;
-  let xpMaximo = 0;
-  Object.keys(state.completions).forEach(dateStr => {
-    const completedIds = state.completions[dateStr] || [];
-    const scheduled = state.habits.filter(h => isScheduledForDate(h, dateStr));
-    scheduled.forEach(h => {
-      xpMaximo += h.xp || 10;
-      if (completedIds.includes(h.id)) xpRecogido += h.xp || 10;
-    });
-  });
-  return xpMaximo > 0 ? Math.round(xpRecogido / xpMaximo * 100) : 0;
-};
-
 export const getXPForDate = (dateStr) => {
   const completedIds = state.completions[dateStr] || [];
   return state.habits

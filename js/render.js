@@ -1,6 +1,6 @@
 import {
   state, today, isCompleted, isScheduledForDate, getHabitStreak,
-  getTodayXP, getXPForDate, getMaxXPForDate, getDiasPerfectos, getExitoXP,
+  getTodayXP, getXPForDate, getMaxXPForDate,
   CATEGORIES, CLASES, calcularNivel, xpParaNivel, xpTotalClase, NIVELES_POR_CLASE,
 } from './state.js';
 
@@ -36,8 +36,12 @@ function renderViajero() {
   const calc = calcularNivel(xpTotal);
   const claseData = CLASES[calc.clase] || CLASES[0];
 
-  const diasPerfectos = getDiasPerfectos();
-  const exitoPct = getExitoXP();
+  const diasPerfectos = state.perfil.diasPerfectos; // Fix 2: O(1)
+
+  // Fix 3: % XP de hoy, no histórico
+  const xpHoy = getTodayXP();
+  const xpMaxHoy = getMaxXPForDate(today());
+  const exitoPct = xpMaxHoy > 0 ? Math.round(xpHoy / xpMaxHoy * 100) : 0;
   const xpHoy = getTodayXP();
 
   const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
@@ -327,9 +331,12 @@ function renderStatsForDate(dateStr) {
   const xp = getXPForDate(dateStr);
   const pct = total ? Math.round(done / total * 100) : 0;
 
-  const diasPerfectos = getDiasPerfectos();
-  const exitoPct = getExitoXP();
+  const diasPerfectos = state.perfil.diasPerfectos; // Fix 2: O(1)
+
+  // Fix 3: % XP de hoy
   const xpHoy = getXPForDate(today());
+  const xpMaxHoy = getMaxXPForDate(today());
+  const exitoPct = xpMaxHoy > 0 ? Math.round(xpHoy / xpMaxHoy * 100) : 0;
 
   const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
   set('stat-dias-perfectos', diasPerfectos);
