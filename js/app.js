@@ -1,5 +1,5 @@
 import { initAuth, toggleAuthMode, handleAuth, showForgotPassword, showLoginForm, sendResetEmail, showChangePassword, hideChangePassword, changePassword, logout } from './auth.js';
-import { toggleHabit, deleteHabit, saveCompletions, resetAllData, resetProgress, createTarea, toggleTarea, borrarTareasCompletadas } from './habits.js';
+import { toggleHabit, deleteHabit, saveCompletions, resetAllData, resetProgress, createTarea, toggleTarea, borrarTareasCompletadas, getCompletadosForDate } from './habits.js';
 import { renderAll, renderHabitsList, renderRangosPanel, renderTareas } from './render.js';
 import { showToast, showConfetti, switchView } from './ui.js';
 import { openCreateModal, openEditModal, closeModal, closeModalOutside, submitModal, selectEmoji, selectNoIcon, selectCategory, selectXP, toggleDay } from './modal.js';
@@ -39,8 +39,7 @@ window.onToggleHabit = async (id) => {
     const { isScheduledForDate, today } = await import('./state.js');
     const todayStr = today();
     const scheduled = state.habits.filter(h => isScheduledForDate(h, todayStr));
-    const _ctDay = state.completions[todayStr];
-    const completedToday = _ctDay ? (Array.isArray(_ctDay) ? _ctDay : (_ctDay.completados || [])) : [];
+    const completedToday = getCompletadosForDate(todayStr);
     const diaPerfecto = scheduled.length > 0 && scheduled.every(h => completedToday.includes(h.id));
 
     if (diaPerfecto && result.subioNivel) {

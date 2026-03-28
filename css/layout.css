@@ -219,11 +219,15 @@ header {
 .week-strip { display: flex; justify-content: space-between; margin: 0 24px 16px; gap: 6px; }
 .day-cell { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
 .day-name { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
-.day-num { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 500; color: var(--muted); border: 1px solid transparent; }
+.day-num { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 500; color: var(--muted); border: 1px solid transparent; transition: all 0.2s; }
 .day-num.today { border-color: var(--accent); color: var(--accent); font-weight: 700; }
-.day-num.past-done { background: var(--accent3); color: var(--bg); }
-.day-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--border); }
-.day-dot.filled { background: var(--accent); }
+/* Estados del día */
+.day-num.day-golden  { background: rgba(196,168,79,0.2); color: var(--accent2); border-color: var(--accent2); font-weight: 700; }
+.day-num.day-green   { background: var(--accent3); color: var(--bg); border-color: var(--accent3); }
+.day-num.day-partial { border-color: var(--accent); color: var(--accent); }
+.day-dot { width: 4px; height: 4px; border-radius: 50%; background: transparent; }
+.day-dot.filled  { background: var(--accent); }
+.day-dot.perfect { background: var(--accent2); }
 
 /* ── Habit card ── */
 .habit-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 14px 16px; margin-bottom: 10px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: all 0.25s; position: relative; overflow: hidden; animation: slideIn 0.3s ease; }
@@ -317,9 +321,7 @@ header {
 }
 
 /* ── Días perfectos en semana ── */
-.day-num.past-perfect { color: var(--accent); font-weight: 700; }
-.day-dot.perfect { background: var(--accent); box-shadow: 0 0 4px rgba(143,179,57,0.5); }
+
 
 /* ── Días perfectos en calendario ── */
-.cal-day.cal-perfect .cal-dot { background: var(--accent); }
-.cal-day.cal-perfect { color: var(--accent); font-weight: 600; }
+

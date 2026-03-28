@@ -148,14 +148,25 @@ body::before {
 .cal-today-btn:hover { border-color: var(--accent); }
 .cal-weekdays { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; margin-bottom: 6px; }
 .cal-weekday { text-align: center; font-size: 10px; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; padding: 4px 0; }
-.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
-.cal-day { aspect-ratio: 1; border-radius: var(--radius-sm); display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 13px; color: var(--muted); cursor: pointer; transition: all 0.2s; position: relative; gap: 2px; }
-.cal-day:hover:not(.cal-future) { background: var(--card2); color: var(--text); }
-.cal-day.cal-today { color: var(--accent); font-weight: 700; border: 1px solid var(--accent); }
-.cal-day.cal-selected { background: var(--accent); color: var(--bg) !important; border-radius: var(--radius-sm); font-weight: 700; }
-.cal-day.cal-has-done .cal-dot { display: block; }
+.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+.cal-day { aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 12px; color: var(--muted); cursor: pointer; transition: all 0.2s; position: relative; gap: 2px; }
+.cal-day-inner { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 500; border: 1px solid transparent; transition: all 0.2s; }
+.cal-day:hover:not(.cal-future) .cal-day-inner { border-color: var(--border); }
+.cal-day.cal-today .cal-day-inner { border-color: var(--accent); color: var(--accent); font-weight: 700; }
+.cal-day.cal-selected .cal-day-inner { background: var(--accent); color: var(--bg); font-weight: 700; border-color: var(--accent); }
 .cal-day.cal-future { color: var(--border); cursor: default; }
+.cal-day.cal-future .cal-day-inner { color: var(--border); }
+
+/* Estados del día en calendario */
+.cal-day.cal-golden .cal-day-inner { background: rgba(196,168,79,0.2); color: var(--accent2); border-color: var(--accent2); font-weight: 700; }
+.cal-day.cal-green .cal-day-inner  { background: var(--accent3); color: var(--bg); border-color: var(--accent3); }
+.cal-day.cal-partial .cal-day-inner { border-color: var(--accent); color: var(--accent); }
+
 .cal-dot { display: none; width: 4px; height: 4px; border-radius: 50%; background: var(--accent); }
+.cal-day.cal-golden .cal-dot,
+.cal-day.cal-green .cal-dot,
+.cal-day.cal-partial .cal-dot { display: block; }
+.cal-day.cal-golden .cal-dot { background: var(--accent2); }
 .cal-day.cal-selected .cal-dot { background: var(--bg); }
 
 /* ── Stats día ── */

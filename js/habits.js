@@ -5,6 +5,13 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import { state, today, calcularNivel, isScheduledForDate } from './state.js';
 
+// ── Helper: extraer completados de cualquier formato de completions ──
+const completadosOf = (dateStr) => {
+  const d = state.completions[dateStr];
+  if (!d) return [];
+  return Array.isArray(d) ? d : (d.completados || []);
+};
+
 // ── Refs ──
 const habitsRef  = () => collection(db, 'users', state.currentUser.uid, 'habits');
 const compsRef   = () => doc(db, 'users', state.currentUser.uid, 'completions', 'data');
@@ -49,9 +56,7 @@ export async function loadData() {
 
 // ── Helper: leer completados (compatible con formato antiguo array y nuevo objeto) ──
 export function getCompletadosForDate(dateStr) {
-  const d = state.completions[dateStr];
-  if (!d) return [];
-  return Array.isArray(d) ? d : (d.completados || []);
+  return completadosOf(dateStr);
 }
 
 // ── Helper: leer planificados para un día (null si no hay snapshot) ──
@@ -60,6 +65,7 @@ export function getPlanificadosForDate(dateStr) {
   if (!d || Array.isArray(d)) return null;
   return d.planificados || null;
 }
+
 
 // ── Actualizar snapshot del día actual ──
 async function actualizarSnapshotHoy() {

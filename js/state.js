@@ -110,20 +110,21 @@ export const isScheduledForDate = (habit, dateStr) => {
   return habit.days.includes(dayKey);
 };
 
-export const isCompleted = (habitId, date) => {
-  const d = state.completions[date];
-  if (!d) return false;
-  const completados = Array.isArray(d) ? d : (d.completados || []);
-  return completados.includes(habitId);
+// ── Helper local: completados de un día (compatible ambos formatos) ──
+const _comp = (dateStr) => {
+  const d = state.completions[dateStr];
+  if (!d) return [];
+  return Array.isArray(d) ? d : (d.completados || []);
 };
+
+export const isCompleted = (habitId, date) => _comp(date).includes(habitId);
 
 export const getHabitStreak = (habitId) => {
   let streak = 0;
   const d = new Date();
   while (true) {
     const ds = d.toISOString().split('T')[0];
-    const _ds = state.completions[ds]; const _dsc = _ds ? (Array.isArray(_ds) ? _ds : (_ds.completados || [])) : [];
-    if (_dsc.includes(habitId)) {
+    if (_comp(ds).includes(habitId)) {
       streak++; d.setDate(d.getDate() - 1);
     } else break;
   }
@@ -133,9 +134,7 @@ export const getHabitStreak = (habitId) => {
 
 
 export const getXPForDate = (dateStr) => {
-  const d = state.completions[dateStr];
-  if (!d) return 0;
-  const completados = Array.isArray(d) ? d : (d.completados || []);
+  const completados = _comp(dateStr);
   return state.habits
     .filter(h => !h.archivado && completados.includes(h.id))
     .reduce((sum, h) => sum + (h.xp || 10), 0);

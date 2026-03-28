@@ -88,6 +88,17 @@ function renderLastSync() {
 }
 
 // ── Semana ──
+function getDayState(ds, habitsSource) {
+  const completedIds = getCompletadosForDate(ds);
+  const scheduled = habitsSource.filter(h => isScheduledForDate(h, ds));
+  const hasDone = completedIds.length > 0;
+  const isPerfect = scheduled.length > 0 && scheduled.every(h => completedIds.includes(h.id));
+  const xpGanado = getXPForDate(ds);
+  const xpMax = getMaxXPForDate(ds);
+  const isGood = !isPerfect && xpMax > 0 && (xpGanado / xpMax) >= 0.8;
+  return { hasDone, isPerfect, isGood, completedIds, scheduled };
+}
+
 function renderWeek() {
   const strip = document.getElementById('week-strip');
   if (!strip) return;
@@ -99,18 +110,25 @@ function renderWeek() {
     d.setDate(d.getDate() - i);
     const ds = d.toISOString().split('T')[0];
     const isToday = ds === today();
-    const _dayDs = state.completions[ds];
-    const _compDs = _dayDs ? (Array.isArray(_dayDs) ? _dayDs : (_dayDs.completados || [])) : [];
-    const hasDone = _compDs.length > 0;
     const isPast = d < now && !isToday;
-    // Día perfecto: todos los hábitos programados completados
-    const scheduled = state.habits.filter(h => !h.archivado && isScheduledForDate(h, ds));
-    const isPerfect = scheduled.length > 0 && scheduled.every(h => _compDs.includes(h.id));
+    const { hasDone, isPerfect, isGood } = getDayState(ds, state.habits);
+
+    // Clases del círculo del día
+    let numClass = isToday ? 'today' : '';
+    if (isPast || isToday) {
+      if (isPerfect) numClass += ' day-golden';
+      else if (isGood) numClass += ' day-green';
+      else if (hasDone) numClass += ' day-partial';
+    }
+
+    // Clase del punto
+    let dotClass = isPerfect ? 'perfect' : hasDone ? 'filled' : '';
+
     html += `
       <div class="day-cell">
         <div class="day-name">${days[d.getDay()]}</div>
-        <div class="day-num ${isToday ? 'today' : ''} ${isPast && isPerfect ? 'past-perfect' : isPast && hasDone ? 'past-done' : ''}">${d.getDate()}</div>
-        <div class="day-dot ${isPerfect ? 'perfect' : hasDone ? 'filled' : ''}"></div>
+        <div class="day-num ${numClass}">${d.getDate()}</div>
+        <div class="day-dot ${dotClass}"></div>
       </div>`;
   }
   strip.innerHTML = html;
@@ -319,16 +337,21 @@ function renderCalendar(activeDate) {
     const isToday = dateStr === todayStr;
     const isSelected = dateStr === activeDate;
     const isFuture = dateStr > todayStr;
-    const completedIds = getCompletadosForDate(dateStr);
     const habSrc = dateStr === todayStr ? state.habits : state.allHabits;
-    const scheduled = habSrc.filter(h => isScheduledForDate(h, dateStr));
-    const hasDone = completedIds.length > 0;
-    const isPerfect = scheduled.length > 0 && scheduled.every(h => completedIds.includes(h.id));
+    const { hasDone, isPerfect, isGood } = getDayState(dateStr, habSrc);
+
+    let stateClass = '';
+    if (!isFuture) {
+      if (isPerfect)   stateClass = 'cal-golden';
+      else if (isGood) stateClass = 'cal-green';
+      else if (hasDone) stateClass = 'cal-partial';
+    }
+
     html += `
-      <div class="cal-day ${isToday?'cal-today':''} ${isSelected?'cal-selected':''} ${isPerfect&&!isFuture?'cal-perfect':hasDone&&!isFuture?'cal-has-done':''} ${isFuture?'cal-future':''}"
+      <div class="cal-day ${isToday?'cal-today':''} ${isSelected?'cal-selected':''} ${stateClass} ${isFuture?'cal-future':''}"
            onclick="${isFuture?'':` window.selectDate('${dateStr}')`}">
-        ${day}
-        ${(hasDone||isPerfect)&&!isFuture?'<div class="cal-dot"></div>':''}
+        <div class="cal-day-inner">${day}</div>
+        ${hasDone&&!isFuture?'<div class="cal-dot"></div>':''}
       </div>`;
   }
   grid.innerHTML = html;
@@ -368,6 +391,38 @@ function renderStatsForDate(dateStr) {
   set('stat-day-done', `${done}/${total}`);
   set('stat-day-xp', `+${xp} XP`);
   set('stat-day-pct', `${pct}%`);
+
+  // Si no es hoy y no hay ningún dato para ese día → Día no registrado
+  const sinRegistro = !isToday && completedIds.length === 0 && !getPlanificadosForDate(dateStr);
+  const catSection = document.getElementById('cat-stats-list')?.closest('.section');
+  const habSection = document.getElementById('stats-day-habits')?.closest('.section');
+
+  if (sinRegistro) {
+    if (catSection) catSection.style.display = 'none';
+    if (habSection) habSection.style.display = 'none';
+    const sl = document.getElementById('stats-day-habits');
+    // Mostrar mensaje en el contenedor padre aunque esté oculto
+    const container = document.querySelector('#view-stats .section:last-of-type') || document.getElementById('stats-day-habits');
+    document.getElementById('stats-day-habits').innerHTML = '';
+    document.getElementById('cat-stats-list').innerHTML = '';
+    // Crear mensaje fuera de las secciones ocultas
+    let noReg = document.getElementById('stats-no-registro');
+    if (!noReg) {
+      noReg = document.createElement('div');
+      noReg.id = 'stats-no-registro';
+      noReg.style.cssText = 'text-align:center;padding:32px 0;';
+      document.getElementById('cat-stats-list').parentElement.after(noReg);
+    }
+    noReg.style.display = 'block';
+    noReg.innerHTML = '<div style="font-size:32px;margin-bottom:8px">🌱</div><div style="font-size:14px;color:var(--muted)">Día no registrado</div>';
+    return;
+  }
+
+  // Ocultar mensaje si existe y mostrar secciones
+  const noReg = document.getElementById('stats-no-registro');
+  if (noReg) noReg.style.display = 'none';
+  if (catSection) catSection.style.display = '';
+  if (habSection) habSection.style.display = '';
 
   renderStatsDayHabits(dateStr, completedIds, scheduledHabits);
   renderCatStats(dateStr, habitsSource);
