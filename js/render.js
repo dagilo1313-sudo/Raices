@@ -44,7 +44,8 @@ function renderViajero() {
   const exitoPct = xpMaxHoy > 0 ? Math.round(xpHoy / xpMaxHoy * 100) : 0;
 
   const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
-  set('viajero-clase', claseData.nombre);
+  const claseEl = document.getElementById('viajero-clase');
+  if (claseEl) { claseEl.textContent = claseData.nombre; claseEl.style.color = claseData.color; }
   set('viajero-nivel-badge', `Nivel ${calc.nivel}`);
   set('viajero-stat-perfectos', diasPerfectos);
   set('viajero-stat-xphoy', `+${xpHoy}`);
@@ -305,8 +306,11 @@ export function renderHabitsList() {
       if (cat) html += `<div class="cat-group-label cat-${h.category}">${cat.label}</div>`;
       lastCat = h.category;
     }
+    const _dayOrder = ['lun','mar','mie','jue','vie','sab','dom'];
+    const _dayLabel = { lun:'L', mar:'M', mie:'X', jue:'J', vie:'V', sab:'S', dom:'D' };
     const days = h.days && h.days.length > 0
-      ? h.days.map(d => ({ lun:'L',mar:'M',mie:'X',jue:'J',vie:'V',sab:'S',dom:'D' }[d] || d)).join(' ')
+      ? [...h.days].sort((a, b) => _dayOrder.indexOf(a) - _dayOrder.indexOf(b))
+                   .map(d => _dayLabel[d] || d).join(' ')
       : 'Todos los días';
     html += `
       <div class="habit-card" style="cursor:default">

@@ -2,7 +2,7 @@ import { initAuth, toggleAuthMode, handleAuth, showForgotPassword, showLoginForm
 import { toggleHabit, deleteHabit, saveCompletions, resetAllData, resetProgress, createTarea, toggleTarea, borrarTareasCompletadas, getCompletadosForDate } from './habits.js';
 import { renderAll, renderHabitsList, renderRangosPanel, renderTareas } from './render.js';
 import { showToast, showConfetti, switchView } from './ui.js';
-import { openCreateModal, openEditModal, closeModal, closeModalOutside, submitModal, selectEmoji, selectNoIcon, selectCategory, selectXP, toggleDay } from './modal.js';
+import { openCreateModal, openEditModal, closeModal, closeModalOutside, submitModal, selectEmoji, selectNoIcon, selectCategory, selectXP, toggleDay, selectAllDays } from './modal.js';
 import { state, getCompletionMessage, today, CLASES } from './state.js';
 
 // ── Exponer funciones al HTML ──
@@ -25,6 +25,7 @@ window.onSelectNoIcon     = selectNoIcon;
 window.onSelectCategory   = selectCategory;
 window.onSelectXP         = selectXP;
 window.onToggleDay        = toggleDay;
+window.onSelectAllDays    = selectAllDays;
 
 window.switchView = (view) => { switchView(view); renderAll(); };
 window.setFilter  = (filter) => { state.activeFilter = filter; renderAll(); };

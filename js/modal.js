@@ -115,9 +115,13 @@ export function toggleDay(el, dayKey) {
     selectedDays.splice(idx, 1);
     el.classList.remove('selected');
   }
-  // Actualizar label
   const label = document.getElementById('days-label');
   if (label) label.textContent = selectedDays.length === 0 ? 'Todos los días' : '';
+}
+
+export function selectAllDays() {
+  selectedDays = [];
+  renderModalInternals();
 }
 
 // ── Render internals ──
@@ -142,10 +146,12 @@ function renderModalInternals() {
     </div>`
   ).join('');
 
-  // Días de semana
-  document.getElementById('days-chips').innerHTML = DAYS_OF_WEEK.map(d =>
-    `<div class="chip day-chip ${selectedDays.includes(d.key) ? 'selected' : ''}" onclick="window.onToggleDay(this,'${d.key}')">${d.label}</div>`
-  ).join('');
+  // Días de semana + botón Todos
+  document.getElementById('days-chips').innerHTML =
+    DAYS_OF_WEEK.map(d =>
+      `<div class="chip day-chip ${selectedDays.includes(d.key) ? 'selected' : ''}" onclick="window.onToggleDay(this,'${d.key}')">${d.label}</div>`
+    ).join('') +
+    `<div class="chip day-chip" onclick="window.onSelectAllDays()" style="margin-left:4px;color:var(--accent);border-color:rgba(143,179,57,0.4)">Todos</div>`;
 
   const label = document.getElementById('days-label');
   if (label) label.textContent = selectedDays.length === 0 ? 'Todos los días' : '';
