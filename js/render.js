@@ -36,10 +36,9 @@ function renderViajero() {
   const calc = calcularNivel(xpTotal);
   const claseData = CLASES[calc.clase] || CLASES[0];
 
-  const diasPerfectos = state.perfil.diasPerfectos; // Fix 2: O(1)
+  const diasPerfectos = state.perfil.diasPerfectos;
 
-  // Fix 3: % XP de hoy, no histórico
-  const xpHoyStatus = getTodayXP();
+  const xpHoy = getTodayXP();
   const xpMaxHoy = getMaxXPForDate(today());
   const exitoPct = xpMaxHoy > 0 ? Math.round(xpHoy / xpMaxHoy * 100) : 0;
 
@@ -330,16 +329,15 @@ function renderStatsForDate(dateStr) {
   const xp = getXPForDate(dateStr);
   const pct = total ? Math.round(done / total * 100) : 0;
 
-  const diasPerfectos = state.perfil.diasPerfectos; // Fix 2: O(1)
+  const diasPerfectos = state.perfil.diasPerfectos;
 
-  // Fix 3: % XP de hoy
-  const xpHoy = getXPForDate(today());
-  const xpMaxHoy = getMaxXPForDate(today());
-  const exitoPct = xpMaxHoy > 0 ? Math.round(xpHoy / xpMaxHoy * 100) : 0;
+  const xpHoyStats = getXPForDate(today());
+  const xpMaxHoyStats = getMaxXPForDate(today());
+  const exitoPct = xpMaxHoyStats > 0 ? Math.round(xpHoyStats / xpMaxHoyStats * 100) : 0;
 
   const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
   set('stat-dias-perfectos', diasPerfectos);
-  set('stat-total-xp', `+${xpHoyStatus}`);
+  set('stat-total-xp', `+${xpHoyStats}`);
   set('stat-exito-xp', exitoPct + '%');
   set('stat-habits-count', state.habits.length);
   set('stat-day-done', `${done}/${total}`);
