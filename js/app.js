@@ -27,7 +27,14 @@ window.onSelectXP         = selectXP;
 window.onToggleDay        = toggleDay;
 window.onSelectAllDays    = selectAllDays;
 
-window.switchView = (view) => { switchView(view); renderAll(); };
+window.switchView = (view) => {
+  switchView(view);
+  renderAll();
+  if (view === 'perfil') {
+    const input = document.getElementById('perfil-nombre-input');
+    if (input) input.value = state.perfil.nombre || '';
+  }
+};
 window.setFilter  = (filter) => { state.activeFilter = filter; renderAll(); };
 
 // ── Toggle hábito con notificación de subida ──
@@ -328,6 +335,20 @@ function initScrollCompact() {
     }
   }, { passive: true });
 }
+
+// ── Nombre perfil ──
+window.guardarNombrePerfil = async () => {
+  const input = document.getElementById('perfil-nombre-input');
+  const nombre = input?.value.trim();
+  if (!nombre) return;
+  state.perfil.nombre = nombre;
+  const { db } = await import('./firebase.js');
+  const { doc, updateDoc } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
+  await updateDoc(doc(db, 'users', state.currentUser.uid, 'profile', 'data'), { nombre });
+  const ok = document.getElementById('nombre-success');
+  if (ok) { ok.style.display = 'block'; setTimeout(() => { ok.style.display = 'none'; }, 2000); }
+  renderAll();
+};
 
 // ── Modo testing ──
 window.onToggleDebug = () => {

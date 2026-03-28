@@ -39,6 +39,7 @@ export async function loadData() {
       state.perfil.nivel         = data.nivel         || 1;
       state.perfil.clase         = data.clase         || 0;
       state.perfil.diasPerfectos = data.diasPerfectos || 0;
+      state.perfil.nombre        = data.nombre        || 'David';
     } else {
       await setDoc(profileRef(), { xpTotal: 0, nivel: 1, clase: 0, diasPerfectos: 0 });
       state.perfil = { xpTotal: 0, nivel: 1, clase: 0, diasPerfectos: 0 };
@@ -74,9 +75,87 @@ async function actualizarSnapshotHoy() {
   const planificados = scheduled.map(h => h.id);
   const completados = getCompletadosForDate(date);
   const updatedAt = new Date().toISOString();
-  state.completions[date] = { completados, planificados, updatedAt };
+
+  // XP snapshot: ganado y máximo por categoría + total
+  const xpGanadoPorCat = {};
+  const xpMaxPorCat = {};
+  let xpTotal = 0;
+  scheduled.forEach(h => {
+    const cat = h.category || 'disciplina';
+    const xp = h.xp || 10;
+    xpMaxPorCat[cat] = (xpMaxPorCat[cat] || 0) + xp;
+    if (completados.includes(h.id)) {
+      xpGanadoPorCat[cat] = (xpGanadoPorCat[cat] || 0) + xp;
+      xpTotal += xp;
+    }
+  });
+
+  state.completions[date] = { completados, planificados, xpTotal, xpGanadoPorCat, xpMaxPorCat, updatedAt };
   state.completions.updatedAt = updatedAt;
   await setDoc(compsRef(), state.completions);
+}
+
+// ── Helpers de lectura snapshot XP ──
+export function getXPTotalSnapshot(dateStr) {
+  const d = state.completions[dateStr];
+  if (!d || Array.isArray(d) || d.xpTotal === undefined) return null;
+  return d.xpTotal;
+}
+export function getXPGanadoPorCat(dateStr) {
+  const d = state.completions[dateStr];
+  if (!d || Array.isArray(d)) return null;
+  return d.xpGanadoPorCat || null;
+}
+export function getXPMaxPorCat(dateStr) {
+  const d = state.completions[dateStr];
+  if (!d || Array.isArray(d)) return null;
+  return d.xpMaxPorCat || null;
+}
+
+// ── Recalcular XP snapshot del día actual (se llama tras cada toggle) ──
+function recalcularXPSnapshot(date) {
+  const dayData = state.completions[date];
+  if (!dayData || Array.isArray(dayData)) return;
+  const completados = dayData.completados || [];
+  const scheduled = state.habits.filter(h => !h.archivado && isScheduledForDate(h, date));
+  const xpGanadoPorCat = {};
+  const xpMaxPorCat = {};
+  let xpTotal = 0;
+  scheduled.forEach(h => {
+    const cat = h.category || 'disciplina';
+    const xp = h.xp || 10;
+    xpMaxPorCat[cat] = (xpMaxPorCat[cat] || 0) + xp;
+    if (completados.includes(h.id)) {
+      xpGanadoPorCat[cat] = (xpGanadoPorCat[cat] || 0) + xp;
+      xpTotal += xp;
+    }
+  });
+  dayData.xpTotal = xpTotal;
+  dayData.xpGanadoPorCat = xpGanadoPorCat;
+  dayData.xpMaxPorCat = xpMaxPorCat;
+}
+
+// ── Recalcular XP snapshot del día actual ──
+function recalcularXPSnapshot(date) {
+  const dayData = state.completions[date];
+  if (!dayData || Array.isArray(dayData)) return;
+  const completados = dayData.completados || [];
+  const scheduled = state.habits.filter(h => !h.archivado && isScheduledForDate(h, date));
+  const xpGanadoPorCat = {};
+  const xpMaxPorCat = {};
+  let xpTotal = 0;
+  scheduled.forEach(h => {
+    const cat = h.category || 'disciplina';
+    const xp = h.xp || 10;
+    xpMaxPorCat[cat] = (xpMaxPorCat[cat] || 0) + xp;
+    if (completados.includes(h.id)) {
+      xpGanadoPorCat[cat] = (xpGanadoPorCat[cat] || 0) + xp;
+      xpTotal += xp;
+    }
+  });
+  dayData.xpTotal = xpTotal;
+  dayData.xpGanadoPorCat = xpGanadoPorCat;
+  dayData.xpMaxPorCat = xpMaxPorCat;
 }
 
 // ── Guardar completions ──
@@ -100,7 +179,7 @@ export async function toggleHabit(id) {
       planificados: scheduled.map(h => h.id),
     };
   }
-  // Actualizar planificados siempre (por si cambiaron)
+  // Actualizar planificados y XP snapshot siempre
   const scheduledNow = state.habits.filter(h => !h.archivado && isScheduledForDate(h, date));
   state.completions[date].planificados = scheduledNow.map(h => h.id);
   state.completions[date].updatedAt = new Date().toISOString();
@@ -123,6 +202,9 @@ export async function toggleHabit(id) {
 
     state.perfil.nivel = calcDespues.nivel;
     state.perfil.clase = calcDespues.clase;
+
+    // Actualizar XP snapshot del día
+    recalcularXPSnapshot(date);
 
     // Comprobar si hoy es día perfecto tras completar
     const scheduled = state.habits.filter(h => !h.archivado && isScheduledForDate(h, date));
@@ -155,6 +237,9 @@ export async function toggleHabit(id) {
     const calc = calcularNivel(state.perfil.xpTotal);
     state.perfil.nivel = calc.nivel;
     state.perfil.clase = calc.clase;
+
+    // Actualizar XP snapshot del día
+    recalcularXPSnapshot(date);
 
     // Si hoy deja de ser día perfecto, restar 1 sin tocar historial
     const scheduledDes = state.habits.filter(h => !h.archivado && isScheduledForDate(h, date));

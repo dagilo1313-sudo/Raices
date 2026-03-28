@@ -67,7 +67,7 @@ header {
 .viajero-card::before {
   content: '';
   position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
-  background: var(--accent);
+  background: var(--bar-color, var(--accent));
   border-radius: 0;
 }
 

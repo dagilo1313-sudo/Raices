@@ -12,6 +12,7 @@ export const state = {
     nivel: 1,
     clase: 0,
     diasPerfectos: 0,
+    nombre: 'David',
   },
   tareas: [], // { id, nombre, urgente, done }
 };

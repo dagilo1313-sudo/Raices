@@ -3,7 +3,7 @@ import {
   getTodayXP, getXPForDate, getMaxXPForDate,
   CATEGORIES, CLASES, calcularNivel, xpParaNivel, xpTotalClase, NIVELES_POR_CLASE,
 } from './state.js';
-import { getCompletadosForDate, getPlanificadosForDate } from './habits.js';
+import { getCompletadosForDate, getPlanificadosForDate, getXPTotalSnapshot, getXPGanadoPorCat, getXPMaxPorCat } from './habits.js';
 
 export function renderAll() {
   renderDate();
@@ -43,38 +43,68 @@ function renderViajero() {
   const xpMaxHoy = getMaxXPForDate(today());
   const exitoPct = xpMaxHoy > 0 ? Math.round(xpHoy / xpMaxHoy * 100) : 0;
 
+  // Comprobar si hoy es día perfecto
+  const todayStr = today();
+  const scheduledHoy = state.habits.filter(h => !h.archivado && isScheduledForDate(h, todayStr));
+  const isPerfectToday = scheduledHoy.length > 0 && scheduledHoy.every(h => isCompleted(h.id, todayStr));
+  const gold = isPerfectToday ? 'var(--accent2)' : '';
+  const goldBorder = isPerfectToday ? 'rgba(196,168,79,0.4)' : '';
+  const goldBg = isPerfectToday ? 'rgba(196,168,79,0.1)' : '';
+
   const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
-  const claseEl = document.getElementById('viajero-clase');
-  if (claseEl) { claseEl.textContent = claseData.nombre; claseEl.style.color = claseData.color + '8c'; }
+
+  // Nombre desde perfil
   const nombreEl = document.getElementById('viajero-nombre');
-  if (nombreEl) nombreEl.style.color = claseData.color;
-  // Badge nivel con color de clase
+  if (nombreEl) {
+    nombreEl.textContent = state.perfil.nombre || 'David';
+    nombreEl.style.color = isPerfectToday ? 'var(--accent2)' : claseData.color;
+  }
+  const claseEl = document.getElementById('viajero-clase');
+  if (claseEl) { claseEl.textContent = claseData.nombre; claseEl.style.color = isPerfectToday ? 'rgba(196,168,79,0.6)' : claseData.color + '8c'; }
+
+  // Badge nivel
   set('viajero-nivel-badge', `Nivel ${calc.nivel}`);
   const nivelBadgeEl = document.getElementById('viajero-nivel-badge');
   if (nivelBadgeEl) {
-    nivelBadgeEl.style.color = claseData.color;
-    nivelBadgeEl.style.borderColor = claseData.color + '44';
-    nivelBadgeEl.style.background = claseData.color + '18';
-  }
-  set('viajero-stat-perfectos', diasPerfectos);
-  set('viajero-stat-xphoy', `+${xpHoy}`);
-  const exitoEl = document.getElementById('viajero-stat-exito');
-  if (exitoEl) {
-    exitoEl.textContent = exitoPct + '%';
-    exitoEl.style.color = exitoPct >= 100 ? 'var(--accent2)' : '';
+    nivelBadgeEl.style.color = isPerfectToday ? 'var(--accent2)' : claseData.color;
+    nivelBadgeEl.style.borderColor = isPerfectToday ? goldBorder : claseData.color + '44';
+    nivelBadgeEl.style.background = isPerfectToday ? goldBg : claseData.color + '18';
   }
 
+  // Stats
+  set('viajero-stat-perfectos', diasPerfectos);
+  const xpHoyEl = document.getElementById('viajero-stat-xphoy');
+  if (xpHoyEl) { xpHoyEl.textContent = `+${xpHoy}`; xpHoyEl.style.color = gold || 'var(--accent)'; }
+  const exitoEl = document.getElementById('viajero-stat-exito');
+  if (exitoEl) { exitoEl.textContent = exitoPct + '%'; exitoEl.style.color = isPerfectToday ? 'var(--accent2)' : (exitoPct >= 100 ? 'var(--accent2)' : ''); }
+
+  // Barra XP
   if (calc.esMaximo) {
     set('viajero-xp-label', 'Nivel máximo');
   } else {
     set('viajero-xp-label', `${calc.xpActual} / ${calc.xpSiguiente}`);
   }
-
   const fill = document.getElementById('viajero-xp-fill');
-  if (fill) fill.style.width = calc.pct + '%';
+  if (fill) {
+    fill.style.width = calc.pct + '%';
+    fill.style.background = isPerfectToday
+      ? 'linear-gradient(to right, #a07a1a, var(--accent2))'
+      : '';
+  }
 
+  // Avatar border + animación dorada si día perfecto
   const avatarEl = document.getElementById('viajero-avatar-emoji');
   if (avatarEl) avatarEl.textContent = claseData.emoji;
+  const avatarWrap = document.querySelector('.viajero-avatar-wrap');
+  if (avatarWrap) avatarWrap.style.borderColor = isPerfectToday ? 'var(--accent2)' : 'var(--accent)';
+
+  // Barrita lateral
+  const viajeroCard = document.querySelector('.viajero-card');
+  if (viajeroCard) viajeroCard.style.setProperty('--bar-color', isPerfectToday ? 'var(--accent2)' : 'var(--accent)');
+
+  // Tareas wording
+  const tareasSpan = document.querySelector('#tareas-toggle span');
+  if (tareasSpan) tareasSpan.style.color = isPerfectToday ? 'var(--accent2)' : 'var(--accent)';
 
   // Sincronizar viajero compacto
   const setC = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
@@ -427,7 +457,9 @@ function renderStatsForDate(dateStr) {
   const scheduledHabits = isToday ? habitsSource.filter(h => isScheduledForDate(h, dateStr)) : habitsSource;
   const done = scheduledHabits.filter(h => completedIds.includes(h.id)).length;
   const total = scheduledHabits.length;
-  const xp = getXPForDate(dateStr);
+  // XP del día: usar snapshot si existe (inmutable), sino calcular live
+  const xpSnap = getXPTotalSnapshot(dateStr);
+  const xp = (xpSnap !== null && !isToday) ? xpSnap : getXPForDate(dateStr);
   const pct = total ? Math.round(done / total * 100) : 0;
 
   const diasPerfectos = state.perfil.diasPerfectos;
@@ -491,6 +523,7 @@ function renderStatsDayHabits(dateStr, completedIds, scheduledHabits) { // compl
   if (!sl) return;
   const isPerfectDay = scheduledHabits.length > 0 && scheduledHabits.every(h => completedIds.includes(h.id));
   sl.classList.toggle('perfect-day', isPerfectDay);
+  const isToday = dateStr === today();
   if (!scheduledHabits.length) {
     sl.innerHTML = `<div class="empty-state"><div class="empty-icon">📅</div><div class="empty-text">Sin hábitos programados para este día.</div></div>`;
     return;
@@ -522,7 +555,7 @@ function renderStatsDayHabits(dateStr, completedIds, scheduledHabits) { // compl
         <div class="habit-info">
           <div class="habit-name">${h.name}</div>
           <div class="habit-meta">
-            <span class="xp-badge xp-${h.xp}">+${h.xp} XP</span>
+            ${isToday ? `<span class="xp-badge xp-${h.xp}">+${h.xp} XP</span>` : ''}
           </div>
         </div>
         <div class="check-circle" style="flex-shrink:0">${done?'✓':''}</div>
@@ -534,14 +567,21 @@ function renderStatsDayHabits(dateStr, completedIds, scheduledHabits) { // compl
 function renderCatStats(dateStr, habitsSource) {
   const cl = document.getElementById('cat-stats-list');
   if (!cl) return;
+  const isToday = dateStr === today();
   const completedIds = getCompletadosForDate(dateStr);
+  // Snapshot XP por categoría para días pasados
+  const snapGanado = !isToday ? getXPGanadoPorCat(dateStr) : null;
+  const snapMax    = !isToday ? getXPMaxPorCat(dateStr)    : null;
+
   cl.innerHTML = Object.entries(CATEGORIES).map(([key, cat]) => {
     const catHabits = habitsSource.filter(h => h.category === key && isScheduledForDate(h, dateStr));
-    if (!catHabits.length) return '';
+    if (!catHabits.length && !snapMax?.[key]) return '';
     const done = catHabits.filter(h => completedIds.includes(h.id)).length;
     const total = catHabits.length;
-    const xpEarned = catHabits.filter(h => completedIds.includes(h.id)).reduce((s, h) => s + (h.xp||10), 0);
-    const xpMax = catHabits.reduce((s, h) => s + (h.xp||10), 0);
+    // Usar snapshot si existe, sino calcular live
+    const xpEarned = snapGanado ? (snapGanado[key] || 0) : catHabits.filter(h => completedIds.includes(h.id)).reduce((s, h) => s + (h.xp||10), 0);
+    const xpMax    = snapMax    ? (snapMax[key]    || 0) : catHabits.reduce((s, h) => s + (h.xp||10), 0);
+    if (xpMax === 0 && !total) return '';
     const pct = xpMax > 0 ? Math.round(xpEarned / xpMax * 100) : 0;
     return `
       <div style="margin-bottom:16px">
