@@ -91,15 +91,15 @@
           <div class="viajero-avatar" id="viajero-avatar-emoji">🌿</div>
         </div>
         <div class="viajero-info">
-          <div class="viajero-clase" id="viajero-clase">Iniciado</div>
-          <div class="viajero-nombre">Viajero</div>
+          <div class="viajero-clase" id="viajero-clase" style="font-weight:700;font-size:11px">Iniciado</div>
+          <div class="viajero-nombre">David</div>
         </div>
         <!-- Nivel clickable → abre panel rangos -->
         <div class="viajero-nivel-badge" id="viajero-nivel-badge" onclick="openRangosPanel()" title="Ver rangos y niveles">Nivel 1</div>
       </div>
       <div class="viajero-stats-grid">
         <div class="viajero-stat">
-          <div class="viajero-stat-num" id="viajero-stat-perfectos" style="color:var(--accent2)">0</div>
+          <div class="viajero-stat-num" id="viajero-stat-perfectos" style="color:var(--accent2);font-weight:700">0</div>
           <div class="viajero-stat-lbl">Días ✦</div>
         </div>
         <div class="viajero-stat">
@@ -150,17 +150,10 @@
       </div>
     </div>
 
-    <!-- Separador inferior tareas -->
-    <div style="display:flex;align-items:center;gap:10px;margin:10px 20px">
-      <div style="flex:1;height:1px;background:#2a3020"></div>
-      <span style="font-size:8px;color:#2a3020">◆</span>
-      <div style="flex:1;height:1px;background:#2a3020"></div>
-    </div>
-
     <div class="progress-section">
       <div class="progress-header">
         <span class="progress-title">Progreso de hoy</span>
-        <span class="progress-count" id="progress-text">0 / 0</span>
+        <span class="progress-count" id="progress-text" style="color:var(--accent);font-weight:600">0 / 0</span>
       </div>
       <div class="progress-track">
         <div class="progress-fill" id="progress-bar" style="width:0%"></div>
@@ -175,7 +168,7 @@
 
     <!-- Última sync discreta -->
     <div id="last-sync" style="text-align:center;font-size:10px;color:var(--border);padding:4px 0 2px"></div>
-    <div style="text-align:center;font-size:9px;color:var(--border);padding:0 0 12px;letter-spacing:1px">v16</div>
+    <div style="text-align:center;font-size:9px;color:var(--border);padding:0 0 12px;letter-spacing:1px">v17</div>
   </div>
 
   <!-- ══ HÁBITOS ══ -->
@@ -210,7 +203,7 @@
 
     <div class="stats-grid">
       <div class="stat-card">
-        <div class="stat-value" id="stat-dias-perfectos">0</div>
+        <div class="stat-value" id="stat-dias-perfectos" style="color:var(--accent2);font-weight:700">0</div>
         <div class="stat-label">Días perfectos ✦</div>
       </div>
       <div class="stat-card">
