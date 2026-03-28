@@ -351,40 +351,22 @@ function renderStatsDayHabits(dateStr, completedIds, scheduledHabits) {
     sl.innerHTML = `<div class="empty-state"><div class="empty-icon">📅</div><div class="empty-text">Sin hábitos programados para este día.</div></div>`;
     return;
   }
-  const catOrder = Object.keys(CATEGORIES);
-  // Ordenar: por categoría, y dentro completados primero
-  const ordenados = [...scheduledHabits].sort((a, b) => {
-    const catA = catOrder.indexOf(a.category);
-    const catB = catOrder.indexOf(b.category);
-    if (catA !== catB) return catA - catB;
-    const doneA = completedIds.includes(a.id) ? 0 : 1;
-    const doneB = completedIds.includes(b.id) ? 0 : 1;
-    return doneA - doneB;
-  });
-
-  let html = '';
-  let lastCat = null;
-  ordenados.forEach(h => {
+  sl.innerHTML = scheduledHabits.map(h => {
     const done = completedIds.includes(h.id);
     const cat = CATEGORIES[h.category] || CATEGORIES.disciplina;
-    if (h.category !== lastCat) {
-      if (lastCat !== null) html += '';
-      html += `<div class="cat-group-label cat-${h.category}">${cat.label}</div>`;
-      lastCat = h.category;
-    }
-    html += `
+    return `
       <div class="habit-card ${done?'done':''}" style="cursor:default">
         ${habitIconHTML(h)}
         <div class="habit-info">
           <div class="habit-name">${h.name}</div>
           <div class="habit-meta">
+            <span class="cat-badge cat-${h.category}">${cat.label}</span>
             <span class="xp-badge xp-${h.xp}">+${h.xp} XP</span>
           </div>
         </div>
         <div class="check-circle" style="flex-shrink:0">${done?'✓':''}</div>
       </div>`;
-  });
-  sl.innerHTML = html;
+  }).join('');
 }
 
 function renderCatStats(dateStr) {
@@ -399,6 +381,18 @@ function renderCatStats(dateStr) {
     const xpEarned = catHabits.filter(h => completedIds.includes(h.id)).reduce((s, h) => s + (h.xp||10), 0);
     const xpMax = catHabits.reduce((s, h) => s + (h.xp||10), 0);
     const pct = xpMax > 0 ? Math.round(xpEarned / xpMax * 100) : 0;
+    const habitsHTML = catHabits.map(h => {
+      const isDone = completedIds.includes(h.id);
+      return `
+        <div class="habit-card ${isDone?'done':''}" style="cursor:default;margin-bottom:6px">
+          ${habitIconHTML(h)}
+          <div class="habit-info">
+            <div class="habit-name">${h.name}</div>
+            <div class="habit-meta"><span class="xp-badge xp-${h.xp}">+${h.xp} XP</span></div>
+          </div>
+          <div class="check-circle" style="flex-shrink:0">${isDone?'✓':''}</div>
+        </div>`;
+    }).join('');
     return `
       <div style="margin-bottom:16px">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;padding:0 2px">
@@ -408,10 +402,10 @@ function renderCatStats(dateStr) {
             <span style="font-size:16px;font-weight:700;color:var(--cat-${key})">${pct}%</span>
           </div>
         </div>
-        <div style="height:4px;background:var(--border);border-radius:4px;overflow:hidden;margin-bottom:4px">
+        <div style="height:4px;background:var(--border);border-radius:4px;overflow:hidden;margin-bottom:10px">
           <div style="height:100%;width:${pct}%;background:var(--cat-${key});border-radius:4px;transition:width 0.6s"></div>
         </div>
-        <div style="font-size:11px;color:var(--muted);padding:0 2px">${done} / ${total} hábitos</div>
+        ${habitsHTML}
       </div>`;
   }).join('');
 }
