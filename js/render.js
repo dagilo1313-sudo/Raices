@@ -414,7 +414,7 @@ export function renderRangosPanel() {
         html += `
           <div class="rango-nivel-row ${isPast?'nivel-past':''} ${isCurrent?'nivel-current':''}">
             <span class="nivel-tag" style="${isCurrent?`background:${clase.color};color:#0d0f0a`:isPast?`color:${clase.color}`:''}">
-              ${isCurrent?'▶ ':isPast?'✓ ':''}Nv.${n}
+              ${isCurrent?'▹ ':isPast?'✓ ':''}Nv.${n}
             </span>
             <span>${xpEste.toLocaleString()} XP</span>
             <span style="color:var(--muted)">${xpAcum.toLocaleString()} XP</span>
