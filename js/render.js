@@ -45,26 +45,10 @@ function renderViajero() {
 
   const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
   const claseEl = document.getElementById('viajero-clase');
-  if (claseEl) { claseEl.textContent = claseData.nombre; claseEl.style.color = claseData.color; }
-  // CSS variable para barrita y animación avatar
-  const viajeroCard = document.querySelector('.viajero-card');
-  if (viajeroCard) viajeroCard.style.setProperty('--clase-color', claseData.color);
-  // Avatar border dinámico con color de clase + animación personalizada
-  const avatarWrap = document.querySelector('.viajero-avatar-wrap');
-  if (avatarWrap) {
-    avatarWrap.style.borderColor = claseData.color;
-    // Inyectar keyframes dinámicos con tonos de la clase
-    const styleId = 'avatar-anim-style';
-    let styleEl = document.getElementById(styleId);
-    if (!styleEl) { styleEl = document.createElement('style'); styleEl.id = styleId; document.head.appendChild(styleEl); }
-    const c = claseData.color;
-    styleEl.textContent = `@keyframes avatarGlow {
-      0%   { box-shadow: 0 0 0 0 ${c}00, 0 0 0 0 ${c}00; border-color: ${c}; }
-      40%  { box-shadow: 0 0 0 5px ${c}30, 0 0 14px ${c}20; border-color: ${c}; }
-      60%  { box-shadow: 0 0 0 8px ${c}18, 0 0 20px ${c}15; border-color: ${c}bb; }
-      100% { box-shadow: 0 0 0 0 ${c}00, 0 0 0 0 ${c}00; border-color: ${c}; }
-    }`;
-  }
+  if (claseEl) { claseEl.textContent = claseData.nombre; claseEl.style.color = claseData.color + '8c'; }
+  const nombreEl = document.getElementById('viajero-nombre');
+  if (nombreEl) nombreEl.style.color = claseData.color;
+  // Badge nivel con color de clase
   set('viajero-nivel-badge', `Nivel ${calc.nivel}`);
   const nivelBadgeEl = document.getElementById('viajero-nivel-badge');
   if (nivelBadgeEl) {
@@ -285,6 +269,10 @@ function renderHabits() {
   const todayStr = today();
   let scheduled = state.habits.filter(h => !h.archivado && isScheduledForDate(h, todayStr));
   if (state.activeFilter !== 'all') scheduled = scheduled.filter(h => h.category === state.activeFilter);
+
+  // Día perfecto: todos completados → clase golden en el contenedor
+  const allCompleted = scheduled.length > 0 && scheduled.every(h => isCompleted(h.id, todayStr));
+  list.classList.toggle('perfect-day', allCompleted);
 
   if (!scheduled.length) {
     list.innerHTML = `
