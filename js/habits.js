@@ -47,6 +47,32 @@ export async function loadData() {
   } catch(e) { console.error('Error cargando tareas:', e); state.tareas = []; }
 }
 
+// ── Helper: leer completados (compatible con formato antiguo array y nuevo objeto) ──
+export function getCompletadosForDate(dateStr) {
+  const d = state.completions[dateStr];
+  if (!d) return [];
+  return Array.isArray(d) ? d : (d.completados || []);
+}
+
+// ── Helper: leer planificados para un día (null si no hay snapshot) ──
+export function getPlanificadosForDate(dateStr) {
+  const d = state.completions[dateStr];
+  if (!d || Array.isArray(d)) return null;
+  return d.planificados || null;
+}
+
+// ── Actualizar snapshot del día actual ──
+async function actualizarSnapshotHoy() {
+  const date = today();
+  const scheduled = state.habits.filter(h => !h.archivado && isScheduledForDate(h, date));
+  const planificados = scheduled.map(h => h.id);
+  const completados = getCompletadosForDate(date);
+  const updatedAt = new Date().toISOString();
+  state.completions[date] = { completados, planificados, updatedAt };
+  state.completions.updatedAt = updatedAt;
+  await setDoc(compsRef(), state.completions);
+}
+
 // ── Guardar completions ──
 export async function saveCompletions() {
   await setDoc(compsRef(), state.completions);
@@ -55,12 +81,30 @@ export async function saveCompletions() {
 // ── Toggle completado ──
 export async function toggleHabit(id) {
   const date = today();
-  if (!state.completions[date]) state.completions[date] = [];
-  const idx = state.completions[date].indexOf(id);
+  // Inicializar con nueva estructura si no existe
+  if (!state.completions[date]) {
+    const scheduled = state.habits.filter(h => !h.archivado && isScheduledForDate(h, date));
+    state.completions[date] = { completados: [], planificados: scheduled.map(h => h.id) };
+  }
+  // Compatibilidad: migrar formato antiguo (array) a nuevo (objeto)
+  if (Array.isArray(state.completions[date])) {
+    const scheduled = state.habits.filter(h => !h.archivado && isScheduledForDate(h, date));
+    state.completions[date] = {
+      completados: state.completions[date],
+      planificados: scheduled.map(h => h.id),
+    };
+  }
+  // Actualizar planificados siempre (por si cambiaron)
+  const scheduledNow = state.habits.filter(h => !h.archivado && isScheduledForDate(h, date));
+  state.completions[date].planificados = scheduledNow.map(h => h.id);
+  state.completions[date].updatedAt = new Date().toISOString();
+  state.completions.updatedAt = new Date().toISOString();
+
+  const idx = state.completions[date].completados.indexOf(id);
 
   if (idx === -1) {
     // Completar — sumar XP con increment atómico
-    state.completions[date].push(id);
+    state.completions[date].completados.push(id);
     const habit = state.habits.find(h => h.id === id);
     const xpGanado = habit ? (habit.xp || 10) : 10;
 
@@ -76,7 +120,7 @@ export async function toggleHabit(id) {
 
     // Comprobar si hoy es día perfecto tras completar
     const scheduled = state.habits.filter(h => !h.archivado && isScheduledForDate(h, date));
-    const todayIsPerfect = scheduled.length > 0 && scheduled.every(h => state.completions[date].includes(h.id));
+    const todayIsPerfect = scheduled.length > 0 && scheduled.every(h => state.completions[date].completados.includes(h.id));
 
     // Guardar: XP con increment atómico, nivel/clase y diasPerfectos
     const updates = {
@@ -97,7 +141,7 @@ export async function toggleHabit(id) {
 
   } else {
     // Desmarcar — restar XP con increment negativo
-    state.completions[date].splice(idx, 1);
+    state.completions[date].completados.splice(idx, 1);
     const habit = state.habits.find(h => h.id === id);
     const xpGanado = habit ? (habit.xp || 10) : 10;
 
@@ -108,7 +152,7 @@ export async function toggleHabit(id) {
 
     // Si hoy deja de ser día perfecto, restar 1 sin tocar historial
     const scheduledDes = state.habits.filter(h => !h.archivado && isScheduledForDate(h, date));
-    const eraPerfecto = scheduledDes.length > 0 && scheduledDes.every(h => state.completions[date].includes(h.id));
+    const eraPerfecto = scheduledDes.length > 0 && scheduledDes.every(h => state.completions[date].completados.includes(h.id));
     const dpUpdates = {};
     if (!eraPerfecto && state.perfil.diasPerfectos > 0) {
       state.perfil.diasPerfectos -= 1;
@@ -133,6 +177,8 @@ export async function createHabit({ name, emoji, category, xp, days }) {
   const newHabit = { id: ref.id, ...data };
   state.habits.push(newHabit);
   state.allHabits.push(newHabit);
+  // Si el nuevo hábito aplica para hoy, actualizar snapshot
+  if (isScheduledForDate(newHabit, today())) await actualizarSnapshotHoy();
 }
 
 // ── Editar hábito ──
@@ -144,6 +190,8 @@ export async function editHabit(id, { name, emoji, category, xp, days }) {
   const idxAll = state.allHabits.findIndex(h => h.id === id);
   if (idxAll !== -1) state.allHabits[idxAll] = { ...state.allHabits[idxAll], ...updates };
   await updateDoc(doc(db, 'users', state.currentUser.uid, 'habits', id), updates);
+  // Actualizar snapshot por si cambiaron los días programados
+  await actualizarSnapshotHoy();
 }
 
 // ── Archivar hábito (soft delete — conserva historial) ──
@@ -152,6 +200,8 @@ export async function deleteHabit(id) {
   const idxAll = state.allHabits.findIndex(h => h.id === id);
   if (idxAll !== -1) state.allHabits[idxAll].archivado = true;
   await updateDoc(doc(db, 'users', state.currentUser.uid, 'habits', id), { archivado: true });
+  // Actualizar snapshot por si estaba planificado para hoy
+  await actualizarSnapshotHoy();
 }
 
 // ── Guardar tareas ──

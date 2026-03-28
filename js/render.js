@@ -3,6 +3,7 @@ import {
   getTodayXP, getXPForDate, getMaxXPForDate,
   CATEGORIES, CLASES, calcularNivel, xpParaNivel, xpTotalClase, NIVELES_POR_CLASE,
 } from './state.js';
+import { getCompletadosForDate, getPlanificadosForDate } from './habits.js';
 
 export function renderAll() {
   renderDate();
@@ -13,6 +14,7 @@ export function renderAll() {
   renderTareas();
   renderCatTabs();
   renderHabits();
+  renderLastSync();
   renderHabitsList();
   renderStats();
 }
@@ -70,6 +72,21 @@ function renderViajero() {
   if (compactBar) compactBar.style.width = calc.pct + '%';
 }
 
+// ── Última sync ──
+function renderLastSync() {
+  const el = document.getElementById('last-sync');
+  if (!el) return;
+  const todayStr = today();
+  const d = state.completions[todayStr];
+  if (!d || Array.isArray(d) || !d.updatedAt) {
+    el.textContent = '';
+    return;
+  }
+  const fecha = new Date(d.updatedAt);
+  const hora = fecha.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+  el.textContent = `Última sync: ${hora}`;
+}
+
 // ── Semana ──
 function renderWeek() {
   const strip = document.getElementById('week-strip');
@@ -82,11 +99,13 @@ function renderWeek() {
     d.setDate(d.getDate() - i);
     const ds = d.toISOString().split('T')[0];
     const isToday = ds === today();
-    const hasDone = state.completions[ds] && state.completions[ds].length > 0;
+    const _dayDs = state.completions[ds];
+    const _compDs = _dayDs ? (Array.isArray(_dayDs) ? _dayDs : (_dayDs.completados || [])) : [];
+    const hasDone = _compDs.length > 0;
     const isPast = d < now && !isToday;
     // Día perfecto: todos los hábitos programados completados
     const scheduled = state.habits.filter(h => !h.archivado && isScheduledForDate(h, ds));
-    const isPerfect = scheduled.length > 0 && scheduled.every(h => (state.completions[ds] || []).includes(h.id));
+    const isPerfect = scheduled.length > 0 && scheduled.every(h => _compDs.includes(h.id));
     html += `
       <div class="day-cell">
         <div class="day-name">${days[d.getDay()]}</div>
@@ -300,7 +319,7 @@ function renderCalendar(activeDate) {
     const isToday = dateStr === todayStr;
     const isSelected = dateStr === activeDate;
     const isFuture = dateStr > todayStr;
-    const completedIds = state.completions[dateStr] || [];
+    const completedIds = getCompletadosForDate(dateStr);
     const habSrc = dateStr === todayStr ? state.habits : state.allHabits;
     const scheduled = habSrc.filter(h => isScheduledForDate(h, dateStr));
     const hasDone = completedIds.length > 0;
@@ -322,10 +341,15 @@ function renderStatsForDate(dateStr) {
   const statsDateLabel = document.getElementById('stats-date-label');
   if (statsDateLabel) statsDateLabel.textContent = isToday ? 'Hoy' : dateLabel;
 
-  // Hoy → solo activos; días pasados → todos incluyendo archivados
-  const habitsSource = isToday ? state.habits : state.allHabits;
-  const completedIds = state.completions[dateStr] || [];
-  const scheduledHabits = habitsSource.filter(h => isScheduledForDate(h, dateStr));
+  // Hoy → solo activos; días pasados → snapshot planificados o allHabits como fallback
+  const planificados = !isToday ? getPlanificadosForDate(dateStr) : null;
+  const habitsSource = isToday
+    ? state.habits
+    : planificados
+      ? state.allHabits.filter(h => planificados.includes(h.id))
+      : state.allHabits.filter(h => isScheduledForDate(h, dateStr));
+  const completedIds = getCompletadosForDate(dateStr);
+  const scheduledHabits = isToday ? habitsSource.filter(h => isScheduledForDate(h, dateStr)) : habitsSource;
   const done = scheduledHabits.filter(h => completedIds.includes(h.id)).length;
   const total = scheduledHabits.length;
   const xp = getXPForDate(dateStr);
@@ -349,7 +373,7 @@ function renderStatsForDate(dateStr) {
   renderCatStats(dateStr, habitsSource);
 }
 
-function renderStatsDayHabits(dateStr, completedIds, scheduledHabits) {
+function renderStatsDayHabits(dateStr, completedIds, scheduledHabits) { // completedIds ya viene como array limpio
   const sl = document.getElementById('stats-day-habits');
   if (!sl) return;
   if (!scheduledHabits.length) {
@@ -395,7 +419,7 @@ function renderStatsDayHabits(dateStr, completedIds, scheduledHabits) {
 function renderCatStats(dateStr, habitsSource) {
   const cl = document.getElementById('cat-stats-list');
   if (!cl) return;
-  const completedIds = state.completions[dateStr] || [];
+  const completedIds = getCompletadosForDate(dateStr);
   cl.innerHTML = Object.entries(CATEGORIES).map(([key, cat]) => {
     const catHabits = habitsSource.filter(h => h.category === key && isScheduledForDate(h, dateStr));
     if (!catHabits.length) return '';
@@ -422,11 +446,12 @@ function renderCatStats(dateStr, habitsSource) {
 
   // Todos los hábitos del día debajo: completados primero, luego pendientes, con cat-badge
   const allScheduled = habitsSource.filter(h => isScheduledForDate(h, dateStr));
+  const _cdAll = getCompletadosForDate(dateStr);
   const allOrdenados = [
-    ...allScheduled.filter(h => (state.completions[dateStr]||[]).includes(h.id)),
-    ...allScheduled.filter(h => !(state.completions[dateStr]||[]).includes(h.id)),
+    ...allScheduled.filter(h => _cdAll.includes(h.id)),
+    ...allScheduled.filter(h => !_cdAll.includes(h.id)),
   ];
-  const completedIds2 = state.completions[dateStr] || [];
+  const completedIds2 = _cdAll;
   if (allOrdenados.length) {
     cl.innerHTML += allOrdenados.map(h => {
       const isDone = completedIds2.includes(h.id);
