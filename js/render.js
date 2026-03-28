@@ -142,7 +142,7 @@ export function renderTareas() {
   }
 
   if (tareas.length === 0) {
-    lista.innerHTML = `<div style="padding:14px 12px;font-size:13px;color:var(--muted);font-style:italic;text-align:center">Sin tareas pendientes</div>`;
+    lista.innerHTML = `<div style="padding:14px 12px;font-size:13px;color:var(--muted);font-style:italic;text-align:center">Sin tareas aún</div>`;
     return;
   }
 
@@ -158,11 +158,7 @@ export function renderTareas() {
       <div class="tarea-check">${t.done ? '✓' : ''}</div>
       <div class="tarea-nombre">${t.nombre}</div>
       ${t.urgente && !t.done ? '<div class="tarea-urgente">Urgente</div>' : ''}
-    </div>`).join('') +
-    `<div class="tarea-add" onclick="window.onAddTarea()">
-      <div class="tarea-add-icon">+</div>
-      <div class="tarea-add-txt">Añadir tarea...</div>
-    </div>`;
+    </div>`).join('');
 }
 
 // ── Category tabs ──

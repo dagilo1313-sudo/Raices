@@ -35,12 +35,15 @@ export async function loadData() {
       await setDoc(profileRef(), { xpTotal: 0, nivel: 1, clase: 0, diasPerfectos: 0 });
       state.perfil = { xpTotal: 0, nivel: 1, clase: 0, diasPerfectos: 0 };
     }
-    // Cargar tareas
-    try {
-      const t = await getDoc(tareasRef());
-      state.tareas = t.exists() ? (t.data().lista || []) : [];
-    } catch(e) { console.error('Error cargando tareas:', e); state.tareas = []; }
-  } catch(e) { console.error('Error con perfil:', e); }
+  } catch(e) {
+    console.error('Error con perfil:', e);
+  }
+
+  // Cargar tareas
+  try {
+    const t = await getDoc(tareasRef());
+    state.tareas = t.exists() ? (t.data().lista || []) : [];
+  } catch(e) { console.error('Error cargando tareas:', e); state.tareas = []; }
 }
 
 // ── Guardar completions ──
