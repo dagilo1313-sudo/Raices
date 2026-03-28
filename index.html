@@ -17,14 +17,12 @@
 </head>
 <body>
 
-<!-- ── Loading ── -->
 <div id="loading-screen">
   <div class="loading-logo">🌿</div>
   <div class="loading-sub">Raíces</div>
   <div class="spinner"></div>
 </div>
 
-<!-- ── Auth ── -->
 <div id="auth-screen" style="display:none">
   <div class="auth-logo">🌿</div>
   <div class="auth-tagline">Tu jardín de hábitos</div>
@@ -47,10 +45,9 @@
   </div>
 </div>
 
-<!-- ── App ── -->
 <div class="app" id="app">
 
-  <!-- ══ Vista: HOY ══ -->
+  <!-- ══ HOY ══ -->
   <div class="view active" id="view-hoy">
     <header>
       <div class="header-top">
@@ -60,13 +57,17 @@
         </div>
         <div class="header-right">
           <div class="date-badge" id="date-display"></div>
+          <!-- Avatar clickable → va al perfil -->
+          <div class="viajero-avatar-header" id="viajero-avatar-header" onclick="switchView('perfil')" title="Ver perfil">
+            <span id="viajero-avatar-emoji-header">🌿</span>
+          </div>
         </div>
       </div>
     </header>
 
     <div class="week-strip" id="week-strip"></div>
 
-    <!-- Viajero -->
+    <!-- Viajero card -->
     <div class="viajero-card">
       <div class="viajero-top-row">
         <div class="viajero-avatar-wrap">
@@ -76,52 +77,33 @@
           <div class="viajero-clase" id="viajero-clase">Iniciado</div>
           <div class="viajero-nombre">Viajero</div>
         </div>
-        <div style="display:flex;align-items:center;gap:8px">
-          <div class="viajero-nivel-badge" id="viajero-nivel-badge">Nivel 1</div>
-          <button class="btn-rangos-info" onclick="openRangosPanel()" title="Ver rangos y niveles">ℹ</button>
-        </div>
+        <!-- Nivel clickable → abre panel rangos -->
+        <div class="viajero-nivel-badge" id="viajero-nivel-badge" onclick="openRangosPanel()" title="Ver rangos y niveles">Nivel 1</div>
       </div>
       <div class="viajero-stats-grid">
         <div class="viajero-stat">
-          <div class="viajero-stat-num" id="viajero-streak">0</div>
-          <div class="viajero-stat-lbl">Racha</div>
+          <div class="viajero-stat-num" id="viajero-stat-perfectos">0</div>
+          <div class="viajero-stat-lbl">Días ✦</div>
         </div>
         <div class="viajero-stat">
-          <div class="viajero-stat-num" id="viajero-xp-total">0</div>
+          <div class="viajero-stat-num" id="viajero-stat-xphoy">+0</div>
           <div class="viajero-stat-lbl">XP hoy</div>
         </div>
         <div class="viajero-stat">
-          <div class="viajero-stat-num" id="viajero-exito">0%</div>
-          <div class="viajero-stat-lbl">Éxito</div>
+          <div class="viajero-stat-num" id="viajero-stat-exito">0%</div>
+          <div class="viajero-stat-lbl">% XP</div>
         </div>
       </div>
       <div class="viajero-xp-bar-wrap">
         <div class="viajero-xp-hdr">
           <span>XP al siguiente nivel</span>
-          <span id="viajero-xp-label">0 / 500</span>
+          <span id="viajero-xp-label">0 / 100</span>
         </div>
         <div class="viajero-xp-track">
           <div class="viajero-xp-fill" id="viajero-xp-fill"></div>
         </div>
       </div>
     </div>
-
-    <!-- <div class="streak-bar">
-      <div class="streak-icon">🌿</div>
-      <div class="streak-text">
-        <div class="streak-number" id="global-streak">0</div>
-        <div class="streak-label">días en racha</div>
-      </div>
-      <div class="streak-dots" id="streak-dots"></div>
-    </div> -->
-
-    <!-- <div class="xp-bar">
-      <div class="xp-icon">⚡</div>
-      <div class="xp-text">
-        <div class="xp-number" id="total-xp">0</div>
-        <div class="xp-label">XP total <span class="xp-today" id="today-xp"></span></div>
-      </div>
-    </div> -->
 
     <div style="text-align:center;font-size:13px;color:#2a3020;letter-spacing:8px;margin:4px 0 8px">— ⚔ —</div>
 
@@ -142,7 +124,7 @@
     </div>
   </div>
 
-  <!-- ══ Vista: HÁBITOS (gestión) ══ -->
+  <!-- ══ HÁBITOS ══ -->
   <div class="view" id="view-habitos">
     <header>
       <div class="header-top">
@@ -152,7 +134,6 @@
         </div>
       </div>
     </header>
-
     <div class="section">
       <div class="section-header">
         <span class="section-label">Todos los hábitos</span>
@@ -162,7 +143,7 @@
     </div>
   </div>
 
-  <!-- ══ Vista: ESTADÍSTICAS ══ -->
+  <!-- ══ STATS ══ -->
   <div class="view" id="view-stats">
     <header>
       <div class="header-top">
@@ -173,19 +154,18 @@
       </div>
     </header>
 
-    <!-- Globales -->
     <div class="stats-grid">
       <div class="stat-card">
-        <div class="stat-value" id="stat-total-done">0</div>
-        <div class="stat-label">Completados</div>
+        <div class="stat-value" id="stat-dias-perfectos">0</div>
+        <div class="stat-label">Días perfectos ✦</div>
       </div>
       <div class="stat-card">
         <div class="stat-value" id="stat-total-xp">0</div>
         <div class="stat-label">XP Total ⚡</div>
       </div>
       <div class="stat-card">
-        <div class="stat-value" id="stat-best-streak">0</div>
-        <div class="stat-label">Racha actual</div>
+        <div class="stat-value" id="stat-exito-xp">0%</div>
+        <div class="stat-label">% XP recogido</div>
       </div>
       <div class="stat-card">
         <div class="stat-value" id="stat-habits-count">0</div>
@@ -193,7 +173,6 @@
       </div>
     </div>
 
-    <!-- Calendario -->
     <div class="cal-wrapper">
       <div class="cal-header">
         <div class="cal-nav">
@@ -204,18 +183,14 @@
         <button class="cal-today-btn" onclick="calGoToday()">Hoy</button>
       </div>
       <div class="cal-weekdays">
-        <div class="cal-weekday">L</div>
-        <div class="cal-weekday">M</div>
-        <div class="cal-weekday">X</div>
-        <div class="cal-weekday">J</div>
-        <div class="cal-weekday">V</div>
-        <div class="cal-weekday">S</div>
+        <div class="cal-weekday">L</div><div class="cal-weekday">M</div>
+        <div class="cal-weekday">X</div><div class="cal-weekday">J</div>
+        <div class="cal-weekday">V</div><div class="cal-weekday">S</div>
         <div class="cal-weekday">D</div>
       </div>
       <div class="cal-grid" id="cal-grid"></div>
     </div>
 
-    <!-- Resumen del día seleccionado -->
     <div class="section">
       <div class="section-header">
         <span class="section-label" id="stats-date-label">Hoy</span>
@@ -233,26 +208,21 @@
       </div>
       <div class="stats-day-card">
         <div class="stats-day-value" id="stat-day-pct">0%</div>
-        <div class="stats-day-label">Éxito</div>
+        <div class="stats-day-label">Completado</div>
       </div>
     </div>
 
     <div class="section">
-      <div class="section-header">
-        <span class="section-label">Por categoría</span>
-      </div>
+      <div class="section-header"><span class="section-label">Por categoría</span></div>
       <div id="cat-stats-list"></div>
     </div>
-
     <div class="section">
-      <div class="section-header">
-        <span class="section-label">Hábitos del día</span>
-      </div>
+      <div class="section-header"><span class="section-label">Hábitos del día</span></div>
       <div id="stats-day-habits"></div>
     </div>
   </div>
 
-  <!-- ══ Vista: PERFIL ══ -->
+  <!-- ══ PERFIL ══ -->
   <div class="view" id="view-perfil">
     <header>
       <div class="header-top">
@@ -262,15 +232,12 @@
         </div>
       </div>
     </header>
-
     <div class="profile-section">
-
       <div class="card">
         <div class="card-title">Cuenta</div>
         <div style="font-size:14px;color:var(--muted);margin-bottom:16px" id="profile-email"></div>
         <button class="btn btn-primary" style="margin-bottom:0" onclick="showChangePassword()">Cambiar contraseña</button>
       </div>
-
       <div class="card" id="change-password-card" style="display:none">
         <div class="card-title">Nueva contraseña</div>
         <div class="msg-error" id="cp-error"></div>
@@ -281,35 +248,24 @@
         <button class="btn btn-primary" onclick="changePassword()" style="margin-bottom:8px">Guardar</button>
         <button class="btn btn-secondary" onclick="hideChangePassword()" style="margin-bottom:0">Cancelar</button>
       </div>
-
-      <!-- Reset de datos -->
       <div class="card">
         <div class="card-title">Zona peligrosa</div>
-
         <div id="reset-confirm-1">
-          <div style="font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.5">
-            Borra todos tus hábitos y progreso de forma permanente. Solo afecta a tu cuenta.
-          </div>
+          <div style="font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.5">Borra todos tus hábitos y progreso de forma permanente.</div>
           <button class="btn btn-danger" style="margin-bottom:0" onclick="showResetConfirm1()">Reiniciar todos los datos</button>
         </div>
-
-        <div id="reset-confirm-2">
-          <div class="reset-warning">
-            ⚠️ Esta acción es <strong>irreversible</strong>. Se borrarán todos tus hábitos, rachas y progreso. ¿Estás seguro?
-          </div>
+        <div id="reset-confirm-2" style="display:none">
+          <div class="reset-warning">⚠️ Esta acción es <strong>irreversible</strong>. ¿Estás seguro?</div>
           <button class="btn btn-danger" id="btn-confirm-reset" style="margin-bottom:8px" onclick="confirmReset()">Sí, borrar todo</button>
           <button class="btn btn-secondary" style="margin-bottom:0" onclick="cancelReset()">Cancelar</button>
         </div>
       </div>
-
       <div class="card">
         <button class="btn btn-danger" onclick="logout()" style="margin-bottom:0">Cerrar sesión</button>
       </div>
-
     </div>
   </div>
 
-  <!-- ── Nav bar (4 pestañas) ── -->
   <nav class="nav-bar">
     <div class="nav-item active" id="nav-hoy" onclick="switchView('hoy')">
       <div class="nav-icon">🌿</div>Hoy
@@ -325,30 +281,24 @@
     </div>
   </nav>
 
-</div><!-- /app -->
+</div>
 
-<!-- ── Modal crear/editar hábito ── -->
+<!-- Modal hábito -->
 <div class="modal-overlay" id="modal" onclick="closeModalOutside(event)">
   <div class="modal">
     <div class="modal-handle"></div>
     <div class="modal-title" id="modal-title">Planta un nuevo hábito</div>
-
     <label class="modal-label">Nombre</label>
     <input class="input-field" id="habit-name-input" placeholder="Nombre del hábito..." maxlength="40">
-
     <label class="modal-label">Icono</label>
     <div class="emoji-grid" id="emoji-grid"></div>
-
     <label class="modal-label">Categoría</label>
     <div class="chips-row" id="cat-chips"></div>
-
     <label class="modal-label">Dificultad · XP</label>
     <div class="chips-row" id="xp-chips"></div>
-
     <label class="modal-label">Días de la semana</label>
     <div class="modal-hint" id="days-label">Todos los días</div>
     <div class="chips-row" id="days-chips"></div>
-
     <button class="btn btn-primary" id="btn-modal-submit" onclick="submitModal()">Plantar hábito 🌱</button>
     <button class="btn btn-secondary" onclick="closeModal()" style="margin-bottom:0">Cancelar</button>
   </div>
@@ -356,17 +306,17 @@
 
 <div class="toast" id="toast"></div>
 
-<!-- ── Panel Rangos ── -->
+<!-- Panel Rangos -->
 <div class="modal-overlay" id="rangos-overlay" onclick="if(event.target===this)closeRangosPanel()">
   <div class="modal">
     <div class="modal-handle"></div>
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
       <div class="modal-title" style="margin:0">Rangos y Niveles</div>
       <button onclick="closeRangosPanel()" style="background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;padding:0">×</button>
     </div>
-    <div style="font-size:12px;color:var(--muted);margin-bottom:20px;line-height:1.5">
-      Cada rango tiene 30 niveles. El XP necesario crece con cada nivel.<br>
-      Fórmula: <span style="color:var(--accent);font-family:monospace">XP(n) = 100 × n¹·⁸</span>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:16px;line-height:1.6">
+      6 rangos · 30 niveles cada uno · ~50.000 XP por rango<br>
+      <span style="color:var(--accent)">XP(n) = 100 × n<sup>1.025</sup></span> · Nivel 1→2: 100 XP · Nivel 29→30: 3.155 XP
     </div>
     <div id="rangos-content"></div>
   </div>
@@ -378,6 +328,5 @@
   }
 </script>
 <script type="module" src="js/app.js"></script>
-
 </body>
 </html>
