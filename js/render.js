@@ -244,7 +244,10 @@ function renderCatTabs() {
   const tabs = document.getElementById('cat-tabs');
   if (!tabs) return;
   const active = state.activeFilter;
-  let html = `<div class="cat-tab ${active === 'all' ? 'active-all' : ''}" onclick="window.setFilter('all')">Todos</div>`;
+  const todayStr = today();
+  const scheduled = state.habits.filter(h => !h.archivado && isScheduledForDate(h, todayStr));
+  const allDone = scheduled.length > 0 && scheduled.every(h => isCompleted(h.id, todayStr));
+  let html = `<div class="cat-tab ${active === 'all' ? (allDone ? 'active-all-perfect' : 'active-all') : ''}" onclick="window.setFilter('all')">Todos</div>`;
   Object.entries(CATEGORIES).forEach(([key, cat]) => {
     html += `<div class="cat-tab ${active === key ? `active-${key}` : ''}" onclick="window.setFilter('${key}')">${cat.label}</div>`;
   });
@@ -437,9 +440,15 @@ function renderStatsForDate(dateStr) {
   set('stat-total-xp', `+${xpHoyStats}`);
   set('stat-exito-xp', exitoPct + '%');
   set('stat-habits-count', state.habits.filter(h => !h.archivado).length);
-  set('stat-day-done', `${done}/${total}`);
-  set('stat-day-xp', `+${xp} XP`);
-  set('stat-day-pct', `${pct}%`);
+  const isPerfectStats = total > 0 && done === total;
+  const goldColor = isPerfectStats ? 'var(--accent2)' : '';
+  const setGold = (id, val) => {
+    const el = document.getElementById(id);
+    if (el) { el.textContent = val; el.style.color = goldColor; }
+  };
+  setGold('stat-day-done', `${done}/${total}`);
+  setGold('stat-day-xp', `+${xp} XP`);
+  setGold('stat-day-pct', `${pct}%`);
 
   // Si no es hoy y no hay ningún dato para ese día → Día no registrado
   const sinRegistro = !isToday && completedIds.length === 0 && !getPlanificadosForDate(dateStr);
@@ -480,6 +489,8 @@ function renderStatsForDate(dateStr) {
 function renderStatsDayHabits(dateStr, completedIds, scheduledHabits) { // completedIds ya viene como array limpio
   const sl = document.getElementById('stats-day-habits');
   if (!sl) return;
+  const isPerfectDay = scheduledHabits.length > 0 && scheduledHabits.every(h => completedIds.includes(h.id));
+  sl.classList.toggle('perfect-day', isPerfectDay);
   if (!scheduledHabits.length) {
     sl.innerHTML = `<div class="empty-state"><div class="empty-icon">📅</div><div class="empty-text">Sin hábitos programados para este día.</div></div>`;
     return;
