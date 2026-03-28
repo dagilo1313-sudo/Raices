@@ -21,50 +21,66 @@ export function showToast(msg) {
 
 // ── Confetti ──
 export function showConfetti() {
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const CW = window.innerWidth, CH = window.innerHeight;
   const cv = document.createElement('canvas');
-  cv.style.cssText = 'position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:9999';
-  cv.width = window.innerWidth; cv.height = window.innerHeight;
+  cv.width = CW * dpr; cv.height = CH * dpr;
+  cv.style.cssText = `position:fixed;inset:0;width:${CW}px;height:${CH}px;pointer-events:none;z-index:9999`;
   document.body.appendChild(cv);
   const ctx = cv.getContext('2d');
+  ctx.scale(dpr, dpr);
+  const cx = CW/2, cy = CH * 0.42;
+  // Burst orbital: 3 anillos de partículas que explotan hacia afuera
+  const rings = [
+    { n:8,  r1:60, speed:3.5, delay:0,  hue:44 },
+    { n:12, r1:88, speed:2.6, delay:50, hue:38 },
+    { n:6,  r1:42, speed:4.2, delay:15, hue:50 },
+  ];
   const ps = [];
-  const cx = cv.width/2, cy = cv.height * 0.42;
-  for (let i = 0; i < 32; i++) {
-    const a = (Math.random() * Math.PI * 2);
-    const speed = 1.5 + Math.random() * 3.5;
-    ps.push({
-      x: cx + (Math.random()-.5)*80,
-      y: cy + (Math.random()-.5)*30,
-      vx: Math.cos(a)*speed,
-      vy: Math.sin(a)*speed - 1.5,
-      life: 1, decay: 0.012+Math.random()*0.01,
-      r: 1.5+Math.random()*2.5,
-      hue: 38+Math.random()*20,
-    });
-  }
-  let t = 0;
-  function frame() {
-    t++; ctx.clearRect(0,0,cv.width,cv.height);
-    let alive = false;
-    ps.forEach(p => {
-      p.x+=p.vx; p.y+=p.vy; p.vy+=0.06; p.vx*=0.98;
+  rings.forEach(ring => {
+    for(let i=0;i<ring.n;i++){
+      const a=(i/ring.n)*Math.PI*2+Math.random()*.25;
+      ps.push({
+        angle:a, r:0, targetR:ring.r1,
+        speed:ring.speed*(0.8+Math.random()*.4),
+        life:1, decay:.013+Math.random()*.008,
+        size:1.8+Math.random()*2,
+        hue:ring.hue+Math.random()*14,
+        delay:ring.delay, frame:0,
+      });
+    }
+  });
+  let t=0;
+  function frame(){
+    t++; ctx.clearRect(0,0,CW,CH);
+    let alive=false;
+    ps.forEach(p=>{
+      p.frame++;
+      if(p.frame<p.delay){alive=true;return;}
+      p.r=Math.min(p.r+p.speed, p.targetR);
       p.life-=p.decay;
-      if(p.life<=0) return;
-      alive = true;
-      ctx.save();
-      ctx.globalAlpha = p.life*p.life*0.85;
-      ctx.beginPath(); ctx.arc(p.x,p.y,p.r*p.life,0,Math.PI*2);
-      const g = ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r*2.5);
-      g.addColorStop(0,`hsla(${p.hue+8},100%,80%,1)`);
-      g.addColorStop(.5,`hsla(${p.hue},95%,60%,.8)`);
-      g.addColorStop(1,`hsla(${p.hue-8},80%,38%,0)`);
-      ctx.fillStyle=g; ctx.fill();
-      // tail
-      ctx.globalAlpha=p.life*.3;
-      ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(p.x-p.vx*2.5,p.y-p.vy*2.5);
-      ctx.strokeStyle=`hsla(${p.hue},95%,65%,1)`; ctx.lineWidth=p.r*.5; ctx.lineCap='round'; ctx.stroke();
-      ctx.restore();
+      if(p.life<=0)return;
+      alive=true;
+      const x=cx+Math.cos(p.angle)*p.r;
+      const y=cy+Math.sin(p.angle)*p.r*.72;
+      ctx.save(); ctx.globalAlpha=p.life*.22;
+      ctx.beginPath(); ctx.arc(x,y,p.size*5,0,Math.PI*2);
+      ctx.fillStyle=`hsl(${p.hue},100%,62%)`; ctx.fill(); ctx.restore();
+      ctx.save(); ctx.globalAlpha=p.life*p.life*.92;
+      ctx.beginPath(); ctx.arc(x,y,p.size*p.life,0,Math.PI*2);
+      const g=ctx.createRadialGradient(x,y,0,x,y,p.size*3);
+      g.addColorStop(0,`hsla(${p.hue+8},100%,88%,1)`);
+      g.addColorStop(.4,`hsla(${p.hue},95%,66%,.8)`);
+      g.addColorStop(1,`hsla(${p.hue-8},80%,40%,0)`);
+      ctx.fillStyle=g; ctx.fill(); ctx.restore();
+      ctx.save(); ctx.globalAlpha=p.life*.4;
+      const px2=cx+Math.cos(p.angle)*(p.r-p.speed*3.5);
+      const py2=cy+Math.sin(p.angle)*(p.r-p.speed*3.5)*.72;
+      ctx.beginPath(); ctx.moveTo(x,y); ctx.lineTo(px2,py2);
+      ctx.strokeStyle=`hsla(${p.hue},95%,68%,1)`;
+      ctx.lineWidth=p.size*.5; ctx.lineCap='round'; ctx.stroke(); ctx.restore();
     });
-    if(alive && t<120) requestAnimationFrame(frame);
+    if(alive&&t<160)requestAnimationFrame(frame);
     else cv.remove();
   }
   frame();

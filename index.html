@@ -166,7 +166,7 @@
 
     <!-- Última sync discreta -->
     <div id="last-sync" style="text-align:center;font-size:10px;color:var(--border);padding:4px 0 2px"></div>
-    <div style="text-align:center;font-size:9px;color:var(--border);padding:0 0 12px;letter-spacing:1px">v26</div>
+    <div style="text-align:center;font-size:9px;color:var(--border);padding:0 0 12px;letter-spacing:1px">v27</div>
   </div>
 
   <!-- ══ HÁBITOS ══ -->
@@ -388,8 +388,12 @@
 (function(){
   const cv=document.getElementById('title-canvas');
   if(!cv)return;
-  const ctx=cv.getContext('2d');
+  const dpr=Math.min(window.devicePixelRatio||1,2);
   const W=140,H=46;
+  cv.width=W*dpr; cv.height=H*dpr;
+  cv.style.width=W+'px'; cv.style.height=H+'px';
+  const ctx=cv.getContext('2d');
+  ctx.scale(dpr,dpr);
   const G='#8fb339',GO='#c4a84f',G2='#3d6b1a',GO2='#7a5c10';
   const particles=[];
   let t=0;
@@ -423,8 +427,12 @@
 (function(){
   const cv=document.getElementById('loading-canvas');
   if(!cv)return;
-  const ctx=cv.getContext('2d');
+  const dpr=Math.min(window.devicePixelRatio||1,2);
   const W=140,H=140,cx=W/2,cy=H/2;
+  cv.width=W*dpr; cv.height=H*dpr;
+  cv.style.width=W+'px'; cv.style.height=H+'px';
+  const ctx=cv.getContext('2d');
+  ctx.scale(dpr,dpr);
   const G='#8fb339',GO='#c4a84f',DK='#111408',TR='#1a1f10';
   let t=0,alive=true;
   function dot(x,y,r,col,a){ctx.save();ctx.globalAlpha=a??1;ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fillStyle=col;ctx.fill();ctx.restore();}
@@ -460,8 +468,13 @@
   function makeOrbitalSparks(canvasId, getActive) {
     const cv = document.getElementById(canvasId);
     if (!cv) return;
+    const dpr = Math.min(window.devicePixelRatio||1,2);
+    const W = cv.width, H = cv.height;
+    cv.width = W*dpr; cv.height = H*dpr;
+    cv.style.width = W+'px'; cv.style.height = H+'px';
     const ctx = cv.getContext('2d');
-    const W = cv.width, H = cv.height, cx = W/2, cy = H/2;
+    ctx.scale(dpr,dpr);
+    const cx = W/2, cy = H/2;
     let t = 0;
     function frame() {
       t += 0.022;
