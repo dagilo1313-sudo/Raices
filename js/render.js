@@ -118,13 +118,17 @@ function renderViajero() {
   const viajeroCard = document.querySelector('.viajero-card');
   if (viajeroCard) viajeroCard.style.setProperty('--bar-color', isPerfectToday ? 'var(--accent2)' : 'var(--accent)');
 
+  // Título canvas: partículas lentas normales, rápidas en día perfecto
+  if (typeof window._titlePerfect !== 'undefined') window._titlePerfect = isPerfectToday;
+
   // Tareas — bordes, wording y botón nueva tarea en gold
-  const tareasSpan = document.querySelector('#tareas-toggle span');
-  if (tareasSpan) tareasSpan.style.color = isPerfectToday ? 'var(--accent2)' : 'var(--accent)';
-  const tareasToggle = document.getElementById('tareas-toggle');
-  if (tareasToggle) {
-    tareasToggle.style.borderColor = isPerfectToday ? 'rgba(196,168,79,0.5)' : '';
+  const tareasSpan = document.getElementById('tareas-titulo');
+  if (tareasSpan) {
+    tareasSpan.style.color = isPerfectToday ? 'var(--accent2)' : 'var(--accent)';
+    tareasSpan.style.fontWeight = '700';
   }
+  const tareasToggle = document.getElementById('tareas-toggle');
+  if (tareasToggle) tareasToggle.style.borderColor = isPerfectToday ? 'rgba(196,168,79,0.5)' : '';
   const tareasPanel = document.getElementById('tareas-panel');
   if (tareasPanel) {
     tareasPanel.style.borderColor = isPerfectToday ? 'rgba(196,168,79,0.5)' : '';
@@ -132,9 +136,20 @@ function renderViajero() {
   }
   const btnNueva = document.querySelector('.btn-nueva-tarea, .btn.btn-primary.btn-sm');
   if (btnNueva) {
-    btnNueva.style.background = isPerfectToday ? 'rgba(196,168,79,0.15)' : '';
-    btnNueva.style.borderColor = isPerfectToday ? 'rgba(196,168,79,0.4)' : '';
-    btnNueva.style.color = isPerfectToday ? 'var(--accent2)' : '';
+    if (isPerfectToday) {
+      btnNueva.style.background = 'var(--accent2)';
+      btnNueva.style.borderColor = 'var(--accent2)';
+      btnNueva.style.color = '#0d0f0a';
+      btnNueva.onmouseenter = () => { btnNueva.style.boxShadow = '0 0 12px rgba(196,168,79,0.5)'; };
+      btnNueva.onmouseleave = () => { btnNueva.style.boxShadow = ''; };
+    } else {
+      btnNueva.style.background = '';
+      btnNueva.style.borderColor = '';
+      btnNueva.style.color = '';
+      btnNueva.onmouseenter = null;
+      btnNueva.onmouseleave = null;
+      btnNueva.style.boxShadow = '';
+    }
   }
   // Navbar HOY gold solo cuando estamos en la vista hoy
   const navHoy = document.getElementById('nav-hoy');

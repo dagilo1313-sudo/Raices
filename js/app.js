@@ -122,17 +122,20 @@ window.onDeleteHabit = (id) => {
   const habit = state.habits.find(h => h.id === id);
   if (!habit) return;
   const overlay = document.createElement('div');
-  overlay.style.cssText = 'position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.6);display:flex;align-items:flex-end;justify-content:center;animation:fadeIn 0.2s ease';
+  overlay.style.cssText = 'position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.65);display:flex;align-items:center;justify-content:center;padding:24px;animation:fadeIn 0.2s ease';
   overlay.innerHTML = `
-    <div style="background:var(--card2);border:1px solid var(--border);border-radius:24px 24px 0 0;padding:28px 24px 40px;width:100%;max-width:480px;animation:slideIn 0.3s cubic-bezier(0.34,1.2,0.64,1)">
-      <div style="width:40px;height:4px;background:var(--border);border-radius:4px;margin:0 auto 20px"></div>
-      <div style="font-size:17px;font-weight:600;color:var(--text);margin-bottom:10px">¿Eliminar hábito?</div>
-      <div style="font-size:14px;color:var(--muted);margin-bottom:24px;line-height:1.5">
-        Vas a eliminar <strong style="color:var(--text)">"${habit.name}"</strong>.<br>Esta acción no se puede deshacer.
+    <div style="background:var(--card2);border:1px solid var(--border);border-radius:20px;padding:28px 24px;max-width:320px;width:100%;text-align:center;animation:popIn 0.35s cubic-bezier(0.34,1.56,0.64,1)">
+      <div style="font-size:32px;margin-bottom:12px">🍂</div>
+      <div style="font-size:17px;font-weight:700;color:var(--text);margin-bottom:8px">¿Eliminar hábito?</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:24px;line-height:1.5">
+        Vas a archivar <strong style="color:var(--text)">"${habit.name}"</strong>.<br>El historial se conservará.
       </div>
-      <button id="btn-confirm-del" style="width:100%;background:var(--danger);color:white;border:none;border-radius:var(--radius-md);padding:14px;font-size:15px;font-weight:600;font-family:var(--font-body);cursor:pointer;margin-bottom:10px">Eliminar</button>
-      <button id="btn-cancel-del" style="width:100%;background:transparent;color:var(--muted);border:1px solid var(--border);border-radius:var(--radius-md);padding:14px;font-size:15px;font-family:var(--font-body);cursor:pointer">Cancelar</button>
-    </div>`;
+      <div style="display:flex;gap:8px">
+        <button id="btn-cancel-del" style="flex:1;background:transparent;border:1px solid var(--border);border-radius:var(--radius-md);padding:12px;font-size:13px;color:var(--muted);font-family:var(--font-body);cursor:pointer">Cancelar</button>
+        <button id="btn-confirm-del" style="flex:1;background:rgba(179,92,79,0.15);border:1.5px solid rgba(179,92,79,0.5);border-radius:var(--radius-md);padding:12px;font-size:13px;font-weight:700;color:#b35c4f;font-family:var(--font-body);cursor:pointer">Eliminar</button>
+      </div>
+    </div>
+    <style>@keyframes popIn{from{transform:scale(0.8);opacity:0}to{transform:scale(1);opacity:1}}</style>`;
   const close = () => overlay.remove();
   overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
   overlay.querySelector('#btn-cancel-del').addEventListener('click', close);
@@ -248,7 +251,7 @@ window.onToggleTarea = async (id) => {
 
 window.onAddTarea = () => {
   const overlay = document.createElement('div');
-  overlay.style.cssText = 'position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.6);display:flex;align-items:flex-end;justify-content:center;animation:fadeIn 0.2s ease';
+  overlay.style.cssText = 'position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.65);display:flex;align-items:center;justify-content:center;padding:24px;animation:fadeIn 0.2s ease';
   overlay.innerHTML = `
     <div style="background:var(--card2);border:1px solid var(--border);border-radius:24px 24px 0 0;padding:24px 24px 40px;width:100%;max-width:480px;animation:slideIn 0.3s cubic-bezier(0.34,1.2,0.64,1)">
       <div style="width:40px;height:4px;background:var(--border);border-radius:4px;margin:0 auto 20px"></div>

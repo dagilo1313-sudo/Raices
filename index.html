@@ -131,7 +131,7 @@
       <!-- Toggle header -->
       <div id="tareas-toggle" class="tareas-toggle" onclick="onToggleTareas()">
         <div style="display:flex;align-items:center;gap:10px">
-          <span style="font-size:13px;font-weight:500;color:var(--accent)">Tareas</span>
+          <span style="font-size:13px;font-weight:700;color:var(--accent)" id="tareas-titulo">Tareas</span>
           <span id="tareas-count" style="font-size:10px;color:var(--muted);background:var(--card2);border:0.5px solid var(--border);border-radius:20px;padding:2px 8px">Sin tareas</span>
         </div>
         <span id="tareas-chevron" style="font-size:10px;color:var(--muted);transition:transform 0.25s">▼</span>
@@ -165,7 +165,7 @@
 
     <!-- Última sync discreta -->
     <div id="last-sync" style="text-align:center;font-size:10px;color:var(--border);padding:4px 0 2px"></div>
-    <div style="text-align:center;font-size:9px;color:var(--border);padding:0 0 12px;letter-spacing:1px">v24</div>
+    <div style="text-align:center;font-size:9px;color:var(--border);padding:0 0 12px;letter-spacing:1px">v24.5</div>
   </div>
 
   <!-- ══ HÁBITOS ══ -->
@@ -387,27 +387,31 @@
   const cv=document.getElementById('title-canvas');
   if(!cv)return;
   const ctx=cv.getContext('2d');
-  const W=160,H=52;
+  const W=140,H=46;
   const G='#8fb339',GO='#c4a84f',G2='#3d6b1a',GO2='#7a5c10';
   const particles=[];
   let t=0;
+  window._titlePerfect=false;
   function spawnP(){
-    particles.push({x:20+Math.random()*120,y:H/2+10,vx:(Math.random()-.5)*1.5,vy:-.5-Math.random()*2,life:1,decay:.012+Math.random()*.015,size:1+Math.random()*2.5,col:Math.random()>.4?GO:G});
+    const fast=window._titlePerfect;
+    const speed=fast?1.5:0.2;
+    const decay=fast?(.012+Math.random()*.015):(.004+Math.random()*.005);
+    particles.push({x:15+Math.random()*110,y:H/2+8,vx:(Math.random()-.5)*speed,vy:(-.3-Math.random()*1.5)*speed,life:1,decay,size:1+Math.random()*2.5,col:Math.random()>.4?GO:G});
   }
   function frame(){
     t+=.02;ctx.clearRect(0,0,W,H);
-    if(Math.random()<.35)spawnP();
+    if(Math.random()<(window._titlePerfect?.35:.07))spawnP();
     for(let i=particles.length-1;i>=0;i--){
       const p=particles[i];
-      p.x+=p.vx;p.y+=p.vy;p.vy+=.02;p.life-=p.decay;
+      p.x+=p.vx;p.y+=p.vy;p.vy+=window._titlePerfect?.02:.004;p.life-=p.decay;
       if(p.life<=0){particles.splice(i,1);continue;}
       ctx.save();ctx.globalAlpha=p.life*.7;ctx.beginPath();ctx.arc(p.x,p.y,p.size*p.life,0,Math.PI*2);ctx.fillStyle=p.col;ctx.fill();ctx.restore();
     }
     ctx.font='700 32px DM Sans,sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
-    const grad=ctx.createLinearGradient(15,0,125,0);
+    const grad=ctx.createLinearGradient(10,0,130,0);
     grad.addColorStop(0,G2);grad.addColorStop(.35,G);grad.addColorStop(.65,GO);grad.addColorStop(1,GO2);
-    ctx.fillStyle=grad;ctx.fillText('Raíces',W/2,H/2+2);
-    ctx.globalAlpha=Math.sin(t)*.04+.04;ctx.fillStyle='#f0d060';ctx.fillText('Raíces',W/2,H/2+2);ctx.globalAlpha=1;
+    ctx.fillStyle=grad;ctx.fillText('Raíces',W/2,H/2+1);
+    ctx.globalAlpha=Math.sin(t)*.04+.04;ctx.fillStyle='#f0d060';ctx.fillText('Raíces',W/2,H/2+1);ctx.globalAlpha=1;
     requestAnimationFrame(frame);
   }
   frame();
