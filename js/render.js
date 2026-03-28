@@ -37,7 +37,6 @@ function renderViajero() {
   const claseData = CLASES[calc.clase] || CLASES[0];
 
   const diasPerfectos = state.perfil.diasPerfectos;
-
   const xpHoy = getTodayXP();
   const xpMaxHoy = getMaxXPForDate(today());
   const exitoPct = xpMaxHoy > 0 ? Math.round(xpHoy / xpMaxHoy * 100) : 0;
@@ -330,7 +329,6 @@ function renderStatsForDate(dateStr) {
   const pct = total ? Math.round(done / total * 100) : 0;
 
   const diasPerfectos = state.perfil.diasPerfectos;
-
   const xpHoyStats = getXPForDate(today());
   const xpMaxHoyStats = getMaxXPForDate(today());
   const exitoPct = xpMaxHoyStats > 0 ? Math.round(xpHoyStats / xpMaxHoyStats * 100) : 0;

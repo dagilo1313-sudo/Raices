@@ -136,6 +136,7 @@ export const getDiasPerfectos = () => {
   return perfectos;
 };
 
+
 export const getXPForDate = (dateStr) => {
   const completedIds = state.completions[dateStr] || [];
   return state.habits
