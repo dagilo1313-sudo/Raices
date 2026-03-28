@@ -61,16 +61,13 @@ export async function handleAuth() {
   if (!email || !password) { showMsg('auth-error', 'Rellena todos los campos.'); return; }
   btn.disabled = true; btn.textContent = '...';
   try {
-    if (authMode === 'login') await signInWithEmailAndPassword(auth, email, password);
-    else await createUserWithEmailAndPassword(auth, email, password);
+    await signInWithEmailAndPassword(auth, email, password);
   } catch (e) {
     btn.disabled = false;
-    btn.textContent = authMode === 'login' ? 'Entrar' : 'Registrarse';
+    btn.textContent = 'Entrar';
     const msgs = {
       'auth/user-not-found': 'No existe cuenta con ese email.',
       'auth/wrong-password': 'Contraseña incorrecta.',
-      'auth/email-already-in-use': 'Ese email ya está registrado.',
-      'auth/weak-password': 'La contraseña debe tener al menos 6 caracteres.',
       'auth/invalid-email': 'Email no válido.',
       'auth/invalid-credential': 'Email o contraseña incorrectos.',
     };

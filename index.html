@@ -35,7 +35,6 @@
       <input class="input-field" id="auth-password" type="password" placeholder="Contraseña" autocomplete="current-password">
       <button class="btn btn-primary" id="auth-btn" onclick="handleAuth()">Entrar</button>
       <button class="btn btn-secondary" onclick="showForgotPassword()">¿Olvidaste tu contraseña?</button>
-      <div class="auth-switch" id="auth-switch">¿Sin cuenta? <span onclick="toggleAuthMode()">Regístrate</span></div>
     </div>
     <div id="forgot-form" style="display:none">
       <input class="input-field" id="forgot-email" type="email" placeholder="Tu email">
@@ -57,10 +56,6 @@
         </div>
         <div class="header-right">
           <div class="date-badge" id="date-display"></div>
-          <!-- Avatar clickable → va al perfil -->
-          <div class="viajero-avatar-header" id="viajero-avatar-header" onclick="switchView('perfil')" title="Ver perfil">
-            <span id="viajero-avatar-emoji-header">🌿</span>
-          </div>
         </div>
       </div>
     </header>
@@ -70,7 +65,8 @@
     <!-- Viajero card -->
     <div class="viajero-card">
       <div class="viajero-top-row">
-        <div class="viajero-avatar-wrap">
+        <!-- Avatar clickable → va al perfil -->
+        <div class="viajero-avatar-wrap" onclick="switchView('perfil')" style="cursor:pointer" title="Ver perfil">
           <div class="viajero-avatar" id="viajero-avatar-emoji">🌿</div>
         </div>
         <div class="viajero-info">
@@ -161,7 +157,7 @@
       </div>
       <div class="stat-card">
         <div class="stat-value" id="stat-total-xp">0</div>
-        <div class="stat-label">XP Total ⚡</div>
+        <div class="stat-label">XP hoy</div>
       </div>
       <div class="stat-card">
         <div class="stat-value" id="stat-exito-xp">0%</div>
@@ -250,12 +246,29 @@
       </div>
       <div class="card">
         <div class="card-title">Zona peligrosa</div>
+
+        <!-- Reset solo progreso -->
+        <div id="reset-progress-1">
+          <div style="font-size:13px;color:var(--muted);margin-bottom:12px;line-height:1.5">Borra tu XP, nivel y días perfectos, pero mantiene todos tus hábitos.</div>
+          <button class="btn btn-secondary" style="margin-bottom:0" onclick="showResetProgressConfirm()">Reiniciar solo el progreso</button>
+        </div>
+        <div id="reset-progress-2" style="display:none">
+          <div class="reset-warning">⚠️ Se borrará tu XP, nivel y días perfectos. Los hábitos se conservan. Escribe <strong>Confirmar</strong> para continuar.</div>
+          <input class="input-field" id="confirm-progress-input" placeholder="Escribe Confirmar" style="margin-top:12px">
+          <button class="btn btn-danger" id="btn-confirm-progress-reset" style="margin-bottom:8px" onclick="confirmResetProgress()">Borrar progreso</button>
+          <button class="btn btn-secondary" style="margin-bottom:0" onclick="cancelResetProgress()">Cancelar</button>
+        </div>
+
+        <div style="height:1px;background:var(--border);margin:16px 0"></div>
+
+        <!-- Reset todo -->
         <div id="reset-confirm-1">
-          <div style="font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.5">Borra todos tus hábitos y progreso de forma permanente.</div>
-          <button class="btn btn-danger" style="margin-bottom:0" onclick="showResetConfirm1()">Reiniciar todos los datos</button>
+          <div style="font-size:13px;color:var(--muted);margin-bottom:12px;line-height:1.5">Borra todos tus hábitos y progreso de forma permanente.</div>
+          <button class="btn btn-danger" style="margin-bottom:0" onclick="showResetConfirm1()">Reiniciar todo</button>
         </div>
         <div id="reset-confirm-2" style="display:none">
-          <div class="reset-warning">⚠️ Esta acción es <strong>irreversible</strong>. ¿Estás seguro?</div>
+          <div class="reset-warning">⚠️ Esta acción es <strong>irreversible</strong>. Se borrarán todos tus hábitos y progreso. Escribe <strong>Confirmar</strong> para continuar.</div>
+          <input class="input-field" id="confirm-all-input" placeholder="Escribe Confirmar" style="margin-top:12px">
           <button class="btn btn-danger" id="btn-confirm-reset" style="margin-bottom:8px" onclick="confirmReset()">Sí, borrar todo</button>
           <button class="btn btn-secondary" style="margin-bottom:0" onclick="cancelReset()">Cancelar</button>
         </div>
@@ -315,8 +328,8 @@
       <button onclick="closeRangosPanel()" style="background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;padding:0">×</button>
     </div>
     <div style="font-size:12px;color:var(--muted);margin-bottom:16px;line-height:1.6">
-      6 rangos · 30 niveles cada uno · ~50.000 XP por rango<br>
-      <span style="color:var(--accent)">XP(n) = 100 × n<sup>1.025</sup></span> · Nivel 1→2: 100 XP · Nivel 29→30: 3.155 XP
+      6 rangos · 30 niveles cada uno · ~100.000 XP por rango<br>
+      <span style="color:var(--accent)">XP(n) = 100 × n<sup>1.26</sup></span> · Nivel 1→2: 100 XP · Nivel 30→31: 7.264 XP
     </div>
     <div id="rangos-content"></div>
   </div>

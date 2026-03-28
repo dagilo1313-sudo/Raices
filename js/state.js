@@ -25,15 +25,15 @@ export const CLASES = [
 
 export const NIVELES_POR_CLASE = 30;
 
-// Nueva fórmula: 100 * n^1.025 → suma total ~50.000 en 30 niveles
-// Nivel 1→2: 100 XP, Nivel 29→30: 3.155 XP
-export const xpParaNivel = (n) => Math.round(100 * Math.pow(n, 1.025));
+// Fórmula: 100 * n^1.260 → suma total ~100.075 en 30 niveles
+// Nivel 1→2: 100 XP · Nivel 30→31: 7.264 XP
+export const xpParaNivel = (n) => Math.round(100 * Math.pow(n, 1.260));
 
 // XP total para completar una clase entera (niveles 1→30)
 export const xpTotalClase = () => {
   let total = 0;
   for (let n = 1; n <= NIVELES_POR_CLASE; n++) total += xpParaNivel(n);
-  return total; // ~50.023
+  return total; // ~100.075
 };
 
 // Calcula clase, nivel y xp actual a partir del xpTotal acumulado

@@ -57,8 +57,6 @@ function renderViajero() {
 
   const avatarEl = document.getElementById('viajero-avatar-emoji');
   if (avatarEl) avatarEl.textContent = claseData.emoji;
-  const avatarHeader = document.getElementById('viajero-avatar-emoji-header');
-  if (avatarHeader) avatarHeader.textContent = claseData.emoji;
 }
 
 // ── Semana ──
@@ -111,7 +109,7 @@ function renderProgress() {
   const pct = total ? Math.round(done / total * 100) : 0;
   const text = document.getElementById('progress-text');
   const bar = document.getElementById('progress-bar');
-  if (text) text.textContent = `${done} / ${total}`;
+  if (text) text.textContent = total ? `${done} / ${total} · ${pct}%` : '0 / 0';
   if (bar) bar.style.width = pct + '%';
 }
 
@@ -283,12 +281,13 @@ function renderStatsForDate(dateStr) {
 
   const diasPerfectos = getDiasPerfectos();
   const exitoPct = getExitoXP();
+  const xpHoy = getXPForDate(today());
 
   const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
   set('stat-dias-perfectos', diasPerfectos);
+  set('stat-total-xp', `+${xpHoy}`);
   set('stat-exito-xp', exitoPct + '%');
   set('stat-habits-count', state.habits.length);
-  set('stat-total-xp', state.perfil.xpTotal);
   set('stat-day-done', `${done}/${total}`);
   set('stat-day-xp', `+${xp} XP`);
   set('stat-day-pct', `${pct}%`);

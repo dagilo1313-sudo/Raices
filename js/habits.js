@@ -139,6 +139,14 @@ export async function deleteHabit(id) {
   await saveCompletions();
 }
 
+// ── Resetear solo el progreso (XP, nivel, clase, días perfectos) ──
+export async function resetProgress() {
+  await setDoc(compsRef(), {});
+  await setDoc(profileRef(), { xpTotal: 0, nivel: 1, clase: 0, diasPerfectos: 0 });
+  state.completions = {};
+  state.perfil = { xpTotal: 0, nivel: 1, clase: 0, diasPerfectos: 0 };
+}
+
 // ── Resetear todos los datos ──
 export async function resetAllData() {
   const snap = await getDocs(habitsRef());

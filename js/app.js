@@ -1,5 +1,5 @@
 import { initAuth, toggleAuthMode, handleAuth, showForgotPassword, showLoginForm, sendResetEmail, showChangePassword, hideChangePassword, changePassword, logout } from './auth.js';
-import { toggleHabit, deleteHabit, saveCompletions, resetAllData } from './habits.js';
+import { toggleHabit, deleteHabit, saveCompletions, resetAllData, resetProgress } from './habits.js';
 import { renderAll, renderHabitsList, renderRangosPanel } from './render.js';
 import { showToast, showConfetti, switchView } from './ui.js';
 import { openCreateModal, openEditModal, closeModal, closeModalOutside, submitModal, selectEmoji, selectNoIcon, selectCategory, selectXP, toggleDay } from './modal.js';
@@ -34,22 +34,33 @@ window.onToggleHabit = async (id) => {
   const result = await toggleHabit(id);
   if (result.xpGanado > 0) {
     showConfetti();
-    if (result.subioRango) {
+
+    // Comprobar si se acaban de completar TODOS los hábitos de hoy
+    const { isScheduledForDate, today } = await import('./state.js');
+    const todayStr = today();
+    const scheduled = state.habits.filter(h => isScheduledForDate(h, todayStr));
+    const completedToday = state.completions[todayStr] || [];
+    const diaPerfecto = scheduled.length > 0 && scheduled.every(h => completedToday.includes(h.id));
+
+    if (diaPerfecto && result.subioNivel) {
+      // Primero mensaje día perfecto, luego nivel
+      showDiaPerfectoNotif(() => {
+        const claseData = result.subioRango ? CLASES[result.calcDespues.clase] : CLASES[result.calcDespues.clase];
+        showLevelUpNotif(
+          result.subioRango ? '¡Nuevo rango desbloqueado!' : `¡Subiste al nivel ${result.calcDespues.nivel}!`,
+          `${claseData.emoji} ${claseData.nombre}`,
+          `+${result.xpGanado} XP · Sigue así, viajero.`,
+          claseData.color,
+        );
+      });
+    } else if (diaPerfecto) {
+      showDiaPerfectoNotif(null);
+    } else if (result.subioRango) {
       const claseData = CLASES[result.calcDespues.clase];
-      showLevelUpNotif(
-        '¡Nuevo rango desbloqueado!',
-        `${claseData.emoji} ${claseData.nombre}`,
-        `Has alcanzado el rango ${claseData.nombre}. ¡Increíble!`,
-        claseData.color,
-      );
+      showLevelUpNotif('¡Nuevo rango desbloqueado!', `${claseData.emoji} ${claseData.nombre}`, `Has alcanzado el rango ${claseData.nombre}. ¡Increíble!`, claseData.color);
     } else if (result.subioNivel) {
       const claseData = CLASES[result.calcDespues.clase];
-      showLevelUpNotif(
-        `¡Subiste al nivel ${result.calcDespues.nivel}!`,
-        `${claseData.emoji} ${claseData.nombre}`,
-        `+${result.xpGanado} XP · Sigue así, viajero.`,
-        claseData.color,
-      );
+      showLevelUpNotif(`¡Subiste al nivel ${result.calcDespues.nivel}!`, `${claseData.emoji} ${claseData.nombre}`, `+${result.xpGanado} XP · Sigue así, viajero.`, claseData.color);
     } else {
       showToast(`${getCompletionMessage()} +${result.xpGanado} XP`);
     }
@@ -57,6 +68,26 @@ window.onToggleHabit = async (id) => {
   renderAll();
   await saveCompletions();
 };
+
+function showDiaPerfectoNotif(onClose) {
+  const el = document.createElement('div');
+  el.id = 'dia-perfecto-notif';
+  el.style.cssText = 'position:fixed;inset:0;z-index:300;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;padding:24px;animation:fadeIn 0.3s ease';
+  el.innerHTML = `
+    <div style="background:var(--card2);border:1px solid var(--accent);border-radius:20px;padding:28px 24px;text-align:center;max-width:300px;width:100%;animation:popIn 0.4s cubic-bezier(0.34,1.56,0.64,1)">
+      <div style="font-size:40px;margin-bottom:10px">🌳</div>
+      <div style="font-size:18px;color:var(--accent);margin-bottom:6px;font-weight:700">¡Día perfecto!</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.5">Has completado todos tus hábitos de hoy. ¡Tus raíces crecen profundo!</div>
+      <button id="btn-dia-perfecto-ok" style="background:var(--accent);color:var(--bg);border:none;border-radius:var(--radius-full);padding:10px 28px;font-size:13px;font-weight:700;font-family:var(--font-body);cursor:pointer">¡Genial!</button>
+    </div>
+    <style>@keyframes popIn{from{transform:scale(0.7);opacity:0}to{transform:scale(1);opacity:1}}</style>`;
+  el.querySelector('#btn-dia-perfecto-ok').addEventListener('click', () => {
+    el.remove();
+    if (onClose) onClose();
+  });
+  el.addEventListener('click', e => { if (e.target === el) { el.remove(); if (onClose) onClose(); } });
+  document.body.appendChild(el);
+}
 
 function showLevelUpNotif(titulo, subtitulo, desc, color) {
   const existing = document.getElementById('levelup-notif');
@@ -135,16 +166,43 @@ window.calNextMonth = () => {
 };
 window.calGoToday = () => { state.selectedDate = null; renderAll(); };
 
-// ── Reset ──
+// ── Reset solo progreso ──
+window.showResetProgressConfirm = () => {
+  document.getElementById('reset-progress-1').style.display = 'none';
+  document.getElementById('reset-progress-2').style.display = 'block';
+  document.getElementById('confirm-progress-input').value = '';
+};
+window.cancelResetProgress = () => {
+  document.getElementById('reset-progress-1').style.display = 'block';
+  document.getElementById('reset-progress-2').style.display = 'none';
+};
+window.confirmResetProgress = async () => {
+  const val = document.getElementById('confirm-progress-input').value.trim();
+  if (val !== 'Confirmar') { showToast('Escribe "Confirmar" exactamente'); return; }
+  const btn = document.getElementById('btn-confirm-progress-reset');
+  btn.disabled = true; btn.textContent = 'Borrando...';
+  try {
+    await resetProgress();
+    renderAll();
+    showToast('Progreso eliminado 🍂');
+    document.getElementById('reset-progress-1').style.display = 'block';
+    document.getElementById('reset-progress-2').style.display = 'none';
+  } finally { btn.disabled = false; btn.textContent = 'Borrar progreso'; }
+};
+
+// ── Reset todo ──
 window.showResetConfirm1 = () => {
   document.getElementById('reset-confirm-1').style.display = 'none';
   document.getElementById('reset-confirm-2').style.display = 'block';
+  document.getElementById('confirm-all-input').value = '';
 };
 window.cancelReset = () => {
   document.getElementById('reset-confirm-1').style.display = 'block';
   document.getElementById('reset-confirm-2').style.display = 'none';
 };
 window.confirmReset = async () => {
+  const val = document.getElementById('confirm-all-input').value.trim();
+  if (val !== 'Confirmar') { showToast('Escribe "Confirmar" exactamente'); return; }
   const btn = document.getElementById('btn-confirm-reset');
   btn.disabled = true; btn.textContent = 'Borrando...';
   try {
