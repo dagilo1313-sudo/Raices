@@ -89,12 +89,28 @@ function renderLastSync() {
 
 // ── Semana ──
 function getDayState(ds, habitsSource) {
+  const isToday = ds === today();
   const completedIds = getCompletadosForDate(ds);
-  const scheduled = habitsSource.filter(h => isScheduledForDate(h, ds));
+  const planificadosIds = getPlanificadosForDate(ds);
+
+  let scheduled, isPerfect, xpGanado, xpMax;
+
+  if (!isToday && planificadosIds) {
+    // Día pasado con snapshot — usar planificados de completions
+    const planificadosHabits = state.allHabits.filter(h => planificadosIds.includes(h.id));
+    scheduled = planificadosHabits;
+    isPerfect = planificadosIds.length > 0 && planificadosIds.every(id => completedIds.includes(id));
+    xpGanado = planificadosHabits.filter(h => completedIds.includes(h.id)).reduce((s, h) => s + (h.xp || 10), 0);
+    xpMax = planificadosHabits.reduce((s, h) => s + (h.xp || 10), 0);
+  } else {
+    // Hoy o sin snapshot — usar habitsSource
+    scheduled = habitsSource.filter(h => isScheduledForDate(h, ds));
+    isPerfect = scheduled.length > 0 && scheduled.every(h => completedIds.includes(h.id));
+    xpGanado = scheduled.filter(h => completedIds.includes(h.id)).reduce((s, h) => s + (h.xp || 10), 0);
+    xpMax = scheduled.reduce((s, h) => s + (h.xp || 10), 0);
+  }
+
   const hasDone = completedIds.length > 0;
-  const isPerfect = scheduled.length > 0 && scheduled.every(h => completedIds.includes(h.id));
-  const xpGanado = getXPForDate(ds);
-  const xpMax = getMaxXPForDate(ds);
   const isGood = !isPerfect && xpMax > 0 && (xpGanado / xpMax) >= 0.8;
   return { hasDone, isPerfect, isGood, completedIds, scheduled };
 }
@@ -111,7 +127,8 @@ function renderWeek() {
     const ds = d.toISOString().split('T')[0];
     const isToday = ds === today();
     const isPast = d < now && !isToday;
-    const { hasDone, isPerfect, isGood } = getDayState(ds, state.habits);
+    const habSrcWeek = isToday ? state.habits : state.allHabits;
+    const { hasDone, isPerfect, isGood } = getDayState(ds, habSrcWeek);
 
     // Clases del círculo del día
     let numClass = isToday ? 'today' : '';
