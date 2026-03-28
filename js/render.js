@@ -276,7 +276,7 @@ function renderProgress() {
 }
 
 // ── Tareas ──
-export function renderTareas() {
+function renderTareas() {
   const lista = document.getElementById('tareas-lista');
   if (!lista) return;
 
