@@ -19,6 +19,7 @@ let authMode = 'login';
 export function initAuth() {
   onAuthStateChanged(auth, async (user) => {
     document.getElementById('loading-screen').style.display = 'none';
+    if (window._stopLoader) window._stopLoader();
     if (user) {
       state.currentUser = user;
       document.getElementById('auth-screen').style.display = 'none';

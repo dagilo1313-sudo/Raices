@@ -53,22 +53,22 @@ function renderViajero() {
 
   const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
 
-  // Nombre desde perfil
+  // Nombre, clase y nivel — SIEMPRE color de rango, nunca cambian con día perfecto
   const nombreEl = document.getElementById('viajero-nombre');
   if (nombreEl) {
     nombreEl.textContent = state.perfil.nombre || 'David';
-    nombreEl.style.color = isPerfectToday ? 'var(--accent2)' : claseData.color;
+    nombreEl.style.color = claseData.color;
   }
   const claseEl = document.getElementById('viajero-clase');
-  if (claseEl) { claseEl.textContent = claseData.nombre; claseEl.style.color = isPerfectToday ? 'rgba(196,168,79,0.6)' : claseData.color + '8c'; }
+  if (claseEl) { claseEl.textContent = claseData.nombre; claseEl.style.color = claseData.color + '8c'; }
 
-  // Badge nivel
+  // Badge nivel — siempre color de rango
   set('viajero-nivel-badge', `Nivel ${calc.nivel}`);
   const nivelBadgeEl = document.getElementById('viajero-nivel-badge');
   if (nivelBadgeEl) {
-    nivelBadgeEl.style.color = isPerfectToday ? 'var(--accent2)' : claseData.color;
-    nivelBadgeEl.style.borderColor = isPerfectToday ? goldBorder : claseData.color + '44';
-    nivelBadgeEl.style.background = isPerfectToday ? goldBg : claseData.color + '18';
+    nivelBadgeEl.style.color = claseData.color;
+    nivelBadgeEl.style.borderColor = claseData.color + '44';
+    nivelBadgeEl.style.background = claseData.color + '18';
   }
 
   // Stats

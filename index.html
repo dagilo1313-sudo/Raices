@@ -11,7 +11,7 @@
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="assets/favicon/apple-touch-icon.png">
   <link rel="icon" type="image/png" href="assets/favicon/apple-touch-icon.png">
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&family=Syne:wght@700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/variables.css">
   <link rel="stylesheet" href="css/components.css">
   <link rel="stylesheet" href="css/layout.css">
@@ -19,9 +19,8 @@
 <body>
 
 <div id="loading-screen">
-  <div class="loading-logo">🌿</div>
-  <div class="loading-sub">Raíces</div>
-  <div class="spinner"></div>
+  <canvas id="loading-canvas" width="140" height="140" style="display:block;margin:0 auto"></canvas>
+  <div class="loading-sub" style="margin-top:20px">Raíces</div>
 </div>
 
 <div id="auth-screen" style="display:none">
@@ -52,8 +51,7 @@
     <header>
       <div class="header-top">
         <div>
-          <div class="logo logo-animated">Raíces</div>
-          <div class="logo-sub">Tu jardín de hábitos</div>
+          <canvas id="title-canvas" width="160" height="52" style="display:block"></canvas>
         </div>
         <div class="header-right">
           <div class="date-badge" id="date-display"></div>
@@ -167,7 +165,7 @@
 
     <!-- Última sync discreta -->
     <div id="last-sync" style="text-align:center;font-size:10px;color:var(--border);padding:4px 0 2px"></div>
-    <div style="text-align:center;font-size:9px;color:var(--border);padding:0 0 12px;letter-spacing:1px">v21</div>
+    <div style="text-align:center;font-size:9px;color:var(--border);padding:0 0 12px;letter-spacing:1px">v22</div>
   </div>
 
   <!-- ══ HÁBITOS ══ -->
@@ -410,6 +408,72 @@
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('./service-worker.js');
   }
+</script>
+<script>
+(function(){
+  const cv=document.getElementById('title-canvas');
+  if(!cv)return;
+  const ctx=cv.getContext('2d');
+  const W=160,H=52;
+  const G='#8fb339',GO='#c4a84f',G2='#3d6b1a',GO2='#7a5c10';
+  const particles=[];
+  let t=0;
+  function spawnP(){
+    particles.push({x:20+Math.random()*120,y:H/2+10,vx:(Math.random()-.5)*1.5,vy:-.5-Math.random()*2,life:1,decay:.012+Math.random()*.015,size:1+Math.random()*2.5,col:Math.random()>.4?GO:G});
+  }
+  function frame(){
+    t+=.02;ctx.clearRect(0,0,W,H);
+    if(Math.random()<.35)spawnP();
+    for(let i=particles.length-1;i>=0;i--){
+      const p=particles[i];
+      p.x+=p.vx;p.y+=p.vy;p.vy+=.02;p.life-=p.decay;
+      if(p.life<=0){particles.splice(i,1);continue;}
+      ctx.save();ctx.globalAlpha=p.life*.7;ctx.beginPath();ctx.arc(p.x,p.y,p.size*p.life,0,Math.PI*2);ctx.fillStyle=p.col;ctx.fill();ctx.restore();
+    }
+    ctx.font='700 38px Syne,sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
+    const grad=ctx.createLinearGradient(20,0,140,0);
+    grad.addColorStop(0,G2);grad.addColorStop(.35,G);grad.addColorStop(.65,GO);grad.addColorStop(1,GO2);
+    ctx.fillStyle=grad;ctx.fillText('Raíces',W/2,H/2+2);
+    ctx.globalAlpha=Math.sin(t)*.04+.04;ctx.fillStyle='#f0d060';ctx.fillText('Raíces',W/2,H/2+2);ctx.globalAlpha=1;
+    requestAnimationFrame(frame);
+  }
+  frame();
+})();
+</script>
+<script>
+(function(){
+  const cv=document.getElementById('loading-canvas');
+  if(!cv)return;
+  const ctx=cv.getContext('2d');
+  const W=140,H=140,cx=W/2,cy=H/2;
+  const G='#8fb339',GO='#c4a84f',DK='#111408',TR='#1a1f10';
+  let t=0,alive=true;
+  function dot(x,y,r,col,a){ctx.save();ctx.globalAlpha=a??1;ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fillStyle=col;ctx.fill();ctx.restore();}
+  function arc(x,y,r,s,e,col,lw,a){ctx.save();ctx.globalAlpha=a??1;ctx.beginPath();ctx.arc(x,y,r,s,e);ctx.strokeStyle=col;ctx.lineWidth=lw;ctx.lineCap='round';ctx.stroke();ctx.restore();}
+  function frame(){
+    if(!alive)return;
+    t+=0.018;ctx.clearRect(0,0,W,H);
+    arc(cx,cy,52,0,Math.PI*2,TR,7);arc(cx,cy,38,0,Math.PI*2,TR,5);arc(cx,cy,26,0,Math.PI*2,TR,3);
+    const o1=(Math.sin(t*.7)*.5+.5)*.75+.15;
+    arc(cx,cy,52,-Math.PI/2,-Math.PI/2+Math.PI*2*o1,G,7);
+    const ox=cx+Math.cos(-Math.PI/2+Math.PI*2*o1)*52,oy=cy+Math.sin(-Math.PI/2+Math.PI*2*o1)*52;
+    ctx.globalAlpha=.7;dot(ox,oy,5,'#fff');ctx.globalAlpha=.3;dot(ox,oy,9,G);ctx.globalAlpha=1;
+    const o2=(Math.sin(-t*1.1+1)*.5+.5)*.8+.1;
+    arc(cx,cy,38,-Math.PI/2,-Math.PI/2+Math.PI*2*o2,GO,5);
+    const mx=cx+Math.cos(-Math.PI/2+Math.PI*2*o2)*38,my=cy+Math.sin(-Math.PI/2+Math.PI*2*o2)*38;
+    ctx.globalAlpha=.7;dot(mx,my,4,'#fff');ctx.globalAlpha=.25;dot(mx,my,7,GO);ctx.globalAlpha=1;
+    const o3=(Math.sin(t*1.8+2)*.5+.5)*.6+.2;
+    arc(cx,cy,26,-Math.PI/2,-Math.PI/2+Math.PI*2*o3,'#5c8a3c',3);
+    for(let i=0;i<4;i++){const a=t*(1.2+i*.3)+i*Math.PI/2,pr=66,px=cx+Math.cos(a)*pr,py=cy+Math.sin(a)*pr;ctx.globalAlpha=(Math.sin(t*2+i)*.5+.5)*.5+.1;dot(px,py,2,i%2===0?G:GO);}
+    for(let i=0;i<3;i++){const a=-t*.6+i*(Math.PI*2/3),px=cx+Math.cos(a)*48,py=cy+Math.sin(a)*48;ctx.globalAlpha=.2;dot(px,py,1.5,G);}
+    ctx.globalAlpha=1;
+    dot(cx,cy,16,DK,1);
+    ctx.font='18px serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.globalAlpha=Math.sin(t)*.15+.85;ctx.fillText('🌿',cx,cy+1);ctx.globalAlpha=1;
+    requestAnimationFrame(frame);
+  }
+  frame();
+  window._stopLoader=function(){alive=false;};
+})();
 </script>
 <script type="module" src="js/app.js"></script>
 </body>
