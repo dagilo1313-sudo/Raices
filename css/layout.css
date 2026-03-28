@@ -223,7 +223,7 @@ header {
 .day-num.today { border-color: var(--accent); color: var(--accent); font-weight: 700; }
 /* Estados del día */
 .day-num.day-golden  { background: rgba(196,168,79,0.2); color: var(--accent2); border-color: var(--accent2); font-weight: 700; }
-.day-num.day-green   { background: var(--accent3); color: var(--bg); border-color: var(--accent3); }
+.day-num.day-green   { background: var(--glow); color: var(--accent); border-color: var(--accent); font-weight: 600; }
 .day-num.day-partial { border-color: var(--accent); color: var(--accent); }
 .day-dot { width: 4px; height: 4px; border-radius: 50%; background: transparent; }
 .day-dot.filled  { background: var(--accent); }

@@ -394,32 +394,32 @@ function renderStatsForDate(dateStr) {
 
   // Si no es hoy y no hay ningún dato para ese día → Día no registrado
   const sinRegistro = !isToday && completedIds.length === 0 && !getPlanificadosForDate(dateStr);
-  const catSection = document.getElementById('cat-stats-list')?.closest('.section');
-  const habSection = document.getElementById('stats-day-habits')?.closest('.section');
+
+  const elCat = document.getElementById('cat-stats-list');
+  const elHab = document.getElementById('stats-day-habits');
+  const catSection = elCat?.closest('.section');
+  const habSection = elHab?.closest('.section');
+  let noReg = document.getElementById('stats-no-registro');
 
   if (sinRegistro) {
+    if (elCat) elCat.innerHTML = '';
+    if (elHab) elHab.innerHTML = '';
     if (catSection) catSection.style.display = 'none';
     if (habSection) habSection.style.display = 'none';
-    const sl = document.getElementById('stats-day-habits');
-    // Mostrar mensaje en el contenedor padre aunque esté oculto
-    const container = document.querySelector('#view-stats .section:last-of-type') || document.getElementById('stats-day-habits');
-    document.getElementById('stats-day-habits').innerHTML = '';
-    document.getElementById('cat-stats-list').innerHTML = '';
-    // Crear mensaje fuera de las secciones ocultas
-    let noReg = document.getElementById('stats-no-registro');
-    if (!noReg) {
+    if (!noReg && elCat) {
       noReg = document.createElement('div');
       noReg.id = 'stats-no-registro';
       noReg.style.cssText = 'text-align:center;padding:32px 0;';
-      document.getElementById('cat-stats-list').parentElement.after(noReg);
+      elCat.parentElement.insertAdjacentElement('afterend', noReg);
     }
-    noReg.style.display = 'block';
-    noReg.innerHTML = '<div style="font-size:32px;margin-bottom:8px">🌱</div><div style="font-size:14px;color:var(--muted)">Día no registrado</div>';
+    if (noReg) {
+      noReg.style.display = 'block';
+      noReg.innerHTML = '<div style="font-size:32px;margin-bottom:8px">🌱</div><div style="font-size:14px;color:var(--muted)">Día no registrado</div>';
+    }
     return;
   }
 
-  // Ocultar mensaje si existe y mostrar secciones
-  const noReg = document.getElementById('stats-no-registro');
+  // Restaurar secciones si estaban ocultas
   if (noReg) noReg.style.display = 'none';
   if (catSection) catSection.style.display = '';
   if (habSection) habSection.style.display = '';
