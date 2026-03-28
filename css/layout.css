@@ -20,6 +20,18 @@ header {
 
 .header-top { display: flex; align-items: flex-start; justify-content: space-between; }
 .logo { font-family: var(--font-body); font-size: 32px; font-weight: 700; color: var(--accent); letter-spacing: -1px; line-height: 1; }
+.logo-animated {
+  background: linear-gradient(90deg, var(--accent), var(--accent2), var(--accent));
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: logoShimmer 3s linear infinite;
+}
+@keyframes logoShimmer {
+  0% { background-position: 0% center; }
+  100% { background-position: 200% center; }
+}
 .logo-sub { font-size: 11px; color: var(--muted); letter-spacing: 3px; text-transform: uppercase; margin-top: 4px; }
 .header-right { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
 .date-badge { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-full); padding: 6px 14px; font-size: 12px; color: var(--muted); text-transform: capitalize; }
@@ -55,7 +67,7 @@ header {
 .viajero-card::before {
   content: '';
   position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
-  background: linear-gradient(to bottom, var(--accent), var(--accent3));
+  background: linear-gradient(to top, var(--accent), var(--clase-color, var(--accent2)));
   border-radius: 0;
 }
 

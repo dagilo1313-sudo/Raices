@@ -46,6 +46,25 @@ function renderViajero() {
   const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
   const claseEl = document.getElementById('viajero-clase');
   if (claseEl) { claseEl.textContent = claseData.nombre; claseEl.style.color = claseData.color; }
+  // CSS variable para barrita y animación avatar
+  const viajeroCard = document.querySelector('.viajero-card');
+  if (viajeroCard) viajeroCard.style.setProperty('--clase-color', claseData.color);
+  // Avatar border dinámico con color de clase + animación personalizada
+  const avatarWrap = document.querySelector('.viajero-avatar-wrap');
+  if (avatarWrap) {
+    avatarWrap.style.borderColor = claseData.color;
+    // Inyectar keyframes dinámicos con tonos de la clase
+    const styleId = 'avatar-anim-style';
+    let styleEl = document.getElementById(styleId);
+    if (!styleEl) { styleEl = document.createElement('style'); styleEl.id = styleId; document.head.appendChild(styleEl); }
+    const c = claseData.color;
+    styleEl.textContent = `@keyframes avatarGlow {
+      0%   { box-shadow: 0 0 0 0 ${c}00, 0 0 0 0 ${c}00; border-color: ${c}; }
+      40%  { box-shadow: 0 0 0 5px ${c}30, 0 0 14px ${c}20; border-color: ${c}; }
+      60%  { box-shadow: 0 0 0 8px ${c}18, 0 0 20px ${c}15; border-color: ${c}bb; }
+      100% { box-shadow: 0 0 0 0 ${c}00, 0 0 0 0 ${c}00; border-color: ${c}; }
+    }`;
+  }
   set('viajero-nivel-badge', `Nivel ${calc.nivel}`);
   const nivelBadgeEl = document.getElementById('viajero-nivel-badge');
   if (nivelBadgeEl) {
@@ -55,7 +74,11 @@ function renderViajero() {
   }
   set('viajero-stat-perfectos', diasPerfectos);
   set('viajero-stat-xphoy', `+${xpHoy}`);
-  set('viajero-stat-exito', exitoPct + '%');
+  const exitoEl = document.getElementById('viajero-stat-exito');
+  if (exitoEl) {
+    exitoEl.textContent = exitoPct + '%';
+    exitoEl.style.color = exitoPct >= 100 ? 'var(--accent2)' : '';
+  }
 
   if (calc.esMaximo) {
     set('viajero-xp-label', 'Nivel máximo');
@@ -179,10 +202,19 @@ function renderProgress() {
   const total = todayHabits.length;
   const done = todayHabits.filter(h => isCompleted(h.id, todayStr)).length;
   const pct = total ? Math.round(done / total * 100) : 0;
+  const isPerfect = total > 0 && done === total;
   const text = document.getElementById('progress-text');
   const bar = document.getElementById('progress-bar');
-  if (text) text.textContent = total ? `${done} / ${total} · ${pct}%` : '0 / 0';
-  if (bar) bar.style.width = pct + '%';
+  if (text) {
+    text.textContent = total ? `${done} / ${total} · ${pct}%` : '0 / 0';
+    text.style.color = isPerfect ? 'var(--accent2)' : 'var(--accent)';
+  }
+  if (bar) {
+    bar.style.width = pct + '%';
+    bar.style.background = isPerfect
+      ? 'linear-gradient(to right, #c4a84f, #e8c96e)'
+      : '';
+  }
 }
 
 // ── Tareas ──
@@ -390,6 +422,8 @@ function renderStatsForDate(dateStr) {
   const dateLabel = d.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' });
   const statsDateLabel = document.getElementById('stats-date-label');
   if (statsDateLabel) statsDateLabel.textContent = isToday ? 'Hoy' : dateLabel;
+  const calTitle = document.getElementById('cal-title');
+  if (calTitle) calTitle.style.color = 'var(--accent)';
 
   // Hoy → solo activos; días pasados → snapshot planificados o allHabits como fallback
   const planificados = !isToday ? getPlanificadosForDate(dateStr) : null;
@@ -586,8 +620,8 @@ export function renderRangosPanel() {
             <div class="rango-sub">30 niveles · ~${xpTotalStr} XP</div>
           </div>
           <div style="display:flex;align-items:center;gap:8px;margin-left:auto">
-            ${isCurrentClase ? `<div class="rango-badge-actual">Nivel ${calc.nivel}</div>` : ''}
-            ${isPastClase ? '<div class="rango-badge-completado">✓</div>' : ''}
+            ${isCurrentClase ? `<div class="rango-badge-actual" style="color:${clase.color};background:${clase.color}18;border-color:${clase.color}44">Nivel ${calc.nivel}</div>` : ''}
+            ${isPastClase ? `<div class="rango-badge-completado" style="color:${clase.color};background:${clase.color}18;border:1px solid ${clase.color}33;border-radius:var(--radius-full);padding:2px 8px;font-size:10px">✓</div>` : ''}
             <span class="rango-chevron" style="color:var(--muted);font-size:11px;transition:transform 0.25s;display:inline-block;${isOpen ? 'transform:rotate(180deg)' : ''}">▼</span>
           </div>
         </div>
