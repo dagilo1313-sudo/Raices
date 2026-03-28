@@ -39,7 +39,8 @@ window.onToggleHabit = async (id) => {
     const { isScheduledForDate, today } = await import('./state.js');
     const todayStr = today();
     const scheduled = state.habits.filter(h => isScheduledForDate(h, todayStr));
-    const completedToday = state.completions[todayStr] || [];
+    const _ctDay = state.completions[todayStr];
+    const completedToday = _ctDay ? (Array.isArray(_ctDay) ? _ctDay : (_ctDay.completados || [])) : [];
     const diaPerfecto = scheduled.length > 0 && scheduled.every(h => completedToday.includes(h.id));
 
     if (diaPerfecto && result.subioNivel) {

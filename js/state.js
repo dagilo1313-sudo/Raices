@@ -122,7 +122,8 @@ export const getHabitStreak = (habitId) => {
   const d = new Date();
   while (true) {
     const ds = d.toISOString().split('T')[0];
-    if (state.completions[ds] && state.completions[ds].includes(habitId)) {
+    const _ds = state.completions[ds]; const _dsc = _ds ? (Array.isArray(_ds) ? _ds : (_ds.completados || [])) : [];
+    if (_dsc.includes(habitId)) {
       streak++; d.setDate(d.getDate() - 1);
     } else break;
   }
