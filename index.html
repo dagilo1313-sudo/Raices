@@ -165,7 +165,7 @@
 
     <!-- Última sync discreta -->
     <div id="last-sync" style="text-align:center;font-size:10px;color:var(--border);padding:4px 0 2px"></div>
-    <div style="text-align:center;font-size:9px;color:var(--border);padding:0 0 12px;letter-spacing:1px">v23</div>
+    <div style="text-align:center;font-size:9px;color:var(--border);padding:0 0 12px;letter-spacing:1px">v24</div>
   </div>
 
   <!-- ══ HÁBITOS ══ -->
@@ -362,9 +362,9 @@
 <div class="toast" id="toast"></div>
 
 <!-- Panel Rangos -->
-<div class="modal-overlay" id="rangos-overlay" onclick="if(event.target===this)closeRangosPanel()">
-  <div class="modal">
-    <div class="modal-handle"></div>
+<div class="modal-overlay rangos-sheet" id="rangos-overlay" onclick="if(event.target===this)closeRangosPanel()">
+  <div class="modal rangos-modal">
+    <div class="modal-handle" style="display:block"></div>
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
       <div class="modal-title" style="margin:0">Rangos y Niveles</div>
       <button onclick="closeRangosPanel()" style="background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;padding:0">×</button>

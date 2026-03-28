@@ -51,3 +51,4 @@ export function switchView(view) {
     if (navHoy) navHoy.style.color = '';
   }
 }
+}

@@ -96,7 +96,23 @@ function renderViajero() {
   const avatarEl = document.getElementById('viajero-avatar-emoji');
   if (avatarEl) avatarEl.textContent = claseData.emoji;
   const avatarWrap = document.querySelector('.viajero-avatar-wrap');
-  if (avatarWrap) avatarWrap.style.borderColor = isPerfectToday ? 'var(--accent2)' : 'var(--accent)';
+  if (avatarWrap) {
+    avatarWrap.style.borderColor = isPerfectToday ? 'var(--accent2)' : 'var(--accent)';
+    // Inyectar animación dorada cuando día perfecto
+    const styleId = 'avatar-perfect-style';
+    let styleEl = document.getElementById(styleId);
+    if (!styleEl) { styleEl = document.createElement('style'); styleEl.id = styleId; document.head.appendChild(styleEl); }
+    if (isPerfectToday) {
+      styleEl.textContent = `.viajero-avatar-wrap { animation: avatarGlowGold 2s ease-in-out infinite !important; border-color: var(--accent2) !important; }
+@keyframes avatarGlowGold {
+  0%,100% { box-shadow: 0 0 0 0 rgba(196,168,79,0), 0 0 0 0 rgba(196,168,79,0); border-color: var(--accent2); }
+  40%  { box-shadow: 0 0 0 6px rgba(196,168,79,0.25), 0 0 16px rgba(196,168,79,0.18); border-color: var(--accent2); }
+  60%  { box-shadow: 0 0 0 9px rgba(196,168,79,0.12), 0 0 22px rgba(196,168,79,0.12); border-color: #e8c96e; }
+}`;
+    } else {
+      styleEl.textContent = '';
+    }
+  }
 
   // Barrita lateral
   const viajeroCard = document.querySelector('.viajero-card');
