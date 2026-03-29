@@ -164,7 +164,7 @@
 
     <!-- Última sync discreta -->
     <div id="last-sync" style="text-align:center;font-size:10px;color:var(--border);padding:4px 0 2px"></div>
-    <div style="text-align:center;font-size:9px;color:var(--border);padding:0 0 12px;letter-spacing:1px">v43</div>
+    <div style="text-align:center;font-size:9px;color:var(--border);padding:0 0 12px;letter-spacing:1px">v44</div>
   </div>
 
   <!-- ══ HÁBITOS ══ -->
@@ -228,56 +228,71 @@
     <!-- DÍAS PERFECTOS -->
     <div class="stats-sep"><div class="stats-sep-line"></div><div class="stats-sep-label">Días perfectos ✦</div><div class="stats-sep-line"></div></div>
 
-    <div class="snarr-card" style="border-color:rgba(196,168,79,0.2)">
-      <div style="position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent2);border-radius:3px 0 0 3px"></div>
-      <div class="snarr-top">
-        <div class="snarr-big" id="stat-perf-racha-actual" style="color:var(--accent2)">—</div>
-        <div class="snarr-ctx">racha actual</div>
-        <div style="display:flex;flex-direction:column;align-items:flex-end;margin-left:auto;gap:2px">
-          <div style="font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase">Mejor racha</div>
-          <div style="font-size:22px;font-weight:700;color:var(--accent2)" id="stat-perf-racha-mejor">—</div>
+    <div class="racha-card gold-racha">
+      <div class="rc-header">
+        <div class="rc-title" style="color:var(--accent2)">Días perfectos ✦</div>
+        <div class="rc-total-badge" style="color:var(--accent2);background:rgba(196,168,79,0.1);border-color:rgba(196,168,79,0.25)" id="stat-dias-perfectos-badge">— total</div>
+      </div>
+      <div class="rc-main">
+        <div class="rc-racha-block">
+          <div class="rc-racha-lbl">Racha actual</div>
+          <div class="rc-racha-val" style="color:var(--accent2)" id="stat-perf-racha-actual">—</div>
+        </div>
+        <div class="rc-divider-v"></div>
+        <div class="rc-racha-block">
+          <div class="rc-racha-lbl">Mejor racha</div>
+          <div class="rc-racha-val" style="color:rgba(196,168,79,0.55)" id="stat-perf-racha-mejor">—</div>
         </div>
       </div>
-      <div class="snarr-triple">
-        <div class="snarr-triple-item">
-          <div class="snarr-triple-num" id="stat-dias-perfectos" style="color:var(--accent2)">—</div>
-          <div class="snarr-triple-lbl">Total</div>
+      <div class="rc-dots" id="rc-dots-perf"></div>
+      <div class="rc-triple">
+        <div class="rc-ti">
+          <div class="rc-ti-num" style="color:var(--accent2)" id="stat-perfectos-semana">—</div>
+          <div class="rc-ti-lbl">Por semana</div>
         </div>
-        <div class="snarr-triple-item" style="border-left:1px solid var(--border)">
-          <div class="snarr-triple-num" id="stat-perfectos-semana" style="color:var(--accent2)">—</div>
-          <div class="snarr-triple-lbl">Por semana</div>
+        <div class="rc-ti" style="border-left:1px solid var(--border)">
+          <div class="rc-ti-num" style="color:var(--accent2)" id="stat-perfectos-mes">—</div>
+          <div class="rc-ti-lbl">Por mes</div>
         </div>
-        <div class="snarr-triple-item" style="border-left:1px solid var(--border)">
-          <div class="snarr-triple-num" id="stat-perfectos-mes" style="color:var(--accent2)">—</div>
-          <div class="snarr-triple-lbl">Por mes</div>
+        <div class="rc-ti" style="border-left:1px solid var(--border)">
+          <div class="rc-ti-num" style="color:var(--accent2)" id="stat-dias-perfectos">—</div>
+          <div class="rc-ti-lbl">Total</div>
         </div>
       </div>
     </div>
 
     <!-- DÍAS BUENOS -->
-    <div class="stats-sep"><div class="stats-sep-line"></div><div class="stats-sep-label">Días buenos ·  ≥80% XP</div><div class="stats-sep-line"></div></div>
+    <div class="stats-sep"><div class="stats-sep-line"></div><div class="stats-sep-label">Días buenos · ≥80% XP</div><div class="stats-sep-line"></div></div>
 
-    <div class="snarr-card green-bar">
-      <div class="snarr-top">
-        <div class="snarr-big" id="stat-buenos-racha-actual" style="color:var(--accent)">—</div>
-        <div class="snarr-ctx">racha actual</div>
-        <div style="display:flex;flex-direction:column;align-items:flex-end;margin-left:auto;gap:2px">
-          <div style="font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase">Mejor racha</div>
-          <div style="font-size:22px;font-weight:700;color:var(--accent)" id="stat-buenos-racha-mejor">—</div>
+    <div class="racha-card green-racha">
+      <div class="rc-header">
+        <div class="rc-title" style="color:var(--accent)">Días buenos ≥80% XP</div>
+        <div class="rc-total-badge" style="color:var(--accent);background:rgba(143,179,57,0.1);border-color:rgba(143,179,57,0.25)" id="stat-dias-buenos-badge">— total</div>
+      </div>
+      <div class="rc-main">
+        <div class="rc-racha-block">
+          <div class="rc-racha-lbl">Racha actual</div>
+          <div class="rc-racha-val" style="color:var(--accent)" id="stat-buenos-racha-actual">—</div>
+        </div>
+        <div class="rc-divider-v"></div>
+        <div class="rc-racha-block">
+          <div class="rc-racha-lbl">Mejor racha</div>
+          <div class="rc-racha-val" style="color:rgba(143,179,57,0.55)" id="stat-buenos-racha-mejor">—</div>
         </div>
       </div>
-      <div class="snarr-triple">
-        <div class="snarr-triple-item">
-          <div class="snarr-triple-num" id="stat-dias-buenos" style="color:var(--accent)">—</div>
-          <div class="snarr-triple-lbl">Total</div>
+      <div class="rc-dots" id="rc-dots-buenos"></div>
+      <div class="rc-triple">
+        <div class="rc-ti">
+          <div class="rc-ti-num" style="color:var(--accent)" id="stat-buenos-semana">—</div>
+          <div class="rc-ti-lbl">Por semana</div>
         </div>
-        <div class="snarr-triple-item" style="border-left:1px solid var(--border)">
-          <div class="snarr-triple-num" id="stat-buenos-semana" style="color:var(--accent)">—</div>
-          <div class="snarr-triple-lbl">Por semana</div>
+        <div class="rc-ti" style="border-left:1px solid var(--border)">
+          <div class="rc-ti-num" style="color:var(--accent)" id="stat-buenos-mes">—</div>
+          <div class="rc-ti-lbl">Por mes</div>
         </div>
-        <div class="snarr-triple-item" style="border-left:1px solid var(--border)">
-          <div class="snarr-triple-num" id="stat-buenos-mes" style="color:var(--accent)">—</div>
-          <div class="snarr-triple-lbl">Por mes</div>
+        <div class="rc-ti" style="border-left:1px solid var(--border)">
+          <div class="rc-ti-num" style="color:var(--accent)" id="stat-dias-buenos">—</div>
+          <div class="rc-ti-lbl">Total</div>
         </div>
       </div>
     </div>

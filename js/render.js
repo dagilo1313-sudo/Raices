@@ -705,6 +705,62 @@ function renderLifetimeStats() {
   set('stat-buenos-semana', (diasBuenos/diffWeeks).toFixed(1));
   set('stat-buenos-mes', (diasBuenos/diffMonths).toFixed(1));
 
+  // Badges de total
+  const perfBadge = document.getElementById('stat-dias-perfectos-badge');
+  if (perfBadge) perfBadge.textContent = diasPerfectos + ' total';
+  const buenosBadge = document.getElementById('stat-dias-buenos-badge');
+  if (buenosBadge) buenosBadge.textContent = diasBuenos + ' total';
+
+  // Puntos de los últimos 7 días
+  const renderDots = (containerId, dotColor, dotEmptyColor, checkFn) => {
+    const el = document.getElementById(containerId);
+    if (!el) return;
+    const dots = [];
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date(today()+'T12:00:00');
+      d.setDate(d.getDate()-i);
+      const ds = d.toISOString().split('T')[0];
+      const dayData = state.completions[ds];
+      const active = checkFn(ds, dayData);
+      const dot = document.createElement('div');
+      dot.className = 'rc-dot';
+      dot.style.background = active ? dotColor : '#1a1f10';
+      dot.style.border = active ? 'none' : '1px solid #2a3020';
+      dot.title = d.toLocaleDateString('es-ES', {weekday:'short', day:'numeric'});
+      dots.push(dot);
+    }
+    const lbl = document.createElement('div');
+    lbl.className = 'rc-dot-lbl';
+    lbl.textContent = 'últimos 7 días';
+    el.innerHTML = '';
+    dots.forEach(d => el.appendChild(d));
+    el.appendChild(lbl);
+  };
+
+  // Perfectos: 100% hábitos completados
+  renderDots('rc-dots-perf', 'var(--accent2)', '#1a1f10', (ds, dayData) => {
+    if (!dayData || Array.isArray(dayData)) return false;
+    const comp = Array.isArray(dayData.completados) ? dayData.completados.length : 0;
+    const plan = Array.isArray(dayData.planificados) ? dayData.planificados.length : 0;
+    return plan > 0 && comp === plan;
+  });
+
+  // Buenos: ≥80% XP
+  renderDots('rc-dots-buenos', 'var(--accent)', '#1a1f10', (ds, dayData) => {
+    if (!dayData || Array.isArray(dayData)) {
+      if (ds === today()) {
+        const sched = state.habits.filter(h => !h.archivado && isScheduledForDate(h, ds));
+        const xpG = sched.filter(h => isCompleted(h.id, ds)).reduce((s,h)=>s+(h.xp||10),0);
+        const xpM = sched.reduce((s,h)=>s+(h.xp||10),0);
+        return xpM > 0 && xpG/xpM >= 0.8;
+      }
+      return false;
+    }
+    const xpG = dayData.xpGanadoPorCat ? Object.values(dayData.xpGanadoPorCat).reduce((s,v)=>s+v,0) : 0;
+    const xpM = dayData.xpMaxPorCat    ? Object.values(dayData.xpMaxPorCat).reduce((s,v)=>s+v,0)    : 0;
+    return xpM > 0 && xpG/xpM >= 0.8;
+  });
+
   const consistGlobal = ratioDays>0 ? Math.round(ratioSum/ratioDays*100) : 0;
   const xpEficGlobal  = xpEficDays>0 ? Math.round(xpEficSum/xpEficDays*100) : 0;
   set('stat-consistencia-global', consistGlobal+'%');
