@@ -479,3 +479,20 @@ header {
 .snarr-trend.up{color:#8fb339;background:rgba(143,179,57,0.12);border:1px solid rgba(143,179,57,0.25);}
 .snarr-trend.dn{color:#e05c5c;background:rgba(224,92,92,0.12);border:1px solid rgba(224,92,92,0.25);}
 .snarr-trend.flat{color:#6b7560;background:rgba(107,117,96,0.12);border:1px solid rgba(107,117,96,0.25);}
+
+/* ── Recorrido ── */
+.rec-row{display:flex;align-items:center;justify-content:space-between;padding:13px 18px;border-bottom:1px solid var(--border);}
+.rec-row:last-child{border-bottom:none;}
+.rec-lbl{font-size:12px;color:var(--muted);}
+.rec-val{font-size:16px;font-weight:700;text-align:right;}
+.rec-sub{font-size:10px;color:var(--dim);text-align:right;margin-top:1px;}
+
+/* ── Insights hábitos ── */
+.insight-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 0;}
+.insight-row+.insight-row{border-top:1px solid var(--border);}
+.insight-left{display:flex;align-items:center;gap:9px;}
+.insight-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.insight-lbl{font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:2px;}
+.insight-name{font-size:13px;font-weight:500;color:var(--text);}
+.insight-val{font-size:16px;font-weight:700;text-align:right;}
+.insight-sub{font-size:10px;color:var(--muted);text-align:right;margin-top:1px;}

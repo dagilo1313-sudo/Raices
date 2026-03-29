@@ -164,7 +164,7 @@
 
     <!-- Última sync discreta -->
     <div id="last-sync" style="text-align:center;font-size:10px;color:var(--border);padding:4px 0 2px"></div>
-    <div style="text-align:center;font-size:9px;color:var(--border);padding:0 0 12px;letter-spacing:1px">v38</div>
+    <div style="text-align:center;font-size:9px;color:var(--border);padding:0 0 12px;letter-spacing:1px">v40</div>
   </div>
 
   <!-- ══ HÁBITOS ══ -->
@@ -281,6 +281,12 @@
     </div>
 
 
+    <!-- Insights hábitos: 2 mejores + 2 peores -->
+    <div class="scat-card">
+      <div class="scat-title">Hábitos destacados</div>
+      <div id="stat-insights-hab"></div>
+    </div>
+
     <!-- Consistencia por categoría -->
     <div class="scat-card">
       <div class="scat-title">% de hábitos completados por categoría</div>
@@ -294,27 +300,27 @@
       <div class="snarr-top">
         <div class="snarr-big" id="stat-eficiencia-big">—</div>
         <div class="snarr-ctx">de eficiencia XP media</div>
+        <div class="snarr-trend" id="stat-tendencia-xp"></div>
       </div>
       <div class="snarr-triple">
         <div class="snarr-triple-item">
-          <div class="snarr-triple-num" id="stat-xp-total-lifetime">—</div>
-          <div class="snarr-triple-lbl">XP total</div>
+          <div class="snarr-triple-num" id="stat-nivel-actual" style="font-size:16px">—</div>
+          <div class="snarr-triple-lbl" id="stat-rango-actual" style="color:var(--muted)">—</div>
         </div>
         <div class="snarr-triple-item" style="border-left:1px solid var(--border)">
           <div class="snarr-triple-num" id="stat-xp-media-dia-pill">—</div>
-          <div class="snarr-triple-lbl">XP / día</div>
+          <div class="snarr-triple-lbl">XP por día</div>
         </div>
         <div class="snarr-triple-item" style="border-left:1px solid var(--border)">
-          <div class="snarr-triple-num" id="stat-nivel-actual">—</div>
-          <div class="snarr-triple-lbl">Nivel actual</div>
+          <div class="snarr-triple-num" id="stat-xp-total-lifetime">—</div>
+          <div class="snarr-triple-lbl">XP total</div>
         </div>
       </div>
     </div>
 
-    <!-- Rendimiento XP por día -->
+    <!-- Gráfica XP últimos 7 días (% real) -->
     <div class="scat-card">
       <div class="scat-title">XP por día · últimos 7</div>
-      <div class="scat-desc">ganado vs máximo posible</div>
       <div class="sdias-grid" id="stat-dias-semana">
         <div class="sdia"><div class="sdia-bar-wrap"><div class="sdia-bar" style="height:0%"></div></div><div class="sdia-name">L</div></div>
         <div class="sdia"><div class="sdia-bar-wrap"><div class="sdia-bar" style="height:0%"></div></div><div class="sdia-name">M</div></div>
@@ -330,6 +336,28 @@
     <div class="scat-card">
       <div class="scat-title">XP medio diario por categoría</div>
       <div class="scats-grid" id="stat-xp-cats"></div>
+    </div>
+
+    <!-- RECORRIDO -->
+    <div class="stats-sep"><div class="stats-sep-line"></div><div class="stats-sep-label">Recorrido</div><div class="stats-sep-line"></div></div>
+
+    <div class="scat-card" style="padding:0;overflow:hidden;">
+      <div class="rec-row">
+        <div class="rec-lbl">Días usando Raíces</div>
+        <div><div class="rec-val" id="stat-dias-raices">—</div></div>
+      </div>
+      <div class="rec-row">
+        <div class="rec-lbl">Mejor día de la semana</div>
+        <div><div class="rec-val" id="stat-mejor-dia" style="color:var(--accent)">—</div><div class="rec-sub" id="stat-mejor-dia-pct"></div></div>
+      </div>
+      <div class="rec-row">
+        <div class="rec-lbl">Día más flojo</div>
+        <div><div class="rec-val" id="stat-peor-dia" style="color:#e05c5c">—</div><div class="rec-sub" id="stat-peor-dia-pct"></div></div>
+      </div>
+      <div class="rec-row">
+        <div class="rec-lbl">XP no recogido</div>
+        <div><div class="rec-val" id="stat-xp-perdido" style="color:var(--muted)">—</div><div class="rec-sub">del máximo posible</div></div>
+      </div>
     </div>
 
   </div>
