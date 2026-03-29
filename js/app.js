@@ -253,18 +253,21 @@ window.onAddTarea = () => {
   const overlay = document.createElement('div');
   overlay.style.cssText = 'position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.65);display:flex;align-items:center;justify-content:center;padding:24px;animation:fadeIn 0.2s ease';
   overlay.innerHTML = `
-    <div style="background:var(--card2);border:1px solid var(--border);border-radius:24px 24px 0 0;padding:24px 24px 40px;width:100%;max-width:480px;animation:slideIn 0.3s cubic-bezier(0.34,1.2,0.64,1)">
-      <div style="width:40px;height:4px;background:var(--border);border-radius:4px;margin:0 auto 20px"></div>
-      <div style="font-size:16px;font-weight:600;color:var(--text);margin-bottom:16px">Nueva tarea</div>
+    <div style="background:var(--card2);border:1px solid var(--border);border-radius:20px;padding:28px 24px;max-width:320px;width:100%;animation:popIn 0.35s cubic-bezier(0.34,1.56,0.64,1)">
+      <div style="font-size:16px;font-weight:700;color:var(--text);margin-bottom:18px;text-align:center">Nueva tarea</div>
       <input class="input-field" id="nueva-tarea-input" placeholder="Nombre de la tarea..." maxlength="80" style="margin-bottom:12px">
       <div style="display:flex;gap:8px;margin-bottom:20px">
-        <button id="btn-normal" onclick="setUrgencia(false)" style="flex:1;padding:10px;border-radius:var(--radius-md);border:1px solid var(--border);background:var(--glow);color:var(--accent);font-family:var(--font-body);font-size:13px;cursor:pointer;font-weight:600">Normal</button>
+        <button id="btn-normal" onclick="setUrgencia(false)" style="flex:1;padding:10px;border-radius:var(--radius-md);border:1px solid rgba(143,179,57,0.3);background:var(--glow);color:var(--accent);font-family:var(--font-body);font-size:13px;cursor:pointer;font-weight:600">Normal</button>
         <button id="btn-urgente" onclick="setUrgencia(true)" style="flex:1;padding:10px;border-radius:var(--radius-md);border:1px solid rgba(179,92,79,0.3);background:transparent;color:var(--muted);font-family:var(--font-body);font-size:13px;cursor:pointer">Urgente</button>
       </div>
-      <button onclick="submitTarea()" style="width:100%;background:var(--accent);color:var(--bg);border:none;border-radius:var(--radius-md);padding:14px;font-size:15px;font-weight:600;font-family:var(--font-body);cursor:pointer;margin-bottom:10px">Añadir tarea</button>
-      <button onclick="this.closest('[data-overlay]').remove()" style="width:100%;background:transparent;color:var(--muted);border:1px solid var(--border);border-radius:var(--radius-md);padding:14px;font-size:15px;font-family:var(--font-body);cursor:pointer">Cancelar</button>
-    </div>`;
+      <div style="display:flex;gap:8px">
+        <button id="btn-cancel-tarea" style="flex:1;background:transparent;border:1px solid var(--border);border-radius:var(--radius-md);padding:10px;font-size:13px;color:var(--muted);font-family:var(--font-body);cursor:pointer">Cancelar</button>
+        <button onclick="submitTarea()" style="flex:1;background:rgba(143,179,57,0.15);color:var(--accent);border:1px solid rgba(143,179,57,0.4);border-radius:var(--radius-md);padding:10px;font-size:13px;font-weight:700;font-family:var(--font-body);cursor:pointer">Añadir</button>
+      </div>
+      <style>@keyframes popIn{from{transform:scale(0.8);opacity:0}to{transform:scale(1);opacity:1}}</style>
+    </div>\`;
   overlay.dataset.overlay = '1';
+  overlay.querySelector('#btn-cancel-tarea').onclick = () => overlay.remove();
   let esUrgente = false;
   window.setUrgencia = (u) => {
     esUrgente = u;

@@ -156,6 +156,24 @@ function renderViajero() {
   const navHoy = document.getElementById('nav-hoy');
   const enHoy = document.getElementById('view-hoy')?.classList.contains('active');
   if (navHoy) navHoy.style.color = (isPerfectToday && enHoy) ? 'var(--accent2)' : '';
+
+  // Cuadrado 3en1 de HOY
+  const xpHoyTriple = xpHoy;
+  const xpMaxTriple = xpMaxHoy;
+  const pctTriple = exitoPct;
+  const completadosHoy = scheduledHoy.filter(h => isCompleted(h.id, todayStr)).length;
+  const gold3 = isPerfectToday ? 'var(--accent2)' : 'var(--accent)';
+  const setTriple = (id, val, color) => {
+    const el = document.getElementById(id);
+    if (el) { el.textContent = val; el.style.color = color || ''; }
+  };
+  setTriple('hoy-stat-done', `${completadosHoy}/${scheduledHoy.length}`, gold3);
+  setTriple('hoy-stat-xp', `+${xpHoyTriple} XP`, gold3);
+  setTriple('hoy-stat-pct', `${pctTriple}%`, gold3);
+  const triple = document.getElementById('hoy-triple');
+  if (triple) {
+    triple.style.borderColor = isPerfectToday ? 'rgba(196,168,79,0.35)' : '';
+  }
   // XP label gold
   const xpLabelEl = document.getElementById('viajero-xp-label');
   if (xpLabelEl) xpLabelEl.style.color = isPerfectToday ? 'var(--accent2)' : '';
@@ -451,36 +469,61 @@ export function renderStats() {
 function renderLifetimeStats() {
   const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
 
-  // Total XP acumulado — directo del perfil
   const xpTotal = state.perfil.xpTotal || 0;
-  set('stat-xp-total-lifetime', xpTotal.toLocaleString('es-ES'));
+  const diasPerfectos = state.perfil.diasPerfectos || 0;
 
-  // Calcular días con actividad desde completions para la media
+  // IDs de días con datos
   const completionKeys = Object.keys(state.completions).filter(k =>
     k !== 'updatedAt' && /^\d{4}-\d{2}-\d{2}$/.test(k)
   );
 
+  set('stat-habits-count', state.habits.filter(h => !h.archivado).length);
+  set('stat-xp-total-lifetime', xpTotal.toLocaleString('es-ES'));
+
+  // Días perfectos dorado si hoy es perfecto
+  const dpEl = document.getElementById('stat-dias-perfectos');
+  if (dpEl) {
+    dpEl.textContent = diasPerfectos;
+    dpEl.style.color = window._isPerfectToday ? 'var(--accent2)' : 'var(--text)';
+  }
+
   if (completionKeys.length === 0) {
-    set('stat-xp-media-dia', '—');
-    set('stat-perfectos-semana', '—');
+    ['stat-xp-media-dia','stat-perfectos-semana','stat-perfectos-mes','stat-media-pct-xp','stat-media-habitos'].forEach(id => set(id,'—'));
     return;
   }
 
-  // Fecha más antigua con datos
   const sorted = completionKeys.sort();
   const firstDate = new Date(sorted[0] + 'T12:00:00');
   const todayDate = new Date(today() + 'T12:00:00');
   const diffDays = Math.max(1, Math.round((todayDate - firstDate) / (1000*60*60*24)) + 1);
   const diffWeeks = Math.max(1, diffDays / 7);
+  const diffMonths = Math.max(1, diffDays / 30.44);
 
-  // Media XP por día
-  const mediaXP = Math.round(xpTotal / diffDays);
-  set('stat-xp-media-dia', mediaXP.toLocaleString('es-ES'));
+  // Media XP/día
+  set('stat-xp-media-dia', Math.round(xpTotal / diffDays).toLocaleString('es-ES'));
 
-  // Media días perfectos por semana
-  const diasPerfectos = state.perfil.diasPerfectos || 0;
-  const mediaPerfectos = (diasPerfectos / diffWeeks).toFixed(1);
-  set('stat-perfectos-semana', mediaPerfectos);
+  // Días perfectos/semana y /mes
+  set('stat-perfectos-semana', (diasPerfectos / diffWeeks).toFixed(1));
+  set('stat-perfectos-mes', (diasPerfectos / diffMonths).toFixed(1));
+
+  // Media % XP recogido usando snapshots xpGanadoPorCat/xpMaxPorCat
+  let ratioSum = 0, ratioDays = 0, habitosSum = 0, habitosDays = 0;
+  completionKeys.forEach(k => {
+    const d = state.completions[k];
+    if (!d || Array.isArray(d)) return;
+    // % XP
+    if (d.xpMaxPorCat && d.xpGanadoPorCat) {
+      const maxTotal = Object.values(d.xpMaxPorCat).reduce((s,v)=>s+v,0);
+      const ganado = Object.values(d.xpGanadoPorCat).reduce((s,v)=>s+v,0);
+      if (maxTotal > 0) { ratioSum += ganado/maxTotal; ratioDays++; }
+    }
+    // Media hábitos completados
+    const completados = Array.isArray(d.completados) ? d.completados.length : 0;
+    if (d.planificados?.length > 0) { habitosSum += completados; habitosDays++; }
+  });
+
+  set('stat-media-pct-xp', ratioDays > 0 ? Math.round(ratioSum/ratioDays*100)+'%' : '—');
+  set('stat-media-habitos', habitosDays > 0 ? (habitosSum/habitosDays).toFixed(1) : '—');
 }
 
 function renderCalendar(activeDate) {

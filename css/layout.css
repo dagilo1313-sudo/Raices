@@ -278,6 +278,13 @@ header {
 .stat-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; }
 .stat-label { font-size: 11px; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; }
 
+/* ── Cuadrado 3en1 en HOY ── */
+.hoy-triple { display: flex; align-items: center; margin: 0 24px 14px; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 14px 16px; transition: border-color 0.3s; }
+.hoy-triple-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; }
+.hoy-triple-value { font-size: 18px; font-weight: 700; color: var(--accent); line-height: 1; }
+.hoy-triple-label { font-size: 9px; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; }
+.hoy-triple-sep { width: 1px; height: 32px; background: var(--border); flex-shrink: 0; margin: 0 8px; }
+
 /* ── Métricas lifetime ── */
 .stats-lifetime { margin: 0 24px 20px; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px 20px; }
 .lifetime-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
