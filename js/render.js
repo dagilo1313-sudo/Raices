@@ -760,17 +760,6 @@ function renderLifetimeStats() {
 }
 
 
-export function renderHistorico() {
-  const activeDate = state.selectedDate || today();
-  const calTitle = document.getElementById('cal-title');
-  if (calTitle) {
-    const d = new Date(activeDate + 'T12:00:00');
-    calTitle.textContent = d.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' });
-  }
-  renderCalendar(activeDate);
-  renderStatsForDate(activeDate);
-}
-
 
 function renderLifetimeStats() {
   const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
