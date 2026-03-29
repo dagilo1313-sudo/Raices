@@ -445,6 +445,42 @@ export function renderStats() {
   }
   renderCalendar(activeDate);
   renderStatsForDate(activeDate);
+  renderLifetimeStats();
+}
+
+function renderLifetimeStats() {
+  const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+
+  // Total XP acumulado — directo del perfil
+  const xpTotal = state.perfil.xpTotal || 0;
+  set('stat-xp-total-lifetime', xpTotal.toLocaleString('es-ES'));
+
+  // Calcular días con actividad desde completions para la media
+  const completionKeys = Object.keys(state.completions).filter(k =>
+    k !== 'updatedAt' && /^\d{4}-\d{2}-\d{2}$/.test(k)
+  );
+
+  if (completionKeys.length === 0) {
+    set('stat-xp-media-dia', '—');
+    set('stat-perfectos-semana', '—');
+    return;
+  }
+
+  // Fecha más antigua con datos
+  const sorted = completionKeys.sort();
+  const firstDate = new Date(sorted[0] + 'T12:00:00');
+  const todayDate = new Date(today() + 'T12:00:00');
+  const diffDays = Math.max(1, Math.round((todayDate - firstDate) / (1000*60*60*24)) + 1);
+  const diffWeeks = Math.max(1, diffDays / 7);
+
+  // Media XP por día
+  const mediaXP = Math.round(xpTotal / diffDays);
+  set('stat-xp-media-dia', mediaXP.toLocaleString('es-ES'));
+
+  // Media días perfectos por semana
+  const diasPerfectos = state.perfil.diasPerfectos || 0;
+  const mediaPerfectos = (diasPerfectos / diffWeeks).toFixed(1);
+  set('stat-perfectos-semana', mediaPerfectos);
 }
 
 function renderCalendar(activeDate) {
