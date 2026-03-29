@@ -1,6 +1,6 @@
 import { initAuth, toggleAuthMode, handleAuth, showForgotPassword, showLoginForm, sendResetEmail, showChangePassword, hideChangePassword, changePassword, logout } from './auth.js';
 import { toggleHabit, deleteHabit, saveCompletions, resetAllData, resetProgress, createTarea, toggleTarea, borrarTareasCompletadas, getCompletadosForDate } from './habits.js';
-import { renderAll, renderHabitsList, renderRangosPanel, renderTareas, renderHistorico } from './render.js';
+import { renderAll, renderHabitsList, renderTareas, renderHistorico } from './render.js';
 import { showToast, showConfetti, switchView } from './ui.js';
 import { openCreateModal, openEditModal, closeModal, closeModalOutside, submitModal, selectEmoji, selectNoIcon, selectCategory, selectXP, toggleDay, selectAllDays } from './modal.js';
 import { state, getCompletionMessage, today, CLASES } from './state.js';
