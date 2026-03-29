@@ -164,7 +164,7 @@
 
     <!-- Última sync discreta -->
     <div id="last-sync" style="text-align:center;font-size:10px;color:var(--border);padding:4px 0 2px"></div>
-    <div style="text-align:center;font-size:9px;color:var(--border);padding:0 0 12px;letter-spacing:1px">v37</div>
+    <div style="text-align:center;font-size:9px;color:var(--border);padding:0 0 12px;letter-spacing:1px">v38</div>
   </div>
 
   <!-- ══ HÁBITOS ══ -->
@@ -203,11 +203,19 @@
     <div class="snarr-card" style="border-color:rgba(196,168,79,0.2)">
       <div style="position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent2);border-radius:3px 0 0 3px"></div>
       <div class="snarr-top">
-        <div class="snarr-big" id="stat-dias-perfectos" style="color:var(--accent2)">0</div>
-        <div class="snarr-ctx">días perfectos</div>
+        <div class="snarr-big" id="stat-perf-racha-actual" style="color:var(--accent2)">—</div>
+        <div class="snarr-ctx">racha actual</div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;margin-left:auto;gap:2px">
+          <div style="font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase">Mejor racha</div>
+          <div style="font-size:22px;font-weight:700;color:var(--accent2)" id="stat-perf-racha-mejor">—</div>
+        </div>
       </div>
       <div class="snarr-triple">
         <div class="snarr-triple-item">
+          <div class="snarr-triple-num" id="stat-dias-perfectos" style="color:var(--accent2)">—</div>
+          <div class="snarr-triple-lbl">Total</div>
+        </div>
+        <div class="snarr-triple-item" style="border-left:1px solid var(--border)">
           <div class="snarr-triple-num" id="stat-perfectos-semana" style="color:var(--accent2)">—</div>
           <div class="snarr-triple-lbl">Por semana</div>
         </div>
@@ -215,13 +223,33 @@
           <div class="snarr-triple-num" id="stat-perfectos-mes" style="color:var(--accent2)">—</div>
           <div class="snarr-triple-lbl">Por mes</div>
         </div>
-        <div class="snarr-triple-item" style="border-left:1px solid var(--border)">
-          <div class="snarr-triple-num" id="stat-racha-actual" style="color:var(--accent2)">—</div>
-          <div class="snarr-triple-lbl">Racha actual</div>
+      </div>
+    </div>
+
+    <!-- DÍAS BUENOS -->
+    <div class="stats-sep"><div class="stats-sep-line"></div><div class="stats-sep-label">Días buenos ·  ≥80% XP</div><div class="stats-sep-line"></div></div>
+
+    <div class="snarr-card green-bar">
+      <div class="snarr-top">
+        <div class="snarr-big" id="stat-buenos-racha-actual" style="color:var(--accent)">—</div>
+        <div class="snarr-ctx">racha actual</div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;margin-left:auto;gap:2px">
+          <div style="font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase">Mejor racha</div>
+          <div style="font-size:22px;font-weight:700;color:var(--accent)" id="stat-buenos-racha-mejor">—</div>
+        </div>
+      </div>
+      <div class="snarr-triple">
+        <div class="snarr-triple-item">
+          <div class="snarr-triple-num" id="stat-dias-buenos" style="color:var(--accent)">—</div>
+          <div class="snarr-triple-lbl">Total</div>
         </div>
         <div class="snarr-triple-item" style="border-left:1px solid var(--border)">
-          <div class="snarr-triple-num" id="stat-racha-mejor" style="color:var(--accent2)">—</div>
-          <div class="snarr-triple-lbl">Mejor racha</div>
+          <div class="snarr-triple-num" id="stat-buenos-semana" style="color:var(--accent)">—</div>
+          <div class="snarr-triple-lbl">Por semana</div>
+        </div>
+        <div class="snarr-triple-item" style="border-left:1px solid var(--border)">
+          <div class="snarr-triple-num" id="stat-buenos-mes" style="color:var(--accent)">—</div>
+          <div class="snarr-triple-lbl">Por mes</div>
         </div>
       </div>
     </div>
@@ -229,11 +257,12 @@
     <!-- HÁBITOS -->
     <div class="stats-sep"><div class="stats-sep-line"></div><div class="stats-sep-label">Hábitos</div><div class="stats-sep-line"></div></div>
 
-    <!-- Card narrativa -->
+    <!-- Card narrativa hábitos -->
     <div class="snarr-card green-bar">
       <div class="snarr-top">
         <div class="snarr-big" id="stat-consistencia-global">—</div>
-        <div class="snarr-ctx">de consistencia global</div>
+        <div class="snarr-ctx">DE HÁBITOS COMPLETADOS</div>
+        <div class="snarr-trend" id="stat-tendencia-hab"></div>
       </div>
       <div class="snarr-triple">
         <div class="snarr-triple-item">
@@ -242,7 +271,7 @@
         </div>
         <div class="snarr-triple-item" style="border-left:1px solid var(--border)">
           <div class="snarr-triple-num" id="stat-media-habitos">—</div>
-          <div class="snarr-triple-lbl">Media / día</div>
+          <div class="snarr-triple-lbl">Hábitos por día</div>
         </div>
         <div class="snarr-triple-item" style="border-left:1px solid var(--border)">
           <div class="snarr-triple-num" id="stat-total-completados">—</div>

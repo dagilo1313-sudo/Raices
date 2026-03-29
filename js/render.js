@@ -553,24 +553,16 @@ export function renderHistorico() {
 
 function renderLifetimeStats() {
   const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+  const setColor = (id, c) => { const el = document.getElementById(id); if (el) el.style.color = c; };
+
   const xpTotal = state.perfil.xpTotal || 0;
-  const diasPerfectos = state.perfil.diasPerfectos || 0;
   const habActivos = state.habits.filter(h => !h.archivado).length;
 
-  const keys = Object.keys(state.completions).filter(k => k !== 'updatedAt' && /^\d{4}-\d{2}-\d{2}$/.test(k));
-
-  // Días perfectos
-  const dpEl = document.getElementById('stat-dias-perfectos');
-  if (dpEl) { dpEl.textContent = diasPerfectos; dpEl.style.color = window._isPerfectToday ? 'var(--accent2)' : 'var(--accent2)'; }
   set('stat-habits-count', habActivos);
   set('stat-xp-total-lifetime', xpTotal.toLocaleString('es-ES'));
 
-  if (!keys.length) {
-    ['stat-perfectos-semana','stat-perfectos-mes','stat-racha-actual','stat-racha-mejor',
-     'stat-consistencia-global','stat-media-habitos','stat-total-completados',
-     'stat-xp-media-dia-pill','stat-eficiencia-pill'].forEach(id => set(id,'—'));
-    return;
-  }
+  const keys = Object.keys(state.completions).filter(k => k !== 'updatedAt' && /^\d{4}-\d{2}-\d{2}$/.test(k));
+  if (!keys.length) return;
 
   const sorted = keys.sort();
   const firstDate = new Date(sorted[0] + 'T12:00:00');
@@ -579,55 +571,291 @@ function renderLifetimeStats() {
   const diffWeeks = Math.max(1, diffDays / 7);
   const diffMonths = Math.max(1, diffDays / 30.44);
 
-  set('stat-perfectos-semana', (diasPerfectos / diffWeeks).toFixed(1));
-  set('stat-perfectos-mes', (diasPerfectos / diffMonths).toFixed(1));
-  set('stat-xp-media-dia-pill', `${Math.round(xpTotal / diffDays)} XP / día`);
-
-  // Racha actual y mejor racha
-  let rachaActual = 0, rachaMejor = 0, rachaTemp = 0;
+  // ── Calcular métricas desde completions ──
+  let diasPerfectos = 0, diasBuenos = 0;
+  let rachaPerfActual = 0, rachaPerfMejor = 0, rachaPerfTemp = 0;
+  let rachaBueActual = 0, rachaBueMejor = 0, rachaBueTemp = 0;
+  let ratioSum = 0, ratioDays = 0, habitosSum = 0, habitosDays = 0, totalCompletados = 0;
+  const xpCatSum = {}, xpCatDays = {};
+  const catComp = {}, catPlan = {};
+  const diaSum = [0,0,0,0,0,0,0], diaDays = [0,0,0,0,0,0,0];
+  // Para tendencia: acumular por semana
   const todayStr = today();
-  [...sorted].reverse().forEach((k, i) => {
-    const d = state.completions[k];
-    if (!d || Array.isArray(d)) return;
-    const completados = d.completados?.length || 0;
-    const planificados = d.planificados?.length || 0;
-    const perfecto = planificados > 0 && completados === planificados;
-    if (i === 0 && perfecto) rachaActual = 1;
-    else if (i === 0) rachaActual = 0;
-  });
+  const semanaActualStart = new Date(todayStr + 'T12:00:00');
+  semanaActualStart.setDate(semanaActualStart.getDate() - 6);
+  const semanaAnteriorStart = new Date(todayStr + 'T12:00:00');
+  semanaAnteriorStart.setDate(semanaAnteriorStart.getDate() - 13);
+  let ratioSemActual = 0, daysSemActual = 0;
+  let ratioSemAnterior = 0, daysSemAnterior = 0;
+
   sorted.forEach(k => {
     const d = state.completions[k];
-    if (!d || Array.isArray(d)) { rachaTemp = 0; return; }
-    const completados = d.completados?.length || 0;
-    const planificados = d.planificados?.length || 0;
-    const perfecto = planificados > 0 && completados === planificados;
-    if (perfecto) { rachaTemp++; rachaMejor = Math.max(rachaMejor, rachaTemp); }
-    else rachaTemp = 0;
+    if (!d || Array.isArray(d)) { rachaPerfTemp = 0; rachaBueTemp = 0; return; }
+    const completados = Array.isArray(d.completados) ? d.completados.length : 0;
+    const planificados = Array.isArray(d.planificados) ? d.planificados.length : 0;
+    if (!planificados) { rachaPerfTemp = 0; rachaBueTemp = 0; return; }
+
+    const xpGanado = d.xpGanadoPorCat ? Object.values(d.xpGanadoPorCat).reduce((s,v)=>s+v,0) : 0;
+    const xpMax    = d.xpMaxPorCat    ? Object.values(d.xpMaxPorCat).reduce((s,v)=>s+v,0)    : 0;
+    const xpRatio  = xpMax > 0 ? xpGanado / xpMax : 0;
+    const isPerfect = planificados > 0 && completados === planificados;
+    const isBueno   = xpRatio >= 0.8; // incluye perfectos
+
+    // Días perfectos y buenos (autocalculado)
+    if (isPerfect) diasPerfectos++;
+    if (isBueno) diasBuenos++;
+
+    // Racha perfectos
+    if (isPerfect) { rachaPerfTemp++; rachaPerfMejor = Math.max(rachaPerfMejor, rachaPerfTemp); }
+    else rachaPerfTemp = 0;
+
+    // Racha buenos (≥80% XP, incluye perfectos)
+    if (isBueno) { rachaBueTemp++; rachaBueMejor = Math.max(rachaBueMejor, rachaBueTemp); }
+    else rachaBueTemp = 0;
+
+    // Consistencia global
+    totalCompletados += completados;
+    ratioSum += completados / planificados;
+    ratioDays++;
+    habitosSum += completados;
+    habitosDays++;
+
+    // Tendencia semanal
+    const kDate = new Date(k + 'T12:00:00');
+    if (kDate >= semanaActualStart) { ratioSemActual += completados / planificados; daysSemActual++; }
+    else if (kDate >= semanaAnteriorStart) { ratioSemAnterior += completados / planificados; daysSemAnterior++; }
+
+    // XP por cat
+    if (d.xpGanadoPorCat) Object.entries(d.xpGanadoPorCat).forEach(([cat, xp]) => {
+      xpCatSum[cat] = (xpCatSum[cat] || 0) + xp;
+      xpCatDays[cat] = (xpCatDays[cat] || 0) + 1;
+    });
+
+    // Consistencia por cat
+    if (Array.isArray(d.planificados) && Array.isArray(d.completados)) {
+      state.allHabits.filter(h => d.planificados.includes(h.id)).forEach(h => {
+        const cat = h.category || 'disciplina';
+        catPlan[cat] = (catPlan[cat] || 0) + 1;
+        if (d.completados.includes(h.id)) catComp[cat] = (catComp[cat] || 0) + 1;
+      });
+    }
+
+    // Día semana
+    const dow = new Date(k + 'T12:00:00').getDay();
+    const idx = dow === 0 ? 6 : dow - 1;
+    diaSum[idx] += completados / planificados;
+    diaDays[idx]++;
   });
-  set('stat-racha-actual', rachaActual);
-  set('stat-racha-mejor', rachaMejor);
 
-  // Consistencia global, total completados, media hábitos
+  // Racha actual = lo que quedó al final del loop (últimos días)
+  rachaPerfActual = rachaPerfTemp;
+  rachaBueActual = rachaBueTemp;
+
+  // ── Días perfectos ──
+  set('stat-dias-perfectos', diasPerfectos);
+  set('stat-perfectos-semana', (diasPerfectos / diffWeeks).toFixed(1));
+  set('stat-perfectos-mes', (diasPerfectos / diffMonths).toFixed(1));
+  set('stat-perf-racha-actual', rachaPerfActual);
+  set('stat-perf-racha-mejor', rachaPerfMejor);
+
+  // ── Días buenos ──
+  set('stat-dias-buenos', diasBuenos);
+  set('stat-buenos-semana', (diasBuenos / diffWeeks).toFixed(1));
+  set('stat-buenos-mes', (diasBuenos / diffMonths).toFixed(1));
+  set('stat-buenos-racha-actual', rachaBueActual);
+  set('stat-buenos-racha-mejor', rachaBueMejor);
+
+  // ── Hábitos ──
+  const consistGlobal = ratioDays > 0 ? Math.round(ratioSum / ratioDays * 100) : 0;
+  set('stat-consistencia-global', consistGlobal + '%');
+  set('stat-eficiencia-big', consistGlobal + '%');
+  set('stat-eficiencia-pill', consistGlobal + '% eficiencia');
+  set('stat-media-habitos', habitosDays > 0 ? (habitosSum / habitosDays).toFixed(1) : '—');
+  set('stat-total-completados', totalCompletados.toLocaleString('es-ES'));
+
+  // Tendencia semanal hábitos
+  const tendEl = document.getElementById('stat-tendencia-hab');
+  if (tendEl && daysSemActual > 0 && daysSemAnterior > 0) {
+    const pctActual = Math.round(ratioSemActual / daysSemActual * 100);
+    const pctAnterior = Math.round(ratioSemAnterior / daysSemAnterior * 100);
+    const delta = pctActual - pctAnterior;
+    if (delta !== 0) {
+      const up = delta > 0;
+      tendEl.textContent = (up ? '↑ +' : '↓ ') + delta + '%';
+      tendEl.style.cssText = up
+        ? 'font-size:12px;font-weight:600;padding:3px 9px;border-radius:20px;color:#8fb339;background:rgba(143,179,57,0.12);border:1px solid rgba(143,179,57,0.25);white-space:nowrap'
+        : 'font-size:12px;font-weight:600;padding:3px 9px;border-radius:20px;color:#e05c5c;background:rgba(224,92,92,0.12);border:1px solid rgba(224,92,92,0.25);white-space:nowrap';
+    } else {
+      tendEl.textContent = '';
+    }
+  }
+
+  // XP / día y nivel
+  const xpPorDia = Math.round(xpTotal / diffDays);
+  set('stat-xp-media-dia-pill', xpPorDia.toLocaleString('es-ES'));
+  set('stat-nivel-actual', 'Nv.' + (state.perfil.nivel || 1));
+
+  // ── Gráfica últimos 7 días (XP) ──
+  const diasGrid = document.getElementById('stat-dias-semana');
+  if (diasGrid) {
+    const last7 = [];
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date(today() + 'T12:00:00');
+      d.setDate(d.getDate() - i);
+      const ds7 = d.toISOString().split('T')[0];
+      const dayData = state.completions[ds7];
+      let ratio7 = 0;
+      if (dayData && !Array.isArray(dayData) && dayData.xpMaxPorCat) {
+        const gan = Object.values(dayData.xpGanadoPorCat || {}).reduce((s,v)=>s+v,0);
+        const max = Object.values(dayData.xpMaxPorCat || {}).reduce((s,v)=>s+v,0);
+        ratio7 = max > 0 ? gan / max : 0;
+      } else if (ds7 === today()) {
+        const sched7 = state.habits.filter(h => !h.archivado && isScheduledForDate(h, ds7));
+        const xpGan = sched7.filter(h => isCompleted(h.id, ds7)).reduce((s,h)=>s+(h.xp||10),0);
+        const xpM = sched7.reduce((s,h)=>s+(h.xp||10),0);
+        ratio7 = xpM > 0 ? xpGan / xpM : 0;
+      }
+      last7.push({ ratio: ratio7, label: d.toLocaleDateString('es-ES',{weekday:'short'}).slice(0,1).toUpperCase(), dateStr: ds7 });
+    }
+    const labels = diasGrid.querySelectorAll('.sdia-name');
+    const bars   = diasGrid.querySelectorAll('.sdia-bar');
+    const maxR   = Math.max(...last7.map(d => d.ratio), 0.01);
+    last7.forEach((d, i) => {
+      if (bars[i]) {
+        const ratio = d.ratio / maxR;
+        const h = Math.max(4, ratio * 100);
+        bars[i].style.height = h + '%';
+        const r = Math.round(143 + (196 - 143) * ratio);
+        const g = Math.round(179 + (168 - 179) * ratio);
+        const b = Math.round(57  + (79  - 57)  * ratio);
+        bars[i].style.background = `rgba(${r},${g},${b},${0.35 + ratio * 0.65})`;
+      }
+      if (labels[i]) labels[i].textContent = d.label;
+    });
+  }
+
+  // ── Categorías ──
+  const CATS = {
+    fisico:{label:'Físico',color:'#e05c5c'},
+    disciplina:{label:'Disciplina',color:'#5c8ae0'},
+    energia:{label:'Energía',color:'#8fb339'},
+    inteligencia:{label:'Inteligencia',color:'#c4a84f'},
+    identidad:{label:'Identidad',color:'#a05ce0'},
+  };
+  const catConsEl = document.getElementById('stat-consistencia-cats');
+  if (catConsEl) {
+    const entries = Object.entries(CATS).map(([k,c]) => ({k,c,pct:catPlan[k]>0?Math.round((catComp[k]||0)/catPlan[k]*100):0})).sort((a,b)=>b.pct-a.pct);
+    catConsEl.innerHTML = entries.map(({k,c,pct}) =>
+      `<div class="scat-row"><div class="scat-pill" style="background:${c.color}22;color:${c.color};border:1px solid ${c.color}44">${c.label}</div><div class="scat-bar-wrap"><div class="scat-bar-fill" style="width:${pct}%;background:${c.color}"></div></div><div class="scat-val" style="color:${c.color}">${pct}%</div></div>`
+    ).join('');
+  }
+  const xpCatEl = document.getElementById('stat-xp-cats');
+  if (xpCatEl) {
+    const entries = Object.entries(CATS).map(([k,c]) => ({k,c,media:xpCatDays[k]>0?Math.round((xpCatSum[k]||0)/diffDays):0})).sort((a,b)=>b.media-a.media);
+    const maxXP = Math.max(...entries.map(e=>e.media), 1);
+    xpCatEl.innerHTML = entries.map(({k,c,media}) =>
+      `<div class="scat-row"><div class="scat-pill" style="background:${c.color}22;color:${c.color};border:1px solid ${c.color}44">${c.label}</div><div class="scat-bar-wrap"><div class="scat-bar-fill" style="width:${Math.round(media/maxXP*100)}%;background:${c.color}"></div></div><div class="scat-val" style="color:${c.color}">${media} xp</div></div>`
+    ).join('');
+  }
+}
+
+
+export function renderHistorico() {
+  const activeDate = state.selectedDate || today();
+  const calTitle = document.getElementById('cal-title');
+  if (calTitle) {
+    const d = new Date(activeDate + 'T12:00:00');
+    calTitle.textContent = d.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' });
+  }
+  renderCalendar(activeDate);
+  renderStatsForDate(activeDate);
+}
+
+
+function renderLifetimeStats() {
+  const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+  const xpTotal = state.perfil.xpTotal || 0;
+  const habActivos = state.habits.filter(h => !h.archivado).length;
+
+  set('stat-habits-count', habActivos);
+  set('stat-xp-total-lifetime', xpTotal.toLocaleString('es-ES'));
+
+  const keys = Object.keys(state.completions).filter(k => k !== 'updatedAt' && /^\d{4}-\d{2}-\d{2}$/.test(k));
+  const sorted = keys.sort();
+
+  if (!keys.length) {
+    ['stat-dias-perfectos','stat-perf-racha-actual','stat-perf-racha-mejor',
+     'stat-perfectos-semana','stat-perfectos-mes',
+     'stat-dias-buenos','stat-buenos-racha-actual','stat-buenos-racha-mejor',
+     'stat-buenos-semana','stat-buenos-mes',
+     'stat-consistencia-global','stat-media-habitos','stat-total-completados',
+     'stat-xp-media-dia-pill','stat-eficiencia-big','stat-nivel-actual'].forEach(id => set(id,'—'));
+    return;
+  }
+
+  const firstDate = new Date(sorted[0] + 'T12:00:00');
+  const todayDate = new Date(today() + 'T12:00:00');
+  const diffDays = Math.max(1, Math.round((todayDate - firstDate) / (1000*60*60*24)) + 1);
+  const diffWeeks = Math.max(1, diffDays / 7);
+  const diffMonths = Math.max(1, diffDays / 30.44);
+
+  // ── Calcular todo desde completions ──
+  let diasPerfectos = 0, diasBuenos = 0;
+  let rachaPerfActual = 0, rachaPerfMejor = 0, rachaPerfTemp = 0;
+  let rachaBuenosActual = 0, rachaBuenosMejor = 0, rachaBuenosTemp = 0;
   let ratioSum = 0, ratioDays = 0, habitosSum = 0, habitosDays = 0, totalCompletados = 0;
-  // XP por categoría
-  const xpCatSum = {}; const xpCatDays = {};
-  // Consistencia por categoría: completados vs planificados
+  let ratioSumSemAnt = 0, ratioDaysSemAnt = 0;
+  const xpCatSum = {}, xpCatDays = {};
   const catComp = {}, catPlan = {};
-  // Rendimiento por día de semana (0=L..6=D)
   const diaSum = [0,0,0,0,0,0,0], diaDays = [0,0,0,0,0,0,0];
+  let xpTotalLost = 0;
 
-  keys.forEach(k => {
+  // Fecha de hace 7 y 14 días para tendencia
+  const hoy = new Date(today() + 'T12:00:00');
+  const hace7  = new Date(hoy); hace7.setDate(hoy.getDate() - 7);
+  const hace14 = new Date(hoy); hace14.setDate(hoy.getDate() - 14);
+  const hace7str  = hace7.toISOString().split('T')[0];
+  const hace14str = hace14.toISOString().split('T')[0];
+
+  sorted.forEach(k => {
     const d = state.completions[k];
-    if (!d || Array.isArray(d)) return;
+    if (!d || Array.isArray(d)) { rachaPerfTemp = 0; rachaBuenosTemp = 0; return; }
+
     const completados = Array.isArray(d.completados) ? d.completados.length : 0;
     const planificados = Array.isArray(d.planificados) ? d.planificados.length : 0;
     totalCompletados += completados;
+
+    // XP ratio del día
+    const xpGanadoDay = d.xpGanadoPorCat ? Object.values(d.xpGanadoPorCat).reduce((s,v)=>s+v,0) : 0;
+    const xpMaxDay    = d.xpMaxPorCat    ? Object.values(d.xpMaxPorCat).reduce((s,v)=>s+v,0)    : 0;
+    const xpRatioDay  = xpMaxDay > 0 ? xpGanadoDay / xpMaxDay : 0;
+    xpTotalLost += (xpMaxDay - xpGanadoDay);
+
+    // Día perfecto = 100% hábitos
+    const esPerfecto = planificados > 0 && completados === planificados;
+    // Día bueno = ≥80% XP (incluye perfectos)
+    const esBueno = xpRatioDay >= 0.8;
+
+    if (esPerfecto) { diasPerfectos++; rachaPerfTemp++; rachaPerfMejor = Math.max(rachaPerfMejor, rachaPerfTemp); }
+    else rachaPerfTemp = 0;
+
+    if (esBueno) { diasBuenos++; rachaBuenosTemp++; rachaBuenosMejor = Math.max(rachaBuenosMejor, rachaBuenosTemp); }
+    else rachaBuenosTemp = 0;
+
+    // Consistencia
     if (planificados > 0) {
-      ratioSum += completados / planificados;
+      const ratio = completados / planificados;
+      ratioSum += ratio;
       ratioDays++;
       habitosSum += completados;
       habitosDays++;
+      // Semana anterior (hace 7-14 días)
+      if (k >= hace14str && k < hace7str) {
+        ratioSumSemAnt += ratio;
+        ratioDaysSemAnt++;
+      }
     }
+
     // XP por cat
     if (d.xpGanadoPorCat) {
       Object.entries(d.xpGanadoPorCat).forEach(([cat, xp]) => {
@@ -635,7 +863,8 @@ function renderLifetimeStats() {
         xpCatDays[cat] = (xpCatDays[cat] || 0) + 1;
       });
     }
-    // Consistencia por cat usando allHabits para ese día
+
+    // Consistencia por cat
     if (Array.isArray(d.planificados) && Array.isArray(d.completados)) {
       const habsDelDia = state.allHabits.filter(h => d.planificados.includes(h.id));
       habsDelDia.forEach(h => {
@@ -644,26 +873,82 @@ function renderLifetimeStats() {
         if (d.completados.includes(h.id)) catComp[cat] = (catComp[cat] || 0) + 1;
       });
     }
-    // Día de semana (JS: 0=D, ajustar a L=0)
+
+    // Día de semana
     const dow = new Date(k + 'T12:00:00').getDay();
     const idx = dow === 0 ? 6 : dow - 1;
     if (planificados > 0) { diaSum[idx] += completados / planificados; diaDays[idx]++; }
   });
 
+  // Rachas actuales — contar desde el final hacia atrás
+  rachaPerfActual = 0;
+  rachaBuenosActual = 0;
+  for (let i = sorted.length - 1; i >= 0; i--) {
+    const k = sorted[i];
+    const d = state.completions[k];
+    if (!d || Array.isArray(d)) break;
+    const comp = Array.isArray(d.completados) ? d.completados.length : 0;
+    const plan = Array.isArray(d.planificados) ? d.planificados.length : 0;
+    const xpG = d.xpGanadoPorCat ? Object.values(d.xpGanadoPorCat).reduce((s,v)=>s+v,0) : 0;
+    const xpM = d.xpMaxPorCat    ? Object.values(d.xpMaxPorCat).reduce((s,v)=>s+v,0)    : 0;
+    const esPerfHoy = plan > 0 && comp === plan;
+    const esBuenoHoy = xpM > 0 && xpG / xpM >= 0.8;
+    // Solo contar racha si es el último o si el anterior también lo era
+    if (i === sorted.length - 1) {
+      if (esPerfHoy) rachaPerfActual = 1;
+      if (esBuenoHoy) rachaBuenosActual = 1;
+    } else {
+      if (esPerfHoy && rachaPerfActual > 0) rachaPerfActual++;
+      else if (!esPerfHoy) rachaPerfActual = -999; // detener
+      if (esBuenoHoy && rachaBuenosActual > 0) rachaBuenosActual++;
+      else if (!esBuenoHoy) rachaBuenosActual = -999;
+    }
+    if (rachaPerfActual < 0 && rachaBuenosActual < 0) break;
+  }
+  rachaPerfActual = Math.max(0, rachaPerfActual);
+  rachaBuenosActual = Math.max(0, rachaBuenosActual);
+
+  // ── Setear valores ──
+  // Días perfectos
+  set('stat-dias-perfectos', diasPerfectos);
+  set('stat-perf-racha-actual', rachaPerfActual);
+  set('stat-perf-racha-mejor', rachaPerfMejor);
+  set('stat-perfectos-semana', (diasPerfectos / diffWeeks).toFixed(1));
+  set('stat-perfectos-mes', (diasPerfectos / diffMonths).toFixed(1));
+
+  // Días buenos
+  set('stat-dias-buenos', diasBuenos);
+  set('stat-buenos-racha-actual', rachaBuenosActual);
+  set('stat-buenos-racha-mejor', rachaBuenosMejor);
+  set('stat-buenos-semana', (diasBuenos / diffWeeks).toFixed(1));
+  set('stat-buenos-mes', (diasBuenos / diffMonths).toFixed(1));
+
+  // Hábitos
   const consistGlobal = ratioDays > 0 ? Math.round(ratioSum / ratioDays * 100) : 0;
+  const consistSemAnt = ratioDaysSemAnt > 0 ? Math.round(ratioSumSemAnt / ratioDaysSemAnt * 100) : null;
   set('stat-consistencia-global', consistGlobal + '%');
   set('stat-eficiencia-big', consistGlobal + '%');
   set('stat-eficiencia-pill', consistGlobal + '% eficiencia');
   set('stat-media-habitos', habitosDays > 0 ? (habitosSum / habitosDays).toFixed(1) : '—');
   set('stat-total-completados', totalCompletados.toLocaleString('es-ES'));
-  // XP/día como número limpio para el triple
+
+  // Tendencia hábitos
+  const trendEl = document.getElementById('stat-tendencia-hab');
+  if (trendEl && consistSemAnt !== null) {
+    const delta = consistGlobal - consistSemAnt;
+    if (delta > 0) { trendEl.textContent = `↑ +${delta}%`; trendEl.className = 'snarr-trend up'; }
+    else if (delta < 0) { trendEl.textContent = `↓ ${delta}%`; trendEl.className = 'snarr-trend dn'; }
+    else { trendEl.textContent = `= sin cambio`; trendEl.className = 'snarr-trend flat'; }
+    trendEl.style.display = '';
+  } else if (trendEl) { trendEl.style.display = 'none'; }
+
+  // Experiencia
   const xpPorDia = Math.round(xpTotal / diffDays);
   set('stat-xp-media-dia-pill', xpPorDia.toLocaleString('es-ES'));
-  // Nivel actual desde perfil
   const nivelActual = state.perfil.nivel || 1;
   set('stat-nivel-actual', 'Nv.' + nivelActual);
 
-  // Barras últimos 7 días — XP ganado vs XP máximo posible
+  // Gráfica XP últimos 7 días
   const diasGrid = document.getElementById('stat-dias-semana');
   if (diasGrid) {
     const last7 = [];
@@ -744,6 +1029,7 @@ function renderLifetimeStats() {
     ).join('');
   }
 }
+
 
 function renderStatsForDate(dateStr) {
   const isToday = dateStr === today();
