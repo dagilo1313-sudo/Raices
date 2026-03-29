@@ -259,6 +259,7 @@ header {
 
 /* ── Habit card ── */
 .habit-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 14px 16px; margin-bottom: 10px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: all 0.25s; position: relative; overflow: hidden; animation: slideIn 0.3s ease; }
+.habit-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--border); border-radius: 3px 0 0 3px; transition: background 0.25s; }
 .habit-card:hover { border-color: #3a4530; transform: translateX(2px); }
 .habit-card.done { border-color: rgba(143,179,57,0.3); background: linear-gradient(135deg, var(--card) 0%, rgba(143,179,57,0.05) 100%); }
 .habit-card.done::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--accent); border-radius: 3px 0 0 3px; }
