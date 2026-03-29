@@ -555,3 +555,6 @@ header {
 .xpm-row-small{font-size:11px;font-weight:600;color:var(--accent);opacity:0.55;}
 .xpm-row-slbl{font-size:9px;color:var(--dim);}
 .xpm-row-unit{font-size:9px;color:var(--muted);}
+
+/* ── XP/Hábitos main simple (sin divider lateral) ── */
+.xpm-main-simple{margin-bottom:16px;}

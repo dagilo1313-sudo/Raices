@@ -761,42 +761,7 @@ function renderLifetimeStats() {
     return xpM > 0 && xpG/xpM >= 0.8;
   });
 
-  // Dots Experiencia: días con ≥80% XP (últimos 7)
-  renderDots('rc-dots-xp', 'var(--accent)', '#1a1f10', (ds, dayData) => {
-    if (!dayData || Array.isArray(dayData)) {
-      if (ds === today()) {
-        const sched = state.habits.filter(h => !h.archivado && isScheduledForDate(h, ds));
-        const xpG = sched.filter(h => isCompleted(h.id, ds)).reduce((s,h)=>s+(h.xp||10),0);
-        const xpM = sched.reduce((s,h)=>s+(h.xp||10),0);
-        return xpM > 0 && xpG/xpM >= 0.8;
-      }
-      return false;
-    }
-    const xpG = dayData.xpGanadoPorCat ? Object.values(dayData.xpGanadoPorCat).reduce((s,v)=>s+v,0) : 0;
-    const xpM = dayData.xpMaxPorCat    ? Object.values(dayData.xpMaxPorCat).reduce((s,v)=>s+v,0)    : 0;
-    return xpM > 0 && xpG/xpM >= 0.8;
-  });
-
-  // Dots Hábitos: días con ≥80% hábitos completados (últimos 7)
-  renderDots('rc-dots-hab', 'var(--accent)', '#1a1f10', (ds, dayData) => {
-    if (!dayData || Array.isArray(dayData)) {
-      if (ds === today()) {
-        const sched = state.habits.filter(h => !h.archivado && isScheduledForDate(h, ds));
-        const done = sched.filter(h => isCompleted(h.id, ds)).length;
-        return sched.length > 0 && done/sched.length >= 0.8;
-      }
-      return false;
-    }
-    const comp = Array.isArray(dayData.completados) ? dayData.completados.length : 0;
-    const plan = Array.isArray(dayData.planificados) ? dayData.planificados.length : 0;
-    return plan > 0 && comp/plan >= 0.8;
-  });
-
-  // Sincronizar IDs duplicados (xp-media-dia-pill2, media-habitos2)
-  const syncEl = (src, dst) => { const s=document.getElementById(src), d=document.getElementById(dst); if(s&&d) d.textContent=s.textContent; };
-  syncEl('stat-xp-media-dia-pill', 'stat-xp-media-dia-pill2');
-  syncEl('stat-xp-dia-30d', 'stat-xp-dia-30d2');
-  syncEl('stat-media-habitos', 'stat-media-habitos2');
+  // IDs directos — sin sincronización necesaria
 
   const consistGlobal = ratioDays>0 ? Math.round(ratioSum/ratioDays*100) : 0;
   const xpEficGlobal  = xpEficDays>0 ? Math.round(xpEficSum/xpEficDays*100) : 0;
@@ -807,7 +772,7 @@ function renderLifetimeStats() {
   // Eficiencia XP y consistencia hábitos últimos 30 días
   const hace30str = (() => { const d = new Date(today()+'T12:00:00'); d.setDate(d.getDate()-30); return d.toISOString().split('T')[0]; })();
   let xpEfic30Sum=0, xpEfic30Days=0;
-  let hab30Sum=0, hab30Days=0;
+  let hab30Sum=0, hab30Days=0, habCount30=0, habDays30=0;
   sorted.forEach(k => {
     if (k < hace30str) return;
     const d = state.completions[k];
@@ -817,12 +782,14 @@ function renderLifetimeStats() {
     if (xpM > 0) { xpEfic30Sum += xpG/xpM; xpEfic30Days++; }
     const comp = Array.isArray(d.completados) ? d.completados.length : 0;
     const plan = Array.isArray(d.planificados) ? d.planificados.length : 0;
-    if (plan > 0) { hab30Sum += comp/plan; hab30Days++; }
+    if (plan > 0) { hab30Sum += comp/plan; hab30Days++; habCount30 += comp; habDays30++; }
   });
   const xpEfic30 = xpEfic30Days>0 ? Math.round(xpEfic30Sum/xpEfic30Days*100) : xpEficGlobal;
   const hab30 = hab30Days>0 ? Math.round(hab30Sum/hab30Days*100) : consistGlobal;
+  const mediaHab30 = habDays30>0 ? (habCount30/habDays30).toFixed(1) : '—';
   set('stat-eficiencia-30d', xpEfic30+'%');
   set('stat-consistencia-30d', hab30+'%');
+  set('stat-media-habitos-30d', mediaHab30);
   set('stat-media-habitos', habitosDays>0 ? (habitosSum/habitosDays).toFixed(1) : '—');
   set('stat-total-completados', totalCompletados.toLocaleString('es-ES'));
   set('stat-xp-media-dia-pill', Math.round(xpTotal/diffDays).toLocaleString('es-ES'));
