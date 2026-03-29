@@ -144,23 +144,7 @@
       </div>
     </div>
 
-    <!-- Cuadrado 3en1: stats del día de hoy -->
-    <div class="hoy-triple" id="hoy-triple">
-      <div class="hoy-triple-item">
-        <div class="hoy-triple-value" id="hoy-stat-done">0/0</div>
-        <div class="hoy-triple-label">Completados</div>
-      </div>
-      <div class="hoy-triple-sep"></div>
-      <div class="hoy-triple-item">
-        <div class="hoy-triple-value" id="hoy-stat-xp">+0 XP</div>
-        <div class="hoy-triple-label">XP ganado</div>
-      </div>
-      <div class="hoy-triple-sep"></div>
-      <div class="hoy-triple-item">
-        <div class="hoy-triple-value" id="hoy-stat-pct">0%</div>
-        <div class="hoy-triple-label">% XP</div>
-      </div>
-    </div>
+
 
     <div class="cat-tabs" id="cat-tabs"></div>
 
@@ -206,33 +190,29 @@
     <!-- DÍAS PERFECTOS -->
     <div class="stats-sep"><div class="stats-sep-line"></div><div class="stats-sep-label">Días perfectos ✦</div><div class="stats-sep-line"></div></div>
 
-    <div class="smrow gold">
-      <div class="smrow-num" id="stat-dias-perfectos">0</div>
-      <div class="smrow-right">
-        <div class="smrow-label">Días perfectos totales</div>
-        <div class="smrow-desc">todos los hábitos completados</div>
+    <div class="snarr-card" style="border-color:rgba(196,168,79,0.2)">
+      <div style="position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent2);border-radius:3px 0 0 3px"></div>
+      <div class="snarr-top">
+        <div class="snarr-big" id="stat-dias-perfectos" style="color:var(--accent2)">0</div>
+        <div class="snarr-ctx">días perfectos</div>
       </div>
-    </div>
-    <div class="smdouble" style="border-color:rgba(196,168,79,0.15)">
-      <div class="smhalf">
-        <div class="smhalf-num" id="stat-perfectos-semana" style="color:var(--accent2)">—</div>
-        <div class="smhalf-lbl">Por semana</div>
-      </div>
-      <div class="smhalf">
-        <div class="smhalf-num" id="stat-perfectos-mes" style="color:var(--accent2)">—</div>
-        <div class="smhalf-lbl">Por mes</div>
-      </div>
-    </div>
-    <div class="smdouble" style="border-color:rgba(196,168,79,0.15)">
-      <div class="smhalf">
-        <div class="smhalf-num" id="stat-racha-actual" style="color:var(--accent2)">—</div>
-        <div class="smhalf-lbl">Racha actual</div>
-        <div class="smhalf-hint">días consecutivos</div>
-      </div>
-      <div class="smhalf">
-        <div class="smhalf-num" id="stat-racha-mejor" style="color:var(--accent2)">—</div>
-        <div class="smhalf-lbl">Mejor racha</div>
-        <div class="smhalf-hint">días consecutivos</div>
+      <div class="snarr-triple">
+        <div class="snarr-triple-item">
+          <div class="snarr-triple-num" id="stat-perfectos-semana" style="color:var(--accent2)">—</div>
+          <div class="snarr-triple-lbl">Por semana</div>
+        </div>
+        <div class="snarr-triple-item" style="border-left:1px solid var(--border)">
+          <div class="snarr-triple-num" id="stat-perfectos-mes" style="color:var(--accent2)">—</div>
+          <div class="snarr-triple-lbl">Por mes</div>
+        </div>
+        <div class="snarr-triple-item" style="border-left:1px solid var(--border)">
+          <div class="snarr-triple-num" id="stat-racha-actual" style="color:var(--accent2)">—</div>
+          <div class="snarr-triple-lbl">Racha actual</div>
+        </div>
+        <div class="snarr-triple-item" style="border-left:1px solid var(--border)">
+          <div class="snarr-triple-num" id="stat-racha-mejor" style="color:var(--accent2)">—</div>
+          <div class="snarr-triple-lbl">Mejor racha</div>
+        </div>
       </div>
     </div>
 
@@ -240,7 +220,7 @@
     <div class="stats-sep"><div class="stats-sep-line"></div><div class="stats-sep-label">Hábitos</div><div class="stats-sep-line"></div></div>
 
     <!-- Card narrativa -->
-    <div class="snarr-card">
+    <div class="snarr-card green-bar">
       <div class="snarr-top">
         <div class="snarr-big" id="stat-consistencia-global">—</div>
         <div class="snarr-ctx">de consistencia global</div>
@@ -265,14 +245,14 @@
     <!-- Consistencia por categoría -->
     <div class="scat-card">
       <div class="scat-title">Consistencia por categoría</div>
-      <div class="scat-desc">% completado vs total programado · lifetime</div>
+      <div class="scat-desc">% completado · lifetime</div>
       <div class="scats-grid" id="stat-consistencia-cats"></div>
     </div>
 
     <!-- EXPERIENCIA -->
     <div class="stats-sep"><div class="stats-sep-line"></div><div class="stats-sep-label">Experiencia</div><div class="stats-sep-line"></div></div>
 
-    <div class="snarr-card">
+    <div class="snarr-card green-bar">
       <div class="snarr-top">
         <div class="snarr-big" id="stat-eficiencia-big">—</div>
         <div class="snarr-ctx">de eficiencia XP media</div>
@@ -295,8 +275,8 @@
 
     <!-- Rendimiento XP por día -->
     <div class="scat-card">
-      <div class="scat-title">XP ganado por día · últimos 7 días</div>
-      <div class="scat-desc">XP recogido cada día respecto al máximo posible</div>
+      <div class="scat-title">XP por día · últimos 7</div>
+      <div class="scat-desc">ganado vs máximo posible</div>
       <div class="sdias-grid" id="stat-dias-semana">
         <div class="sdia"><div class="sdia-bar-wrap"><div class="sdia-bar" style="height:0%"></div></div><div class="sdia-name">L</div></div>
         <div class="sdia"><div class="sdia-bar-wrap"><div class="sdia-bar" style="height:0%"></div></div><div class="sdia-name">M</div></div>
@@ -310,8 +290,8 @@
 
     <!-- XP medio por categoría -->
     <div class="scat-card">
-      <div class="scat-title">XP medio diario por categoría</div>
-      <div class="scat-desc">media de XP ganado cada día · lifetime</div>
+      <div class="scat-title">XP medio por categoría</div>
+      <div class="scat-desc">media diaria · lifetime</div>
       <div class="scats-grid" id="stat-xp-cats"></div>
     </div>
 

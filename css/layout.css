@@ -412,12 +412,12 @@ header {
 
 /* Card narrativa */
 .snarr-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px 18px;margin:0 24px 8px;position:relative;overflow:hidden;}
-.snarr-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:3px 0 0 3px;background:var(--accent);}
+.snarr-card.green-bar::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:3px 0 0 3px;background:var(--accent);}
 .snarr-top{display:flex;align-items:baseline;gap:10px;margin-bottom:6px;}
 .snarr-big{font-size:38px;font-weight:700;color:var(--accent);line-height:1;}
 .snarr-ctx{font-size:14px;color:var(--muted);}
 .snarr-triple{display:flex;border-top:1px solid var(--border);margin-top:12px;padding-top:12px;}
-.snarr-triple-item{flex:1;display:flex;flex-direction:column;gap:3px;padding:0 12px;}
+.snarr-triple-item{flex:1;display:flex;flex-direction:column;gap:3px;padding:0 10px;}
 .snarr-triple-item:first-child{padding-left:0;}
 .snarr-triple-num{font-size:19px;font-weight:700;color:var(--accent);line-height:1;}
 .snarr-triple-lbl{font-size:12px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;line-height:1.3;}
