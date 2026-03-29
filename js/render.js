@@ -221,7 +221,7 @@ function getDayState(ds, habitsSource) {
   }
 
   const hasDone = completedIds.length > 0;
-  const isGood = !isPerfect && xpMax > 0 && (xpGanado / xpMax) >= 0.8;
+  const isGood = !isPerfect && xpMax > 0 && (xpGanado / xpMax) >= 0.8; // >=80%
   return { hasDone, isPerfect, isGood, completedIds, scheduled };
 }
 
@@ -243,9 +243,9 @@ function renderWeek() {
     // Clases del círculo del día
     let numClass = isToday ? 'today' : '';
     if (isPast || isToday) {
-      if (isPerfect) numClass += ' day-golden';
+      if (isPerfect)   numClass += ' day-golden';
       else if (isGood) numClass += ' day-green';
-      else if (hasDone) numClass += ' day-partial';
+      else if (hasDone) numClass += ' day-gray';
     }
 
     // Clase del punto
@@ -483,7 +483,7 @@ function renderCalendar(activeDate) {
     if (!isFuture) {
       if (isPerfect)   stateClass = 'cal-golden';
       else if (isGood) stateClass = 'cal-green';
-      else if (hasDone) stateClass = 'cal-partial';
+      else if (hasDone) stateClass = 'cal-gray';
     }
 
     html += `

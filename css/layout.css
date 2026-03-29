@@ -246,7 +246,7 @@ header {
 /* Estados del día */
 .day-num.day-golden  { background: rgba(196,168,79,0.2); color: var(--accent2); border-color: var(--accent2); font-weight: 700; }
 .day-num.day-green   { background: var(--glow); color: var(--accent); border-color: var(--accent); font-weight: 600; }
-.day-num.day-partial { border-color: var(--accent); color: var(--accent); }
+.day-num.day-gray { border-color: #3a3e32; color: #4a5240; background: rgba(58,62,50,0.15); }
 .day-dot { width: 4px; height: 4px; border-radius: 50%; background: transparent; }
 .day-dot.filled  { background: var(--accent); }
 .day-dot.perfect { background: var(--accent2); }
@@ -433,7 +433,7 @@ header {
 /* Cat cards */
 .scat-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px 18px;margin:0 24px 8px;position:relative;overflow:hidden;}
 .scat-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:3px 0 0 3px;background:var(--accent);}
-.scat-title{font-size:12px;font-weight:500;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;}
+.scat-title{font-size:12px;font-weight:500;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:14px;}
 .scat-desc{font-size:11px;color:var(--dim);font-style:italic;margin-bottom:12px;}
 .scats-grid{display:flex;flex-direction:column;gap:10px;}
 .scat-row{display:flex;align-items:center;gap:10px;}

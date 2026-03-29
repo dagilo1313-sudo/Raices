@@ -156,7 +156,7 @@
 
     <!-- Última sync discreta -->
     <div id="last-sync" style="text-align:center;font-size:10px;color:var(--border);padding:4px 0 2px"></div>
-    <div style="text-align:center;font-size:9px;color:var(--border);padding:0 0 12px;letter-spacing:1px">v34</div>
+    <div style="text-align:center;font-size:9px;color:var(--border);padding:0 0 12px;letter-spacing:1px">v36</div>
   </div>
 
   <!-- ══ HÁBITOS ══ -->
@@ -246,8 +246,7 @@
 
     <!-- Consistencia por categoría -->
     <div class="scat-card">
-      <div class="scat-title">Consistencia por categoría</div>
-      <div class="scat-desc">% completado · lifetime</div>
+      <div class="scat-title">% de hábitos completados por categoría</div>
       <div class="scats-grid" id="stat-consistencia-cats"></div>
     </div>
 
@@ -292,8 +291,7 @@
 
     <!-- XP medio por categoría -->
     <div class="scat-card">
-      <div class="scat-title">XP medio por categoría</div>
-      <div class="scat-desc">media diaria · lifetime</div>
+      <div class="scat-title">XP medio diario por categoría</div>
       <div class="scats-grid" id="stat-xp-cats"></div>
     </div>
 
@@ -422,11 +420,11 @@
     <div class="nav-item active" id="nav-hoy" onclick="switchView('hoy')">
       <div class="nav-icon">☉</div>Hoy
     </div>
-    <div class="nav-item" id="nav-historico" onclick="switchView('historico')">
-      <div class="nav-icon nav-icon-lg">◷</div>Histórico
-    </div>
     <div class="nav-item" id="nav-stats" onclick="switchView('stats')">
       <div class="nav-icon nav-icon-lg">⚡︎</div>Stats
+    </div>
+    <div class="nav-item" id="nav-historico" onclick="switchView('historico')">
+      <div class="nav-icon nav-icon-lg">◷</div>Histórico
     </div>
     <div class="nav-item" id="nav-habitos" onclick="switchView('habitos')">
       <div class="nav-icon nav-icon-lg">⚙︎</div>Hábitos
