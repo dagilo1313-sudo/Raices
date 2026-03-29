@@ -221,15 +221,16 @@ function getDayState(ds, habitsSource) {
   }
 
   const hasDone = completedIds.length > 0;
-  // Ratio de hábitos completados (no XP, sino count)
-  const totalScheduled = scheduled.length;
-  const doneCount = scheduled.filter(h => completedIds.includes(h.id)).length;
-  const habitRatio = totalScheduled > 0 ? doneCount / totalScheduled : 0;
-  // Estados por ratio de hábitos
-  const isGray    = hasDone && habitRatio < 0.5;                        // <50% — gris+punto gris
-  const isGrayGreen = !isPerfect && habitRatio >= 0.5 && habitRatio < 0.8; // 50-79% — gris+punto verde
-  const isGood    = !isPerfect && habitRatio >= 0.8;                    // 80-99% — verde+punto verde
-  return { hasDone, isPerfect, isGood, isGray, isGrayGreen, completedIds, scheduled };
+  // Ratio basado en XP ganado vs XP máximo
+  const xpRatio = xpMax > 0 ? xpGanado / xpMax : 0;
+  // Sin completion o 0 completados → hasRecord=false
+  const hasRecord = scheduled.length > 0 && (hasDone || xpMax > 0);
+  // Estados por ratio XP
+  const isGray      = hasRecord && !hasDone;                              // registrado pero 0 completados
+  const isGrayDot   = hasDone && xpRatio < 0.5;                          // <50% XP — gris+punto gris
+  const isGrayGreen = !isPerfect && hasDone && xpRatio >= 0.5 && xpRatio < 0.8; // 50-79% — gris+punto verde
+  const isGood      = !isPerfect && hasDone && xpRatio >= 0.8;            // 80-99% — verde+punto verde
+  return { hasDone, isPerfect, isGood, isGray, isGrayDot, isGrayGreen, completedIds, scheduled };
 }
 
 function renderWeek() {
@@ -245,7 +246,7 @@ function renderWeek() {
     const isToday = ds === today();
     const isPast = d < now && !isToday;
     const habSrcWeek = isToday ? state.habits : state.allHabits;
-    const { hasDone, isPerfect, isGood, isGray, isGrayGreen } = getDayState(ds, habSrcWeek);
+    const { hasDone, isPerfect, isGood, isGray, isGrayDot, isGrayGreen } = getDayState(ds, habSrcWeek);
 
     // Clases del círculo del día
     let numClass = isToday ? 'today' : '';
@@ -253,15 +254,17 @@ function renderWeek() {
       if (isPerfect)         numClass += ' day-golden';
       else if (isGood)       numClass += ' day-green';
       else if (isGrayGreen)  numClass += ' day-gray';
+      else if (isGrayDot)    numClass += ' day-gray';
       else if (isGray)       numClass += ' day-gray';
     }
 
-    // Clase del punto
+    // Clase del punto (sin punto si isGray — 0 completados)
     let dotClass = '';
-    if (isPerfect)              dotClass = 'perfect';
-    else if (isGood)            dotClass = 'filled';
-    else if (isGrayGreen)       dotClass = 'filled';
-    else if (isGray)            dotClass = 'gray';
+    if (isPerfect)        dotClass = 'perfect';
+    else if (isGood)      dotClass = 'filled';
+    else if (isGrayGreen) dotClass = 'filled';
+    else if (isGrayDot)   dotClass = 'gray';
+    // isGray → sin punto
 
     html += `
       <div class="day-cell">
@@ -489,18 +492,20 @@ function renderCalendar(activeDate) {
     const isSelected = dateStr === activeDate;
     const isFuture = dateStr > todayStr;
     const habSrc = dateStr === todayStr ? state.habits : state.allHabits;
-    const { hasDone, isPerfect, isGood, isGray, isGrayGreen } = getDayState(dateStr, habSrc);
+    const { hasDone, isPerfect, isGood, isGray, isGrayDot, isGrayGreen } = getDayState(dateStr, habSrc);
 
     let stateClass = '';
     let dotColor = '';
     if (!isFuture) {
-      if (isPerfect)              { stateClass = 'cal-golden';    dotColor = 'gold'; }
-      else if (isGood)            { stateClass = 'cal-green';     dotColor = 'green'; }
-      else if (isGrayGreen)       { stateClass = 'cal-gray';      dotColor = 'green'; }
-      else if (isGray)            { stateClass = 'cal-gray';      dotColor = 'gray'; }
+      if (isPerfect)        { stateClass = 'cal-golden'; dotColor = 'gold'; }
+      else if (isGood)      { stateClass = 'cal-green';  dotColor = 'green'; }
+      else if (isGrayGreen) { stateClass = 'cal-gray';   dotColor = 'green'; }
+      else if (isGrayDot)   { stateClass = 'cal-gray';   dotColor = 'gray'; }
+      else if (isGray)      { stateClass = 'cal-gray'; } // sin punto
     }
 
-    const dotHtml = (!isFuture && hasDone)
+    // Punto: solo si hay xp ganado (no para isGray=0 completados)
+    const dotHtml = (!isFuture && dotColor)
       ? `<div class="cal-dot cal-dot-${dotColor}"></div>`
       : '';
 
