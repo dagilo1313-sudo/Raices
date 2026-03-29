@@ -423,7 +423,7 @@ function habitIconHTML(h) {
   const content = h.emoji
     ? `<span style="font-size:24px;line-height:1">${h.emoji}</span>`
     // : cat.label.charAt(0).toUpperCase();
-    : ⚒;
+    : `<span style="font-size:24px;line-height:1">⚒</span>`;
   return `<div class="habit-emoji habit-emoji-cat"
     style="background:var(--cat-${catKey}-bg);border:1px solid var(--cat-${catKey}-border);color:var(--cat-${catKey})">
     ${content}
