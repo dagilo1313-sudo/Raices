@@ -836,6 +836,157 @@ function renderLifetimeStats() {
   set('stat-peor-dia', diasSemana[peorIdx]||'—');
   const peorSubEl=document.getElementById('stat-peor-dia-pct'); if(peorSubEl) peorSubEl.textContent=peorPct+'% de media';
   set('stat-xp-perdido', '–'+Math.round(xpTotalLost).toLocaleString('es-ES')+' xp');
+
+
+  // ── MOMENTUM SCORE ──
+  // Ventana: 90 días, decaimiento exponencial proporcional a datos disponibles
+  (function() {
+    const WINDOW = 90;
+    const allDays = []; // { dateStr, xpRatio, hábitos completados/fallados por peso }
+    const todayStr = today();
+
+    // Recopilar datos de los últimos 90 días
+    for (let i = 0; i < WINDOW; i++) {
+      const d = new Date(todayStr + 'T12:00:00');
+      d.setDate(d.getDate() - i);
+      const ds = d.toISOString().split('T')[0];
+      const dayData = state.completions[ds];
+
+      let xpRatio = 0, difNet = 0, difMax = 0, hasData = false;
+
+      if (dayData && !Array.isArray(dayData)) {
+        hasData = true;
+        const xpG = dayData.xpGanadoPorCat ? Object.values(dayData.xpGanadoPorCat).reduce((s,v)=>s+v,0) : 0;
+        const xpM = dayData.xpMaxPorCat    ? Object.values(dayData.xpMaxPorCat).reduce((s,v)=>s+v,0)    : 0;
+        xpRatio = xpM > 0 ? xpG / xpM : 0;
+
+        // Dificultad neta: completados suman XP, fallados restan XP
+        if (Array.isArray(dayData.planificados) && Array.isArray(dayData.completados)) {
+          const habsDelDia = state.allHabits.filter(h => dayData.planificados.includes(h.id));
+          habsDelDia.forEach(h => {
+            const xp = h.xp || 10;
+            difMax += xp;
+            if (dayData.completados.includes(h.id)) difNet += xp;
+            else difNet -= xp;
+          });
+        }
+      } else if (ds === todayStr) {
+        // Hoy: calcular en tiempo real
+        const sched = state.habits.filter(h => !h.archivado && isScheduledForDate(h, ds));
+        const xpG = sched.filter(h => isCompleted(h.id, ds)).reduce((s,h)=>s+(h.xp||10),0);
+        const xpM = sched.reduce((s,h)=>s+(h.xp||10),0);
+        xpRatio = xpM > 0 ? xpG / xpM : 0;
+        sched.forEach(h => {
+          const xp = h.xp || 10;
+          difMax += xp;
+          if (isCompleted(h.id, ds)) difNet += xp; else difNet -= xp;
+        });
+        hasData = sched.length > 0;
+      } else {
+        // Día sin registro: penaliza
+        const habActivos = state.habits.filter(h => !h.archivado);
+        habActivos.forEach(h => { const xp = h.xp||10; difMax += xp; difNet -= xp; });
+        xpRatio = 0;
+        hasData = false;
+      }
+
+      allDays.push({ ds, xpRatio, difNet, difMax, i }); // i=0 es hoy
+    }
+
+    if (!allDays.length) return;
+
+    // Decaimiento exponencial proporcional: el día más antiguo disponible recibe
+    // el mismo peso relativo independientemente de cuántos días haya
+    const N = allDays.length; // días disponibles (máx 90)
+    const getWeight = (idx) => Math.pow(0.5, (idx / N) * 6); // 6 halvings en el rango completo
+
+    // Componente 1: Eficiencia XP ponderada (0-10)
+    let xpWeightedSum = 0, xpWeightTotal = 0;
+    allDays.forEach(({ xpRatio, i }) => {
+      const w = getWeight(i);
+      xpWeightedSum += xpRatio * w;
+      xpWeightTotal += w;
+    });
+    const eficienciaXP = xpWeightTotal > 0 ? (xpWeightedSum / xpWeightTotal) * 10 : 0;
+
+    // Componente 2: Racha (0-10), máx 14 días = 10
+    // Ya calculada arriba: rachaBuenosActual
+    const rachaScore = Math.min(rachaBuenosActual / 14, 1) * 10;
+
+    // Componente 3: Dificultad neta ponderada (0-10)
+    let difWeightedNet = 0, difWeightedMax = 0;
+    allDays.forEach(({ difNet, difMax, i }) => {
+      const w = getWeight(i);
+      difWeightedNet += difNet * w;
+      difWeightedMax += difMax * w;
+    });
+    // Normalizar: máximo teórico es difWeightedMax, mínimo es -difWeightedMax
+    // Llevar rango [-1, 1] a [0, 10]
+    const difRatio = difWeightedMax > 0 ? difWeightedNet / difWeightedMax : 0;
+    const difScore = ((difRatio + 1) / 2) * 10; // [-1,1] → [0,10]
+
+    // Bonus racha perfecta
+    let bonusPerfectos = 0;
+    if (rachaPerfActual >= 3) bonusPerfectos = 1.0;
+    else if (rachaPerfActual === 2) bonusPerfectos = 0.75;
+    else if (rachaPerfActual === 1) bonusPerfectos = 0.5;
+
+    // Momentum final
+    const rawMomentum = (eficienciaXP * 0.4) + (rachaScore * 0.3) + (difScore * 0.3) + bonusPerfectos;
+    const momentum = Math.min(10, Math.max(0, rawMomentum));
+    const momentumDisplay = momentum.toFixed(1);
+
+    // Etiqueta
+    const tag = momentum === 10 ? 'Imparable'
+      : momentum >= 8 ? 'En racha'
+      : momentum >= 6 ? 'En forma'
+      : momentum >= 4 ? 'Estable'
+      : momentum >= 2 ? 'Recuperándose'
+      : 'En crisis';
+
+    // Color según etiqueta
+    const color = momentum >= 8 ? 'var(--gold)'
+      : momentum >= 6 ? 'var(--accent)'
+      : momentum >= 4 ? 'var(--accent)'
+      : momentum >= 2 ? '#6b7560'
+      : '#e05c5c';
+
+    // Setear UI
+    const scoreEl = document.getElementById('momentum-score');
+    const tagEl   = document.getElementById('momentum-tag');
+    const cardEl  = document.getElementById('momentum-card');
+
+    if (scoreEl) { scoreEl.textContent = momentumDisplay; scoreEl.style.color = color; }
+    if (tagEl)   { tagEl.textContent = tag; tagEl.style.color = color; }
+    if (cardEl)  { cardEl.style.borderColor = color + '44'; }
+    const barBefore = cardEl?.style;
+    if (cardEl) cardEl.style.setProperty('--momentum-color', color);
+
+    // Barras componentes
+    const setMC = (barId, valId, score) => {
+      const bar = document.getElementById(barId);
+      const val = document.getElementById(valId);
+      if (bar) { bar.style.width = (score/10*100)+'%'; bar.style.background = color; }
+      if (val) { val.textContent = score.toFixed(1); val.style.color = color; }
+    };
+    setMC('mc-bar-xp',    'mc-val-xp',    eficienciaXP);
+    setMC('mc-bar-racha', 'mc-val-racha', rachaScore + bonusPerfectos);
+    setMC('mc-bar-dif',   'mc-val-dif',   difScore);
+
+    // Barra lateral de la card
+    if (cardEl) {
+      const pseudo = cardEl.querySelector('.momentum-bar-lat');
+      // Usamos el ::before via CSS variable
+    }
+    // Actualizar color de la barra lateral via inline style en el primer hijo
+    const latBar = document.createElement('style');
+    latBar.id = 'momentum-lat-style';
+    const existingStyle = document.getElementById('momentum-lat-style');
+    if (existingStyle) existingStyle.remove();
+    latBar.textContent = `.momentum-card::before { background: ${color} !important; }`;
+    document.head.appendChild(latBar);
+  })();
+
 }
 
 
