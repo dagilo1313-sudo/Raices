@@ -53,9 +53,6 @@
         <div>
           <canvas id="title-canvas" width="140" height="46" style="display:block"></canvas>
         </div>
-        <div class="header-right">
-          <div class="date-badge" id="date-display"></div>
-        </div>
       </div>
     </header>
 
@@ -65,8 +62,13 @@
       ⚠️ Modo testing — sistema cree que hoy es <strong id="debug-banner-date"></strong>
     </div>
 
+    <!-- Fecha encima del viajero -->
+    <div style="display:flex;justify-content:flex-end;padding:6px 24px 0">
+      <div class="date-badge" id="date-display"></div>
+    </div>
+
     <!-- Viajero card -->
-    <div class="viajero-card" style="transition:opacity 0.3s,transform 0.3s;margin-top:10px">
+    <div class="viajero-card" style="transition:opacity 0.3s,transform 0.3s;margin-top:8px">
       <div class="viajero-top-row">
         <!-- Avatar clickable → va al perfil -->
         <div class="viajero-avatar-wrap" onclick="switchView('perfil')" style="cursor:pointer" title="Ver perfil">
@@ -154,7 +156,7 @@
 
     <!-- Última sync discreta -->
     <div id="last-sync" style="text-align:center;font-size:10px;color:var(--border);padding:4px 0 2px"></div>
-    <div style="text-align:center;font-size:9px;color:var(--border);padding:0 0 12px;letter-spacing:1px">v33.5</div>
+    <div style="text-align:center;font-size:9px;color:var(--border);padding:0 0 12px;letter-spacing:1px">v34</div>
   </div>
 
   <!-- ══ HÁBITOS ══ -->
@@ -332,18 +334,20 @@
       </div>
     </div>
 
-    <div class="stats-day-summary">
-      <div class="stats-day-card">
-        <div class="stats-day-value" id="stat-day-done">0/0</div>
-        <div class="stats-day-label">Completados</div>
+    <div class="hoy-triple" id="hist-triple">
+      <div class="hoy-triple-item">
+        <div class="hoy-triple-value" id="stat-day-done">0/0</div>
+        <div class="hoy-triple-label">Completados</div>
       </div>
-      <div class="stats-day-card">
-        <div class="stats-day-value" id="stat-day-xp">+0 XP</div>
-        <div class="stats-day-label">XP ganado</div>
+      <div class="hoy-triple-sep"></div>
+      <div class="hoy-triple-item">
+        <div class="hoy-triple-value" id="stat-day-xp">+0 XP</div>
+        <div class="hoy-triple-label">XP ganado</div>
       </div>
-      <div class="stats-day-card">
-        <div class="stats-day-value" id="stat-day-pct">0%</div>
-        <div class="stats-day-label">Completado</div>
+      <div class="hoy-triple-sep"></div>
+      <div class="hoy-triple-item">
+        <div class="hoy-triple-value" id="stat-day-pct">0%</div>
+        <div class="hoy-triple-label">% completado</div>
       </div>
     </div>
 
