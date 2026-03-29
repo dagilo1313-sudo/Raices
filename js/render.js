@@ -17,6 +17,7 @@ export function renderAll() {
   renderLastSync();
   renderHabitsList();
   renderStats();
+  renderHistorico();
 }
 
 // ── Fecha ──
@@ -455,6 +456,10 @@ export function renderHabitsList() {
 
 // ── Stats ──
 export function renderStats() {
+  renderLifetimeStats();
+}
+
+export function renderHistorico() {
   const activeDate = state.selectedDate || today();
   const calTitle = document.getElementById('cal-title');
   if (calTitle) {
@@ -463,374 +468,165 @@ export function renderStats() {
   }
   renderCalendar(activeDate);
   renderStatsForDate(activeDate);
-  renderLifetimeStats();
 }
 
 function renderLifetimeStats() {
   const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
-
   const xpTotal = state.perfil.xpTotal || 0;
   const diasPerfectos = state.perfil.diasPerfectos || 0;
+  const habActivos = state.habits.filter(h => !h.archivado).length;
 
-  // IDs de días con datos
-  const completionKeys = Object.keys(state.completions).filter(k =>
-    k !== 'updatedAt' && /^\d{4}-\d{2}-\d{2}$/.test(k)
-  );
+  const keys = Object.keys(state.completions).filter(k => k !== 'updatedAt' && /^\d{4}-\d{2}-\d{2}$/.test(k));
 
-  set('stat-habits-count', state.habits.filter(h => !h.archivado).length);
+  // Días perfectos
+  const dpEl = document.getElementById('stat-dias-perfectos');
+  if (dpEl) { dpEl.textContent = diasPerfectos; dpEl.style.color = window._isPerfectToday ? 'var(--accent2)' : 'var(--accent2)'; }
+  set('stat-habits-count', habActivos);
   set('stat-xp-total-lifetime', xpTotal.toLocaleString('es-ES'));
 
-  // Días perfectos dorado si hoy es perfecto
-  const dpEl = document.getElementById('stat-dias-perfectos');
-  if (dpEl) {
-    dpEl.textContent = diasPerfectos;
-    dpEl.style.color = window._isPerfectToday ? 'var(--accent2)' : 'var(--text)';
-  }
-
-  if (completionKeys.length === 0) {
-    ['stat-xp-media-dia','stat-perfectos-semana','stat-perfectos-mes','stat-media-pct-xp','stat-media-habitos'].forEach(id => set(id,'—'));
+  if (!keys.length) {
+    ['stat-perfectos-semana','stat-perfectos-mes','stat-racha-actual','stat-racha-mejor',
+     'stat-consistencia-global','stat-media-habitos','stat-total-completados',
+     'stat-xp-media-dia-pill','stat-eficiencia-pill'].forEach(id => set(id,'—'));
     return;
   }
 
-  const sorted = completionKeys.sort();
+  const sorted = keys.sort();
   const firstDate = new Date(sorted[0] + 'T12:00:00');
   const todayDate = new Date(today() + 'T12:00:00');
   const diffDays = Math.max(1, Math.round((todayDate - firstDate) / (1000*60*60*24)) + 1);
   const diffWeeks = Math.max(1, diffDays / 7);
   const diffMonths = Math.max(1, diffDays / 30.44);
 
-  // Media XP/día
-  set('stat-xp-media-dia', Math.round(xpTotal / diffDays).toLocaleString('es-ES'));
-
-  // Días perfectos/semana y /mes
   set('stat-perfectos-semana', (diasPerfectos / diffWeeks).toFixed(1));
   set('stat-perfectos-mes', (diasPerfectos / diffMonths).toFixed(1));
+  set('stat-xp-media-dia-pill', `${Math.round(xpTotal / diffDays)} XP / día`);
 
-  // Media % XP recogido usando snapshots xpGanadoPorCat/xpMaxPorCat
-  let ratioSum = 0, ratioDays = 0, habitosSum = 0, habitosDays = 0;
-  completionKeys.forEach(k => {
+  // Racha actual y mejor racha
+  let rachaActual = 0, rachaMejor = 0, rachaTemp = 0;
+  const todayStr = today();
+  [...sorted].reverse().forEach((k, i) => {
     const d = state.completions[k];
     if (!d || Array.isArray(d)) return;
-    // % XP
-    if (d.xpMaxPorCat && d.xpGanadoPorCat) {
-      const maxTotal = Object.values(d.xpMaxPorCat).reduce((s,v)=>s+v,0);
-      const ganado = Object.values(d.xpGanadoPorCat).reduce((s,v)=>s+v,0);
-      if (maxTotal > 0) { ratioSum += ganado/maxTotal; ratioDays++; }
-    }
-    // Media hábitos completados
+    const completados = d.completados?.length || 0;
+    const planificados = d.planificados?.length || 0;
+    const perfecto = planificados > 0 && completados === planificados;
+    if (i === 0 && perfecto) rachaActual = 1;
+    else if (i === 0) rachaActual = 0;
+  });
+  sorted.forEach(k => {
+    const d = state.completions[k];
+    if (!d || Array.isArray(d)) { rachaTemp = 0; return; }
+    const completados = d.completados?.length || 0;
+    const planificados = d.planificados?.length || 0;
+    const perfecto = planificados > 0 && completados === planificados;
+    if (perfecto) { rachaTemp++; rachaMejor = Math.max(rachaMejor, rachaTemp); }
+    else rachaTemp = 0;
+  });
+  set('stat-racha-actual', rachaActual);
+  set('stat-racha-mejor', rachaMejor);
+
+  // Consistencia global, total completados, media hábitos
+  let ratioSum = 0, ratioDays = 0, habitosSum = 0, habitosDays = 0, totalCompletados = 0;
+  // XP por categoría
+  const xpCatSum = {}; const xpCatDays = {};
+  // Consistencia por categoría: completados vs planificados
+  const catComp = {}, catPlan = {};
+  // Rendimiento por día de semana (0=L..6=D)
+  const diaSum = [0,0,0,0,0,0,0], diaDays = [0,0,0,0,0,0,0];
+
+  keys.forEach(k => {
+    const d = state.completions[k];
+    if (!d || Array.isArray(d)) return;
     const completados = Array.isArray(d.completados) ? d.completados.length : 0;
-    if (d.planificados?.length > 0) { habitosSum += completados; habitosDays++; }
+    const planificados = Array.isArray(d.planificados) ? d.planificados.length : 0;
+    totalCompletados += completados;
+    if (planificados > 0) {
+      ratioSum += completados / planificados;
+      ratioDays++;
+      habitosSum += completados;
+      habitosDays++;
+    }
+    // XP por cat
+    if (d.xpGanadoPorCat) {
+      Object.entries(d.xpGanadoPorCat).forEach(([cat, xp]) => {
+        xpCatSum[cat] = (xpCatSum[cat] || 0) + xp;
+        xpCatDays[cat] = (xpCatDays[cat] || 0) + 1;
+      });
+    }
+    // Consistencia por cat usando allHabits para ese día
+    if (Array.isArray(d.planificados) && Array.isArray(d.completados)) {
+      const habsDelDia = state.allHabits.filter(h => d.planificados.includes(h.id));
+      habsDelDia.forEach(h => {
+        const cat = h.category || 'disciplina';
+        catPlan[cat] = (catPlan[cat] || 0) + 1;
+        if (d.completados.includes(h.id)) catComp[cat] = (catComp[cat] || 0) + 1;
+      });
+    }
+    // Día de semana (JS: 0=D, ajustar a L=0)
+    const dow = new Date(k + 'T12:00:00').getDay();
+    const idx = dow === 0 ? 6 : dow - 1;
+    if (planificados > 0) { diaSum[idx] += completados / planificados; diaDays[idx]++; }
   });
 
-  set('stat-media-pct-xp', ratioDays > 0 ? Math.round(ratioSum/ratioDays*100)+'%' : '—');
-  set('stat-media-habitos', habitosDays > 0 ? (habitosSum/habitosDays).toFixed(1) : '—');
-}
+  const consistGlobal = ratioDays > 0 ? Math.round(ratioSum / ratioDays * 100) : 0;
+  set('stat-consistencia-global', consistGlobal + '%');
+  set('stat-eficiencia-pill', consistGlobal + '% eficiencia');
+  set('stat-media-habitos', habitosDays > 0 ? (habitosSum / habitosDays).toFixed(1) : '—');
+  set('stat-total-completados', totalCompletados.toLocaleString('es-ES'));
 
-function renderCalendar(activeDate) {
-  const grid = document.getElementById('cal-grid');
-  if (!grid) return;
-  const d = new Date(activeDate + 'T12:00:00');
-  const year = d.getFullYear(), month = d.getMonth();
-  const firstDay = new Date(year, month, 1);
-  const lastDay = new Date(year, month + 1, 0);
-  const todayStr = today();
-  let startDow = firstDay.getDay() - 1;
-  if (startDow < 0) startDow = 6;
-  let html = '';
-  for (let i = 0; i < startDow; i++) html += '<div></div>';
-  for (let day = 1; day <= lastDay.getDate(); day++) {
-    const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
-    const isToday = dateStr === todayStr;
-    const isSelected = dateStr === activeDate;
-    const isFuture = dateStr > todayStr;
-    const habSrc = dateStr === todayStr ? state.habits : state.allHabits;
-    const { hasDone, isPerfect, isGood } = getDayState(dateStr, habSrc);
-
-    let stateClass = '';
-    if (!isFuture) {
-      if (isPerfect)   stateClass = 'cal-golden';
-      else if (isGood) stateClass = 'cal-green';
-      else if (hasDone) stateClass = 'cal-partial';
-    }
-
-    html += `
-      <div class="cal-day ${isToday?'cal-today':''} ${isSelected?'cal-selected':''} ${stateClass} ${isFuture?'cal-future':''}"
-           onclick="${isFuture?'':` window.selectDate('${dateStr}')`}">
-        <div class="cal-day-inner">${day}</div>
-        ${hasDone&&!isFuture?'<div class="cal-dot"></div>':''}
-      </div>`;
+  // Barras día de semana
+  const diasGrid = document.getElementById('stat-dias-semana');
+  if (diasGrid) {
+    const bars = diasGrid.querySelectorAll('.sdia-bar');
+    const maxPct = Math.max(...diaSum.map((s, i) => diaDays[i] > 0 ? s / diaDays[i] : 0), 0.01);
+    bars.forEach((bar, i) => {
+      const pct = diaDays[i] > 0 ? (diaSum[i] / diaDays[i]) / maxPct : 0;
+      const opacity = 0.25 + pct * 0.65;
+      bar.style.height = Math.max(4, pct * 100) + '%';
+      bar.style.background = `rgba(143,179,57,${opacity})`;
+    });
   }
-  grid.innerHTML = html;
-}
 
-function renderStatsForDate(dateStr) {
-  const isToday = dateStr === today();
-  const d = new Date(dateStr + 'T12:00:00');
-  const dateLabel = d.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' });
-  const statsDateLabel = document.getElementById('stats-date-label');
-  if (statsDateLabel) statsDateLabel.textContent = isToday ? 'Hoy' : dateLabel;
-  const calTitle = document.getElementById('cal-title');
-  if (calTitle) calTitle.style.color = 'var(--accent)';
-
-  // Hoy → solo activos; días pasados → snapshot planificados o allHabits como fallback
-  const planificados = !isToday ? getPlanificadosForDate(dateStr) : null;
-  const habitsSource = isToday
-    ? state.habits
-    : planificados
-      ? state.allHabits.filter(h => planificados.includes(h.id))
-      : state.allHabits.filter(h => isScheduledForDate(h, dateStr));
-  const completedIds = getCompletadosForDate(dateStr);
-  const scheduledHabits = isToday ? habitsSource.filter(h => isScheduledForDate(h, dateStr)) : habitsSource;
-  const done = scheduledHabits.filter(h => completedIds.includes(h.id)).length;
-  const total = scheduledHabits.length;
-  // XP del día: usar snapshot si existe (inmutable), sino calcular live
-  const xpSnap = getXPTotalSnapshot(dateStr);
-  const xp = (xpSnap !== null && !isToday) ? xpSnap : getXPForDate(dateStr);
-  const pct = total ? Math.round(done / total * 100) : 0;
-
-  const diasPerfectos = state.perfil.diasPerfectos;
-  const xpHoyStats = getXPForDate(today());
-  const xpMaxHoyStats = getMaxXPForDate(today());
-  const exitoPct = xpMaxHoyStats > 0 ? Math.round(xpHoyStats / xpMaxHoyStats * 100) : 0;
-
-  const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
-  set('stat-dias-perfectos', diasPerfectos);
-  set('stat-total-xp', `+${xpHoyStats}`);
-  set('stat-exito-xp', exitoPct + '%');
-  set('stat-habits-count', state.habits.filter(h => !h.archivado).length);
-  const isPerfectStats = total > 0 && done === total;
-  const goldColor = isPerfectStats ? 'var(--accent2)' : '';
-  const setGold = (id, val) => {
-    const el = document.getElementById(id);
-    if (el) { el.textContent = val; el.style.color = goldColor; }
+  // Consistencia por categoría
+  const CATS = {
+    fisico:{label:'Físico',color:'#e05c5c'},
+    disciplina:{label:'Disciplina',color:'#5c8ae0'},
+    energia:{label:'Energía',color:'#8fb339'},
+    inteligencia:{label:'Inteligencia',color:'#c4a84f'},
+    identidad:{label:'Identidad',color:'#a05ce0'},
   };
-  setGold('stat-day-done', `${done}/${total}`);
-  setGold('stat-day-xp', `+${xp} XP`);
-  setGold('stat-day-pct', `${pct}%`);
-
-  // Si no es hoy y no hay ningún dato para ese día → Día no registrado
-  const sinRegistro = !isToday && completedIds.length === 0 && !getPlanificadosForDate(dateStr);
-
-  const elCat = document.getElementById('cat-stats-list');
-  const elHab = document.getElementById('stats-day-habits');
-  const catSection = elCat?.closest('.section');
-  const habSection = elHab?.closest('.section');
-  let noReg = document.getElementById('stats-no-registro');
-
-  if (sinRegistro) {
-    if (elCat) elCat.innerHTML = '';
-    if (elHab) elHab.innerHTML = '';
-    if (catSection) catSection.style.display = 'none';
-    if (habSection) habSection.style.display = 'none';
-    if (!noReg && elCat) {
-      noReg = document.createElement('div');
-      noReg.id = 'stats-no-registro';
-      noReg.style.cssText = 'text-align:center;padding:32px 0;';
-      elCat.parentElement.insertAdjacentElement('afterend', noReg);
-    }
-    if (noReg) {
-      noReg.style.display = 'block';
-      noReg.innerHTML = '<div style="font-size:32px;margin-bottom:8px">🌱</div><div style="font-size:14px;color:var(--muted);font-style:italic">Día no registrado</div>';
-    }
-    return;
+  const catConsEl = document.getElementById('stat-consistencia-cats');
+  if (catConsEl) {
+    const entries = Object.entries(CATS).map(([k, c]) => {
+      const pct = catPlan[k] > 0 ? Math.round((catComp[k]||0) / catPlan[k] * 100) : 0;
+      return { k, c, pct };
+    }).sort((a, b) => b.pct - a.pct);
+    catConsEl.innerHTML = entries.map(({k, c, pct}) =>
+      `<div class="scat-row">
+        <div class="scat-pill" style="background:${c.color}22;color:${c.color};border:1px solid ${c.color}44">${c.label}</div>
+        <div class="scat-bar-wrap"><div class="scat-bar-fill" style="width:${pct}%;background:${c.color}"></div></div>
+        <div class="scat-val" style="color:${c.color}">${pct}%</div>
+      </div>`
+    ).join('');
   }
 
-  // Restaurar secciones si estaban ocultas
-  if (noReg) noReg.style.display = 'none';
-  if (catSection) catSection.style.display = '';
-  if (habSection) habSection.style.display = '';
-
-  renderStatsDayHabits(dateStr, completedIds, scheduledHabits);
-  renderCatStats(dateStr, habitsSource);
-}
-
-function renderStatsDayHabits(dateStr, completedIds, scheduledHabits) { // completedIds ya viene como array limpio
-  const sl = document.getElementById('stats-day-habits');
-  if (!sl) return;
-  const isPerfectDay = scheduledHabits.length > 0 && scheduledHabits.every(h => completedIds.includes(h.id));
-  sl.classList.toggle('perfect-day', isPerfectDay);
-  const isToday = dateStr === today();
-  if (!scheduledHabits.length) {
-    sl.innerHTML = `<div class="empty-state"><div class="empty-icon">📅</div><div class="empty-text">Sin hábitos programados para este día.</div></div>`;
-    return;
-  }
-  const catOrder = Object.keys(CATEGORIES);
-  // Ordenar: por categoría, y dentro completados primero
-  const ordenados = [...scheduledHabits].sort((a, b) => {
-    const catA = catOrder.indexOf(a.category);
-    const catB = catOrder.indexOf(b.category);
-    if (catA !== catB) return catA - catB;
-    const doneA = completedIds.includes(a.id) ? 0 : 1;
-    const doneB = completedIds.includes(b.id) ? 0 : 1;
-    return doneA - doneB;
-  });
-
-  let html = '';
-  let lastCat = null;
-  ordenados.forEach(h => {
-    const done = completedIds.includes(h.id);
-    const cat = CATEGORIES[h.category] || CATEGORIES.disciplina;
-    if (h.category !== lastCat) {
-      if (lastCat !== null) html += '';
-      html += `<div class="cat-group-label cat-${h.category}">${cat.label}</div>`;
-      lastCat = h.category;
-    }
-    html += `
-      <div class="habit-card ${done?'done':''}" style="cursor:default">
-        ${habitIconHTML(h)}
-        <div class="habit-info">
-          <div class="habit-name">${h.name}</div>
-          <div class="habit-meta">
-            ${isToday ? `<span class="xp-badge xp-${h.xp}">+${h.xp} XP</span>` : ''}
-          </div>
-        </div>
-        <div class="check-circle" style="flex-shrink:0">${done?'✓':''}</div>
-      </div>`;
-  });
-  sl.innerHTML = html;
-}
-
-function renderCatStats(dateStr, habitsSource) {
-  const cl = document.getElementById('cat-stats-list');
-  if (!cl) return;
-  const isToday = dateStr === today();
-  const completedIds = getCompletadosForDate(dateStr);
-  // Día perfecto en stats: añadir clase al contenedor de categorías
-  const allDoneStats = habitsSource.length > 0 && habitsSource.every(h => completedIds.includes(h.id));
-  cl.classList.toggle('perfect-day-cats', allDoneStats);
-  // Snapshot XP por categoría para días pasados
-  const snapGanado = !isToday ? getXPGanadoPorCat(dateStr) : null;
-  const snapMax    = !isToday ? getXPMaxPorCat(dateStr)    : null;
-
-  cl.innerHTML = Object.entries(CATEGORIES).map(([key, cat]) => {
-    const catHabits = habitsSource.filter(h => h.category === key && isScheduledForDate(h, dateStr));
-    if (!catHabits.length && !snapMax?.[key]) return '';
-    const done = catHabits.filter(h => completedIds.includes(h.id)).length;
-    const total = catHabits.length;
-    // Usar snapshot si existe, sino calcular live
-    const xpEarned = snapGanado ? (snapGanado[key] || 0) : catHabits.filter(h => completedIds.includes(h.id)).reduce((s, h) => s + (h.xp||10), 0);
-    const xpMax    = snapMax    ? (snapMax[key]    || 0) : catHabits.reduce((s, h) => s + (h.xp||10), 0);
-    if (xpMax === 0 && !total) return '';
-    const pct = xpMax > 0 ? Math.round(xpEarned / xpMax * 100) : 0;
-    return `
-      <div style="margin-bottom:16px">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;padding:0 2px">
-          <div class="cat-group-label cat-${key}" style="margin:0">${cat.label}</div>
-          <div style="display:flex;align-items:center;gap:8px">
-            ${xpEarned > 0 ? `<span class="xp-badge xp-50">+${xpEarned} XP</span>` : ''}
-            <span style="font-size:16px;font-weight:700;color:var(--cat-${key})">${pct}%</span>
-          </div>
-        </div>
-        <div style="height:4px;background:var(--border);border-radius:4px;overflow:hidden;margin-bottom:4px">
-          <div style="height:100%;width:${pct}%;background:var(--cat-${key});border-radius:4px;transition:width 0.6s"></div>
-        </div>
-        <div style="font-size:11px;color:var(--muted);padding:0 2px;margin-bottom:8px">${done} / ${total} hábitos</div>
-      </div>`;
-  }).join('');
-
-  // Todos los hábitos del día debajo: completados primero, luego pendientes, con cat-badge
-  const allScheduled = habitsSource.filter(h => isScheduledForDate(h, dateStr));
-  const _cdAll = getCompletadosForDate(dateStr);
-  const allOrdenados = [
-    ...allScheduled.filter(h => _cdAll.includes(h.id)),
-    ...allScheduled.filter(h => !_cdAll.includes(h.id)),
-  ];
-  const completedIds2 = _cdAll;
-  if (allOrdenados.length) {
-    cl.innerHTML += allOrdenados.map(h => {
-      const isDone = completedIds2.includes(h.id);
-      const cat = CATEGORIES[h.category] || CATEGORIES.disciplina;
-      return `
-        <div class="habit-card ${isDone?'done':''}" style="cursor:default;margin-bottom:6px">
-          ${habitIconHTML(h)}
-          <div class="habit-info">
-            <div class="habit-name">${h.name}</div>
-            <div class="habit-meta">
-              <span class="cat-badge cat-${h.category}">${cat.label}</span>
-              ${isToday ? `<span class="xp-badge xp-${h.xp}">+${h.xp} XP</span>` : ''}
-            </div>
-          </div>
-          <div class="check-circle" style="flex-shrink:0">${isDone?'✓':''}</div>
-        </div>`;
-    }).join('');
+  // XP medio diario por categoría
+  const xpCatEl = document.getElementById('stat-xp-cats');
+  if (xpCatEl) {
+    const entries = Object.entries(CATS).map(([k, c]) => {
+      const media = xpCatDays[k] > 0 ? Math.round((xpCatSum[k]||0) / diffDays) : 0;
+      return { k, c, media };
+    }).sort((a, b) => b.media - a.media);
+    const maxXP = Math.max(...entries.map(e => e.media), 1);
+    xpCatEl.innerHTML = entries.map(({k, c, media}) =>
+      `<div class="scat-row">
+        <div class="scat-pill" style="background:${c.color}22;color:${c.color};border:1px solid ${c.color}44">${c.label}</div>
+        <div class="scat-bar-wrap"><div class="scat-bar-fill" style="width:${Math.round(media/maxXP*100)}%;background:${c.color}"></div></div>
+        <div class="scat-val" style="color:${c.color}">${media} xp</div>
+      </div>`
+    ).join('');
   }
 }
 
-// ── Panel de rangos ──
-export function renderRangosPanel() {
-  const el = document.getElementById('rangos-content');
-  if (!el) return;
 
-  const { xpTotal } = state.perfil;
-  const calc = calcularNivel(xpTotal);
-
-  const xpAcumuladoHasta = (n) => {
-    let total = 0;
-    for (let i = 1; i < n; i++) total += xpParaNivel(i);
-    return total;
-  };
-
-  const xpTotalReal = xpTotalClase();
-  const xpTotalStr = (Math.round(xpTotalReal / 1000) * 1000).toLocaleString();
-
-  let html = '';
-  CLASES.forEach((clase, ci) => {
-    const isCurrentClase = ci === calc.clase;
-    const isPastClase = ci < calc.clase;
-    const isOpen = isCurrentClase;
-
-    html += `
-      <div class="rango-bloque ${isCurrentClase ? 'rango-activo' : ''} ${isPastClase ? 'rango-completado' : ''}">
-        <div class="rango-header rango-toggle" onclick="toggleRango(this)" style="cursor:pointer">
-          <span class="rango-emoji">${clase.emoji}</span>
-          <div class="rango-info">
-            <div class="rango-nombre" style="color:${clase.color}">${clase.nombre}</div>
-            <div class="rango-sub">30 niveles · ~${xpTotalStr} XP</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:8px;margin-left:auto">
-            ${isCurrentClase ? `<div class="rango-badge-actual" style="color:${clase.color};background:${clase.color}18;border-color:${clase.color}44">Nivel ${calc.nivel}</div>` : ''}
-            ${isPastClase ? `<div class="rango-badge-completado" style="color:${clase.color};background:${clase.color}18;border:1px solid ${clase.color}33;border-radius:var(--radius-full);padding:2px 8px;font-size:10px">✓</div>` : ''}
-            <span class="rango-chevron" style="color:var(--muted);font-size:11px;transition:transform 0.25s;display:inline-block;${isOpen ? 'transform:rotate(180deg)' : ''}">▼</span>
-          </div>
-        </div>
-        <div class="rango-body" style="display:${isOpen ? 'block' : 'none'}">`;
-
-    if (isCurrentClase || isPastClase) {
-      html += `<div class="rango-niveles-tabla">
-        <div class="rango-tabla-header">
-          <span>Nivel</span><span>XP p/ subir</span><span>XP acum.</span>
-        </div>`;
-      for (let n = 1; n <= 30; n++) {
-        const xpEste = xpParaNivel(n);
-        const xpAcum = xpAcumuladoHasta(n);
-        const isPast = isPastClase || (isCurrentClase && n < calc.nivel);
-        const isCurrent = isCurrentClase && n === calc.nivel;
-        html += `
-          <div class="rango-nivel-row ${isPast?'nivel-past':''} ${isCurrent?'nivel-current':''}">
-            <span class="nivel-tag" style="${
-              isCurrent
-                ? `background:${clase.color}28;color:${clase.color};border:1px solid ${clase.color}55`
-                : isPast
-                  ? `background:${clase.color}18;color:${clase.color};border:1px solid ${clase.color}33`
-                  : ''
-            }">
-              ${isCurrent?'▹ ':isPast?'✓ ':''}Nv.${n}
-            </span>
-            <span>${xpEste.toLocaleString()} XP</span>
-            <span style="color:var(--muted)">${xpAcum.toLocaleString()} XP</span>
-          </div>`;
-      }
-      html += `</div>`;
-    } else {
-      html += `
-        <div class="rango-futuro-info">
-          <span>Nv.1 → Nv.30</span>
-          <span>100 XP → ${xpParaNivel(30).toLocaleString()} XP</span>
-        </div>`;
-    }
-
-    html += `</div></div>`;
-  });
-
-  el.innerHTML = html;
-}

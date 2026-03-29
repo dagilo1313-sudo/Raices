@@ -170,7 +170,7 @@
 
     <!-- Última sync discreta -->
     <div id="last-sync" style="text-align:center;font-size:10px;color:var(--border);padding:4px 0 2px"></div>
-    <div style="text-align:center;font-size:9px;color:var(--border);padding:0 0 12px;letter-spacing:1px">v30</div>
+    <div style="text-align:center;font-size:9px;color:var(--border);padding:0 0 12px;letter-spacing:1px">v31</div>
   </div>
 
   <!-- ══ HÁBITOS ══ -->
@@ -203,45 +203,119 @@
       </div>
     </header>
 
-    <!-- Stats grid: 4 filas x 2 columnas -->
-    <div class="stats-grid">
-      <!-- Fila 1: hábitos activos | días perfectos -->
-      <div class="stat-card">
-        <div class="stat-value" id="stat-habits-count">0</div>
-        <div class="stat-label">Hábitos activos</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-value" id="stat-dias-perfectos" style="font-weight:700">0</div>
-        <div class="stat-label">Días perfectos ✦</div>
-      </div>
-      <!-- Fila 2: media XP/día | XP acumulado -->
-      <div class="stat-card">
-        <div class="stat-value" id="stat-xp-media-dia">—</div>
-        <div class="stat-label">Media XP / día</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-value" id="stat-xp-total-lifetime">—</div>
-        <div class="stat-label">XP acumulado</div>
-      </div>
-      <!-- Fila 3: días perfectos/semana | días perfectos/mes -->
-      <div class="stat-card">
-        <div class="stat-value" id="stat-perfectos-semana">—</div>
-        <div class="stat-label">Días perf. / semana</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-value" id="stat-perfectos-mes">—</div>
-        <div class="stat-label">Días perf. / mes</div>
-      </div>
-      <!-- Fila 4: media % XP | media hábitos completados -->
-      <div class="stat-card">
-        <div class="stat-value" id="stat-media-pct-xp">—</div>
-        <div class="stat-label">Media % XP recogido</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-value" id="stat-media-habitos">—</div>
-        <div class="stat-label">Media hábitos / día</div>
+    <!-- DÍAS PERFECTOS -->
+    <div class="stats-sep"><div class="stats-sep-line"></div><div class="stats-sep-label">Días perfectos ✦</div><div class="stats-sep-line"></div></div>
+
+    <div class="smrow gold">
+      <div class="smrow-num" id="stat-dias-perfectos">0</div>
+      <div class="smrow-right">
+        <div class="smrow-label">Días perfectos totales</div>
+        <div class="smrow-desc">todos los hábitos completados</div>
       </div>
     </div>
+    <div class="smdouble" style="border-color:rgba(196,168,79,0.15)">
+      <div class="smhalf">
+        <div class="smhalf-num" id="stat-perfectos-semana" style="color:var(--accent2)">—</div>
+        <div class="smhalf-lbl">Por semana</div>
+      </div>
+      <div class="smhalf">
+        <div class="smhalf-num" id="stat-perfectos-mes" style="color:var(--accent2)">—</div>
+        <div class="smhalf-lbl">Por mes</div>
+      </div>
+    </div>
+    <div class="smdouble" style="border-color:rgba(196,168,79,0.15)">
+      <div class="smhalf">
+        <div class="smhalf-num" id="stat-racha-actual" style="color:var(--accent2)">—</div>
+        <div class="smhalf-lbl">Racha actual</div>
+        <div class="smhalf-hint">días consecutivos</div>
+      </div>
+      <div class="smhalf">
+        <div class="smhalf-num" id="stat-racha-mejor" style="color:var(--accent2)">—</div>
+        <div class="smhalf-lbl">Mejor racha</div>
+        <div class="smhalf-hint">días consecutivos</div>
+      </div>
+    </div>
+
+    <!-- HÁBITOS -->
+    <div class="stats-sep"><div class="stats-sep-line"></div><div class="stats-sep-label">Hábitos</div><div class="stats-sep-line"></div></div>
+
+    <!-- Card narrativa -->
+    <div class="snarr-card">
+      <div class="snarr-top">
+        <div class="snarr-big" id="stat-consistencia-global">—</div>
+        <div class="snarr-ctx">de consistencia global</div>
+      </div>
+      <div class="snarr-triple">
+        <div class="snarr-triple-item">
+          <div class="snarr-triple-num" id="stat-habits-count">0</div>
+          <div class="snarr-triple-lbl">Activos</div>
+        </div>
+        <div class="snarr-triple-item" style="border-left:1px solid var(--border)">
+          <div class="snarr-triple-num" id="stat-media-habitos">—</div>
+          <div class="snarr-triple-lbl">Media / día</div>
+        </div>
+        <div class="snarr-triple-item" style="border-left:1px solid var(--border)">
+          <div class="snarr-triple-num" id="stat-total-completados">—</div>
+          <div class="snarr-triple-lbl">Total completados</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Rendimiento por día de semana -->
+    <div class="scat-card">
+      <div class="scat-title">Rendimiento por día de la semana</div>
+      <div class="scat-desc">% de hábitos completados de media ese día</div>
+      <div class="sdias-grid" id="stat-dias-semana">
+        <div class="sdia"><div class="sdia-bar-wrap"><div class="sdia-bar" style="height:0%"></div></div><div class="sdia-name">L</div></div>
+        <div class="sdia"><div class="sdia-bar-wrap"><div class="sdia-bar" style="height:0%"></div></div><div class="sdia-name">M</div></div>
+        <div class="sdia"><div class="sdia-bar-wrap"><div class="sdia-bar" style="height:0%"></div></div><div class="sdia-name">X</div></div>
+        <div class="sdia"><div class="sdia-bar-wrap"><div class="sdia-bar" style="height:0%"></div></div><div class="sdia-name">J</div></div>
+        <div class="sdia"><div class="sdia-bar-wrap"><div class="sdia-bar" style="height:0%"></div></div><div class="sdia-name">V</div></div>
+        <div class="sdia"><div class="sdia-bar-wrap"><div class="sdia-bar" style="height:0%"></div></div><div class="sdia-name">S</div></div>
+        <div class="sdia"><div class="sdia-bar-wrap"><div class="sdia-bar" style="height:0%"></div></div><div class="sdia-name">D</div></div>
+      </div>
+    </div>
+
+    <!-- Consistencia por categoría -->
+    <div class="scat-card">
+      <div class="scat-title">Consistencia por categoría</div>
+      <div class="scat-desc">% completado vs total programado · lifetime</div>
+      <div class="scats-grid" id="stat-consistencia-cats"></div>
+    </div>
+
+    <!-- EXPERIENCIA -->
+    <div class="stats-sep"><div class="stats-sep-line"></div><div class="stats-sep-label">Experiencia</div><div class="stats-sep-line"></div></div>
+
+    <div class="shero-row">
+      <div class="shero-num" id="stat-xp-total-lifetime">—</div>
+      <div>
+        <div class="shero-label">XP total acumulado</div>
+        <div class="shero-pills">
+          <div class="spill" id="stat-xp-media-dia-pill">42 XP / día</div>
+          <div class="spill" id="stat-eficiencia-pill">80% eficiencia</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- XP medio por categoría -->
+    <div class="scat-card">
+      <div class="scat-title">XP medio diario por categoría</div>
+      <div class="scat-desc">media de XP ganado cada día · lifetime</div>
+      <div class="scats-grid" id="stat-xp-cats"></div>
+    </div>
+
+  </div>
+
+  <!-- ══ HISTÓRICO ══ -->
+  <div class="view" id="view-historico">
+    <header>
+      <div class="header-top">
+        <div>
+          <div class="logo" style="font-size:26px">Histórico</div>
+          <div class="logo-sub">Tu registro diario</div>
+        </div>
+      </div>
+    </header>
 
     <div class="cal-wrapper">
       <div class="cal-header">
@@ -286,6 +360,9 @@
       <div class="section-header"><span class="section-label">Por categoría</span></div>
       <div id="cat-stats-list"></div>
     </div>
+
+    <div id="stats-no-registro" style="display:none;text-align:center;padding:32px 24px"></div>
+    <div id="stats-day-habits"></div>
   </div>
 
   <!-- ══ PERFIL ══ -->
@@ -353,6 +430,9 @@
     </div>
     <div class="nav-item" id="nav-stats" onclick="switchView('stats')">
       <div class="nav-icon nav-icon-lg">⚡︎</div>Stats
+    </div>
+    <div class="nav-item" id="nav-historico" onclick="switchView('historico')">
+      <div class="nav-icon nav-icon-lg">◷</div>Histórico
     </div>
     <div class="nav-item" id="nav-habitos" onclick="switchView('habitos')">
       <div class="nav-icon nav-icon-lg">⚙︎</div>Hábitos
