@@ -89,7 +89,7 @@ export function showConfetti() {
 
 export function showXPFloat(habitId, xp) {
   // Color según peso del XP
-  const color = xp >= 50 ? '#e05c5c' : xp >= 25 ? '#c4a84f' : '#8fb339';
+  const color = xp >= 50 ? '#c4a84f' : xp >= 25 ? '#8fb339' : '#6b7560';
   // Buscar el elemento del hábito en la lista
   const el = document.createElement('div');
   el.style.cssText = `

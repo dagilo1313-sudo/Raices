@@ -170,7 +170,7 @@
 
     <!-- Última sync discreta -->
     <div id="last-sync" style="text-align:center;font-size:10px;color:var(--border);padding:4px 0 2px"></div>
-    <div style="text-align:center;font-size:9px;color:var(--border);padding:0 0 12px;letter-spacing:1px">v33</div>
+    <div style="text-align:center;font-size:9px;color:var(--border);padding:0 0 12px;letter-spacing:1px">v33.5</div>
   </div>
 
   <!-- ══ HÁBITOS ══ -->
@@ -261,20 +261,6 @@
       </div>
     </div>
 
-    <!-- Rendimiento por día de semana -->
-    <div class="scat-card">
-      <div class="scat-title">Rendimiento por día de la semana</div>
-      <div class="scat-desc">% de hábitos completados de media ese día</div>
-      <div class="sdias-grid" id="stat-dias-semana">
-        <div class="sdia"><div class="sdia-bar-wrap"><div class="sdia-bar" style="height:0%"></div></div><div class="sdia-name">L</div></div>
-        <div class="sdia"><div class="sdia-bar-wrap"><div class="sdia-bar" style="height:0%"></div></div><div class="sdia-name">M</div></div>
-        <div class="sdia"><div class="sdia-bar-wrap"><div class="sdia-bar" style="height:0%"></div></div><div class="sdia-name">X</div></div>
-        <div class="sdia"><div class="sdia-bar-wrap"><div class="sdia-bar" style="height:0%"></div></div><div class="sdia-name">J</div></div>
-        <div class="sdia"><div class="sdia-bar-wrap"><div class="sdia-bar" style="height:0%"></div></div><div class="sdia-name">V</div></div>
-        <div class="sdia"><div class="sdia-bar-wrap"><div class="sdia-bar" style="height:0%"></div></div><div class="sdia-name">S</div></div>
-        <div class="sdia"><div class="sdia-bar-wrap"><div class="sdia-bar" style="height:0%"></div></div><div class="sdia-name">D</div></div>
-      </div>
-    </div>
 
     <!-- Consistencia por categoría -->
     <div class="scat-card">
@@ -304,6 +290,21 @@
           <div class="snarr-triple-num" id="stat-nivel-actual">—</div>
           <div class="snarr-triple-lbl">Nivel actual</div>
         </div>
+      </div>
+    </div>
+
+    <!-- Rendimiento XP por día -->
+    <div class="scat-card">
+      <div class="scat-title">XP ganado por día · últimos 7 días</div>
+      <div class="scat-desc">XP recogido cada día respecto al máximo posible</div>
+      <div class="sdias-grid" id="stat-dias-semana">
+        <div class="sdia"><div class="sdia-bar-wrap"><div class="sdia-bar" style="height:0%"></div></div><div class="sdia-name">L</div></div>
+        <div class="sdia"><div class="sdia-bar-wrap"><div class="sdia-bar" style="height:0%"></div></div><div class="sdia-name">M</div></div>
+        <div class="sdia"><div class="sdia-bar-wrap"><div class="sdia-bar" style="height:0%"></div></div><div class="sdia-name">X</div></div>
+        <div class="sdia"><div class="sdia-bar-wrap"><div class="sdia-bar" style="height:0%"></div></div><div class="sdia-name">J</div></div>
+        <div class="sdia"><div class="sdia-bar-wrap"><div class="sdia-bar" style="height:0%"></div></div><div class="sdia-name">V</div></div>
+        <div class="sdia"><div class="sdia-bar-wrap"><div class="sdia-bar" style="height:0%"></div></div><div class="sdia-name">S</div></div>
+        <div class="sdia"><div class="sdia-bar-wrap"><div class="sdia-bar" style="height:0%"></div></div><div class="sdia-name">D</div></div>
       </div>
     </div>
 
@@ -372,7 +373,6 @@
     </div>
 
     <div id="stats-no-registro" style="display:none;text-align:center;padding:32px 24px"></div>
-    <div id="stats-day-habits"></div>
   </div>
 
   <!-- ══ PERFIL ══ -->

@@ -621,7 +621,7 @@ function renderLifetimeStats() {
   const nivelActual = state.perfil.nivel || 1;
   set('stat-nivel-actual', 'Nv.' + nivelActual);
 
-  // Barras últimos 7 días reales
+  // Barras últimos 7 días — XP ganado vs XP máximo posible
   const diasGrid = document.getElementById('stat-dias-semana');
   if (diasGrid) {
     const last7 = [];
@@ -630,29 +630,28 @@ function renderLifetimeStats() {
       d.setDate(d.getDate() - i);
       const dateStr7 = d.toISOString().split('T')[0];
       const dayData = state.completions[dateStr7];
-      let pct7 = 0;
-      if (dayData && !Array.isArray(dayData)) {
-        const comp = dayData.completados?.length || 0;
-        const plan = dayData.planificados?.length || 0;
-        pct7 = plan > 0 ? comp / plan : 0;
+      let ratio7 = 0;
+      if (dayData && !Array.isArray(dayData) && dayData.xpMaxPorCat) {
+        const ganado = Object.values(dayData.xpGanadoPorCat || {}).reduce((s,v)=>s+v,0);
+        const maximo = Object.values(dayData.xpMaxPorCat || {}).reduce((s,v)=>s+v,0);
+        ratio7 = maximo > 0 ? ganado / maximo : 0;
       } else if (dateStr7 === today()) {
         const sched7 = state.habits.filter(h => !h.archivado && isScheduledForDate(h, dateStr7));
-        const done7 = sched7.filter(h => isCompleted(h.id, dateStr7)).length;
-        pct7 = sched7.length > 0 ? done7 / sched7.length : 0;
+        const xpGan = sched7.filter(h => isCompleted(h.id, dateStr7)).reduce((s,h)=>s+(h.xp||10),0);
+        const xpMax7 = sched7.reduce((s,h)=>s+(h.xp||10),0);
+        ratio7 = xpMax7 > 0 ? xpGan / xpMax7 : 0;
       }
       const dayName = d.toLocaleDateString('es-ES', {weekday:'short'}).slice(0,1).toUpperCase();
-      last7.push({ pct: pct7, label: dayName, dateStr: dateStr7 });
+      last7.push({ ratio: ratio7, label: dayName, dateStr: dateStr7 });
     }
-    const dias = diasGrid.querySelectorAll('.sdia');
     const labels = diasGrid.querySelectorAll('.sdia-name');
     const bars = diasGrid.querySelectorAll('.sdia-bar');
-    const maxPct7 = Math.max(...last7.map(d => d.pct), 0.01);
+    const maxR = Math.max(...last7.map(d => d.ratio), 0.01);
     last7.forEach((d, i) => {
       if (bars[i]) {
-        const ratio = d.pct / maxPct7;
+        const ratio = d.ratio / maxR;
         const h = Math.max(4, ratio * 100);
         bars[i].style.height = h + '%';
-        // Verde para bajos, dorado para altos — interpolación RGB
         const r = Math.round(143 + (196 - 143) * ratio);
         const g = Math.round(179 + (168 - 179) * ratio);
         const b = Math.round(57  + (79  - 57)  * ratio);
