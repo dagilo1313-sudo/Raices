@@ -298,18 +298,37 @@ function renderProgress() {
   const done = todayHabits.filter(h => isCompleted(h.id, todayStr)).length;
   const pct = total ? Math.round(done / total * 100) : 0;
   const isPerfect = total > 0 && done === total;
-  const text = document.getElementById('progress-text');
-  const bar = document.getElementById('progress-bar');
-  if (text) {
-    text.textContent = total ? `${done} / ${total} · ${pct}%` : '0 / 0';
-    text.style.color = isPerfect ? 'var(--accent2)' : 'var(--accent)';
-  }
-  if (bar) {
-    bar.style.width = pct + '%';
-    bar.style.background = isPerfect
-      ? 'linear-gradient(to right, #c4a84f, #e8c96e)'
-      : '';
-  }
+
+  const xpHoy = getTodayXP();
+  const xpMax = getMaxXPForDate(todayStr);
+  const xpPct = xpMax > 0 ? Math.round(xpHoy / xpMax * 100) : 0;
+
+  const color = isPerfect ? 'var(--accent2)' : 'var(--accent)';
+  const barColor = isPerfect ? 'linear-gradient(to right,#c4a84f,#e8c96e)' : 'var(--accent)';
+
+  const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+  const setColor = (id, c) => { const el = document.getElementById(id); if (el) el.style.color = c; };
+  const setBg = (id, bg) => { const el = document.getElementById(id); if (el) el.style.background = bg; };
+
+  // Hábitos card
+  set('hoy-sc-hab-val', total ? `${done}/${total}` : '0/0');
+  set('hoy-sc-hab-pct', `${pct}% completado`);
+  setColor('hoy-sc-hab-val', color);
+  setColor('hoy-sc-hab-pct', color);
+  setBg('hoy-sc-bar-lat-hab', isPerfect ? '#c4a84f' : 'var(--accent)');
+  setBg('hoy-sc-hab-bar', barColor);
+  const habBar = document.getElementById('hoy-sc-hab-bar');
+  if (habBar) habBar.style.width = pct + '%';
+
+  // XP card
+  set('hoy-sc-xp-val', `+${xpHoy}`);
+  set('hoy-sc-xp-pct', `${xpPct}% del máximo`);
+  setColor('hoy-sc-xp-val', color);
+  setColor('hoy-sc-xp-pct', color);
+  setBg('hoy-sc-bar-lat-xp', isPerfect ? '#c4a84f' : 'var(--accent)');
+  setBg('hoy-sc-xp-bar', barColor);
+  const xpBar = document.getElementById('hoy-sc-xp-bar');
+  if (xpBar) xpBar.style.width = xpPct + '%';
 }
 
 // ── Tareas ──
@@ -775,11 +794,12 @@ function renderStatsForDate(dateStr) {
   setGold('stat-day-xp', `+${xp} xp`);
   setGold('stat-day-pct', `${pct}% completado`);
   setGold('stat-day-xp-pct', `${xpPct}% del máximo`);
-  // Barras de progreso del score card
+  // Barras de progreso del score card — doradas si día perfecto
+  const barColor = isPerfectStats ? 'linear-gradient(to right,#c4a84f,#e8c96e)' : 'var(--accent)';
   const barHab = document.getElementById('stat-day-bar');
   const barXp  = document.getElementById('stat-xp-bar');
-  if (barHab) barHab.style.width = pct + '%';
-  if (barXp)  barXp.style.width  = xpPct + '%';
+  if (barHab) { barHab.style.width = pct + '%'; barHab.style.background = barColor; }
+  if (barXp)  { barXp.style.width  = xpPct + '%'; barXp.style.background = barColor; }
 
   // Si no es hoy y no hay ningún dato para ese día → Día no registrado
   const sinRegistro = !isToday && completedIds.length === 0 && !getPlanificadosForDate(dateStr);

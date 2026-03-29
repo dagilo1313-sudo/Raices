@@ -136,13 +136,21 @@
       </div>
     </div>
 
-    <div class="progress-section">
-      <div class="progress-header">
-        <span class="progress-title">Progreso de hoy</span>
-        <span class="progress-count" id="progress-text" style="color:var(--accent);font-weight:600">0 / 0</span>
+    <!-- Score cards HOY -->
+    <div class="hoy-score-grid">
+      <div class="hoy-sc-card" id="hoy-sc-hab">
+        <div class="hoy-sc-bar-lat" id="hoy-sc-bar-lat-hab"></div>
+        <div class="hoy-sc-lbl">Hábitos hoy</div>
+        <div class="hoy-sc-big" id="hoy-sc-hab-val">0/0</div>
+        <div class="hoy-sc-sub" id="hoy-sc-hab-pct">0% completado</div>
+        <div class="hoy-sc-track"><div class="hoy-sc-fill" id="hoy-sc-hab-bar" style="width:0%"></div></div>
       </div>
-      <div class="progress-track">
-        <div class="progress-fill" id="progress-bar" style="width:0%"></div>
+      <div class="hoy-sc-card" id="hoy-sc-xp">
+        <div class="hoy-sc-bar-lat" id="hoy-sc-bar-lat-xp"></div>
+        <div class="hoy-sc-lbl">XP hoy</div>
+        <div class="hoy-sc-big" id="hoy-sc-xp-val">+0</div>
+        <div class="hoy-sc-sub" id="hoy-sc-xp-pct">0% del máximo</div>
+        <div class="hoy-sc-track"><div class="hoy-sc-fill" id="hoy-sc-xp-bar" style="width:0%"></div></div>
       </div>
     </div>
 
@@ -156,7 +164,7 @@
 
     <!-- Última sync discreta -->
     <div id="last-sync" style="text-align:center;font-size:10px;color:var(--border);padding:4px 0 2px"></div>
-    <div style="text-align:center;font-size:9px;color:var(--border);padding:0 0 12px;letter-spacing:1px">v36.7</div>
+    <div style="text-align:center;font-size:9px;color:var(--border);padding:0 0 12px;letter-spacing:1px">v37</div>
   </div>
 
   <!-- ══ HÁBITOS ══ -->
