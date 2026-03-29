@@ -376,4 +376,3 @@ window.onDebugDateChange = (dateStr) => {
 
 // ── Arrancar ──
 initAuth();
-setTimeout(initScrollCompact, 500);

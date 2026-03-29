@@ -160,6 +160,9 @@ function renderViajero() {
   const xpLabelEl = document.getElementById('viajero-xp-label');
   if (xpLabelEl) xpLabelEl.style.color = isPerfectToday ? 'var(--accent2)' : '';
 
+
+}
+
 // ── Última sync ──
 function renderLastSync() {
   const el = document.getElementById('last-sync');
@@ -276,7 +279,7 @@ function renderProgress() {
 }
 
 // ── Tareas ──
-function renderTareas() {
+export function renderTareas() {
   const lista = document.getElementById('tareas-lista');
   if (!lista) return;
 
