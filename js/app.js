@@ -1,7 +1,7 @@
 import { initAuth, toggleAuthMode, handleAuth, showForgotPassword, showLoginForm, sendResetEmail, showChangePassword, hideChangePassword, changePassword, logout } from './auth.js';
 import { toggleHabit, deleteHabit, saveCompletions, resetAllData, resetProgress, createTarea, toggleTarea, borrarTareasCompletadas, getCompletadosForDate } from './habits.js';
 import { renderAll, renderHabitsList, renderTareas, renderHistorico } from './render.js';
-import { showToast, showConfetti, switchView } from './ui.js';
+import { showToast, showConfetti, showXPFloat, switchView } from './ui.js';
 import { openCreateModal, openEditModal, closeModal, closeModalOutside, submitModal, selectEmoji, selectNoIcon, selectCategory, selectXP, toggleDay, selectAllDays } from './modal.js';
 import { state, getCompletionMessage, today, CLASES } from './state.js';
 
@@ -42,7 +42,8 @@ window.setFilter  = (filter) => { state.activeFilter = filter; renderAll(); };
 window.onToggleHabit = async (id) => {
   const result = await toggleHabit(id);
   if (result.xpGanado > 0) {
-    showConfetti();
+    // Animación ligera + XP flotante sobre el hábito
+    showXPFloat(id, result.xpGanado);
 
     // Comprobar si se acaban de completar TODOS los hábitos de hoy
     const { isScheduledForDate, today } = await import('./state.js');
@@ -52,7 +53,7 @@ window.onToggleHabit = async (id) => {
     const diaPerfecto = scheduled.length > 0 && scheduled.every(h => completedToday.includes(h.id));
 
     if (diaPerfecto && result.subioNivel) {
-      // Primero mensaje día perfecto, luego nivel
+      showConfetti();
       showDiaPerfectoNotif(() => {
         const claseData = result.subioRango ? CLASES[result.calcDespues.clase] : CLASES[result.calcDespues.clase];
         showLevelUpNotif(
@@ -63,15 +64,16 @@ window.onToggleHabit = async (id) => {
         );
       });
     } else if (diaPerfecto) {
+      showConfetti();
       showDiaPerfectoNotif(null);
     } else if (result.subioRango) {
+      showConfetti();
       const claseData = CLASES[result.calcDespues.clase];
       showLevelUpNotif('¡Nuevo rango desbloqueado!', `${claseData.emoji} ${claseData.nombre}`, `Has alcanzado el rango ${claseData.nombre}. ¡Increíble!`, claseData.color);
     } else if (result.subioNivel) {
+      showConfetti();
       const claseData = CLASES[result.calcDespues.clase];
       showLevelUpNotif(`¡Subiste al nivel ${result.calcDespues.nivel}!`, `${claseData.emoji} ${claseData.nombre}`, `+${result.xpGanado} XP · Sigue así, viajero.`, claseData.color);
-    } else {
-      showToast(`${getCompletionMessage()} +${result.xpGanado} XP`);
     }
   }
   renderAll();

@@ -87,6 +87,44 @@ export function showConfetti() {
   frame();
 }
 
+export function showXPFloat(habitId, xp) {
+  // Color según peso del XP
+  const color = xp >= 50 ? '#e05c5c' : xp >= 25 ? '#c4a84f' : '#8fb339';
+  // Buscar el elemento del hábito en la lista
+  const el = document.createElement('div');
+  el.style.cssText = `
+    position:fixed;
+    left:50%;
+    top:45%;
+    transform:translate(-50%,-50%);
+    font-family:'DM Sans',sans-serif;
+    font-size:38px;
+    font-weight:700;
+    color:${color};
+    pointer-events:none;
+    z-index:9999;
+    opacity:1;
+    text-shadow:0 2px 16px ${color}66;
+    animation:xpFloat 0.9s ease-out forwards;
+  `;
+  el.textContent = `+${xp} XP`;
+  document.body.appendChild(el);
+
+  // Inyectar keyframes si no existen
+  if (!document.getElementById('xp-float-style')) {
+    const s = document.createElement('style');
+    s.id = 'xp-float-style';
+    s.textContent = `@keyframes xpFloat {
+      0%   { opacity:0; transform:translate(-50%,-50%) scale(0.6); }
+      15%  { opacity:1; transform:translate(-50%,-60%) scale(1.1); }
+      40%  { opacity:0.9; transform:translate(-50%,-70%) scale(1); }
+      100% { opacity:0; transform:translate(-50%,-90%) scale(0.85); }
+    }`;
+    document.head.appendChild(s);
+  }
+  setTimeout(() => el.remove(), 900);
+}
+
 // ── Router de vistas ──
 export function switchView(view) {
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
