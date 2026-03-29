@@ -727,6 +727,17 @@ function renderLifetimeStats() {
   set('stat-media-habitos', habitosDays>0 ? (habitosSum/habitosDays).toFixed(1) : '—');
   set('stat-total-completados', totalCompletados.toLocaleString('es-ES'));
   set('stat-xp-media-dia-pill', Math.round(xpTotal/diffDays).toLocaleString('es-ES'));
+  // XP por día últimos 30 días
+  let xp30Sum=0, xp30Count=0;
+  sorted.forEach(k => {
+    if (k < hace30str) return;
+    const d = state.completions[k];
+    if (!d||Array.isArray(d)) return;
+    const xpG = d.xpGanadoPorCat ? Object.values(d.xpGanadoPorCat).reduce((s,v)=>s+v,0) : 0;
+    xp30Sum += xpG; xp30Count++;
+  });
+  const xpDia30 = Math.round(xp30Sum / Math.min(30, diffDays));
+  set('stat-xp-dia-30d', xpDia30.toLocaleString('es-ES'));
 
   // Tendencia hábitos
   const setTrend = (elId, semActualSum, semActualDays, s1sum, s1d, s2sum, s2d, s3sum, s3d) => {
@@ -814,45 +825,33 @@ function renderLifetimeStats() {
     insightsEl.innerHTML = top2.map(h=>makeRow(h,true)).join('') + (habStats.length>2 ? '<div style="height:1px;background:var(--border);margin:0"></div>' : '') + bot2.map(h=>makeRow(h,false)).join('');
   }
 
-  // Hábitos en riesgo: activos sin completar en los últimos 7 días
+  // Hábitos en riesgo: activos que llevan MÁS DE 7 días sin completarse
   const riesgoCard = document.getElementById('stat-riesgo-card');
   const riesgoList = document.getElementById('stat-riesgo-list');
   if (riesgoCard && riesgoList) {
-    const hace7riesgo = (() => { const d = new Date(today()+'T12:00:00'); d.setDate(d.getDate()-7); return d.toISOString().split('T')[0]; })();
-    const habRiesgo = state.habits.filter(h => !h.archivado).filter(h => {
-      // Buscar si ha sido completado en los últimos 7 días
-      for (let i = 0; i <= 7; i++) {
-        const d = new Date(today()+'T12:00:00'); d.setDate(d.getDate()-i);
-        const ds = d.toISOString().split('T')[0];
-        if (isCompleted(h.id, ds)) return false; // completado → no en riesgo
-      }
-      // Ver cuántos días lleva sin completarse (buscar último completado)
-      return true;
-    }).map(h => {
-      // Calcular días desde el último completion
+    const habRiesgo = state.habits.filter(h => !h.archivado).map(h => {
+      // Contar días consecutivos sin completar desde hoy hacia atrás
       let diasSin = 0;
-      for (let i = 1; i <= 90; i++) {
+      for (let i = 0; i <= 90; i++) {
         const d = new Date(today()+'T12:00:00'); d.setDate(d.getDate()-i);
         const ds = d.toISOString().split('T')[0];
-        if (isCompleted(h.id, ds)) break;
+        if (isCompleted(h.id, ds)) break; // encontrado → parar
         diasSin = i;
       }
       return { ...h, diasSin };
-    }).sort((a,b) => b.diasSin - a.diasSin);
+    }).filter(h => h.diasSin > 7) // solo los que llevan MÁS de 7 días
+      .sort((a,b) => b.diasSin - a.diasSin);
 
     if (habRiesgo.length > 0) {
       riesgoCard.style.display = '';
-      riesgoList.innerHTML = habRiesgo.map(h => {
-        const cat = window.CATEGORIES?.[h.category] || { color: '#6b7560' };
-        const color = cat.color || '#6b7560';
-        return `<div class="riesgo-row">
+      riesgoList.innerHTML = habRiesgo.map(h => `
+        <div class="riesgo-row">
           <div class="riesgo-left">
             <div class="riesgo-dot"></div>
             <div class="riesgo-name">${h.name}</div>
           </div>
-          <div class="riesgo-dias">${h.diasSin > 0 ? h.diasSin+'d sin completar' : 'Esta semana'}</div>
-        </div>`;
-      }).join('');
+          <div class="riesgo-dias">${h.diasSin}d sin completar</div>
+        </div>`).join('');
     } else {
       riesgoCard.style.display = 'none';
     }

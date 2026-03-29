@@ -164,7 +164,7 @@
 
     <!-- Última sync discreta -->
     <div id="last-sync" style="text-align:center;font-size:10px;color:var(--border);padding:4px 0 2px"></div>
-    <div style="text-align:center;font-size:9px;color:var(--border);padding:0 0 12px;letter-spacing:1px">v42</div>
+    <div style="text-align:center;font-size:9px;color:var(--border);padding:0 0 12px;letter-spacing:1px">v43</div>
   </div>
 
   <!-- ══ HÁBITOS ══ -->
@@ -287,17 +287,15 @@
 
     <div class="snarr-card green-bar">
       <div class="snarr-top">
-        <div style="display:flex;flex-direction:column;gap:4px;flex:1">
-          <div style="display:flex;align-items:baseline;gap:10px">
-            <div class="snarr-big" id="stat-eficiencia-30d">—</div>
-            <div class="snarr-ctx">últ. 30 días</div>
-            <div class="snarr-trend" id="stat-tendencia-xp"></div>
-          </div>
-          <div style="display:flex;align-items:baseline;gap:8px">
-            <div style="font-size:20px;font-weight:700;color:var(--accent)" id="stat-eficiencia-big">—</div>
-            <div style="font-size:11px;color:var(--muted)">media total</div>
+        <div class="snarr-big" id="stat-eficiencia-big">—</div>
+        <div style="display:flex;flex-direction:column;justify-content:center;gap:3px">
+          <div class="snarr-ctx">eficiencia XP media</div>
+          <div style="display:flex;align-items:baseline;gap:5px">
+            <div style="font-size:14px;font-weight:600;color:var(--accent)" id="stat-eficiencia-30d">—</div>
+            <div style="font-size:10px;color:var(--muted)">últ. 30 días</div>
           </div>
         </div>
+        <div class="snarr-trend" id="stat-tendencia-xp"></div>
       </div>
       <div class="snarr-triple">
         <div class="snarr-triple-item">
@@ -306,13 +304,37 @@
         </div>
         <div class="snarr-triple-item" style="border-left:1px solid var(--border)">
           <div class="snarr-triple-num" id="stat-xp-media-dia-pill">—</div>
-          <div class="snarr-triple-lbl">XP por día</div>
+          <div style="font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-top:1px">XP por día</div>
+          <div style="display:flex;align-items:baseline;gap:4px;margin-top:2px">
+            <div style="font-size:12px;font-weight:600;color:var(--accent)" id="stat-xp-dia-30d">—</div>
+            <div style="font-size:9px;color:var(--dim)">30d</div>
+          </div>
         </div>
         <div class="snarr-triple-item" style="border-left:1px solid var(--border)">
           <div class="snarr-triple-num" id="stat-xp-total-lifetime">—</div>
           <div class="snarr-triple-lbl">XP total</div>
         </div>
       </div>
+    </div>
+
+    <!-- Gráfica XP últimos 7 días (% real) -->
+    <div class="scat-card">
+      <div class="scat-title">XP por día · últimos 7</div>
+      <div class="sdias-grid" id="stat-dias-semana">
+        <div class="sdia"><div class="sdia-bar-wrap"><div class="sdia-bar" style="height:0%"></div></div><div class="sdia-name">L</div></div>
+        <div class="sdia"><div class="sdia-bar-wrap"><div class="sdia-bar" style="height:0%"></div></div><div class="sdia-name">M</div></div>
+        <div class="sdia"><div class="sdia-bar-wrap"><div class="sdia-bar" style="height:0%"></div></div><div class="sdia-name">X</div></div>
+        <div class="sdia"><div class="sdia-bar-wrap"><div class="sdia-bar" style="height:0%"></div></div><div class="sdia-name">J</div></div>
+        <div class="sdia"><div class="sdia-bar-wrap"><div class="sdia-bar" style="height:0%"></div></div><div class="sdia-name">V</div></div>
+        <div class="sdia"><div class="sdia-bar-wrap"><div class="sdia-bar" style="height:0%"></div></div><div class="sdia-name">S</div></div>
+        <div class="sdia"><div class="sdia-bar-wrap"><div class="sdia-bar" style="height:0%"></div></div><div class="sdia-name">D</div></div>
+      </div>
+    </div>
+
+    <!-- XP medio por categoría -->
+    <div class="scat-card">
+      <div class="scat-title">XP medio diario por categoría</div>
+      <div class="scats-grid" id="stat-xp-cats"></div>
     </div>
 
     <!-- HÁBITOS -->
@@ -357,26 +379,6 @@
     <div class="scat-card">
       <div class="scat-title">% de hábitos completados por categoría</div>
       <div class="scats-grid" id="stat-consistencia-cats"></div>
-    </div>
-
-    <!-- Gráfica XP últimos 7 días (% real) -->
-    <div class="scat-card">
-      <div class="scat-title">XP por día · últimos 7</div>
-      <div class="sdias-grid" id="stat-dias-semana">
-        <div class="sdia"><div class="sdia-bar-wrap"><div class="sdia-bar" style="height:0%"></div></div><div class="sdia-name">L</div></div>
-        <div class="sdia"><div class="sdia-bar-wrap"><div class="sdia-bar" style="height:0%"></div></div><div class="sdia-name">M</div></div>
-        <div class="sdia"><div class="sdia-bar-wrap"><div class="sdia-bar" style="height:0%"></div></div><div class="sdia-name">X</div></div>
-        <div class="sdia"><div class="sdia-bar-wrap"><div class="sdia-bar" style="height:0%"></div></div><div class="sdia-name">J</div></div>
-        <div class="sdia"><div class="sdia-bar-wrap"><div class="sdia-bar" style="height:0%"></div></div><div class="sdia-name">V</div></div>
-        <div class="sdia"><div class="sdia-bar-wrap"><div class="sdia-bar" style="height:0%"></div></div><div class="sdia-name">S</div></div>
-        <div class="sdia"><div class="sdia-bar-wrap"><div class="sdia-bar" style="height:0%"></div></div><div class="sdia-name">D</div></div>
-      </div>
-    </div>
-
-    <!-- XP medio por categoría -->
-    <div class="scat-card">
-      <div class="scat-title">XP medio diario por categoría</div>
-      <div class="scats-grid" id="stat-xp-cats"></div>
     </div>
 
     <!-- RECORRIDO -->
