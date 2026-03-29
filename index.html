@@ -164,7 +164,7 @@
 
     <!-- Última sync discreta -->
     <div id="last-sync" style="text-align:center;font-size:10px;color:var(--border);padding:4px 0 2px"></div>
-    <div style="text-align:center;font-size:9px;color:var(--border);padding:0 0 12px;letter-spacing:1px">v44</div>
+    <div style="text-align:center;font-size:9px;color:var(--border);padding:0 0 12px;letter-spacing:1px">v45</div>
   </div>
 
   <!-- ══ HÁBITOS ══ -->
@@ -300,34 +300,52 @@
     <!-- EXPERIENCIA -->
     <div class="stats-sep"><div class="stats-sep-line"></div><div class="stats-sep-label">Experiencia</div><div class="stats-sep-line"></div></div>
 
-    <div class="snarr-card green-bar">
-      <div class="snarr-top">
-        <div class="snarr-big" id="stat-eficiencia-big">—</div>
-        <div style="display:flex;flex-direction:column;justify-content:center;gap:3px">
-          <div class="snarr-ctx">eficiencia XP media</div>
-          <div style="display:flex;align-items:baseline;gap:5px">
-            <div style="font-size:14px;font-weight:600;color:var(--accent)" id="stat-eficiencia-30d">—</div>
-            <div style="font-size:10px;color:var(--muted)">últ. 30 días</div>
-          </div>
-        </div>
+    <div class="racha-card" style="border-color:rgba(143,179,57,0.2)">
+      <div class="rc-header">
+        <div class="rc-title" style="color:var(--accent)">Experiencia</div>
         <div class="snarr-trend" id="stat-tendencia-xp"></div>
       </div>
-      <div class="snarr-triple">
-        <div class="snarr-triple-item">
-          <div class="snarr-triple-num" id="stat-nivel-actual" style="font-size:16px">—</div>
-          <div class="snarr-triple-lbl" id="stat-rango-actual" style="color:var(--muted)">—</div>
+      <div class="xp-main-block">
+        <div class="xpm-left">
+          <div class="xpm-lbl">Eficiencia media</div>
+          <div class="xpm-big" id="stat-eficiencia-big">—</div>
         </div>
-        <div class="snarr-triple-item" style="border-left:1px solid var(--border)">
-          <div class="snarr-triple-num" id="stat-xp-media-dia-pill">—</div>
-          <div style="font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-top:1px">XP por día</div>
-          <div style="display:flex;align-items:baseline;gap:4px;margin-top:2px">
-            <div style="font-size:12px;font-weight:600;color:var(--accent)" id="stat-xp-dia-30d">—</div>
+        <div class="xpm-divider"></div>
+        <div class="xpm-right">
+          <div class="xpm-row">
+            <div class="xpm-row-lbl">Últ. 30 días</div>
+            <div style="display:flex;align-items:baseline;gap:4px">
+              <div class="xpm-row-val" id="stat-eficiencia-30d">—</div>
+              <div class="xpm-row-unit">efic.</div>
+            </div>
+          </div>
+          <div class="xpm-row">
+            <div class="xpm-row-lbl">XP por día</div>
+            <div style="display:flex;align-items:baseline;gap:4px">
+              <div class="xpm-row-val" id="stat-xp-media-dia-pill">—</div>
+              <div class="xpm-row-small" id="stat-xp-dia-30d">—</div>
+              <div class="xpm-row-slbl">30d</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="rc-dots" id="rc-dots-xp"></div>
+      <div class="rc-triple">
+        <div class="rc-ti">
+          <div class="rc-ti-num" id="stat-nivel-actual" style="font-size:16px;color:var(--accent)">—</div>
+          <div class="rc-ti-lbl" id="stat-rango-actual">—</div>
+        </div>
+        <div class="rc-ti" style="border-left:1px solid var(--border)">
+          <div class="rc-ti-num" style="color:var(--accent)" id="stat-xp-media-dia-pill2">—</div>
+          <div class="rc-ti-lbl">XP por día</div>
+          <div style="display:flex;align-items:baseline;gap:3px;margin-top:2px">
+            <div style="font-size:11px;font-weight:600;color:var(--accent);opacity:0.55" id="stat-xp-dia-30d2">—</div>
             <div style="font-size:9px;color:var(--dim)">30d</div>
           </div>
         </div>
-        <div class="snarr-triple-item" style="border-left:1px solid var(--border)">
-          <div class="snarr-triple-num" id="stat-xp-total-lifetime">—</div>
-          <div class="snarr-triple-lbl">XP total</div>
+        <div class="rc-ti" style="border-left:1px solid var(--border)">
+          <div class="rc-ti-num" style="color:var(--accent)" id="stat-xp-total-lifetime">—</div>
+          <div class="rc-ti-lbl">XP total</div>
         </div>
       </div>
     </div>
@@ -355,25 +373,48 @@
     <!-- HÁBITOS -->
     <div class="stats-sep"><div class="stats-sep-line"></div><div class="stats-sep-label">Hábitos</div><div class="stats-sep-line"></div></div>
 
-    <!-- Card narrativa hábitos -->
-    <div class="snarr-card green-bar">
-      <div class="snarr-top">
-        <div class="snarr-big" id="stat-consistencia-global">—</div>
-        <div class="snarr-ctx">DE HÁBITOS COMPLETADOS</div>
+    <!-- Card narrativa hábitos — estilo racha -->
+    <div class="racha-card" style="border-color:rgba(143,179,57,0.2)">
+      <div class="rc-header">
+        <div class="rc-title" style="color:var(--accent)">Hábitos</div>
         <div class="snarr-trend" id="stat-tendencia-hab"></div>
       </div>
-      <div class="snarr-triple">
-        <div class="snarr-triple-item">
-          <div class="snarr-triple-num" id="stat-habits-count">0</div>
-          <div class="snarr-triple-lbl">Activos</div>
+      <div class="xp-main-block">
+        <div class="xpm-left">
+          <div class="xpm-lbl">Consistencia</div>
+          <div class="xpm-big" id="stat-consistencia-global">—</div>
         </div>
-        <div class="snarr-triple-item" style="border-left:1px solid var(--border)">
-          <div class="snarr-triple-num" id="stat-media-habitos">—</div>
-          <div class="snarr-triple-lbl">Hábitos por día</div>
+        <div class="xpm-divider"></div>
+        <div class="xpm-right">
+          <div class="xpm-row">
+            <div class="xpm-row-lbl">Últ. 30 días</div>
+            <div style="display:flex;align-items:baseline;gap:4px">
+              <div class="xpm-row-val" id="stat-consistencia-30d">—</div>
+              <div class="xpm-row-unit">completado</div>
+            </div>
+          </div>
+          <div class="xpm-row">
+            <div class="xpm-row-lbl">Media diaria</div>
+            <div style="display:flex;align-items:baseline;gap:4px">
+              <div class="xpm-row-val" id="stat-media-habitos">—</div>
+              <div class="xpm-row-unit">hábitos</div>
+            </div>
+          </div>
         </div>
-        <div class="snarr-triple-item" style="border-left:1px solid var(--border)">
-          <div class="snarr-triple-num" id="stat-total-completados">—</div>
-          <div class="snarr-triple-lbl">Total completados</div>
+      </div>
+      <div class="rc-dots" id="rc-dots-hab"></div>
+      <div class="rc-triple">
+        <div class="rc-ti">
+          <div class="rc-ti-num" style="color:var(--accent)" id="stat-habits-count">0</div>
+          <div class="rc-ti-lbl">Activos</div>
+        </div>
+        <div class="rc-ti" style="border-left:1px solid var(--border)">
+          <div class="rc-ti-num" style="color:var(--accent)" id="stat-media-habitos2">—</div>
+          <div class="rc-ti-lbl">Por día</div>
+        </div>
+        <div class="rc-ti" style="border-left:1px solid var(--border)">
+          <div class="rc-ti-num" style="color:var(--accent)" id="stat-total-completados">—</div>
+          <div class="rc-ti-lbl">Total completados</div>
         </div>
       </div>
     </div>

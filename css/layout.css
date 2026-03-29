@@ -541,3 +541,17 @@ header {
 .rc-ti:first-child{padding-left:0;}
 .rc-ti-num{font-size:20px;font-weight:700;line-height:1;}
 .rc-ti-lbl{font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;}
+
+/* ── XP/Hábitos main block (opción A) ── */
+.xp-main-block{display:flex;align-items:flex-end;gap:20px;margin-bottom:12px;}
+.xpm-left{display:flex;flex-direction:column;}
+.xpm-lbl{font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:2px;}
+.xpm-big{font-size:44px;font-weight:700;line-height:1;color:var(--accent);}
+.xpm-divider{width:1px;background:var(--border);align-self:stretch;margin-bottom:6px;}
+.xpm-right{flex:1;display:flex;flex-direction:column;gap:8px;justify-content:flex-end;}
+.xpm-row{display:flex;flex-direction:column;gap:2px;}
+.xpm-row-lbl{font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;}
+.xpm-row-val{font-size:18px;font-weight:700;color:var(--accent);}
+.xpm-row-small{font-size:11px;font-weight:600;color:var(--accent);opacity:0.55;}
+.xpm-row-slbl{font-size:9px;color:var(--dim);}
+.xpm-row-unit{font-size:9px;color:var(--muted);}

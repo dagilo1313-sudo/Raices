@@ -761,25 +761,68 @@ function renderLifetimeStats() {
     return xpM > 0 && xpG/xpM >= 0.8;
   });
 
+  // Dots Experiencia: días con ≥80% XP (últimos 7)
+  renderDots('rc-dots-xp', 'var(--accent)', '#1a1f10', (ds, dayData) => {
+    if (!dayData || Array.isArray(dayData)) {
+      if (ds === today()) {
+        const sched = state.habits.filter(h => !h.archivado && isScheduledForDate(h, ds));
+        const xpG = sched.filter(h => isCompleted(h.id, ds)).reduce((s,h)=>s+(h.xp||10),0);
+        const xpM = sched.reduce((s,h)=>s+(h.xp||10),0);
+        return xpM > 0 && xpG/xpM >= 0.8;
+      }
+      return false;
+    }
+    const xpG = dayData.xpGanadoPorCat ? Object.values(dayData.xpGanadoPorCat).reduce((s,v)=>s+v,0) : 0;
+    const xpM = dayData.xpMaxPorCat    ? Object.values(dayData.xpMaxPorCat).reduce((s,v)=>s+v,0)    : 0;
+    return xpM > 0 && xpG/xpM >= 0.8;
+  });
+
+  // Dots Hábitos: días con ≥80% hábitos completados (últimos 7)
+  renderDots('rc-dots-hab', 'var(--accent)', '#1a1f10', (ds, dayData) => {
+    if (!dayData || Array.isArray(dayData)) {
+      if (ds === today()) {
+        const sched = state.habits.filter(h => !h.archivado && isScheduledForDate(h, ds));
+        const done = sched.filter(h => isCompleted(h.id, ds)).length;
+        return sched.length > 0 && done/sched.length >= 0.8;
+      }
+      return false;
+    }
+    const comp = Array.isArray(dayData.completados) ? dayData.completados.length : 0;
+    const plan = Array.isArray(dayData.planificados) ? dayData.planificados.length : 0;
+    return plan > 0 && comp/plan >= 0.8;
+  });
+
+  // Sincronizar IDs duplicados (xp-media-dia-pill2, media-habitos2)
+  const syncEl = (src, dst) => { const s=document.getElementById(src), d=document.getElementById(dst); if(s&&d) d.textContent=s.textContent; };
+  syncEl('stat-xp-media-dia-pill', 'stat-xp-media-dia-pill2');
+  syncEl('stat-xp-dia-30d', 'stat-xp-dia-30d2');
+  syncEl('stat-media-habitos', 'stat-media-habitos2');
+
   const consistGlobal = ratioDays>0 ? Math.round(ratioSum/ratioDays*100) : 0;
   const xpEficGlobal  = xpEficDays>0 ? Math.round(xpEficSum/xpEficDays*100) : 0;
   set('stat-consistencia-global', consistGlobal+'%');
   set('stat-eficiencia-big', xpEficGlobal+'%');
   set('stat-eficiencia-pill', xpEficGlobal+'% eficiencia');
 
-  // Eficiencia XP últimos 30 días (ventana deslizante)
+  // Eficiencia XP y consistencia hábitos últimos 30 días
   const hace30str = (() => { const d = new Date(today()+'T12:00:00'); d.setDate(d.getDate()-30); return d.toISOString().split('T')[0]; })();
   let xpEfic30Sum=0, xpEfic30Days=0;
+  let hab30Sum=0, hab30Days=0;
   sorted.forEach(k => {
-    if (k < hace30str) return; // solo últimos 30 días
+    if (k < hace30str) return;
     const d = state.completions[k];
     if (!d || Array.isArray(d)) return;
     const xpG = d.xpGanadoPorCat ? Object.values(d.xpGanadoPorCat).reduce((s,v)=>s+v,0) : 0;
     const xpM = d.xpMaxPorCat    ? Object.values(d.xpMaxPorCat).reduce((s,v)=>s+v,0)    : 0;
     if (xpM > 0) { xpEfic30Sum += xpG/xpM; xpEfic30Days++; }
+    const comp = Array.isArray(d.completados) ? d.completados.length : 0;
+    const plan = Array.isArray(d.planificados) ? d.planificados.length : 0;
+    if (plan > 0) { hab30Sum += comp/plan; hab30Days++; }
   });
   const xpEfic30 = xpEfic30Days>0 ? Math.round(xpEfic30Sum/xpEfic30Days*100) : xpEficGlobal;
+  const hab30 = hab30Days>0 ? Math.round(hab30Sum/hab30Days*100) : consistGlobal;
   set('stat-eficiencia-30d', xpEfic30+'%');
+  set('stat-consistencia-30d', hab30+'%');
   set('stat-media-habitos', habitosDays>0 ? (habitosSum/habitosDays).toFixed(1) : '—');
   set('stat-total-completados', totalCompletados.toLocaleString('es-ES'));
   set('stat-xp-media-dia-pill', Math.round(xpTotal/diffDays).toLocaleString('es-ES'));
@@ -810,12 +853,34 @@ function renderLifetimeStats() {
     else if (delta<0)  { el.textContent=`↓ ${delta}%`;  el.className='snarr-trend dn'; }
     else               { el.textContent='= sin cambio';  el.className='snarr-trend flat'; }
   };
-  setTrend('stat-tendencia-hab',
-    habSemActual, habDiasSemActual,
-    habSem1, habDiasSem1, habSem2, habDiasSem2, habSem3, habDiasSem3);
-  setTrend('stat-tendencia-xp',
-    xpSemActual, xpDiasSemActual,
-    xpSem1, xpDiasSem1, xpSem2, xpDiasSem2, xpSem3, xpDiasSem3);
+  // Tendencia basada en últimos 30 días vs 30 anteriores
+  const hace60str = (() => { const d = new Date(today()+'T12:00:00'); d.setDate(d.getDate()-60); return d.toISOString().split('T')[0]; })();
+  let habAnt30Sum=0, habAnt30Days=0, xpAnt30Sum=0, xpAnt30Days=0;
+  sorted.forEach(k => {
+    if (k < hace60str || k >= hace30str) return;
+    const d = state.completions[k];
+    if (!d || Array.isArray(d)) return;
+    const comp = Array.isArray(d.completados) ? d.completados.length : 0;
+    const plan = Array.isArray(d.planificados) ? d.planificados.length : 0;
+    if (plan > 0) { habAnt30Sum += comp/plan; habAnt30Days++; }
+    const xpG = d.xpGanadoPorCat ? Object.values(d.xpGanadoPorCat).reduce((s,v)=>s+v,0) : 0;
+    const xpM = d.xpMaxPorCat    ? Object.values(d.xpMaxPorCat).reduce((s,v)=>s+v,0)    : 0;
+    if (xpM > 0) { xpAnt30Sum += xpG/xpM; xpAnt30Days++; }
+  });
+  const setTrend30 = (elId, actual, actualDays, prev, prevDays) => {
+    const el = document.getElementById(elId);
+    if (!el) return;
+    if (!actualDays || !prevDays) { el.style.display='none'; return; }
+    const pctActual = Math.round(actual/actualDays*100);
+    const pctPrev   = Math.round(prev/prevDays*100);
+    const delta = pctActual - pctPrev;
+    el.style.display='';
+    if (delta > 0)       { el.textContent=`↑ +${delta}%`; el.className='snarr-trend up'; }
+    else if (delta < 0)  { el.textContent=`↓ ${delta}%`;  el.className='snarr-trend dn'; }
+    else                 { el.textContent='= sin cambio';   el.className='snarr-trend flat'; }
+  };
+  setTrend30('stat-tendencia-hab', hab30Sum, hab30Days, habAnt30Sum, habAnt30Days);
+  setTrend30('stat-tendencia-xp',  xpEfic30Sum, xpEfic30Days, xpAnt30Sum, xpAnt30Days);
 
   // Gráfica XP últimos 7 días — % real (no normalizado)
   const diasGrid = document.getElementById('stat-dias-semana');
