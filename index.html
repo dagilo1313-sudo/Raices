@@ -80,19 +80,33 @@
         </div>
         <div class="viajero-nivel-badge" id="viajero-nivel-badge" onclick="openRangosPanel()" title="Ver rangos y niveles">Nivel 1</div>
       </div>
-      <div class="viajero-stats-grid">
+      <!-- Fila 1: Días perfectos + Días buenos -->
+      <div class="viajero-stats-grid viajero-grid-2" style="margin-bottom:6px">
         <div class="viajero-stat" style="position:relative;overflow:visible">
           <canvas id="sparks-hoy" width="72" height="72" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-52%);pointer-events:none;z-index:0"></canvas>
-          <div class="viajero-stat-num" id="viajero-stat-perfectos" style="color:var(--accent2);font-weight:700;position:relative;z-index:1">0</div>
-          <div class="viajero-stat-lbl" style="position:relative;z-index:1">Días ✦</div>
+          <div class="viajero-stat-num viajero-stat-lg" id="viajero-stat-perfectos" style="color:var(--accent2);font-weight:700;position:relative;z-index:1">0</div>
+          <div class="viajero-stat-lbl" style="position:relative;z-index:1">Días perfectos ✦</div>
         </div>
         <div class="viajero-stat">
-          <div class="viajero-stat-num" id="viajero-stat-xphoy">+0</div>
-          <div class="viajero-stat-lbl">XP hoy</div>
+          <div class="viajero-stat-num viajero-stat-lg" id="viajero-stat-buenos">0</div>
+          <div class="viajero-stat-lbl">Días buenos</div>
+        </div>
+      </div>
+      <!-- Fila 2: Eficiencia XP + Consistencia + Momentum -->
+      <div class="viajero-stats-grid viajero-grid-3">
+        <div class="viajero-stat">
+          <div class="viajero-stat-num viajero-stat-md" id="viajero-stat-eficiencia">—</div>
+          <div class="viajero-stat-lbl">Eficiencia XP</div>
         </div>
         <div class="viajero-stat">
-          <div class="viajero-stat-num" id="viajero-stat-exito">0%</div>
-          <div class="viajero-stat-lbl">% XP</div>
+          <div class="viajero-stat-num viajero-stat-md" id="viajero-stat-consistencia">—</div>
+          <div class="viajero-stat-lbl">Consistencia</div>
+        </div>
+        <div class="viajero-stat viajero-stat-momentum">
+          <div class="viajero-momentum-row">
+            <div class="viajero-stat-num viajero-stat-md" id="viajero-stat-momentum">—</div>
+          </div>
+          <div class="viajero-stat-lbl" id="viajero-momentum-tag">Momentum</div>
         </div>
       </div>
       <div class="viajero-xp-bar-wrap">
@@ -307,10 +321,12 @@
       </div>
       <div class="xpm-main-simple">
         <div class="xpm-lbl">Eficiencia media</div>
-        <div class="xpm-big" id="stat-eficiencia-big">—</div>
-        <div style="display:flex;align-items:baseline;gap:5px;margin-top:4px">
-          <div style="font-size:14px;font-weight:600;color:var(--accent);opacity:0.6" id="stat-eficiencia-30d">—</div>
-          <div style="font-size:10px;color:var(--muted)">últ. 30 días</div>
+        <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:12px">
+          <div class="xpm-big" id="stat-eficiencia-big">—</div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;padding-bottom:6px;gap:2px">
+            <div style="font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase">Últ. 30 días</div>
+            <div style="font-size:22px;font-weight:700;color:var(--accent);opacity:0.6" id="stat-eficiencia-30d">—</div>
+          </div>
         </div>
       </div>
       <div class="rc-triple">
@@ -364,10 +380,12 @@
       </div>
       <div class="xpm-main-simple">
         <div class="xpm-lbl">Consistencia</div>
-        <div class="xpm-big" id="stat-consistencia-global">—</div>
-        <div style="display:flex;align-items:baseline;gap:5px;margin-top:4px">
-          <div style="font-size:14px;font-weight:600;color:var(--accent);opacity:0.6" id="stat-consistencia-30d">—</div>
-          <div style="font-size:10px;color:var(--muted)">últ. 30 días</div>
+        <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:12px">
+          <div class="xpm-big" id="stat-consistencia-global">—</div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;padding-bottom:6px;gap:2px">
+            <div style="font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase">Últ. 30 días</div>
+            <div style="font-size:22px;font-weight:700;color:var(--accent);opacity:0.6" id="stat-consistencia-30d">—</div>
+          </div>
         </div>
       </div>
       <div class="rc-triple">

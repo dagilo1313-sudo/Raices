@@ -72,12 +72,44 @@ function renderViajero() {
     nivelBadgeEl.style.background = claseData.color + '18';
   }
 
-  // Stats
-  set('viajero-stat-perfectos', diasPerfectos);
-  const xpHoyEl = document.getElementById('viajero-stat-xphoy');
-  if (xpHoyEl) { xpHoyEl.textContent = `+${xpHoy}`; xpHoyEl.style.color = gold || 'var(--accent)'; }
-  const exitoEl = document.getElementById('viajero-stat-exito');
-  if (exitoEl) { exitoEl.textContent = exitoPct + '%'; exitoEl.style.color = isPerfectToday ? 'var(--accent2)' : (exitoPct >= 100 ? 'var(--accent2)' : ''); }
+  // Stats — calcular desde completions (igual que renderLifetimeStats)
+  const keys = Object.keys(state.completions).filter(k => k !== 'updatedAt' && /^\d{4}-\d{2}-\d{2}$/.test(k));
+  let vDiasPerfectos=0, vDiasBuenos=0, vRatioSum=0, vRatioDays=0, vXpEficSum=0, vXpEficDays=0;
+  keys.forEach(k => {
+    const d = state.completions[k];
+    if (!d || Array.isArray(d)) return;
+    const comp = Array.isArray(d.completados) ? d.completados.length : 0;
+    const plan = Array.isArray(d.planificados) ? d.planificados.length : 0;
+    const xpG = d.xpGanadoPorCat ? Object.values(d.xpGanadoPorCat).reduce((s,v)=>s+v,0) : 0;
+    const xpM = d.xpMaxPorCat    ? Object.values(d.xpMaxPorCat).reduce((s,v)=>s+v,0)    : 0;
+    if (plan > 0 && comp === plan) vDiasPerfectos++;
+    if (xpM > 0 && xpG/xpM >= 0.8) vDiasBuenos++;
+    if (plan > 0) { vRatioSum += comp/plan; vRatioDays++; }
+    if (xpM > 0) { vXpEficSum += xpG/xpM; vXpEficDays++; }
+  });
+  const vConsistencia = vRatioDays > 0 ? Math.round(vRatioSum/vRatioDays*100) : 0;
+  const vEficiencia   = vXpEficDays > 0 ? Math.round(vXpEficSum/vXpEficDays*100) : 0;
+
+  const perfEl = document.getElementById('viajero-stat-perfectos');
+  if (perfEl) { perfEl.textContent = vDiasPerfectos; perfEl.style.color = isPerfectToday ? 'var(--accent2)' : 'var(--accent2)'; }
+  set('viajero-stat-buenos', vDiasBuenos);
+  set('viajero-stat-eficiencia', vEficiencia + '%');
+  set('viajero-stat-consistencia', vConsistencia + '%');
+
+  // Momentum — leer el valor calculado por renderLifetimeStats si está disponible
+  const momentumEl = document.getElementById('viajero-stat-momentum');
+  const momentumTagEl = document.getElementById('viajero-momentum-tag');
+  const cachedMomentum = window._lastMomentum;
+  if (momentumEl && cachedMomentum !== undefined) {
+    momentumEl.textContent = cachedMomentum.toFixed(1);
+    const tag = cachedMomentum === 10 ? 'Imparable'
+      : cachedMomentum >= 8 ? 'En racha'
+      : cachedMomentum >= 6 ? 'En forma'
+      : cachedMomentum >= 4 ? 'Estable'
+      : cachedMomentum >= 2 ? 'Recuperándose'
+      : 'En crisis';
+    if (momentumTagEl) momentumTagEl.textContent = tag;
+  }
 
   // Barra XP
   if (calc.esMaximo) {
@@ -1079,6 +1111,7 @@ function renderLifetimeStats() {
     // Momentum final
     const rawMomentum = (eficienciaXP * 0.4) + (rachaScore * 0.3) + (difScore * 0.3) + bonusPerfectos;
     const momentum = Math.min(10, Math.max(0, rawMomentum));
+    window._lastMomentum = momentum;
     const momentumDisplay = momentum.toFixed(1);
 
     // Etiqueta
