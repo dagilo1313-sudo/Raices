@@ -245,11 +245,12 @@ header {
 .day-num.today { border-color: var(--accent); color: var(--accent); font-weight: 700; }
 /* Estados del día */
 .day-num.day-golden  { background: rgba(196,168,79,0.2); color: var(--accent2); border-color: var(--accent2); font-weight: 700; }
-.day-num.day-green   { background: var(--glow); color: var(--accent); border-color: var(--accent); font-weight: 600; }
+.day-num.day-green   { background: rgba(143,179,57,0.15); color: var(--accent); border-color: var(--accent); font-weight: 600; }
 .day-num.day-gray { border-color: #3a3e32; color: #4a5240; background: rgba(58,62,50,0.15); }
 .day-dot { width: 4px; height: 4px; border-radius: 50%; background: transparent; }
 .day-dot.filled  { background: var(--accent); }
 .day-dot.perfect { background: var(--accent2); }
+.day-dot.gray    { background: #3a3e32; }
 
 /* ── Habit card ── */
 .habit-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 14px 16px; margin-bottom: 10px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: all 0.25s; position: relative; overflow: hidden; animation: slideIn 0.3s ease; }

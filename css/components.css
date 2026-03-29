@@ -163,15 +163,13 @@ body::before {
 
 /* Estados del día en calendario */
 .cal-day.cal-golden .cal-day-inner { background: rgba(196,168,79,0.2); color: var(--accent2); border-color: var(--accent2); font-weight: 700; }
-.cal-day.cal-green .cal-day-inner  { background: var(--glow); color: var(--accent); border-color: var(--accent); font-weight: 600; }
+.cal-day.cal-green .cal-day-inner  { background: rgba(143,179,57,0.15); color: var(--accent); border-color: var(--accent); font-weight: 600; }
 .cal-day.cal-gray .cal-day-inner { border-color: #3a3e32; color: #4a5240; background: rgba(58,62,50,0.15); }
 
-.cal-dot { display: none; width: 4px; height: 4px; border-radius: 50%; background: var(--accent); }
-.cal-day.cal-golden .cal-dot,
-.cal-day.cal-green .cal-dot,
-.cal-day.cal-gray .cal-dot { display: block; }
-.cal-day.cal-golden .cal-dot { background: var(--accent2); }
-.cal-day.cal-gray .cal-dot { background: #3a3e32; }
+.cal-dot { width: 4px; height: 4px; border-radius: 50%; }
+.cal-dot-green { background: var(--accent); }
+.cal-dot-gold  { background: var(--accent2); }
+.cal-dot-gray  { background: #3a3e32; }
 
 
 /* ── Stats día ── */

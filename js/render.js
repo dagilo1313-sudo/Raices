@@ -221,8 +221,15 @@ function getDayState(ds, habitsSource) {
   }
 
   const hasDone = completedIds.length > 0;
-  const isGood = !isPerfect && xpMax > 0 && (xpGanado / xpMax) >= 0.8; // >=80%
-  return { hasDone, isPerfect, isGood, completedIds, scheduled };
+  // Ratio de hábitos completados (no XP, sino count)
+  const totalScheduled = scheduled.length;
+  const doneCount = scheduled.filter(h => completedIds.includes(h.id)).length;
+  const habitRatio = totalScheduled > 0 ? doneCount / totalScheduled : 0;
+  // Estados por ratio de hábitos
+  const isGray    = hasDone && habitRatio < 0.5;                        // <50% — gris+punto gris
+  const isGrayGreen = !isPerfect && habitRatio >= 0.5 && habitRatio < 0.8; // 50-79% — gris+punto verde
+  const isGood    = !isPerfect && habitRatio >= 0.8;                    // 80-99% — verde+punto verde
+  return { hasDone, isPerfect, isGood, isGray, isGrayGreen, completedIds, scheduled };
 }
 
 function renderWeek() {
@@ -243,13 +250,18 @@ function renderWeek() {
     // Clases del círculo del día
     let numClass = isToday ? 'today' : '';
     if (isPast || isToday) {
-      if (isPerfect)   numClass += ' day-golden';
-      else if (isGood) numClass += ' day-green';
-      else if (hasDone) numClass += ' day-gray';
+      if (isPerfect)         numClass += ' day-golden';
+      else if (isGood)       numClass += ' day-green';
+      else if (isGrayGreen)  numClass += ' day-gray';
+      else if (isGray)       numClass += ' day-gray';
     }
 
     // Clase del punto
-    let dotClass = isPerfect ? 'perfect' : hasDone ? 'filled' : '';
+    let dotClass = '';
+    if (isPerfect)              dotClass = 'perfect';
+    else if (isGood)            dotClass = 'filled';
+    else if (isGrayGreen)       dotClass = 'filled';
+    else if (isGray)            dotClass = 'gray';
 
     html += `
       <div class="day-cell">
@@ -480,17 +492,23 @@ function renderCalendar(activeDate) {
     const { hasDone, isPerfect, isGood } = getDayState(dateStr, habSrc);
 
     let stateClass = '';
+    let dotColor = '';
     if (!isFuture) {
-      if (isPerfect)   stateClass = 'cal-golden';
-      else if (isGood) stateClass = 'cal-green';
-      else if (hasDone) stateClass = 'cal-gray';
+      if (isPerfect)              { stateClass = 'cal-golden';    dotColor = 'gold'; }
+      else if (isGood)            { stateClass = 'cal-green';     dotColor = 'green'; }
+      else if (isGrayGreen)       { stateClass = 'cal-gray';      dotColor = 'green'; }
+      else if (isGray)            { stateClass = 'cal-gray';      dotColor = 'gray'; }
     }
+
+    const dotHtml = (!isFuture && hasDone)
+      ? `<div class="cal-dot cal-dot-${dotColor}"></div>`
+      : '';
 
     html += `
       <div class="cal-day ${isToday?'cal-today':''} ${isSelected?'cal-selected':''} ${stateClass} ${isFuture?'cal-future':''}"
            onclick="${isFuture?'':` window.selectDate('${dateStr}')`}">
         <div class="cal-day-inner">${day}</div>
-        ${hasDone&&!isFuture?'<div class="cal-dot"></div>':''}
+        ${dotHtml}
       </div>`;
   }
   grid.innerHTML = html;
