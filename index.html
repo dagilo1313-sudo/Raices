@@ -164,7 +164,7 @@
 
     <!-- Última sync discreta -->
     <div id="last-sync" style="text-align:center;font-size:10px;color:var(--border);padding:4px 0 2px"></div>
-    <div style="text-align:center;font-size:9px;color:var(--border);padding:0 0 12px;letter-spacing:1px">v41</div>
+    <div style="text-align:center;font-size:9px;color:var(--border);padding:0 0 12px;letter-spacing:1px">v42</div>
   </div>
 
   <!-- ══ HÁBITOS ══ -->
@@ -282,6 +282,39 @@
       </div>
     </div>
 
+    <!-- EXPERIENCIA -->
+    <div class="stats-sep"><div class="stats-sep-line"></div><div class="stats-sep-label">Experiencia</div><div class="stats-sep-line"></div></div>
+
+    <div class="snarr-card green-bar">
+      <div class="snarr-top">
+        <div style="display:flex;flex-direction:column;gap:4px;flex:1">
+          <div style="display:flex;align-items:baseline;gap:10px">
+            <div class="snarr-big" id="stat-eficiencia-30d">—</div>
+            <div class="snarr-ctx">últ. 30 días</div>
+            <div class="snarr-trend" id="stat-tendencia-xp"></div>
+          </div>
+          <div style="display:flex;align-items:baseline;gap:8px">
+            <div style="font-size:20px;font-weight:700;color:var(--accent)" id="stat-eficiencia-big">—</div>
+            <div style="font-size:11px;color:var(--muted)">media total</div>
+          </div>
+        </div>
+      </div>
+      <div class="snarr-triple">
+        <div class="snarr-triple-item">
+          <div class="snarr-triple-num" id="stat-nivel-actual" style="font-size:16px">—</div>
+          <div class="snarr-triple-lbl" id="stat-rango-actual" style="color:var(--muted)">—</div>
+        </div>
+        <div class="snarr-triple-item" style="border-left:1px solid var(--border)">
+          <div class="snarr-triple-num" id="stat-xp-media-dia-pill">—</div>
+          <div class="snarr-triple-lbl">XP por día</div>
+        </div>
+        <div class="snarr-triple-item" style="border-left:1px solid var(--border)">
+          <div class="snarr-triple-num" id="stat-xp-total-lifetime">—</div>
+          <div class="snarr-triple-lbl">XP total</div>
+        </div>
+      </div>
+    </div>
+
     <!-- HÁBITOS -->
     <div class="stats-sep"><div class="stats-sep-line"></div><div class="stats-sep-label">Hábitos</div><div class="stats-sep-line"></div></div>
 
@@ -308,6 +341,11 @@
       </div>
     </div>
 
+    <!-- Hábitos en riesgo -->
+    <div class="scat-card" id="stat-riesgo-card" style="display:none">
+      <div class="scat-title">⚠ Hábitos en riesgo</div>
+      <div id="stat-riesgo-list"></div>
+    </div>
 
     <!-- Insights hábitos: 2 mejores + 2 peores -->
     <div class="scat-card">
@@ -319,31 +357,6 @@
     <div class="scat-card">
       <div class="scat-title">% de hábitos completados por categoría</div>
       <div class="scats-grid" id="stat-consistencia-cats"></div>
-    </div>
-
-    <!-- EXPERIENCIA -->
-    <div class="stats-sep"><div class="stats-sep-line"></div><div class="stats-sep-label">Experiencia</div><div class="stats-sep-line"></div></div>
-
-    <div class="snarr-card green-bar">
-      <div class="snarr-top">
-        <div class="snarr-big" id="stat-eficiencia-big">—</div>
-        <div class="snarr-ctx">de eficiencia XP media</div>
-        <div class="snarr-trend" id="stat-tendencia-xp"></div>
-      </div>
-      <div class="snarr-triple">
-        <div class="snarr-triple-item">
-          <div class="snarr-triple-num" id="stat-nivel-actual" style="font-size:16px">—</div>
-          <div class="snarr-triple-lbl" id="stat-rango-actual" style="color:var(--muted)">—</div>
-        </div>
-        <div class="snarr-triple-item" style="border-left:1px solid var(--border)">
-          <div class="snarr-triple-num" id="stat-xp-media-dia-pill">—</div>
-          <div class="snarr-triple-lbl">XP por día</div>
-        </div>
-        <div class="snarr-triple-item" style="border-left:1px solid var(--border)">
-          <div class="snarr-triple-num" id="stat-xp-total-lifetime">—</div>
-          <div class="snarr-triple-lbl">XP total</div>
-        </div>
-      </div>
     </div>
 
     <!-- Gráfica XP últimos 7 días (% real) -->

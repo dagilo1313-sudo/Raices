@@ -710,6 +710,20 @@ function renderLifetimeStats() {
   set('stat-consistencia-global', consistGlobal+'%');
   set('stat-eficiencia-big', xpEficGlobal+'%');
   set('stat-eficiencia-pill', xpEficGlobal+'% eficiencia');
+
+  // Eficiencia XP últimos 30 días (ventana deslizante)
+  const hace30str = (() => { const d = new Date(today()+'T12:00:00'); d.setDate(d.getDate()-30); return d.toISOString().split('T')[0]; })();
+  let xpEfic30Sum=0, xpEfic30Days=0;
+  sorted.forEach(k => {
+    if (k < hace30str) return; // solo últimos 30 días
+    const d = state.completions[k];
+    if (!d || Array.isArray(d)) return;
+    const xpG = d.xpGanadoPorCat ? Object.values(d.xpGanadoPorCat).reduce((s,v)=>s+v,0) : 0;
+    const xpM = d.xpMaxPorCat    ? Object.values(d.xpMaxPorCat).reduce((s,v)=>s+v,0)    : 0;
+    if (xpM > 0) { xpEfic30Sum += xpG/xpM; xpEfic30Days++; }
+  });
+  const xpEfic30 = xpEfic30Days>0 ? Math.round(xpEfic30Sum/xpEfic30Days*100) : xpEficGlobal;
+  set('stat-eficiencia-30d', xpEfic30+'%');
   set('stat-media-habitos', habitosDays>0 ? (habitosSum/habitosDays).toFixed(1) : '—');
   set('stat-total-completados', totalCompletados.toLocaleString('es-ES'));
   set('stat-xp-media-dia-pill', Math.round(xpTotal/diffDays).toLocaleString('es-ES'));
@@ -798,6 +812,50 @@ function renderLifetimeStats() {
         </div>
       </div>`;
     insightsEl.innerHTML = top2.map(h=>makeRow(h,true)).join('') + (habStats.length>2 ? '<div style="height:1px;background:var(--border);margin:0"></div>' : '') + bot2.map(h=>makeRow(h,false)).join('');
+  }
+
+  // Hábitos en riesgo: activos sin completar en los últimos 7 días
+  const riesgoCard = document.getElementById('stat-riesgo-card');
+  const riesgoList = document.getElementById('stat-riesgo-list');
+  if (riesgoCard && riesgoList) {
+    const hace7riesgo = (() => { const d = new Date(today()+'T12:00:00'); d.setDate(d.getDate()-7); return d.toISOString().split('T')[0]; })();
+    const habRiesgo = state.habits.filter(h => !h.archivado).filter(h => {
+      // Buscar si ha sido completado en los últimos 7 días
+      for (let i = 0; i <= 7; i++) {
+        const d = new Date(today()+'T12:00:00'); d.setDate(d.getDate()-i);
+        const ds = d.toISOString().split('T')[0];
+        if (isCompleted(h.id, ds)) return false; // completado → no en riesgo
+      }
+      // Ver cuántos días lleva sin completarse (buscar último completado)
+      return true;
+    }).map(h => {
+      // Calcular días desde el último completion
+      let diasSin = 0;
+      for (let i = 1; i <= 90; i++) {
+        const d = new Date(today()+'T12:00:00'); d.setDate(d.getDate()-i);
+        const ds = d.toISOString().split('T')[0];
+        if (isCompleted(h.id, ds)) break;
+        diasSin = i;
+      }
+      return { ...h, diasSin };
+    }).sort((a,b) => b.diasSin - a.diasSin);
+
+    if (habRiesgo.length > 0) {
+      riesgoCard.style.display = '';
+      riesgoList.innerHTML = habRiesgo.map(h => {
+        const cat = window.CATEGORIES?.[h.category] || { color: '#6b7560' };
+        const color = cat.color || '#6b7560';
+        return `<div class="riesgo-row">
+          <div class="riesgo-left">
+            <div class="riesgo-dot"></div>
+            <div class="riesgo-name">${h.name}</div>
+          </div>
+          <div class="riesgo-dias">${h.diasSin > 0 ? h.diasSin+'d sin completar' : 'Esta semana'}</div>
+        </div>`;
+      }).join('');
+    } else {
+      riesgoCard.style.display = 'none';
+    }
   }
 
   // Consistencia por categoría
