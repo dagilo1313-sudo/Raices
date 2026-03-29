@@ -1,10 +1,10 @@
-import { state, CATEGORIES, XP_VALUES, EMOJIS, DAYS_OF_WEEK } from './state.js';
+import { state, CATEGORIES, XP_VALUES, SYMBOL_CATEGORIES, DAYS_OF_WEEK } from './state.js';
 import { createHabit, editHabit } from './habits.js';
 import { renderAll } from './render.js';
 import { showToast } from './ui.js';
 
 let editingId = null;
-let selectedEmoji = '🌿';
+let selectedEmoji = '★';
 let selectedCategory = 'disciplina';
 let selectedXP = 10;
 let selectedDays = []; // [] = todos los días
@@ -14,7 +14,7 @@ const NO_ICON = '__none__';
 // ── Abrir modal nuevo ──
 export function openCreateModal() {
   editingId = null;
-  selectedEmoji = '🌿';
+  selectedEmoji = '★';
   selectedCategory = 'disciplina';
   selectedXP = 10;
   selectedDays = [];
@@ -136,9 +136,29 @@ function renderModalInternals() {
   // Emojis (con botón Sin Icono al principio)
   const isNone = !selectedEmoji || selectedEmoji === NO_ICON;
   const noneBtn = `<div class="emoji-btn emoji-btn-none ${isNone ? 'selected' : ''}" onclick="window.onSelectNoIcon(this)" title="Sin icono">—</div>`;
-  document.getElementById('emoji-grid').innerHTML = noneBtn + EMOJIS.map(e =>
-    `<div class="emoji-btn ${(!isNone && e === selectedEmoji) ? 'selected' : ''}" onclick="window.onSelectEmoji(this,'${e}')">${e}</div>`
-  ).join('');
+  let pickerHTML = `<div class="symbol-picker-tabs" id="symbol-tabs"></div><div class="symbol-picker-grid" id="symbol-grid"></div>`;
+  const gridEl = document.getElementById('emoji-grid');
+  gridEl.innerHTML = noneBtn + pickerHTML;
+
+  // Renderizar tabs y grid
+  const catNames = Object.keys(SYMBOL_CATEGORIES);
+  let activeCat = window._activeSymbolCat || catNames[0];
+  const tabsEl = document.getElementById('symbol-tabs');
+  const gridInner = document.getElementById('symbol-grid');
+
+  const renderSymbolGrid = (cat) => {
+    window._activeSymbolCat = cat;
+    tabsEl.innerHTML = catNames.map(c =>
+      `<div class="symbol-tab ${c === cat ? 'active' : ''}" onclick="window._switchSymbolCat('${c}')">${c}</div>`
+    ).join('');
+    const syms = SYMBOL_CATEGORIES[cat] || [];
+    gridInner.innerHTML = syms.map(s =>
+      `<div class="emoji-btn ${s === selectedEmoji ? 'selected' : ''}" onclick="window.onSelectEmoji(this,'${s.replace(/'/g,"\'")}')"><span class="symbol-inner">${s}</span></div>`
+    ).join('');
+  };
+
+  window._switchSymbolCat = (cat) => renderSymbolGrid(cat);
+  renderSymbolGrid(activeCat);
 
   // Categorías
   document.getElementById('cat-chips').innerHTML = Object.entries(CATEGORIES).map(([key, cat]) =>

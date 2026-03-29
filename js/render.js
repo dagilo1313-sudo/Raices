@@ -418,12 +418,14 @@ function renderCatTabs() {
 
 // ── Helper icono hábito ──
 function habitIconHTML(h) {
-  if (h.emoji) return `<div class="habit-emoji">${h.emoji}</div>`;
-  const cat = CATEGORIES[h.category] || CATEGORIES.disciplina;
-  const initial = cat.label.charAt(0).toUpperCase();
+  const catKey = h.category || 'disciplina';
+  const cat = CATEGORIES[catKey] || CATEGORIES.disciplina;
+  const content = h.emoji
+    ? `<span style="font-size:15px;line-height:1">${h.emoji}</span>`
+    : cat.label.charAt(0).toUpperCase();
   return `<div class="habit-emoji habit-emoji-cat"
-    style="background:var(--cat-${h.category || 'disciplina'}-bg);border:1px solid var(--cat-${h.category || 'disciplina'}-border);color:var(--cat-${h.category || 'disciplina'})">
-    ${initial}
+    style="background:var(--cat-${catKey}-bg);border:1px solid var(--cat-${catKey}-border);color:var(--cat-${catKey})">
+    ${content}
   </div>`;
 }
 
