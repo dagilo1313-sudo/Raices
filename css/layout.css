@@ -449,3 +449,17 @@ header {
 .sdia-bar-wrap{width:100%;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:48px;}
 .sdia-bar{width:100%;border-radius:3px 3px 0 0;min-height:2px;background:rgba(143,179,57,0.6);}
 .sdia-name{font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;}
+
+/* ── Score card histórico ── */
+.score-card{display:flex;margin:0 24px 16px;border-radius:14px;overflow:hidden;border:1px solid var(--border);}
+.score-half{flex:1;padding:16px 18px;background:var(--card);display:flex;flex-direction:column;gap:6px;}
+.score-half.green-half{border-right:1px solid var(--border);}
+.score-half.green-half .sc-num,.score-half.green-half .sc-pct,.score-half.green-half .sc-fill{color:var(--accent);}
+.score-half.green-half .sc-fill{background:var(--accent);}
+.score-half.xp-half .sc-num,.score-half.xp-half .sc-pct{color:var(--accent);}
+.score-half.xp-half .sc-fill{background:var(--accent);}
+.sc-lbl{font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;}
+.sc-num{font-size:26px;font-weight:700;line-height:1;}
+.sc-pct{font-size:11px;opacity:0.65;}
+.sc-bar{height:3px;background:#131708;border-radius:3px;overflow:hidden;margin-top:2px;}
+.sc-fill{height:100%;border-radius:3px;transition:width 0.5s ease;}

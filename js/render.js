@@ -772,9 +772,14 @@ function renderStatsForDate(dateStr) {
     if (el) { el.textContent = val; el.style.color = goldColor; }
   };
   setGold('stat-day-done', `${done}/${total}`);
-  setGold('stat-day-xp', `+${xp} XP`);
-  setGold('stat-day-pct', `${pct}%`);
-  setGold('stat-day-xp-pct', `${xpPct}%`);
+  setGold('stat-day-xp', `+${xp} xp`);
+  setGold('stat-day-pct', `${pct}% completado`);
+  setGold('stat-day-xp-pct', `${xpPct}% del máximo`);
+  // Barras de progreso del score card
+  const barHab = document.getElementById('stat-day-bar');
+  const barXp  = document.getElementById('stat-xp-bar');
+  if (barHab) barHab.style.width = pct + '%';
+  if (barXp)  barXp.style.width  = xpPct + '%';
 
   // Si no es hoy y no hay ningún dato para ese día → Día no registrado
   const sinRegistro = !isToday && completedIds.length === 0 && !getPlanificadosForDate(dateStr);
