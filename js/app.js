@@ -265,7 +265,7 @@ window.onAddTarea = () => {
         <button onclick="submitTarea()" style="flex:1;background:rgba(143,179,57,0.15);color:var(--accent);border:1px solid rgba(143,179,57,0.4);border-radius:var(--radius-md);padding:10px;font-size:13px;font-weight:700;font-family:var(--font-body);cursor:pointer">Añadir</button>
       </div>
       <style>@keyframes popIn{from{transform:scale(0.8);opacity:0}to{transform:scale(1);opacity:1}}</style>
-    </div>\`;
+    </div>`;
   overlay.dataset.overlay = '1';
   overlay.querySelector('#btn-cancel-tarea').onclick = () => overlay.remove();
   let esUrgente = false;
