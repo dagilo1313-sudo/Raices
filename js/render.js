@@ -459,6 +459,44 @@ export function renderStats() {
   renderLifetimeStats();
 }
 
+function renderCalendar(activeDate) {
+  const grid = document.getElementById('cal-grid');
+  if (!grid) return;
+  const d = new Date(activeDate + 'T12:00:00');
+  const year = d.getFullYear(), month = d.getMonth();
+  const firstDay = new Date(year, month, 1);
+  const lastDay = new Date(year, month + 1, 0);
+  const todayStr = today();
+  let startDow = firstDay.getDay() - 1;
+  if (startDow < 0) startDow = 6;
+  let html = '';
+  for (let i = 0; i < startDow; i++) html += '<div></div>';
+  for (let day = 1; day <= lastDay.getDate(); day++) {
+    const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+    const isToday = dateStr === todayStr;
+    const isSelected = dateStr === activeDate;
+    const isFuture = dateStr > todayStr;
+    const habSrc = dateStr === todayStr ? state.habits : state.allHabits;
+    const { hasDone, isPerfect, isGood } = getDayState(dateStr, habSrc);
+
+    let stateClass = '';
+    if (!isFuture) {
+      if (isPerfect)   stateClass = 'cal-golden';
+      else if (isGood) stateClass = 'cal-green';
+      else if (hasDone) stateClass = 'cal-partial';
+    }
+
+    html += `
+      <div class="cal-day ${isToday?'cal-today':''} ${isSelected?'cal-selected':''} ${stateClass} ${isFuture?'cal-future':''}"
+           onclick="${isFuture?'':` window.selectDate('${dateStr}')`}">
+        <div class="cal-day-inner">${day}</div>
+        ${hasDone&&!isFuture?'<div class="cal-dot"></div>':''}
+      </div>`;
+  }
+  grid.innerHTML = html;
+}
+
+
 export function renderHistorico() {
   const activeDate = state.selectedDate || today();
   const calTitle = document.getElementById('cal-title');
@@ -572,9 +610,16 @@ function renderLifetimeStats() {
 
   const consistGlobal = ratioDays > 0 ? Math.round(ratioSum / ratioDays * 100) : 0;
   set('stat-consistencia-global', consistGlobal + '%');
+  set('stat-eficiencia-big', consistGlobal + '%');
   set('stat-eficiencia-pill', consistGlobal + '% eficiencia');
   set('stat-media-habitos', habitosDays > 0 ? (habitosSum / habitosDays).toFixed(1) : '—');
   set('stat-total-completados', totalCompletados.toLocaleString('es-ES'));
+  // XP/día como número limpio para el triple
+  const xpPorDia = Math.round(xpTotal / diffDays);
+  set('stat-xp-media-dia-pill', xpPorDia.toLocaleString('es-ES'));
+  // Nivel actual desde perfil
+  const nivelActual = state.perfil.nivel || 1;
+  set('stat-nivel-actual', 'Nv.' + nivelActual);
 
   // Barras últimos 7 días reales
   const diasGrid = document.getElementById('stat-dias-semana');
@@ -604,11 +649,15 @@ function renderLifetimeStats() {
     const maxPct7 = Math.max(...last7.map(d => d.pct), 0.01);
     last7.forEach((d, i) => {
       if (bars[i]) {
-        const h = Math.max(4, (d.pct / maxPct7) * 100);
-        const op = 0.2 + (d.pct / maxPct7) * 0.65;
+        const ratio = d.pct / maxPct7;
+        const h = Math.max(4, ratio * 100);
         bars[i].style.height = h + '%';
-        bars[i].style.background = d.dateStr === today()
-          ? `rgba(196,168,79,${op})` : `rgba(143,179,57,${op})`;
+        // Verde para bajos, dorado para altos — interpolación RGB
+        const r = Math.round(143 + (196 - 143) * ratio);
+        const g = Math.round(179 + (168 - 179) * ratio);
+        const b = Math.round(57  + (79  - 57)  * ratio);
+        const op = 0.35 + ratio * 0.65;
+        bars[i].style.background = `rgba(${r},${g},${b},${op})`;
       }
       if (labels[i]) labels[i].textContent = d.label;
     });

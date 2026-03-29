@@ -170,7 +170,7 @@
 
     <!-- Última sync discreta -->
     <div id="last-sync" style="text-align:center;font-size:10px;color:var(--border);padding:4px 0 2px"></div>
-    <div style="text-align:center;font-size:9px;color:var(--border);padding:0 0 12px;letter-spacing:1px">v32</div>
+    <div style="text-align:center;font-size:9px;color:var(--border);padding:0 0 12px;letter-spacing:1px">v33</div>
   </div>
 
   <!-- ══ HÁBITOS ══ -->
@@ -286,13 +286,23 @@
     <!-- EXPERIENCIA -->
     <div class="stats-sep"><div class="stats-sep-line"></div><div class="stats-sep-label">Experiencia</div><div class="stats-sep-line"></div></div>
 
-    <div class="shero-row">
-      <div class="shero-num" id="stat-xp-total-lifetime">—</div>
-      <div>
-        <div class="shero-label">XP total acumulado</div>
-        <div class="shero-pills">
-          <div class="spill" id="stat-xp-media-dia-pill">42 XP / día</div>
-          <div class="spill" id="stat-eficiencia-pill">80% eficiencia</div>
+    <div class="snarr-card">
+      <div class="snarr-top">
+        <div class="snarr-big" id="stat-eficiencia-big">—</div>
+        <div class="snarr-ctx">de eficiencia XP media</div>
+      </div>
+      <div class="snarr-triple">
+        <div class="snarr-triple-item">
+          <div class="snarr-triple-num" id="stat-xp-total-lifetime">—</div>
+          <div class="snarr-triple-lbl">XP total</div>
+        </div>
+        <div class="snarr-triple-item" style="border-left:1px solid var(--border)">
+          <div class="snarr-triple-num" id="stat-xp-media-dia-pill">—</div>
+          <div class="snarr-triple-lbl">XP / día</div>
+        </div>
+        <div class="snarr-triple-item" style="border-left:1px solid var(--border)">
+          <div class="snarr-triple-num" id="stat-nivel-actual">—</div>
+          <div class="snarr-triple-lbl">Nivel actual</div>
         </div>
       </div>
     </div>
