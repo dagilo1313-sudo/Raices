@@ -245,7 +245,7 @@ function renderWeek() {
     const isToday = ds === today();
     const isPast = d < now && !isToday;
     const habSrcWeek = isToday ? state.habits : state.allHabits;
-    const { hasDone, isPerfect, isGood } = getDayState(ds, habSrcWeek);
+    const { hasDone, isPerfect, isGood, isGray, isGrayGreen } = getDayState(ds, habSrcWeek);
 
     // Clases del círculo del día
     let numClass = isToday ? 'today' : '';
@@ -489,7 +489,7 @@ function renderCalendar(activeDate) {
     const isSelected = dateStr === activeDate;
     const isFuture = dateStr > todayStr;
     const habSrc = dateStr === todayStr ? state.habits : state.allHabits;
-    const { hasDone, isPerfect, isGood } = getDayState(dateStr, habSrc);
+    const { hasDone, isPerfect, isGood, isGray, isGrayGreen } = getDayState(dateStr, habSrc);
 
     let stateClass = '';
     let dotColor = '';
