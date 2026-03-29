@@ -166,7 +166,7 @@ body::before {
 .cal-day.cal-green .cal-day-inner  { background: rgba(143,179,57,0.15); color: var(--accent); border-color: var(--accent); font-weight: 600; }
 .cal-day.cal-gray .cal-day-inner { border-color: #3a3e32; color: #4a5240; background: rgba(58,62,50,0.15); }
 
-.cal-dot { width: 4px; height: 4px; border-radius: 50%; margin-top: 4px}
+.cal-dot { width: 4px; height: 4px; border-radius: 50%; }
 .cal-dot-green { background: var(--accent); }
 .cal-dot-gold  { background: var(--accent2); }
 .cal-dot-gray  { background: #3a3e32; }

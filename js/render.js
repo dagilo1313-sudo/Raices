@@ -751,6 +751,10 @@ function renderStatsForDate(dateStr) {
   const xp = (xpSnap !== null && !isToday) ? xpSnap : getXPForDate(dateStr);
   const pct = total ? Math.round(done / total * 100) : 0;
 
+  // % XP ganado vs máximo posible ese día
+  const xpMax = getMaxXPForDate(dateStr);
+  const xpPct = xpMax > 0 ? Math.round(xp / xpMax * 100) : 0;
+
   const diasPerfectos = state.perfil.diasPerfectos;
   const xpHoyStats = getXPForDate(today());
   const xpMaxHoyStats = getMaxXPForDate(today());
@@ -770,6 +774,7 @@ function renderStatsForDate(dateStr) {
   setGold('stat-day-done', `${done}/${total}`);
   setGold('stat-day-xp', `+${xp} XP`);
   setGold('stat-day-pct', `${pct}%`);
+  setGold('stat-day-xp-pct', `${xpPct}%`);
 
   // Si no es hoy y no hay ningún dato para ese día → Día no registrado
   const sinRegistro = !isToday && completedIds.length === 0 && !getPlanificadosForDate(dateStr);
