@@ -421,7 +421,7 @@ function habitIconHTML(h) {
   const catKey = h.category || 'disciplina';
   const cat = CATEGORIES[catKey] || CATEGORIES.disciplina;
   const content = h.emoji
-    ? `<span style="font-size:15px;line-height:1">${h.emoji}</span>`
+    ? `<span style="font-size:24px;line-height:1">${h.emoji}</span>`
     : cat.label.charAt(0).toUpperCase();
   return `<div class="habit-emoji habit-emoji-cat"
     style="background:var(--cat-${catKey}-bg);border:1px solid var(--cat-${catKey}-border);color:var(--cat-${catKey})">
