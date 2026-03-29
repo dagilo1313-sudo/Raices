@@ -179,7 +179,7 @@
 
     <!-- Última sync discreta -->
     <div id="last-sync" style="text-align:center;font-size:10px;color:var(--border);padding:4px 0 2px"></div>
-    <div style="text-align:center;font-size:9px;color:var(--border);padding:0 0 12px;letter-spacing:1px">v47</div>
+    <div style="text-align:center;font-size:9px;color:var(--border);padding:0 0 12px;letter-spacing:1px">v47.1</div>
   </div>
 
   <!-- ══ HÁBITOS ══ -->
@@ -596,7 +596,32 @@
     <label class="modal-label">Nombre</label>
     <input class="input-field" id="habit-name-input" placeholder="Nombre del hábito..." maxlength="40">
     <label class="modal-label">Icono</label>
-    <div class="emoji-grid" id="emoji-grid"></div>
+    <div class="icon-input-wrap" onclick="openIconPicker()">
+      <div class="icon-input-preview" id="icon-preview-display">—</div>
+      <div class="icon-input-label">Toca para elegir símbolo</div>
+      <div class="icon-input-arrow">›</div>
+    </div>
+
+    <!-- Popup selector de iconos (oculto) -->
+    <div class="icon-picker-overlay" id="icon-picker-overlay" onclick="if(event.target===this)closeIconPicker()">
+      <div class="icon-picker-sheet">
+        <div class="icon-picker-header">
+          <div class="icon-picker-title">Elige un símbolo</div>
+          <div class="icon-picker-tabs" id="icon-picker-tabs"></div>
+        </div>
+        <div class="icon-picker-grid" id="icon-picker-grid"></div>
+        <div class="icon-picker-footer">
+          <div class="icon-picker-selected-wrap">
+            <div class="icon-picker-selected-preview" id="icon-picker-preview">—</div>
+            <div class="icon-picker-selected-lbl" id="icon-picker-lbl">Sin icono</div>
+          </div>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-secondary btn-sm" onclick="clearIconPicker()">Sin icono</button>
+            <button class="btn btn-primary btn-sm" onclick="confirmIconPicker()">Elegir</button>
+          </div>
+        </div>
+      </div>
+    </div>
     <label class="modal-label">Categoría</label>
     <div class="chips-row" id="cat-chips"></div>
     <label class="modal-label">Dificultad · XP</label>

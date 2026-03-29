@@ -2,7 +2,7 @@ import { initAuth, toggleAuthMode, handleAuth, showForgotPassword, showLoginForm
 import { toggleHabit, deleteHabit, saveCompletions, resetAllData, resetProgress, createTarea, toggleTarea, borrarTareasCompletadas, getCompletadosForDate } from './habits.js';
 import { renderAll, renderHabitsList, renderTareas, renderHistorico } from './render.js';
 import { showToast, showConfetti, showXPFloat, switchView } from './ui.js';
-import { openCreateModal, openEditModal, closeModal, closeModalOutside, submitModal, selectEmoji, selectNoIcon, selectCategory, selectXP, toggleDay, selectAllDays } from './modal.js';
+import { openCreateModal, openEditModal, closeModal, closeModalOutside, submitModal, selectEmoji, selectNoIcon, selectCategory, selectXP, toggleDay, selectAllDays, openIconPicker, closeIconPicker, confirmIconPicker, clearIconPicker } from './modal.js';
 import { state, getCompletionMessage, today, CLASES } from './state.js';
 
 // ── Exponer funciones al HTML ──
@@ -22,6 +22,10 @@ window.closeModalOutside  = closeModalOutside;
 window.submitModal        = submitModal;
 window.onSelectEmoji      = selectEmoji;
 window.onSelectNoIcon     = selectNoIcon;
+window.openIconPicker     = openIconPicker;
+window.closeIconPicker    = closeIconPicker;
+window.confirmIconPicker  = confirmIconPicker;
+window.clearIconPicker    = clearIconPicker;
 window.onSelectCategory   = selectCategory;
 window.onSelectXP         = selectXP;
 window.onToggleDay        = toggleDay;

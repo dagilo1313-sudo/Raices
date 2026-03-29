@@ -134,31 +134,11 @@ export function selectAllDays() {
 // ── Render internals ──
 function renderModalInternals() {
   // Emojis (con botón Sin Icono al principio)
-  const isNone = !selectedEmoji || selectedEmoji === NO_ICON;
-  const noneBtn = `<div class="emoji-btn emoji-btn-none ${isNone ? 'selected' : ''}" onclick="window.onSelectNoIcon(this)" title="Sin icono">—</div>`;
-  let pickerHTML = `<div class="symbol-picker-tabs" id="symbol-tabs"></div><div class="symbol-picker-grid" id="symbol-grid"></div>`;
-  const gridEl = document.getElementById('emoji-grid');
-  gridEl.innerHTML = noneBtn + pickerHTML;
-
-  // Renderizar tabs y grid
-  const catNames = Object.keys(SYMBOL_CATEGORIES);
-  let activeCat = window._activeSymbolCat || catNames[0];
-  const tabsEl = document.getElementById('symbol-tabs');
-  const gridInner = document.getElementById('symbol-grid');
-
-  const renderSymbolGrid = (cat) => {
-    window._activeSymbolCat = cat;
-    tabsEl.innerHTML = catNames.map(c =>
-      `<div class="symbol-tab ${c === cat ? 'active' : ''}" onclick="window._switchSymbolCat('${c}')">${c}</div>`
-    ).join('');
-    const syms = SYMBOL_CATEGORIES[cat] || [];
-    gridInner.innerHTML = syms.map(s =>
-      `<div class="emoji-btn ${s === selectedEmoji ? 'selected' : ''}" onclick="window.onSelectEmoji(this,'${s.replace(/'/g,"\'")}')"><span class="symbol-inner">${s}</span></div>`
-    ).join('');
-  };
-
-  window._switchSymbolCat = (cat) => renderSymbolGrid(cat);
-  renderSymbolGrid(activeCat);
+  // Actualizar display del input de icono
+  const iconPreview = document.getElementById('icon-preview-display');
+  if (iconPreview) iconPreview.textContent = (selectedEmoji && selectedEmoji !== NO_ICON) ? selectedEmoji : '—';
+  const iconLabel = document.querySelector('.icon-input-label');
+  if (iconLabel) iconLabel.textContent = (selectedEmoji && selectedEmoji !== NO_ICON) ? selectedEmoji : 'Toca para elegir símbolo';
 
   // Categorías
   document.getElementById('cat-chips').innerHTML = Object.entries(CATEGORIES).map(([key, cat]) =>
@@ -191,3 +171,99 @@ function xpLabel(xp) {
   if (xp === 50) return '· Difícil';
   return '· Legendario';
 }
+
+
+// ── Icon picker popup ──
+let _pickerTempIcon = null;
+
+export function openIconPicker() {
+  _pickerTempIcon = selectedEmoji;
+  const overlay = document.getElementById('icon-picker-overlay');
+  if (!overlay) return;
+  overlay.classList.add('open');
+  _renderIconPickerTabs();
+  _updateIconPickerFooter();
+}
+
+export function closeIconPicker() {
+  const overlay = document.getElementById('icon-picker-overlay');
+  if (overlay) overlay.classList.remove('open');
+}
+
+export function confirmIconPicker() {
+  selectedEmoji = _pickerTempIcon;
+  _updateIconInputDisplay();
+  closeIconPicker();
+}
+
+export function clearIconPicker() {
+  _pickerTempIcon = null;
+  _updateIconPickerFooter();
+}
+
+function _updateIconInputDisplay() {
+  const preview = document.getElementById('icon-preview-display');
+  if (!preview) return;
+  // Mostrar en círculo del color de la categoría
+  if (selectedEmoji && selectedEmoji !== '—') {
+    preview.textContent = selectedEmoji;
+    preview.style.fontSize = '18px';
+  } else {
+    preview.textContent = '—';
+  }
+  const label = document.querySelector('.icon-input-label');
+  if (label) label.textContent = selectedEmoji && selectedEmoji !== '—' ? selectedEmoji : 'Toca para elegir símbolo';
+}
+
+function _updateIconPickerFooter() {
+  const prev = document.getElementById('icon-picker-preview');
+  const lbl  = document.getElementById('icon-picker-lbl');
+  if (prev) prev.textContent = _pickerTempIcon || '—';
+  if (lbl)  lbl.textContent  = _pickerTempIcon || 'Sin icono seleccionado';
+  // Actualizar selected en grid
+  document.querySelectorAll('.icon-sym-btn').forEach(b => {
+    b.classList.toggle('selected', b.dataset.sym === _pickerTempIcon);
+  });
+}
+
+let _activeIconCat = null;
+
+function _renderIconPickerTabs() {
+  const tabsEl  = document.getElementById('icon-picker-tabs');
+  const gridEl  = document.getElementById('icon-picker-grid');
+  if (!tabsEl || !gridEl) return;
+  const catNames = Object.keys(SYMBOL_CATEGORIES);
+  if (!_activeIconCat) _activeIconCat = catNames[0];
+
+  tabsEl.innerHTML = catNames.map(c =>
+    `<div class="symbol-tab ${c === _activeIconCat ? 'active' : ''}" onclick="window._iconPickerSwitchCat('${c}')">${c}</div>`
+  ).join('');
+
+  _renderIconPickerGrid(_activeIconCat);
+}
+
+function _renderIconPickerGrid(cat) {
+  _activeIconCat = cat;
+  const gridEl = document.getElementById('icon-picker-grid');
+  const tabsEl = document.getElementById('icon-picker-tabs');
+  if (!gridEl) return;
+  // Actualizar tab activa
+  if (tabsEl) {
+    tabsEl.querySelectorAll('.symbol-tab').forEach(t => {
+      t.classList.toggle('active', t.textContent === cat);
+    });
+  }
+  const syms = SYMBOL_CATEGORIES[cat] || [];
+  gridEl.innerHTML = syms.map(s =>
+    `<div class="icon-sym-btn ${s === _pickerTempIcon ? 'selected' : ''}" data-sym="${s}"
+      onclick="window._iconPickerSelect('${s.replace(/'/g,"\'")}')">
+      ${s}
+    </div>`
+  ).join('');
+}
+
+window._iconPickerSwitchCat = (cat) => _renderIconPickerGrid(cat);
+window._iconPickerSelect = (sym) => {
+  _pickerTempIcon = sym;
+  _updateIconPickerFooter();
+};
