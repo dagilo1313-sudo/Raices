@@ -120,6 +120,10 @@ body::before {
 .chip { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-full); padding: 7px 14px; color: var(--muted); font-size: 13px; cursor: pointer; transition: all 0.2s; font-family: var(--font-body); white-space: nowrap; }
 .chip:hover { border-color: var(--accent); color: var(--accent); }
 .chip.selected { border-color: var(--accent); color: var(--accent); background: var(--glow); }
+/* XP chip colors */
+.chip.xp-chip.selected-xp10 { border-color: #6b7560; background: rgba(107,117,96,0.15); }
+.chip.xp-chip.selected-xp25 { border-color: #8fb339; background: rgba(143,179,57,0.15); }
+.chip.xp-chip.selected-xp50 { border-color: #c4a84f; background: rgba(196,168,79,0.15); }
 .chip.cat-chip.selected-fisico       { border-color: var(--cat-fisico);       color: var(--cat-fisico);       background: var(--cat-fisico-bg); }
 .chip.cat-chip.selected-disciplina   { border-color: var(--cat-disciplina);   color: var(--cat-disciplina);   background: var(--cat-disciplina-bg); }
 .chip.cat-chip.selected-energia      { border-color: var(--cat-energia);      color: var(--cat-energia);      background: var(--cat-energia-bg); }

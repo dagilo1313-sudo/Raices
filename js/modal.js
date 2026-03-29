@@ -102,8 +102,10 @@ export function selectCategory(el, cat) {
 
 export function selectXP(el, xp) {
   selectedXP = xp;
-  document.querySelectorAll('.xp-chip').forEach(c => c.classList.remove('selected'));
-  el.classList.add('selected');
+  document.querySelectorAll('.xp-chip').forEach(c => {
+    c.classList.remove('selected', 'selected-xp10', 'selected-xp25', 'selected-xp50');
+  });
+  el.classList.add('selected', `selected-xp${xp}`);
 }
 
 export function toggleDay(el, dayKey) {
@@ -145,7 +147,7 @@ function renderModalInternals() {
 
   // XP
   document.getElementById('xp-chips').innerHTML = XP_VALUES.map(xp =>
-    `<div class="chip xp-chip ${selectedXP === xp ? 'selected' : ''}" onclick="window.onSelectXP(this,${xp})">
+    `<div class="chip xp-chip ${selectedXP === xp ? `selected selected-xp${xp}` : ''}" onclick="window.onSelectXP(this,${xp})">
       <span class="xp-${xp}" style="font-weight:700">+${xp} XP</span>
       <span style="font-size:11px;color:var(--muted);margin-left:4px">${xpLabel(xp)}</span>
     </div>`
