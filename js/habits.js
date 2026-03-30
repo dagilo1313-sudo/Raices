@@ -14,7 +14,8 @@ const completadosOf = (dateStr) => {
 
 // ── Refs ──
 const habitsRef  = () => collection(db, 'users', state.currentUser.uid, 'habits');
-const compsRef   = () => doc(db, 'users', state.currentUser.uid, 'completions', 'data');
+const compsCol   = () => collection(db, 'users', state.currentUser.uid, 'completions');
+const compsYearRef = (year) => doc(db, 'users', state.currentUser.uid, 'completions', String(year));
 const tareasRef  = () => doc(db, 'users', state.currentUser.uid, 'tareas', 'data');
 const profileRef = () => doc(db, 'users', state.currentUser.uid, 'profile', 'data');
 
@@ -27,8 +28,12 @@ export async function loadData() {
   } catch(e) { console.error('Error cargando hábitos:', e); }
 
   try {
-    const c = await getDoc(compsRef());
-    state.completions = c.exists() ? c.data() : {};
+    const snap = await getDocs(compsCol());
+    state.completions = {};
+    snap.docs.forEach(d => {
+      // Fusionar todos los años en un solo objeto plano
+      Object.assign(state.completions, d.data());
+    });
   } catch(e) { console.error('Error cargando completions:', e); }
 
   try {
@@ -91,8 +96,13 @@ async function actualizarSnapshotHoy() {
   });
 
   state.completions[date] = { completados, planificados, xpTotal, xpGanadoPorCat, xpMaxPorCat, updatedAt };
-  state.completions.updatedAt = updatedAt;
-  await setDoc(compsRef(), state.completions);
+  // Escribir solo el año correspondiente
+  const year = date.substring(0, 4);
+  const yearData = {};
+  Object.entries(state.completions).forEach(([k, v]) => {
+    if (k.startsWith(year + '-')) yearData[k] = v;
+  });
+  await setDoc(compsYearRef(year), yearData);
 }
 
 // ── Helpers de lectura snapshot XP ──
@@ -137,7 +147,15 @@ function recalcularXPSnapshot(date) {
 
 // ── Guardar completions ──
 export async function saveCompletions() {
-  await setDoc(compsRef(), state.completions);
+  // Agrupar por año y escribir cada documento
+  const byYear = {};
+  Object.entries(state.completions).forEach(([k, v]) => {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(k)) return;
+    const yr = k.substring(0, 4);
+    if (!byYear[yr]) byYear[yr] = {};
+    byYear[yr][k] = v;
+  });
+  await Promise.all(Object.entries(byYear).map(([yr, data]) => setDoc(compsYearRef(yr), data)));
 }
 
 // ── Toggle completado ──
@@ -299,7 +317,7 @@ export async function borrarTareasCompletadas() {
 
 // ── Resetear solo el progreso ──
 export async function resetProgress() {
-  await setDoc(compsRef(), {});
+  const _csnap = await getDocs(compsCol()); await Promise.all(_csnap.docs.map(d => deleteDoc(d.ref)));
   await setDoc(profileRef(), { xpTotal: 0, nivel: 1, clase: 0, diasPerfectos: 0 });
   state.completions = {};
   state.perfil = { xpTotal: 0, nivel: 1, clase: 0, diasPerfectos: 0 };
@@ -311,7 +329,7 @@ export async function resetAllData() {
   const batch = writeBatch(db);
   snap.docs.forEach(d => batch.delete(d.ref));
   await batch.commit();
-  await setDoc(compsRef(), {});
+  const _csnap = await getDocs(compsCol()); await Promise.all(_csnap.docs.map(d => deleteDoc(d.ref)));
   await setDoc(profileRef(), { xpTotal: 0, nivel: 1, clase: 0, diasPerfectos: 0 });
   state.habits = [];
   state.allHabits = [];
