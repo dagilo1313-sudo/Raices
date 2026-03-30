@@ -1300,23 +1300,32 @@ function renderStatsDayHabits(dateStr, completedIds, scheduledHabits) { // compl
     return;
   }
   const catOrder = Object.keys(CATEGORIES);
-  // Ordenar: por categoría, y dentro completados primero
-  const ordenados = [...scheduledHabits].sort((a, b) => {
-    const catA = catOrder.indexOf(a.category);
-    const catB = catOrder.indexOf(b.category);
+
+  // Ordenar: 1º completados vs no completados, 2º categoría, 3º XP desc
+  const sortFn = (a, b) => {
+    const catA = catOrder.indexOf(a.category ?? 'disciplina');
+    const catB = catOrder.indexOf(b.category ?? 'disciplina');
     if (catA !== catB) return catA - catB;
-    const doneA = completedIds.includes(a.id) ? 0 : 1;
-    const doneB = completedIds.includes(b.id) ? 0 : 1;
-    return doneA - doneB;
-  });
+    return (b.xp || 10) - (a.xp || 10);
+  };
+  const completados = scheduledHabits.filter(h => completedIds.includes(h.id)).sort(sortFn);
+  const pendientes  = scheduledHabits.filter(h => !completedIds.includes(h.id)).sort(sortFn);
+  const ordenados = [...completados, ...pendientes];
 
   let html = '';
+  // Separador visual entre grupos si hay de ambos tipos
+  let inPendientes = false;
   let lastCat = null;
   ordenados.forEach(h => {
     const done = completedIds.includes(h.id);
+    // Añadir separador al empezar los pendientes
+    if (!done && !inPendientes && completados.length > 0 && pendientes.length > 0) {
+      inPendientes = true;
+      lastCat = null; // resetear categoría para mostrar cabecera de nuevo
+      html += `<div style="height:1px;background:var(--border);margin:8px 0;opacity:0.5"></div>`;
+    }
     const cat = CATEGORIES[h.category] || CATEGORIES.disciplina;
     if (h.category !== lastCat) {
-      if (lastCat !== null) html += '';
       html += `<div class="cat-group-label cat-${h.category}">${cat.label}</div>`;
       lastCat = h.category;
     }
