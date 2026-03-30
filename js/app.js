@@ -1,6 +1,6 @@
 import { initAuth, toggleAuthMode, handleAuth, showForgotPassword, showLoginForm, sendResetEmail, showChangePassword, hideChangePassword, changePassword, logout } from './auth.js';
-import { toggleHabit, deleteHabit, saveCompletions, resetAllData, resetProgress, createTarea, toggleTarea, borrarTareasCompletadas, getCompletadosForDate } from './habits.js';
-import { renderAll, renderHabitsList, renderTareas, renderHistorico } from './render.js';
+import { toggleHabit, deleteHabit, saveCompletions, resetAllData, resetProgress, createTarea, toggleTarea, borrarTareasCompletadas, getCompletadosForDate, loadAllCompletions, loadMonthCompletions } from './habits.js';
+import { renderAll, renderHabitsList, renderTareas, renderHistorico, renderStats } from './render.js';
 import { showToast, showConfetti, showXPFloat, switchView } from './ui.js';
 import { openCreateModal, openEditModal, closeModal, closeModalOutside, submitModal, selectEmoji, selectNoIcon, selectCategory, selectXP, toggleDay, selectAllDays, openIconPicker, closeIconPicker, confirmIconPicker, clearIconPicker } from './modal.js';
 import { state, getCompletionMessage, today, CLASES } from './state.js';
@@ -44,6 +44,7 @@ window.switchView = (view) => {
     if (display) display.textContent = state.perfil.nombre || '—';
   }
   if (view === 'historico') renderHistorico();
+  if (view === 'stats') renderStats();
 };
 window.setFilter  = (filter) => { state.activeFilter = filter; renderAll(); };
 
@@ -180,23 +181,29 @@ window.closeRangosPanel = () => {
 
 // ── Calendario ──
 window.selectDate = (dateStr) => { state.selectedDate = dateStr; renderAll(); };
-window.calPrevMonth = () => {
+window.calPrevMonth = async () => {
   const base = state.selectedDate || today();
   const d = new Date(base + 'T12:00:00');
   d.setMonth(d.getMonth() - 1);
   state.selectedDate = d.toISOString().split('T')[0];
-  renderAll();
+  const monthKey = state.selectedDate.substring(0, 7);
+  const { loadMonthCompletions } = await import('./habits.js');
+  await loadMonthCompletions(monthKey);
+  renderHistorico();
 };
-window.calNextMonth = () => {
+window.calNextMonth = async () => {
   const base = state.selectedDate || today();
   const d = new Date(base + 'T12:00:00');
   d.setMonth(d.getMonth() + 1);
   if (d <= new Date(today() + 'T12:00:00')) {
     state.selectedDate = d.toISOString().split('T')[0];
-    renderAll();
+    const monthKey = state.selectedDate.substring(0, 7);
+    const { loadMonthCompletions } = await import('./habits.js');
+    await loadMonthCompletions(monthKey);
+    renderHistorico();
   }
 };
-window.calGoToday = () => { state.selectedDate = null; renderAll(); };
+window.calGoToday = () => { state.selectedDate = null; renderHistorico(); };
 
 // ── Reset solo progreso ──
 function showConfirmPopup({ title, desc, btnLabel, btnClass, keyword, onConfirm }) {

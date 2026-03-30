@@ -72,27 +72,28 @@ function renderViajero() {
     nivelBadgeEl.style.background = claseData.color + '18';
   }
 
-  // Stats — calcular desde completions (igual que renderLifetimeStats)
-  const keys = Object.keys(state.completions).filter(k => k !== 'updatedAt' && /^\d{4}-\d{2}-\d{2}$/.test(k));
-  let vDiasPerfectos=0, vDiasBuenos=0, vRatioSum=0, vRatioDays=0, vXpEficSum=0, vXpEficDays=0;
-  keys.forEach(k => {
-    const d = state.completions[k];
-    if (!d || Array.isArray(d)) return;
+  // Días perfectos y buenos — desde perfil (sin recalcular historial)
+  const vDiasPerfectos = state.perfil.diasPerfectos || 0;
+  const vDiasBuenos    = state.perfil.diasBuenos    || 0;
+
+  const perfEl = document.getElementById('viajero-stat-perfectos');
+  if (perfEl) { perfEl.textContent = vDiasPerfectos; perfEl.style.color = 'var(--accent2)'; }
+  set('viajero-stat-buenos', vDiasBuenos);
+
+  // Eficiencia XP y consistencia — solo del mes actual (máx 31 días en memoria)
+  const currentMonthPrefix = today().substring(0, 7); // 'YYYY-MM'
+  let vRatioSum=0, vRatioDays=0, vXpEficSum=0, vXpEficDays=0;
+  Object.entries(state.completions).forEach(([k, d]) => {
+    if (!k.startsWith(currentMonthPrefix) || !d || Array.isArray(d)) return;
     const comp = Array.isArray(d.completados) ? d.completados.length : 0;
     const plan = Array.isArray(d.planificados) ? d.planificados.length : 0;
     const xpG = d.xpGanadoPorCat ? Object.values(d.xpGanadoPorCat).reduce((s,v)=>s+v,0) : 0;
     const xpM = d.xpMaxPorCat    ? Object.values(d.xpMaxPorCat).reduce((s,v)=>s+v,0)    : 0;
-    if (plan > 0 && comp === plan) vDiasPerfectos++;
-    if (xpM > 0 && xpG/xpM >= 0.8) vDiasBuenos++;
     if (plan > 0) { vRatioSum += comp/plan; vRatioDays++; }
-    if (xpM > 0) { vXpEficSum += xpG/xpM; vXpEficDays++; }
+    if (xpM > 0)  { vXpEficSum += xpG/xpM; vXpEficDays++; }
   });
   const vConsistencia = vRatioDays > 0 ? Math.round(vRatioSum/vRatioDays*100) : 0;
   const vEficiencia   = vXpEficDays > 0 ? Math.round(vXpEficSum/vXpEficDays*100) : 0;
-
-  const perfEl = document.getElementById('viajero-stat-perfectos');
-  if (perfEl) { perfEl.textContent = vDiasPerfectos; perfEl.style.color = isPerfectToday ? 'var(--accent2)' : 'var(--accent2)'; }
-  set('viajero-stat-buenos', vDiasBuenos);
   set('viajero-stat-eficiencia', vEficiencia + '%');
   set('viajero-stat-consistencia', vConsistencia + '%');
 
@@ -538,7 +539,21 @@ export function renderHabitsList() {
 }
 
 // ── Stats ──
-export function renderStats() {
+export async function renderStats() {
+  if (!state.statsLoaded) {
+    const statsView = document.getElementById('view-stats');
+    const header = statsView?.querySelector('header');
+    if (header && !document.getElementById('stats-loader')) {
+      const loader = document.createElement('div');
+      loader.id = 'stats-loader';
+      loader.style.cssText = 'display:flex;align-items:center;justify-content:center;padding:60px 0;flex-direction:column;gap:12px';
+      loader.innerHTML = '<div style="width:28px;height:28px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite"></div><div style="font-size:12px;color:var(--muted);letter-spacing:1px">Cargando historial...</div><style>@keyframes spin{to{transform:rotate(360deg)}}</style>';
+      header.insertAdjacentElement('afterend', loader);
+    }
+    const { loadAllCompletions } = await import('./habits.js');
+    await loadAllCompletions();
+    document.getElementById('stats-loader')?.remove();
+  }
   renderLifetimeStats();
 }
 
@@ -602,6 +617,8 @@ export function renderHistorico() {
 
 function renderLifetimeStats() {
   const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+  // Usar statsCompletions (histórico completo) si está disponible
+  const comps = state.statsLoaded ? state.statsCompletions : state.completions;
   const xpTotal = state.perfil.xpTotal || 0;
   const habActivos = state.habits.filter(h => !h.archivado).length;
   const nivelActual = state.perfil.nivel || 1;
@@ -638,9 +655,9 @@ function renderLifetimeStats() {
       const pct = calc.pct;
       const hace30 = (() => { const d = new Date(today()+'T12:00:00'); d.setDate(d.getDate()-30); return d.toISOString().split('T')[0]; })();
       let xp30 = 0, dias30 = 0;
-      Object.keys(state.completions).forEach(k => {
+      Object.keys(comps).forEach(k => {
         if (k < hace30 || k === 'updatedAt' || !/^\d{4}-\d{2}-\d{2}$/.test(k)) return;
-        const d = state.completions[k];
+        const d = comps[k];
         if (!d || Array.isArray(d)) return;
         const g = d.xpGanadoPorCat ? Object.values(d.xpGanadoPorCat).reduce((s,v)=>s+v,0) : 0;
         xp30 += g; dias30++;
@@ -669,7 +686,7 @@ function renderLifetimeStats() {
     }
   }
 
-  const keys = Object.keys(state.completions).filter(k => k !== 'updatedAt' && /^\d{4}-\d{2}-\d{2}$/.test(k));
+  const keys = Object.keys(comps).filter(k => k !== 'updatedAt' && /^\d{4}-\d{2}-\d{2}$/.test(k));
   const sorted = keys.sort();
 
   if (!keys.length) {
@@ -718,7 +735,7 @@ function renderLifetimeStats() {
   const habComp={}, habPlan={};
 
   sorted.forEach(k => {
-    const d = state.completions[k];
+    const d = comps[k];
     if (!d || Array.isArray(d)) { rachaPerfTemp=0; rachaBuenosTemp=0; return; }
 
     const completados = Array.isArray(d.completados) ? d.completados.length : 0;
@@ -779,7 +796,7 @@ function renderLifetimeStats() {
   let perfStop=false, buenosStop=false;
   for (let i=sorted.length-1; i>=0; i--) {
     const k=sorted[i];
-    const d=state.completions[k];
+    const d=comps[k];
     if (!d||Array.isArray(d)) break;
     const comp=Array.isArray(d.completados)?d.completados.length:0;
     const plan=Array.isArray(d.planificados)?d.planificados.length:0;
@@ -817,7 +834,7 @@ function renderLifetimeStats() {
       const d = new Date(today()+'T12:00:00');
       d.setDate(d.getDate()-i);
       const ds = d.toISOString().split('T')[0];
-      const dayData = state.completions[ds];
+      const dayData = comps[ds];
       const active = checkFn(ds, dayData);
       const dot = document.createElement('div');
       dot.className = 'rc-dot';
@@ -872,7 +889,7 @@ function renderLifetimeStats() {
   let hab30Sum=0, hab30Days=0, habCount30=0, habDays30=0;
   sorted.forEach(k => {
     if (k < hace30str) return;
-    const d = state.completions[k];
+    const d = comps[k];
     if (!d || Array.isArray(d)) return;
     const xpG = d.xpGanadoPorCat ? Object.values(d.xpGanadoPorCat).reduce((s,v)=>s+v,0) : 0;
     const xpM = d.xpMaxPorCat    ? Object.values(d.xpMaxPorCat).reduce((s,v)=>s+v,0)    : 0;
@@ -894,7 +911,7 @@ function renderLifetimeStats() {
   let xp30Sum=0, xp30Count=0;
   sorted.forEach(k => {
     if (k < hace30str) return;
-    const d = state.completions[k];
+    const d = comps[k];
     if (!d||Array.isArray(d)) return;
     const xpG = d.xpGanadoPorCat ? Object.values(d.xpGanadoPorCat).reduce((s,v)=>s+v,0) : 0;
     xp30Sum += xpG; xp30Count++;
@@ -922,7 +939,7 @@ function renderLifetimeStats() {
   let habAnt30Sum=0, habAnt30Days=0, xpAnt30Sum=0, xpAnt30Days=0;
   sorted.forEach(k => {
     if (k < hace60str || k >= hace30str) return;
-    const d = state.completions[k];
+    const d = comps[k];
     if (!d || Array.isArray(d)) return;
     const comp = Array.isArray(d.completados) ? d.completados.length : 0;
     const plan = Array.isArray(d.planificados) ? d.planificados.length : 0;
@@ -953,7 +970,7 @@ function renderLifetimeStats() {
     for (let i=6; i>=0; i--) {
       const d=new Date(today()+'T12:00:00'); d.setDate(d.getDate()-i);
       const ds=d.toISOString().split('T')[0];
-      const dayData=state.completions[ds];
+      const dayData=comps[ds];
       let ratio=0;
       if (dayData&&!Array.isArray(dayData)&&dayData.xpMaxPorCat) {
         const g=Object.values(dayData.xpGanadoPorCat||{}).reduce((s,v)=>s+v,0);
@@ -1092,7 +1109,7 @@ function renderLifetimeStats() {
       const d = new Date(todayStr + 'T12:00:00');
       d.setDate(d.getDate() - i);
       const ds = d.toISOString().split('T')[0];
-      const dayData = state.completions[ds];
+      const dayData = comps[ds];
 
       let xpRatio = 0, difNet = 0, difMax = 0, hasData = false;
 

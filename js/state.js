@@ -1,20 +1,25 @@
 // ── Estado global ──
 export const state = {
   currentUser: null,
-  habits: [],       // solo activos (no archivados) — vista Hoy y gestión
-  allHabits: [],    // todos incluyendo archivados — stats e historial
-  completions: {},
+  habits: [],       // activos (no archivados)
+  allHabits: [],    // todos incluyendo archivados
+  completions: {},  // solo el mes actual cargado para HOY
+  statsCompletions: {}, // histórico completo cargado al abrir Stats
+  statsLoaded: false,   // si el histórico completo ya fue cargado
   activeFilter: 'all',
   selectedDate: null,
-  debugDate: null,  // null = fecha real; string 'YYYY-MM-DD' = modo testing
+  debugDate: null,
+  currentMonthKey: null, // 'YYYY-MM' del mes cargado actualmente
+  historicMonthKey: null, // 'YYYY-MM' del mes cargado en Histórico
   perfil: {
     xpTotal: 0,
     nivel: 1,
     clase: 0,
     diasPerfectos: 0,
+    diasBuenos: 0,
     nombre: 'David',
   },
-  tareas: [], // { id, nombre, urgente, done }
+  tareas: [],
 };
 
 // ── Sistema de niveles ──

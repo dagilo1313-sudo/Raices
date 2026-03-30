@@ -37,14 +37,14 @@ function validarContenido(data) {
   // completions — formato nuevo: objeto de años { "2025": { "2025-01-01": {...} } }
   if (!data.completions || typeof data.completions !== 'object')
     return 'Falta o es inválido el campo completions.';
-  for (const [yr, days] of Object.entries(data.completions)) {
-    if (!/^\d{4}$/.test(yr))
-      return `Año inválido en completions: "${yr}". Debe ser YYYY.`;
+  for (const [mk, days] of Object.entries(data.completions)) {
+    if (!/^\d{4}-\d{2}$/.test(mk))
+      return `Clave inválida en completions: "${mk}". Debe ser YYYY-MM.`;
     if (typeof days !== 'object' || days === null)
-      return `El año ${yr} en completions debe ser un objeto.`;
+      return `El mes ${mk} en completions debe ser un objeto.`;
     for (const dateKey of Object.keys(days)) {
       if (!/^\d{4}-\d{2}-\d{2}$/.test(dateKey))
-        return `Fecha inválida en completions/${yr}: "${dateKey}".`;
+        return `Fecha inválida en completions/${mk}: "${dateKey}".`;
     }
   }
 
@@ -104,9 +104,9 @@ export function onBackupFileSelected(input) {
 
     _backupPendiente = data;
     const habits = data.allHabits || data.habits || [];
-    const años = Object.keys(data.completions);
-    const totalDias = Object.values(data.completions).reduce((s, yr) => s + Object.keys(yr).length, 0);
-    mostrarStatus(`✓ Válido · ${habits.length} hábitos · ${totalDias} días (${años.join(', ')}) · exportado el ${data.exportadoEn.split('T')[0]}`, 'ok');
+    const meses = Object.keys(data.completions);
+    const totalDias = Object.values(data.completions).reduce((s, m) => s + Object.keys(m).length, 0);
+    mostrarStatus(`✓ Válido · ${habits.length} hábitos · ${totalDias} días · ${meses.length} meses · exportado el ${data.exportadoEn.split('T')[0]}`, 'ok');
     if (btnRestaurar) btnRestaurar.style.display = 'block';
   };
   reader.onerror = () => { mostrarStatus('Error al leer el archivo.', 'error'); input.value = ''; };
@@ -151,10 +151,10 @@ export async function confirmarRestaurar() {
     const compsSnap = await getDocs(compsCol);
     await Promise.all(compsSnap.docs.map(d => deleteDoc(d.ref)));
 
-    // 4. Subir completions año por año (formato nuevo directo)
+    // 4. Subir completions mes por mes (formato YYYY-MM)
     await Promise.all(
-      Object.entries(data.completions).map(([yr, days]) =>
-        setDoc(doc(db, 'users', uid, 'completions', yr), days)
+      Object.entries(data.completions).map(([mk, days]) =>
+        setDoc(doc(db, 'users', uid, 'completions', mk), days)
       )
     );
 
@@ -176,22 +176,25 @@ export async function confirmarRestaurar() {
 // ── Descargar backup (formato nuevo: completions por año) ─────────────────────
 
 export function descargarBackup() {
-  // Agrupar completions por año
-  const completionsByYear = {};
-  Object.entries(state.completions).forEach(([k, v]) => {
+  // Usar statsCompletions si está disponible (histórico completo), si no solo el mes actual
+  const allComps = state.statsLoaded ? state.statsCompletions : state.completions;
+
+  // Agrupar completions por mes (YYYY-MM)
+  const completionsByMonth = {};
+  Object.entries(allComps).forEach(([k, v]) => {
     if (!/^\d{4}-\d{2}-\d{2}$/.test(k)) return;
-    const yr = k.substring(0, 4);
-    if (!completionsByYear[yr]) completionsByYear[yr] = {};
-    completionsByYear[yr][k] = v;
+    const mk = k.substring(0, 7); // 'YYYY-MM'
+    if (!completionsByMonth[mk]) completionsByMonth[mk] = {};
+    completionsByMonth[mk][k] = v;
   });
 
   const backup = {
     exportadoEn: new Date().toISOString(),
-    version: 'raices-v56',
+    version: 'raices-v60',
     perfil: state.perfil,
     habits: state.habits,
     allHabits: state.allHabits,
-    completions: completionsByYear,
+    completions: completionsByMonth,
   };
 
   const json = JSON.stringify(backup, null, 2);
