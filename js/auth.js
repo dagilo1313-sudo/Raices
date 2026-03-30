@@ -18,14 +18,16 @@ let authMode = 'login';
 
 export function initAuth() {
   onAuthStateChanged(auth, async (user) => {
-    document.getElementById('loading-screen').style.display = 'none';
     if (window._stopLoader) window._stopLoader();
     if (user) {
       state.currentUser = user;
       document.getElementById('auth-screen').style.display = 'none';
-      document.getElementById('app').style.display = 'block';
       document.getElementById('profile-email').textContent = user.email;
+      // Cargar datos ANTES de mostrar la app
       await loadData();
+      // Solo ahora ocultamos loading y mostramos la app
+      document.getElementById('loading-screen').style.display = 'none';
+      document.getElementById('app').style.display = 'block';
       renderAll();
     } else {
       state.currentUser = null;
@@ -33,6 +35,7 @@ export function initAuth() {
       state.allHabits = [];
       state.completions = {};
       state.perfil = { xpTotal: 0, nivel: 1, clase: 0 };
+      document.getElementById('loading-screen').style.display = 'none';
       document.getElementById('app').style.display = 'none';
       document.getElementById('auth-screen').style.display = 'flex';
       const btn = document.getElementById('auth-btn');
