@@ -514,62 +514,51 @@ export async function renderStats() {
     const statsView = document.getElementById('view-stats');
     const header = statsView?.querySelector('header');
     if (!document.getElementById('stats-loader')) {
-      // Ocultar todo el contenido de stats mientras carga
       const statsView = document.getElementById('view-stats');
+
+      // Ocultar todos los hijos de stats excepto el header con display:none
       if (statsView) {
         Array.from(statsView.children).forEach(el => {
-          if (el.tagName !== 'HEADER') el.style.visibility = 'hidden';
+          if (el.tagName !== 'HEADER') el.style.display = 'none';
         });
       }
 
       const loader = document.createElement('div');
       loader.id = 'stats-loader';
-      loader.style.cssText = 'position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;z-index:10;background:var(--bg)';
+      loader.style.cssText = 'display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px 24px;gap:18px';
 
-      // Canvas para partículas orbitales
       loader.innerHTML = `
         <style>
           @keyframes stats-txt-fade{0%,100%{opacity:0.3}50%{opacity:1}}
-          @keyframes stats-glow{0%,100%{box-shadow:0 0 0px rgba(143,179,57,0)}50%{box-shadow:0 0 40px rgba(143,179,57,0.15)}}
-          @keyframes stats-leaf-bounce{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-4px) scale(1.05)}}
-          @keyframes stats-ring1{0%,100%{opacity:0.06;transform:scale(1)}50%{opacity:0.18;transform:scale(1.08)}}
-          @keyframes stats-ring2{0%,100%{opacity:0.04;transform:scale(1)}50%{opacity:0.12;transform:scale(1.15)}}
-          @keyframes stats-ring3{0%,100%{opacity:0.03;transform:scale(1)}50%{opacity:0.08;transform:scale(1.22)}}
+          @keyframes stats-leaf-bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+          @keyframes stats-ring1{0%,100%{opacity:0.08;transform:scale(1)}50%{opacity:0.2;transform:scale(1.07)}}
+          @keyframes stats-ring2{0%,100%{opacity:0.05;transform:scale(1)}50%{opacity:0.12;transform:scale(1.13)}}
         </style>
-        <div style="display:flex;flex-direction:column;align-items:center;gap:28px">
-          <div style="position:relative;width:180px;height:180px;display:flex;align-items:center;justify-content:center;animation:stats-glow 2.5s ease-in-out infinite">
-            <!-- Anillos de pulso -->
-            <div style="position:absolute;inset:0;border-radius:50%;border:1px solid rgba(143,179,57,0.3);animation:stats-ring1 2s ease-in-out infinite"></div>
-            <div style="position:absolute;inset:-16px;border-radius:50%;border:1px solid rgba(143,179,57,0.2);animation:stats-ring2 2s ease-in-out infinite 0.4s"></div>
-            <div style="position:absolute;inset:-32px;border-radius:50%;border:1px solid rgba(143,179,57,0.1);animation:stats-ring3 2s ease-in-out infinite 0.8s"></div>
-            <!-- Fondo circular -->
-            <div style="position:absolute;inset:12px;border-radius:50%;background:rgba(143,179,57,0.06)"></div>
-            <!-- Canvas orbital -->
-            <canvas id="stats-orbit-canvas" width="360" height="360" style="position:absolute;inset:-90px;width:360px;height:360px;pointer-events:none"></canvas>
-            <!-- Planta -->
-            <div style="font-size:52px;position:relative;z-index:2;animation:stats-leaf-bounce 2s ease-in-out infinite">🌱</div>
-          </div>
-          <div style="display:flex;flex-direction:column;align-items:center;gap:8px">
-            <div style="font-size:12px;color:var(--accent);letter-spacing:3px;text-transform:uppercase;font-weight:600;animation:stats-txt-fade 1.8s ease-in-out infinite">Cargando historial</div>
-            <div style="font-size:10px;color:var(--muted);letter-spacing:1px">Analizando tu progreso completo</div>
-          </div>
+        <div style="position:relative;width:100px;height:100px;display:flex;align-items:center;justify-content:center">
+          <div style="position:absolute;inset:0;border-radius:50%;border:1px solid rgba(143,179,57,0.25);animation:stats-ring1 2s ease-in-out infinite"></div>
+          <div style="position:absolute;inset:-14px;border-radius:50%;border:1px solid rgba(143,179,57,0.12);animation:stats-ring2 2s ease-in-out infinite 0.5s"></div>
+          <div style="position:absolute;inset:8px;border-radius:50%;background:rgba(143,179,57,0.05)"></div>
+          <canvas id="stats-orbit-canvas" width="200" height="200" style="position:absolute;inset:-50px;width:200px;height:200px;pointer-events:none"></canvas>
+          <div style="font-size:30px;position:relative;z-index:2;animation:stats-leaf-bounce 2s ease-in-out infinite">🌱</div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:5px">
+          <div style="font-size:10px;color:var(--accent);letter-spacing:2.5px;text-transform:uppercase;animation:stats-txt-fade 1.8s ease-in-out infinite">Cargando historial</div>
+          <div style="font-size:9px;color:var(--muted)">Analizando tu progreso</div>
         </div>`;
 
-      if (statsView) statsView.style.position = 'relative';
-      statsView?.appendChild(loader);
+      header?.insertAdjacentElement('afterend', loader);
 
       // Lanzar animación orbital
       requestAnimationFrame(() => {
         const cv = document.getElementById('stats-orbit-canvas');
         if (!cv) return;
         const ctx = cv.getContext('2d');
-        const W = 360, H = 360, cx = W/2, cy = H/2;
+        const W = 200, H = 200, cx = W/2, cy = H/2;
 
-        // Tres anillos orbitales con partículas
+        // Dos anillos orbitales más pequeños y discretos
         const orbits = [
-          { r: 68,  n: 7,  speed: 0.014,  offset: 0,           size: 3.2, hue: 44,  alpha: 1.0  },
-          { r: 95,  n: 11, speed: -0.009, offset: Math.PI/5,  size: 2.4, hue: 38,  alpha: 0.75 },
-          { r: 118, n: 14, speed: 0.006,  offset: Math.PI/8,  size: 1.8, hue: 50,  alpha: 0.5  },
+          { r: 38, n: 5,  speed: 0.014,  offset: 0,          size: 2.0, hue: 44, alpha: 0.9 },
+          { r: 54, n: 8,  speed: -0.009, offset: Math.PI/4,  size: 1.5, hue: 38, alpha: 0.6 },
         ];
 
         // Inicializar ángulos
@@ -643,8 +632,7 @@ export async function renderStats() {
     if (window._statsOrbitStop) { window._statsOrbitStop(); window._statsOrbitStop = null; }
     const statsView2 = document.getElementById('view-stats');
     if (statsView2) {
-      Array.from(statsView2.children).forEach(el => { el.style.visibility = ''; });
-      statsView2.style.position = '';
+      Array.from(statsView2.children).forEach(el => { el.style.display = ''; });
     }
     document.getElementById('stats-loader')?.remove();
   }
