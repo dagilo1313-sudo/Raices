@@ -1299,18 +1299,20 @@ function renderStatsDayHabits(dateStr, completedIds, scheduledHabits) { // compl
     sl.innerHTML = `<div class="empty-state"><div class="empty-icon">📅</div><div class="empty-text">Sin hábitos programados para este día.</div></div>`;
     return;
   }
-  const catOrder = Object.keys(CATEGORIES);
+  const catOrder = Object.keys(CATEGORIES); // ['fisico','disciplina','energia','inteligencia','identidad']
 
-  // Ordenar: 1º completados vs no completados, 2º categoría, 3º XP desc
+  // Ordenar: 1º categoría, 2º XP desc
   const sortFn = (a, b) => {
-    const catA = catOrder.includes(a.category) ? catOrder.indexOf(a.category) : 99;
-    const catB = catOrder.includes(b.category) ? catOrder.indexOf(b.category) : 99;
+    const catA = catOrder.indexOf(a.category || '') !== -1 ? catOrder.indexOf(a.category) : 99;
+    const catB = catOrder.indexOf(b.category || '') !== -1 ? catOrder.indexOf(b.category) : 99;
     if (catA !== catB) return catA - catB;
     return (b.xp || 10) - (a.xp || 10);
   };
-  const completados = scheduledHabits.filter(h => completedIds.includes(h.id)).sort(sortFn);
-  const pendientes  = scheduledHabits.filter(h => !completedIds.includes(h.id)).sort(sortFn);
-  const ordenados = [...completados, ...pendientes];
+
+  // Separar en completados y pendientes, ordenar cada grupo independientemente
+  const completados = [...scheduledHabits].filter(h =>  completedIds.includes(h.id)).sort(sortFn);
+  const pendientes  = [...scheduledHabits].filter(h => !completedIds.includes(h.id)).sort(sortFn);
+  const ordenados   = [...completados, ...pendientes];
 
   let html = '';
   // Separador visual entre grupos si hay de ambos tipos
