@@ -1,4 +1,4 @@
-const CACHE = 'raices-v60';
+const CACHE = 'raices-v61';
 const ASSETS = [
   '/Raices/',
   '/Raices/index.html',

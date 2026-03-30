@@ -96,87 +96,7 @@ function renderViajero() {
   const vEficiencia   = vXpEficDays > 0 ? Math.round(vXpEficSum/vXpEficDays*100) : 0;
   set('viajero-stat-eficiencia', vEficiencia + '%');
   set('viajero-stat-consistencia', vConsistencia + '%');
-
-  // Momentum — leer el valor calculado por renderLifetimeStats si está disponible
-  const momentumEl = document.getElementById('viajero-stat-momentum');
-  const momentumTagEl = document.getElementById('viajero-momentum-tag');
-  const cachedMomentum = window._lastMomentum;
-  if (momentumEl && cachedMomentum !== undefined) {
-    momentumEl.textContent = cachedMomentum.toFixed(1);
-    const tag = cachedMomentum === 10 ? 'Imparable'
-      : cachedMomentum >= 8 ? 'En racha'
-      : cachedMomentum >= 6 ? 'En forma'
-      : cachedMomentum >= 4 ? 'Estable'
-      : cachedMomentum >= 2 ? 'Recuperándose'
-      : 'En crisis';
-    if (momentumTagEl) momentumTagEl.textContent = tag;
-  }
-
-  // Barra XP
-  if (calc.esMaximo) {
-    set('viajero-xp-label', 'Nivel máximo');
-  } else {
-    set('viajero-xp-label', `${calc.xpActual} / ${calc.xpSiguiente}`);
-  }
-  const fill = document.getElementById('viajero-xp-fill');
-  if (fill) {
-    fill.style.width = calc.pct + '%';
-    fill.style.background = isPerfectToday
-      ? 'linear-gradient(to right, #a07a1a, var(--accent2))'
-      : '';
-  }
-
-  // Avatar border + animación dorada si día perfecto
-  const avatarEl = document.getElementById('viajero-avatar-emoji');
-  if (avatarEl) avatarEl.textContent = claseData.emoji;
-  const avatarWrap = document.querySelector('.viajero-avatar-wrap');
-  if (avatarWrap) {
-    avatarWrap.style.borderColor = isPerfectToday ? 'var(--accent2)' : 'var(--accent)';
-    // Inyectar animación dorada cuando día perfecto
-    const styleId = 'avatar-perfect-style';
-    let styleEl = document.getElementById(styleId);
-    if (!styleEl) { styleEl = document.createElement('style'); styleEl.id = styleId; document.head.appendChild(styleEl); }
-    if (isPerfectToday) {
-      styleEl.textContent = `.viajero-avatar-wrap { animation: avatarGlowGold 2s ease-in-out infinite !important; border-color: var(--accent2) !important; }
-@keyframes avatarGlowGold {
-  0%,100% { box-shadow: 0 0 0 0 rgba(196,168,79,0), 0 0 0 0 rgba(196,168,79,0); border-color: var(--accent2); }
-  40%  { box-shadow: 0 0 0 6px rgba(196,168,79,0.25), 0 0 16px rgba(196,168,79,0.18); border-color: var(--accent2); }
-  60%  { box-shadow: 0 0 0 9px rgba(196,168,79,0.12), 0 0 22px rgba(196,168,79,0.12); border-color: #e8c96e; }
-}`;
-    } else {
-      styleEl.textContent = '';
-    }
-  }
-
-  // Barrita lateral
-  const viajeroCard = document.querySelector('.viajero-card');
-  if (viajeroCard) viajeroCard.style.setProperty('--bar-color', isPerfectToday ? 'var(--accent2)' : 'var(--accent)');
-
-  // Título canvas: partículas lentas normales, rápidas en día perfecto
-  if (typeof window._titlePerfect !== 'undefined') window._titlePerfect = isPerfectToday;
-  window._isPerfectToday = isPerfectToday;
-
-  // Tareas — bordes, wording y botón nueva tarea en gold
-  const tareasSpan = document.getElementById('tareas-titulo');
-  if (tareasSpan) {
-    tareasSpan.style.color = isPerfectToday ? 'var(--accent2)' : 'var(--accent)';
-    tareasSpan.style.fontWeight = '700';
-  }
-  const tareasToggle = document.getElementById('tareas-toggle');
-  if (tareasToggle) tareasToggle.style.borderColor = isPerfectToday ? 'rgba(196,168,79,0.5)' : '';
-  const tareasPanel = document.getElementById('tareas-panel');
-  if (tareasPanel) {
-    tareasPanel.style.borderColor = isPerfectToday ? 'rgba(196,168,79,0.5)' : '';
-    tareasPanel.style.borderTopColor = isPerfectToday ? 'var(--border)' : '';
-  }
-  const btnNueva = document.querySelector('.btn-nueva-tarea, .btn.btn-primary.btn-sm');
-  if (btnNueva) {
-    if (isPerfectToday) {
-      btnNueva.style.background = 'var(--accent2)';
-      btnNueva.style.borderColor = 'var(--accent2)';
-      btnNueva.style.color = '#0d0f0a';
-      btnNueva.onmouseenter = () => { btnNueva.style.boxShadow = '0 0 12px rgba(196,168,79,0.5)'; };
-      btnNueva.onmouseleave = () => { btnNueva.style.boxShadow = ''; };
+btnNueva.onmouseleave = () => { btnNueva.style.boxShadow = ''; };
     } else {
       btnNueva.style.background = '';
       btnNueva.style.borderColor = '';
@@ -901,9 +821,24 @@ function renderLifetimeStats() {
   const xpEfic30 = xpEfic30Days>0 ? Math.round(xpEfic30Sum/xpEfic30Days*100) : xpEficGlobal;
   const hab30 = hab30Days>0 ? Math.round(hab30Sum/hab30Days*100) : consistGlobal;
   const mediaHab30 = habDays30>0 ? (habCount30/habDays30).toFixed(1) : '—';
-  set('stat-eficiencia-30d', xpEfic30+'%');
-  set('stat-consistencia-30d', hab30+'%');
   set('stat-media-habitos-30d', mediaHab30);
+
+  // Eficiencia XP y consistencia del mes actual (desde state.completions — siempre cargado)
+  const mesActualPrefix = today().substring(0, 7);
+  let xpMesSum=0, xpMesDays=0, habMesSum=0, habMesDays=0;
+  Object.entries(state.completions).forEach(([k, d]) => {
+    if (!k.startsWith(mesActualPrefix) || !d || Array.isArray(d)) return;
+    const xpG = d.xpGanadoPorCat ? Object.values(d.xpGanadoPorCat).reduce((s,v)=>s+v,0) : 0;
+    const xpM = d.xpMaxPorCat    ? Object.values(d.xpMaxPorCat).reduce((s,v)=>s+v,0)    : 0;
+    const comp = Array.isArray(d.completados) ? d.completados.length : 0;
+    const plan = Array.isArray(d.planificados) ? d.planificados.length : 0;
+    if (xpM > 0) { xpMesSum += xpG/xpM; xpMesDays++; }
+    if (plan > 0) { habMesSum += comp/plan; habMesDays++; }
+  });
+  const eficienciaMes  = xpMesDays  > 0 ? Math.round(xpMesSum/xpMesDays*100)  : 0;
+  const consistenciaMes = habMesDays > 0 ? Math.round(habMesSum/habMesDays*100) : 0;
+  set('stat-eficiencia-mes',   eficienciaMes + '%');
+  set('stat-consistencia-mes', consistenciaMes + '%');
   set('stat-media-habitos', habitosDays>0 ? (habitosSum/habitosDays).toFixed(1) : '—');
   set('stat-total-completados', totalCompletados.toLocaleString('es-ES'));
   set('stat-xp-media-dia-pill', Math.round(xpTotal/diffDays).toLocaleString('es-ES'));
@@ -1096,156 +1031,6 @@ function renderLifetimeStats() {
   const peorSubEl=document.getElementById('stat-peor-dia-pct'); if(peorSubEl) peorSubEl.textContent=peorPct+'% de media';
   set('stat-xp-perdido', '–'+Math.round(xpTotalLost).toLocaleString('es-ES')+' xp');
 
-
-  // ── MOMENTUM SCORE ──
-  // Ventana: 90 días, decaimiento exponencial proporcional a datos disponibles
-  (function() {
-    const WINDOW = 90;
-    const allDays = []; // { dateStr, xpRatio, hábitos completados/fallados por peso }
-    const todayStr = today();
-
-    // Recopilar datos de los últimos 90 días
-    for (let i = 0; i < WINDOW; i++) {
-      const d = new Date(todayStr + 'T12:00:00');
-      d.setDate(d.getDate() - i);
-      const ds = d.toISOString().split('T')[0];
-      const dayData = comps[ds];
-
-      let xpRatio = 0, difNet = 0, difMax = 0, hasData = false;
-
-      if (dayData && !Array.isArray(dayData)) {
-        hasData = true;
-        const xpG = dayData.xpGanadoPorCat ? Object.values(dayData.xpGanadoPorCat).reduce((s,v)=>s+v,0) : 0;
-        const xpM = dayData.xpMaxPorCat    ? Object.values(dayData.xpMaxPorCat).reduce((s,v)=>s+v,0)    : 0;
-        xpRatio = xpM > 0 ? xpG / xpM : 0;
-
-        // Dificultad neta: completados suman XP, fallados restan XP
-        if (Array.isArray(dayData.planificados) && Array.isArray(dayData.completados)) {
-          const habsDelDia = state.allHabits.filter(h => dayData.planificados.includes(h.id));
-          habsDelDia.forEach(h => {
-            const xp = h.xp || 10;
-            difMax += xp;
-            if (dayData.completados.includes(h.id)) difNet += xp;
-            else difNet -= xp;
-          });
-        }
-      } else if (ds === todayStr) {
-        // Hoy: calcular en tiempo real
-        const sched = state.habits.filter(h => !h.archivado && isScheduledForDate(h, ds));
-        const xpG = sched.filter(h => isCompleted(h.id, ds)).reduce((s,h)=>s+(h.xp||10),0);
-        const xpM = sched.reduce((s,h)=>s+(h.xp||10),0);
-        xpRatio = xpM > 0 ? xpG / xpM : 0;
-        sched.forEach(h => {
-          const xp = h.xp || 10;
-          difMax += xp;
-          if (isCompleted(h.id, ds)) difNet += xp; else difNet -= xp;
-        });
-        hasData = sched.length > 0;
-      } else {
-        // Día sin registro: penaliza
-        const habActivos = state.habits.filter(h => !h.archivado);
-        habActivos.forEach(h => { const xp = h.xp||10; difMax += xp; difNet -= xp; });
-        xpRatio = 0;
-        hasData = false;
-      }
-
-      allDays.push({ ds, xpRatio, difNet, difMax, i }); // i=0 es hoy
-    }
-
-    if (!allDays.length) return;
-
-    // Decaimiento exponencial proporcional: el día más antiguo disponible recibe
-    // el mismo peso relativo independientemente de cuántos días haya
-    const N = allDays.length; // días disponibles (máx 90)
-    const getWeight = (idx) => Math.pow(0.5, (idx / N) * 6); // 6 halvings en el rango completo
-
-    // Componente 1: Eficiencia XP ponderada (0-10)
-    let xpWeightedSum = 0, xpWeightTotal = 0;
-    allDays.forEach(({ xpRatio, i }) => {
-      const w = getWeight(i);
-      xpWeightedSum += xpRatio * w;
-      xpWeightTotal += w;
-    });
-    const eficienciaXP = xpWeightTotal > 0 ? (xpWeightedSum / xpWeightTotal) * 10 : 0;
-
-    // Componente 2: Racha (0-10), máx 14 días = 10
-    // Ya calculada arriba: rachaBuenosActual
-    const rachaScore = Math.min(rachaBuenosActual / 14, 1) * 10;
-
-    // Componente 3: Dificultad neta ponderada (0-10)
-    let difWeightedNet = 0, difWeightedMax = 0;
-    allDays.forEach(({ difNet, difMax, i }) => {
-      const w = getWeight(i);
-      difWeightedNet += difNet * w;
-      difWeightedMax += difMax * w;
-    });
-    // Normalizar: máximo teórico es difWeightedMax, mínimo es -difWeightedMax
-    // Llevar rango [-1, 1] a [0, 10]
-    const difRatio = difWeightedMax > 0 ? difWeightedNet / difWeightedMax : 0;
-    const difScore = ((difRatio + 1) / 2) * 10; // [-1,1] → [0,10]
-
-    // Bonus racha perfecta
-    let bonusPerfectos = 0;
-    if (rachaPerfActual >= 3) bonusPerfectos = 1.0;
-    else if (rachaPerfActual === 2) bonusPerfectos = 0.75;
-    else if (rachaPerfActual === 1) bonusPerfectos = 0.5;
-
-    // Momentum final
-    const rawMomentum = (eficienciaXP * 0.4) + (rachaScore * 0.3) + (difScore * 0.3) + bonusPerfectos;
-    const momentum = Math.min(10, Math.max(0, rawMomentum));
-    window._lastMomentum = momentum;
-    const momentumDisplay = momentum.toFixed(1);
-
-    // Etiqueta
-    const tag = momentum === 10 ? 'Imparable'
-      : momentum >= 8 ? 'En racha'
-      : momentum >= 6 ? 'En forma'
-      : momentum >= 4 ? 'Estable'
-      : momentum >= 2 ? 'Recuperándose'
-      : 'En crisis';
-
-    // Color según etiqueta
-    const color = momentum >= 8 ? 'var(--gold)'
-      : momentum >= 6 ? 'var(--accent)'
-      : momentum >= 4 ? 'var(--accent)'
-      : momentum >= 2 ? '#6b7560'
-      : '#e05c5c';
-
-    // Setear UI
-    const scoreEl = document.getElementById('momentum-score');
-    const tagEl   = document.getElementById('momentum-tag');
-    const cardEl  = document.getElementById('momentum-card');
-
-    if (scoreEl) { scoreEl.textContent = momentumDisplay; scoreEl.style.color = color; }
-    if (tagEl)   { tagEl.textContent = tag; tagEl.style.color = color; }
-    if (cardEl)  { cardEl.style.borderColor = color + '44'; }
-    const barBefore = cardEl?.style;
-    if (cardEl) cardEl.style.setProperty('--momentum-color', color);
-
-    // Barras componentes
-    const setMC = (barId, valId, score) => {
-      const bar = document.getElementById(barId);
-      const val = document.getElementById(valId);
-      if (bar) { bar.style.width = (score/10*100)+'%'; bar.style.background = color; }
-      if (val) { val.textContent = score.toFixed(1); val.style.color = color; }
-    };
-    setMC('mc-bar-xp',    'mc-val-xp',    eficienciaXP);
-    setMC('mc-bar-racha', 'mc-val-racha', rachaScore + bonusPerfectos);
-    setMC('mc-bar-dif',   'mc-val-dif',   difScore);
-
-    // Barra lateral de la card
-    if (cardEl) {
-      const pseudo = cardEl.querySelector('.momentum-bar-lat');
-      // Usamos el ::before via CSS variable
-    }
-    // Actualizar color de la barra lateral via inline style en el primer hijo
-    const latBar = document.createElement('style');
-    latBar.id = 'momentum-lat-style';
-    const existingStyle = document.getElementById('momentum-lat-style');
-    if (existingStyle) existingStyle.remove();
-    latBar.textContent = `.momentum-card::before { background: ${color} !important; }`;
-    document.head.appendChild(latBar);
-  })();
 
 }
 

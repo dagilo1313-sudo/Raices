@@ -44,6 +44,7 @@ export async function loadData() {
       state.perfil.nivel         = data.nivel         || 1;
       state.perfil.clase         = data.clase         || 0;
       state.perfil.diasPerfectos = data.diasPerfectos || 0;
+      state.perfil.diasBuenos    = data.diasBuenos    || 0;
       state.perfil.nombre        = data.nombre        || 'David';
     } else {
       await setDoc(profileRef(), { xpTotal: 0, nivel: 1, clase: 0, diasPerfectos: 0 });
