@@ -513,29 +513,124 @@ export async function renderStats() {
   if (!state.statsLoaded) {
     const statsView = document.getElementById('view-stats');
     const header = statsView?.querySelector('header');
-    if (header && !document.getElementById('stats-loader')) {
+    if (!document.getElementById('stats-loader')) {
+      // Ocultar todo el contenido de stats mientras carga
+      const statsView = document.getElementById('view-stats');
+      if (statsView) {
+        Array.from(statsView.children).forEach(el => {
+          if (el.tagName !== 'HEADER') el.style.visibility = 'hidden';
+        });
+      }
+
       const loader = document.createElement('div');
       loader.id = 'stats-loader';
-      loader.style.cssText = 'display:flex;flex-direction:column;align-items:center;justify-content:center;padding:64px 24px;gap:16px';
+      loader.style.cssText = 'position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;z-index:10;background:var(--bg)';
+
+      // Canvas para partículas orbitales
       loader.innerHTML = `
         <style>
-          @keyframes pulse-ring{0%,100%{transform:scale(1);opacity:0.08}50%{transform:scale(1.15);opacity:0.18}}
-          @keyframes pulse-ring2{0%,100%{transform:scale(1);opacity:0.12}50%{transform:scale(1.2);opacity:0.22}}
-          @keyframes stats-fade{0%,100%{opacity:0.4}50%{opacity:0.9}}
+          @keyframes stats-txt-fade{0%,100%{opacity:0.35}50%{opacity:0.85}}
         </style>
-        <div style="position:relative;width:64px;height:64px;display:flex;align-items:center;justify-content:center">
-          <div style="position:absolute;inset:-12px;border-radius:50%;background:rgba(143,179,57,0.1);animation:pulse-ring2 2s ease-in-out infinite"></div>
-          <div style="position:absolute;inset:-4px;border-radius:50%;background:rgba(143,179,57,0.12);animation:pulse-ring 1.6s ease-in-out infinite 0.3s"></div>
-          <div style="font-size:30px;position:relative;z-index:1">🌱</div>
+        <div style="position:relative;width:140px;height:140px">
+          <canvas id="stats-orbit-canvas" width="280" height="280" style="position:absolute;inset:0;width:140px;height:140px;pointer-events:none"></canvas>
+          <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:36px">🌱</div>
         </div>
-        <div style="display:flex;flex-direction:column;align-items:center;gap:5px">
-          <div style="font-size:12px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;animation:stats-fade 1.8s ease-in-out infinite">Cargando historial</div>
-          <div style="font-size:10px;color:#2a3a1a">Analizando tu progreso completo</div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:6px">
+          <div style="font-size:11px;color:var(--muted);letter-spacing:2.5px;text-transform:uppercase;animation:stats-txt-fade 2s ease-in-out infinite">Cargando historial</div>
+          <div style="font-size:10px;color:#2a3a1a;letter-spacing:1px">Analizando tu progreso completo</div>
         </div>`;
-      header.insertAdjacentElement('afterend', loader);
+
+      if (statsView) statsView.style.position = 'relative';
+      statsView?.appendChild(loader);
+
+      // Lanzar animación orbital
+      requestAnimationFrame(() => {
+        const cv = document.getElementById('stats-orbit-canvas');
+        if (!cv) return;
+        const ctx = cv.getContext('2d');
+        const W = 280, H = 280, cx = W/2, cy = H/2;
+        const DPR = 2; // canvas ya es 2x
+
+        // Tres anillos orbitales con partículas
+        const orbits = [
+          { r: 52,  n: 6,  speed: 0.012, offset: 0,           size: 2.8, hue: 44,  alpha: 0.9  },
+          { r: 72,  n: 9,  speed: -0.008, offset: Math.PI/5,  size: 2.2, hue: 38,  alpha: 0.7  },
+          { r: 90,  n: 12, speed: 0.005, offset: Math.PI/8,   size: 1.6, hue: 50,  alpha: 0.5  },
+        ];
+
+        // Inicializar ángulos
+        const particles = [];
+        orbits.forEach(o => {
+          for (let i = 0; i < o.n; i++) {
+            particles.push({
+              orbit: o,
+              angle: (i / o.n) * Math.PI * 2 + o.offset,
+              trail: [],
+            });
+          }
+        });
+
+        let animId = null;
+        let active = true;
+        window._statsOrbitStop = () => { active = false; if (animId) cancelAnimationFrame(animId); };
+
+        function frame() {
+          if (!active) return;
+          ctx.clearRect(0, 0, W, H);
+
+          // Anillo guía tenue
+          orbits.forEach(o => {
+            ctx.beginPath();
+            ctx.arc(cx, cy, o.r, 0, Math.PI * 2);
+            ctx.strokeStyle = `rgba(143,179,57,0.06)`;
+            ctx.lineWidth = 1;
+            ctx.stroke();
+          });
+
+          particles.forEach(p => {
+            p.angle += p.orbit.speed;
+            const x = cx + Math.cos(p.angle) * p.orbit.r;
+            const y = cy + Math.sin(p.angle) * p.orbit.r;
+
+            // Trail
+            p.trail.push({x, y});
+            if (p.trail.length > 8) p.trail.shift();
+
+            // Dibujar trail
+            p.trail.forEach((pt, ti) => {
+              const a = (ti / p.trail.length) * p.orbit.alpha * 0.4;
+              const s = p.orbit.size * (ti / p.trail.length) * 0.7;
+              ctx.beginPath();
+              ctx.arc(pt.x, pt.y, s, 0, Math.PI * 2);
+              ctx.fillStyle = `hsla(${p.orbit.hue}, 90%, 65%, ${a})`;
+              ctx.fill();
+            });
+
+            // Partícula principal con glow
+            const g = ctx.createRadialGradient(x, y, 0, x, y, p.orbit.size * 3);
+            g.addColorStop(0, `hsla(${p.orbit.hue + 8}, 100%, 88%, ${p.orbit.alpha})`);
+            g.addColorStop(0.4, `hsla(${p.orbit.hue}, 95%, 66%, ${p.orbit.alpha * 0.7})`);
+            g.addColorStop(1, `hsla(${p.orbit.hue - 8}, 80%, 40%, 0)`);
+            ctx.beginPath();
+            ctx.arc(x, y, p.orbit.size, 0, Math.PI * 2);
+            ctx.fillStyle = g;
+            ctx.fill();
+          });
+
+          animId = requestAnimationFrame(frame);
+        }
+        frame();
+      });
     }
     const { loadAllCompletions } = await import('./habits.js');
     await loadAllCompletions();
+    // Parar animación orbital y restaurar contenido
+    if (window._statsOrbitStop) { window._statsOrbitStop(); window._statsOrbitStop = null; }
+    const statsView2 = document.getElementById('view-stats');
+    if (statsView2) {
+      Array.from(statsView2.children).forEach(el => { el.style.visibility = ''; });
+      statsView2.style.position = '';
+    }
     document.getElementById('stats-loader')?.remove();
   }
   renderLifetimeStats();
