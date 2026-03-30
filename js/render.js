@@ -1299,19 +1299,30 @@ function renderStatsDayHabits(dateStr, completedIds, scheduledHabits) { // compl
     sl.innerHTML = `<div class="empty-state"><div class="empty-icon">📅</div><div class="empty-text">Sin hábitos programados para este día.</div></div>`;
     return;
   }
-  const catOrder = Object.keys(CATEGORIES); // ['fisico','disciplina','energia','inteligencia','identidad']
+  const catOrder = ['fisico','disciplina','energia','inteligencia','identidad'];
 
-  // Ordenar: 1º categoría, 2º XP desc
-  const sortFn = (a, b) => {
-    const catA = catOrder.indexOf(a.category || '') !== -1 ? catOrder.indexOf(a.category) : 99;
-    const catB = catOrder.indexOf(b.category || '') !== -1 ? catOrder.indexOf(b.category) : 99;
-    if (catA !== catB) return catA - catB;
-    return (b.xp || 10) - (a.xp || 10);
+  // Paso 1: separar
+  const grupoComp = [];
+  const grupoPend = [];
+  scheduledHabits.forEach(h => {
+    if (completedIds.includes(h.id)) grupoComp.push(h);
+    else grupoPend.push(h);
+  });
+
+  // Paso 2: ordenar cada grupo por categoría, luego XP desc
+  const ordenarGrupo = (arr) => {
+    return arr.slice().sort((a, b) => {
+      const iA = catOrder.indexOf(a.category);
+      const iB = catOrder.indexOf(b.category);
+      const cA = iA === -1 ? 99 : iA;
+      const cB = iB === -1 ? 99 : iB;
+      if (cA !== cB) return cA - cB;
+      return (b.xp || 10) - (a.xp || 10);
+    });
   };
 
-  // Separar en completados y pendientes, ordenar cada grupo independientemente
-  const completados = [...scheduledHabits].filter(h =>  completedIds.includes(h.id)).sort(sortFn);
-  const pendientes  = [...scheduledHabits].filter(h => !completedIds.includes(h.id)).sort(sortFn);
+  const completados = ordenarGrupo(grupoComp);
+  const pendientes  = ordenarGrupo(grupoPend);
   const ordenados   = [...completados, ...pendientes];
 
   let html = '';
