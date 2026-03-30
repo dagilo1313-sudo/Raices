@@ -1303,8 +1303,8 @@ function renderStatsDayHabits(dateStr, completedIds, scheduledHabits) { // compl
 
   // Ordenar: 1º completados vs no completados, 2º categoría, 3º XP desc
   const sortFn = (a, b) => {
-    const catA = catOrder.indexOf(a.category ?? 'disciplina');
-    const catB = catOrder.indexOf(b.category ?? 'disciplina');
+    const catA = catOrder.includes(a.category) ? catOrder.indexOf(a.category) : 99;
+    const catB = catOrder.includes(b.category) ? catOrder.indexOf(b.category) : 99;
     if (catA !== catB) return catA - catB;
     return (b.xp || 10) - (a.xp || 10);
   };
