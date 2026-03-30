@@ -90,18 +90,34 @@
           <div class="viajero-xp-fill" id="viajero-xp-fill"></div>
         </div>
       </div>
-      <!-- Fila 1: Días perfectos + Días buenos -->
+      <!-- Fila 1: Días perfectos + Días buenos — estilo B -->
       <div class="viajero-stats-grid viajero-grid-2" style="margin-bottom:6px">
-        <div class="viajero-stat" style="position:relative;overflow:visible">
+        <div class="viajero-stat" style="position:relative;overflow:visible;padding:12px 14px;text-align:left">
           <canvas id="sparks-hoy" width="72" height="72" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-52%);pointer-events:none;z-index:0"></canvas>
-          <div class="viajero-stat-num viajero-stat-md" id="viajero-stat-perfectos" style="color:var(--accent2);font-weight:700;position:relative;z-index:1">0</div>
-          <div class="viajero-stat-lbl" style="position:relative;z-index:1">Días perfectos ✦</div>
-          <div style="font-size:10px;color:var(--accent2);opacity:0.7;margin-top:3px;position:relative;z-index:1">racha <span id="viajero-racha-perfectos" style="font-weight:700">0</span></div>
+          <div class="viajero-stat-lbl" style="position:relative;z-index:1;margin-bottom:6px">Días perfectos ✦</div>
+          <div style="display:flex;align-items:flex-end;justify-content:space-between;position:relative;z-index:1">
+            <div>
+              <div style="font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:2px">Total</div>
+              <div class="viajero-stat-num viajero-stat-md" id="viajero-stat-perfectos" style="color:var(--accent2)">0</div>
+            </div>
+            <div style="text-align:right">
+              <div style="font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:2px">Racha</div>
+              <div style="font-size:18px;font-weight:700;color:var(--accent2);opacity:0.65;line-height:1" id="viajero-racha-perfectos">0</div>
+            </div>
+          </div>
         </div>
-        <div class="viajero-stat">
-          <div class="viajero-stat-num viajero-stat-md" id="viajero-stat-buenos" style="color:var(--accent)">0</div>
-          <div class="viajero-stat-lbl">Días buenos</div>
-          <div style="font-size:10px;color:var(--accent);opacity:0.7;margin-top:3px">racha <span id="viajero-racha-buenos" style="font-weight:700;color:var(--accent)">0</span></div>
+        <div class="viajero-stat" style="padding:12px 14px;text-align:left">
+          <div class="viajero-stat-lbl" style="margin-bottom:6px">Días buenos</div>
+          <div style="display:flex;align-items:flex-end;justify-content:space-between">
+            <div>
+              <div style="font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:2px">Total</div>
+              <div class="viajero-stat-num viajero-stat-md" id="viajero-stat-buenos" style="color:var(--accent)">0</div>
+            </div>
+            <div style="text-align:right">
+              <div style="font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:2px">Racha</div>
+              <div style="font-size:18px;font-weight:700;color:var(--accent);opacity:0.65;line-height:1" id="viajero-racha-buenos">0</div>
+            </div>
+          </div>
         </div>
       </div>
       <!-- Fila 2: Eficiencia XP mes + Consistencia mes -->
@@ -176,7 +192,7 @@
 
     <!-- Última sync discreta -->
     <div id="last-sync" style="text-align:center;font-size:10px;color:var(--border);padding:4px 0 2px"></div>
-    <div style="text-align:center;font-size:9px;color:var(--border);padding:0 0 12px;letter-spacing:1px">v64</div>
+    <div style="text-align:center;font-size:9px;color:var(--border);padding:0 0 12px;letter-spacing:1px">v65</div>
   </div>
 
   <!-- ══ HÁBITOS ══ -->

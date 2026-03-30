@@ -516,8 +516,94 @@ export async function renderStats() {
     if (header && !document.getElementById('stats-loader')) {
       const loader = document.createElement('div');
       loader.id = 'stats-loader';
-      loader.style.cssText = 'display:flex;align-items:center;justify-content:center;padding:60px 0;flex-direction:column;gap:12px';
-      loader.innerHTML = '<div style="width:28px;height:28px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite"></div><div style="font-size:12px;color:var(--muted);letter-spacing:1px">Cargando historial...</div><style>@keyframes spin{to{transform:rotate(360deg)}}</style>';
+      loader.innerHTML = `
+        <style>
+          @keyframes shimmer-gold{0%{background-position:-600px 0}100%{background-position:600px 0}}
+          @keyframes shimmer-green{0%{background-position:-600px 0}100%{background-position:600px 0}}
+          .sk-gold{border-radius:7px;background:linear-gradient(90deg,#1a1508 0%,#2e2410 40%,#5a4520 50%,#2e2410 60%,#1a1508 100%);background-size:1200px 100%;animation:shimmer-gold 1.3s infinite linear;}
+          .sk-green{border-radius:7px;background:linear-gradient(90deg,#0e1209 0%,#1a2810 40%,#2e4a1a 50%,#1a2810 60%,#0e1209 100%);background-size:1200px 100%;animation:shimmer-green 1.3s infinite linear;}
+          .sk-card{background:var(--card);border:1px solid #1e2d12;border-radius:14px;padding:15px 17px;margin:0 24px 8px;position:relative;}
+          .sk-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:3px 0 0 3px;}
+          .sk-card.gold-card::before{background:#2e2410;}
+          .sk-card.green-card::before{background:#1e2d12;}
+          .sk-sep{display:flex;align-items:center;gap:10px;margin:20px 24px 10px;}
+          .sk-sep-line{flex:1;height:1px;background:#1e2d12;}
+          .sk-triple{display:flex;border-top:1px solid #1a2010;padding-top:12px;margin-top:12px;}
+          .sk-ti{flex:1;display:flex;flex-direction:column;gap:5px;}
+          .sk-ti+.sk-ti{border-left:1px solid #1a2010;padding-left:12px;}
+          .sk-grid2{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:0 24px 8px;}
+          .sk-half{background:var(--card2);border-radius:10px;padding:12px 14px;border:1px solid #1e2d12;}
+        </style>
+
+        <!-- Sep Días perfectos -->
+        <div class="sk-sep"><div class="sk-sep-line"></div><div class="sk-gold" style="width:100px;height:10px"></div><div class="sk-sep-line"></div></div>
+        <div class="sk-grid2">
+          <div class="sk-half">
+            <div class="sk-gold" style="width:80px;height:9px;margin-bottom:8px"></div>
+            <div style="display:flex;justify-content:space-between;align-items:flex-end">
+              <div><div class="sk-gold" style="width:28px;height:9px;margin-bottom:4px"></div><div class="sk-gold" style="width:44px;height:26px;border-radius:8px"></div></div>
+              <div style="text-align:right"><div class="sk-gold" style="width:28px;height:9px;margin-bottom:4px;margin-left:auto"></div><div class="sk-gold" style="width:32px;height:20px;border-radius:8px"></div></div>
+            </div>
+          </div>
+          <div class="sk-half">
+            <div class="sk-green" style="width:80px;height:9px;margin-bottom:8px"></div>
+            <div style="display:flex;justify-content:space-between;align-items:flex-end">
+              <div><div class="sk-green" style="width:28px;height:9px;margin-bottom:4px"></div><div class="sk-green" style="width:44px;height:26px;border-radius:8px"></div></div>
+              <div style="text-align:right"><div class="sk-green" style="width:28px;height:9px;margin-bottom:4px;margin-left:auto"></div><div class="sk-green" style="width:32px;height:20px;border-radius:8px"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sep Experiencia -->
+        <div class="sk-sep"><div class="sk-sep-line"></div><div class="sk-green" style="width:90px;height:10px"></div><div class="sk-sep-line"></div></div>
+        <div class="sk-card green-card">
+          <div style="display:flex;justify-content:space-between;margin-bottom:13px">
+            <div class="sk-green" style="width:100px;height:10px"></div><div class="sk-green" style="width:50px;height:10px"></div>
+          </div>
+          <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:13px">
+            <div class="sk-green" style="width:70px;height:46px;border-radius:10px"></div>
+            <div class="sk-green" style="width:48px;height:30px;border-radius:10px"></div>
+          </div>
+          <div class="sk-triple">
+            <div class="sk-ti"><div class="sk-green" style="height:20px;width:36px;border-radius:7px"></div><div class="sk-green" style="height:9px;width:54px;margin-top:4px"></div></div>
+            <div class="sk-ti"><div class="sk-green" style="height:20px;width:36px;border-radius:7px"></div><div class="sk-green" style="height:9px;width:54px;margin-top:4px"></div></div>
+            <div class="sk-ti"><div class="sk-green" style="height:20px;width:36px;border-radius:7px"></div><div class="sk-green" style="height:9px;width:54px;margin-top:4px"></div></div>
+          </div>
+        </div>
+
+        <!-- Gráfica barras -->
+        <div style="background:var(--card);border:1px solid #1e2d12;border-radius:14px;padding:15px 17px;margin:0 24px 8px;">
+          <div class="sk-green" style="width:140px;height:10px;margin-bottom:14px"></div>
+          <div style="display:flex;gap:5px;align-items:flex-end;height:68px;margin-bottom:8px">
+            <div class="sk-green" style="flex:1;height:45px;border-radius:4px"></div>
+            <div class="sk-green" style="flex:1;height:30px;border-radius:4px"></div>
+            <div class="sk-green" style="flex:1;height:58px;border-radius:4px"></div>
+            <div class="sk-green" style="flex:1;height:22px;border-radius:4px"></div>
+            <div class="sk-green" style="flex:1;height:52px;border-radius:4px"></div>
+            <div class="sk-green" style="flex:1;height:38px;border-radius:4px"></div>
+            <div class="sk-green" style="flex:1;height:62px;border-radius:4px"></div>
+          </div>
+          <div style="display:flex;justify-content:space-around">
+            ${[1,2,3,4,5,6,7].map(()=>'<div class="sk-green" style="width:12px;height:9px;border-radius:3px"></div>').join('')}
+          </div>
+        </div>
+
+        <!-- Sep Hábitos -->
+        <div class="sk-sep"><div class="sk-sep-line"></div><div class="sk-green" style="width:80px;height:10px"></div><div class="sk-sep-line"></div></div>
+        <div class="sk-card green-card">
+          <div style="display:flex;justify-content:space-between;margin-bottom:13px">
+            <div class="sk-green" style="width:100px;height:10px"></div><div class="sk-green" style="width:50px;height:10px"></div>
+          </div>
+          <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:13px">
+            <div class="sk-green" style="width:70px;height:46px;border-radius:10px"></div>
+            <div class="sk-green" style="width:48px;height:30px;border-radius:10px"></div>
+          </div>
+          <div class="sk-triple">
+            <div class="sk-ti"><div class="sk-green" style="height:20px;width:36px;border-radius:7px"></div><div class="sk-green" style="height:9px;width:54px;margin-top:4px"></div></div>
+            <div class="sk-ti"><div class="sk-green" style="height:20px;width:36px;border-radius:7px"></div><div class="sk-green" style="height:9px;width:54px;margin-top:4px"></div></div>
+            <div class="sk-ti"><div class="sk-green" style="height:20px;width:36px;border-radius:7px"></div><div class="sk-green" style="height:9px;width:54px;margin-top:4px"></div></div>
+          </div>
+        </div>`;
       header.insertAdjacentElement('afterend', loader);
     }
     const { loadAllCompletions } = await import('./habits.js');
