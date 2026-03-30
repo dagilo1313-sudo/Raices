@@ -19,6 +19,7 @@ window.logout                = logout;
 window.descargarBackup       = descargarBackup;
 window.onBackupFileSelected  = onBackupFileSelected;
 window.confirmarRestaurar    = confirmarRestaurar;
+window.confirmarRestaurarPopup = window.confirmarRestaurarPopup || (() => {});
 
 window.openCreateModal    = openCreateModal;
 window.closeModal         = closeModal;
@@ -39,8 +40,8 @@ window.switchView = (view) => {
   switchView(view);
   renderAll();
   if (view === 'perfil') {
-    const input = document.getElementById('perfil-nombre-input');
-    if (input) input.value = state.perfil.nombre || '';
+    const display = document.getElementById('perfil-nombre-display');
+    if (display) display.textContent = state.perfil.nombre || '—';
   }
   if (view === 'historico') renderHistorico();
 };
@@ -198,15 +199,16 @@ window.calNextMonth = () => {
 window.calGoToday = () => { state.selectedDate = null; renderAll(); };
 
 // ── Reset solo progreso ──
-function showConfirmPopup({ title, desc, btnLabel, btnClass, onConfirm }) {
+function showConfirmPopup({ title, desc, btnLabel, btnClass, keyword, onConfirm }) {
+  const kw = keyword || 'Confirmar';
   const ov = document.createElement('div');
   ov.style.cssText = 'position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.65);display:flex;align-items:center;justify-content:center;padding:24px;animation:fadeIn 0.2s ease';
   ov.innerHTML = `
     <div style="background:var(--card2);border:1px solid var(--border);border-radius:20px;padding:28px 24px;max-width:320px;width:100%;text-align:center;animation:popIn 0.35s cubic-bezier(0.34,1.56,0.64,1)">
       <div style="font-size:16px;font-weight:700;color:var(--text);margin-bottom:8px">${title}</div>
       <div style="font-size:13px;color:var(--muted);margin-bottom:6px;line-height:1.5">${desc}</div>
-      <div style="font-size:12px;color:var(--muted);margin-bottom:16px">Para continuar escribe <em style="color:var(--text)">"Confirmar"</em></div>
-      <input id="popup-confirm-input" class="input-field" placeholder="Confirmar" style="margin-bottom:14px;text-align:center">
+      <div style="font-size:12px;color:var(--muted);margin-bottom:16px">Para continuar escribe <em style="color:var(--text)">"${kw}"</em></div>
+      <input id="popup-confirm-input" class="input-field" placeholder="${kw}" style="margin-bottom:14px;text-align:center">
       <div style="display:flex;gap:8px">
         <button id="popup-cancel-btn" style="flex:1;background:transparent;border:1px solid var(--border);border-radius:var(--radius-md);padding:10px;font-size:13px;color:var(--muted);font-family:var(--font-body);cursor:pointer">Cancelar</button>
         <button id="popup-ok-btn" class="${btnClass}" style="flex:1;border-radius:var(--radius-md);padding:10px;font-size:13px;font-weight:700;font-family:var(--font-body);cursor:pointer">${btnLabel}</button>
@@ -216,7 +218,7 @@ function showConfirmPopup({ title, desc, btnLabel, btnClass, onConfirm }) {
   ov.querySelector('#popup-cancel-btn').onclick = () => ov.remove();
   ov.querySelector('#popup-ok-btn').onclick = async () => {
     const val = ov.querySelector('#popup-confirm-input').value.trim();
-    if (val !== 'Confirmar') { showToast('Escribe "Confirmar" exactamente'); return; }
+    if (val !== kw) { showToast(`Escribe "${kw}" exactamente`); return; }
     const btn = ov.querySelector('#popup-ok-btn');
     btn.disabled = true; btn.textContent = '...';
     await onConfirm();
@@ -232,6 +234,7 @@ window.showResetProgressConfirm = () => showConfirmPopup({
   desc: 'Se borrará tu XP, nivel y días perfectos. Los hábitos se conservan.',
   btnLabel: 'Borrar progreso',
   btnClass: 'btn btn-danger',
+  keyword: 'reiniciar progreso',
   onConfirm: async () => { await resetProgress(); renderAll(); showToast('Progreso eliminado 🍂'); }
 });
 
@@ -240,9 +243,59 @@ window.showResetConfirm1 = () => showConfirmPopup({
   desc: 'Se borrarán todos tus hábitos y progreso de forma permanente. Esta acción es irreversible.',
   btnLabel: 'Sí, borrar todo',
   btnClass: 'btn btn-danger',
+  keyword: 'reiniciar todo',
   onConfirm: async () => { await resetAllData(); renderAll(); showToast('Datos eliminados 🍂'); }
 });
 
+// ── Restaurar backup con popup igual que resets ──
+window.confirmarRestaurarPopup = () => showConfirmPopup({
+  title: 'Restaurar backup',
+  desc: 'Se sobreescribirán TODOS tus datos actuales (hábitos, progreso y registros). Esta acción es irreversible.',
+  btnLabel: 'Restaurar',
+  btnClass: 'btn btn-primary',
+  keyword: 'restaurar backup',
+  onConfirm: async () => { await confirmarRestaurar(); }
+});
+
+
+// ── Cambiar nombre (popup igual que cambiar contraseña) ──
+window.showChangeNombre = () => {
+  const ov = document.createElement('div');
+  ov.id = 'change-nombre-overlay';
+  ov.style.cssText = 'position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.65);display:flex;align-items:center;justify-content:center;padding:24px;animation:fadeIn 0.2s ease';
+  const current = state.perfil.nombre || '';
+  ov.innerHTML = `
+    <div style="background:var(--card2);border:1px solid var(--border);border-radius:20px;padding:28px 24px;max-width:320px;width:100%;animation:popIn 0.35s cubic-bezier(0.34,1.56,0.64,1)">
+      <div style="font-size:16px;font-weight:700;color:var(--text);margin-bottom:18px;text-align:center">Cambiar nombre</div>
+      <div class="msg-error" id="cn-error" style="margin-bottom:8px;display:none"></div>
+      <div class="msg-success" id="cn-success" style="margin-bottom:8px;display:none"></div>
+      <input class="input-field" id="cn-input" type="text" placeholder="Tu nombre" value="${current}" maxlength="30">
+      <button class="btn btn-primary" onclick="guardarNombrePopup()" style="width:100%;margin-bottom:8px">Guardar</button>
+      <button class="btn btn-secondary" onclick="document.getElementById('change-nombre-overlay').remove()" style="width:100%;margin-bottom:0">Cancelar</button>
+    </div>
+    <style>@keyframes popIn{from{transform:scale(0.8);opacity:0}to{transform:scale(1);opacity:1}}@keyframes fadeIn{from{opacity:0}to{opacity:1}}</style>`;
+  ov.addEventListener('click', e => { if (e.target === ov) ov.remove(); });
+  document.body.appendChild(ov);
+  setTimeout(() => { const i = document.getElementById('cn-input'); if(i){i.focus();i.select();} }, 100);
+};
+
+window.guardarNombrePopup = async () => {
+  const input = document.getElementById('cn-input');
+  const errEl = document.getElementById('cn-error');
+  const okEl  = document.getElementById('cn-success');
+  const nombre = input?.value?.trim();
+  if (!nombre) { if(errEl){errEl.textContent='Escribe un nombre.';errEl.style.display='block';} return; }
+  if(errEl) errEl.style.display='none';
+  try {
+    await guardarNombrePerfil(nombre);
+    const display = document.getElementById('perfil-nombre-display');
+    if (display) display.textContent = nombre;
+    if(okEl){okEl.textContent='Nombre actualizado ✓';okEl.style.display='block';}
+    setTimeout(() => { document.getElementById('change-nombre-overlay')?.remove(); }, 1200);
+  } catch(e) {
+    if(errEl){errEl.textContent='Error al guardar.';errEl.style.display='block';}
+  }
+};
 // ── Tareas ──
 window.onToggleTareas = () => {
   const panel = document.getElementById('tareas-panel');
@@ -328,16 +381,13 @@ window.onBorrarCompletadas = () => {
 };
 
 // ── Nombre perfil ──
-window.guardarNombrePerfil = async () => {
-  const input = document.getElementById('perfil-nombre-input');
-  const nombre = input?.value.trim();
+window.guardarNombrePerfil = async (nombreParam) => {
+  const nombre = nombreParam || document.getElementById('perfil-nombre-input')?.value.trim();
   if (!nombre) return;
   state.perfil.nombre = nombre;
   const { db } = await import('./firebase.js');
   const { doc, updateDoc } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
   await updateDoc(doc(db, 'users', state.currentUser.uid, 'profile', 'data'), { nombre });
-  const ok = document.getElementById('nombre-success');
-  if (ok) { ok.style.display = 'block'; setTimeout(() => { ok.style.display = 'none'; }, 2000); }
   renderAll();
 };
 
