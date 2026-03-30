@@ -469,8 +469,8 @@ function renderHabits() {
     return;
   }
 
-  const catOrder = Object.keys(CATEGORIES);
-  scheduled.sort((a, b) => (catOrder.indexOf(a.category) ?? 99) - (catOrder.indexOf(b.category) ?? 99));
+  // Ordenar por XP de mayor a menor
+  scheduled.sort((a, b) => (b.xp || 10) - (a.xp || 10));
 
   let html = '', lastCat = null;
   scheduled.forEach(h => {
@@ -506,7 +506,7 @@ export function renderHabitsList() {
     return;
   }
   const catOrder = Object.keys(CATEGORIES);
-  const sorted = [...state.habits].filter(h => !h.archivado).sort((a, b) => (catOrder.indexOf(a.category) ?? 99) - (catOrder.indexOf(b.category) ?? 99));
+  const sorted = [...state.habits].filter(h => !h.archivado).sort((a, b) => (b.xp || 10) - (a.xp || 10));
   let html = '', lastCat = null;
   sorted.forEach(h => {
     if (h.category !== lastCat) {
@@ -612,7 +612,7 @@ function renderLifetimeStats() {
   set('stat-nivel-actual', 'Nv.' + nivelActual);
 
   // Rango debajo del nivel
-  const CLASES_LABELS = ['Iniciado','Aprendiz','Guardián','Maestro','Sabio','Eterno'];
+  const CLASES_LABELS = ['Iniciado','Aprendiz','Guardán','Maestro','Sabio','Eterno'];
   const CLASES_COLORS = ['#6b7560','#8fb339','#5c8ae0','#c4a84f','#a05ce0','#e05c5c'];
   const claseLabel = CLASES_LABELS[claseIdx] || 'Iniciado';
   const claseColor = CLASES_COLORS[claseIdx] || '#6b7560';
@@ -620,6 +620,54 @@ function renderLifetimeStats() {
   const nivelEl = document.getElementById('stat-nivel-actual');
   if (rangoEl) { rangoEl.textContent = claseLabel; rangoEl.style.color = claseColor; }
   if (nivelEl) { nivelEl.style.color = claseColor; }
+
+  // ── Progreso al siguiente nivel ──
+  const calc = calcularNivel(xpTotal);
+  const nivelCard = document.getElementById('stat-nivel-card');
+  if (nivelCard) {
+    if (calc.esMaximo) {
+      set('stat-nivel-titulo', 'Nivel máximo alcanzado');
+      set('stat-nivel-subtitulo', claseLabel + ' · Nv.' + calc.nivel);
+      set('stat-nivel-pct', '100%');
+      set('stat-nivel-xp-actual', xpTotal.toLocaleString('es-ES') + ' XP totales');
+      set('stat-nivel-dias-restantes', '¡Eres un Eterno! 🌳');
+      const bar = document.getElementById('stat-nivel-bar');
+      if (bar) { bar.style.width = '100%'; bar.style.background = claseColor; }
+    } else {
+      const xpFalta = calc.xpSiguiente - calc.xpActual;
+      const pct = calc.pct;
+      const hace30 = (() => { const d = new Date(today()+'T12:00:00'); d.setDate(d.getDate()-30); return d.toISOString().split('T')[0]; })();
+      let xp30 = 0, dias30 = 0;
+      Object.keys(state.completions).forEach(k => {
+        if (k < hace30 || k === 'updatedAt' || !/^\d{4}-\d{2}-\d{2}$/.test(k)) return;
+        const d = state.completions[k];
+        if (!d || Array.isArray(d)) return;
+        const g = d.xpGanadoPorCat ? Object.values(d.xpGanadoPorCat).reduce((s,v)=>s+v,0) : 0;
+        xp30 += g; dias30++;
+      });
+      const xpDia30 = dias30 > 0 ? xp30 / dias30 : 0;
+      const diasEstimados = xpDia30 > 0 ? Math.ceil(xpFalta / xpDia30) : null;
+      set('stat-nivel-titulo', 'Nv.' + calc.nivel + ' → Nv.' + (calc.nivel + 1));
+      set('stat-nivel-subtitulo', claseLabel + ' · ' + calc.xpActual.toLocaleString('es-ES') + ' / ' + calc.xpSiguiente.toLocaleString('es-ES') + ' XP');
+      set('stat-nivel-pct', pct + '%');
+      set('stat-nivel-xp-actual', 'Faltan ' + xpFalta.toLocaleString('es-ES') + ' XP');
+      const diasEl = document.getElementById('stat-nivel-dias-restantes');
+      if (diasEl) {
+        if (diasEstimados !== null) {
+          diasEl.textContent = diasEstimados <= 1 ? '¡Hoy puedes subir! ⚡' : '~' + diasEstimados + ' días a este ritmo';
+          diasEl.style.color = diasEstimados <= 3 ? claseColor : 'var(--muted)';
+        } else {
+          diasEl.textContent = 'Sin datos de ritmo';
+          diasEl.style.color = 'var(--muted)';
+        }
+      }
+      const bar = document.getElementById('stat-nivel-bar');
+      if (bar) {
+        bar.style.width = pct + '%';
+        bar.style.background = pct >= 80 ? '#c4a84f' : claseColor;
+      }
+    }
+  }
 
   const keys = Object.keys(state.completions).filter(k => k !== 'updatedAt' && /^\d{4}-\d{2}-\d{2}$/.test(k));
   const sorted = keys.sort();
