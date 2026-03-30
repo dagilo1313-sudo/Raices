@@ -220,8 +220,22 @@ export async function toggleHabit(id) {
 
   const idx = state.completions[date].completados.indexOf(id);
 
+  // ── Helper: calcular estado bueno/perfecto del día actual ──
+  const calcDayState = () => {
+    const sched = state.habits.filter(h => !h.archivado && isScheduledForDate(h, date));
+    const esPerfecto = sched.length > 0 && sched.every(h => state.completions[date].completados.includes(h.id));
+    const d = state.completions[date];
+    const xpG = d.xpGanadoPorCat ? Object.values(d.xpGanadoPorCat).reduce((s,v)=>s+v,0) : 0;
+    const xpM = d.xpMaxPorCat    ? Object.values(d.xpMaxPorCat).reduce((s,v)=>s+v,0)    : 0;
+    const esBueno = xpM > 0 && xpG / xpM >= 0.8;
+    return { esPerfecto, esBueno };
+  };
+
+  // Estado ANTES del toggle
+  const antes = calcDayState();
+
   if (idx === -1) {
-    // Completar — sumar XP con increment atómico
+    // Completar
     state.completions[date].completados.push(id);
     const habit = state.habits.find(h => h.id === id);
     const xpGanado = habit ? (habit.xp || 10) : 10;
@@ -229,46 +243,37 @@ export async function toggleHabit(id) {
     const calcAntes = calcularNivel(state.perfil.xpTotal);
     state.perfil.xpTotal += xpGanado;
     const calcDespues = calcularNivel(state.perfil.xpTotal);
-
     const subioNivel = calcDespues.nivel > calcAntes.nivel || calcDespues.clase > calcAntes.clase;
     const subioRango = calcDespues.clase > calcAntes.clase;
-
     state.perfil.nivel = calcDespues.nivel;
     state.perfil.clase = calcDespues.clase;
 
-    // Actualizar XP snapshot del día
     recalcularXPSnapshot(date);
 
-    // Comprobar si hoy es día perfecto y día bueno tras completar
-    const scheduled = state.habits.filter(h => !h.archivado && isScheduledForDate(h, date));
-    const todayIsPerfect = scheduled.length > 0 && scheduled.every(h => state.completions[date].completados.includes(h.id));
-    const dayData = state.completions[date];
-    const xpG = dayData.xpGanadoPorCat ? Object.values(dayData.xpGanadoPorCat).reduce((s,v)=>s+v,0) : 0;
-    const xpM = dayData.xpMaxPorCat    ? Object.values(dayData.xpMaxPorCat).reduce((s,v)=>s+v,0)    : 0;
-    const todayIsBueno = xpM > 0 && xpG / xpM >= 0.8;
+    // Estado DESPUÉS del toggle
+    const despues = calcDayState();
 
-    // Guardar: XP con increment atómico, nivel/clase y días especiales
     const updates = {
       xpTotal: increment(xpGanado),
       nivel: calcDespues.nivel,
       clase: calcDespues.clase,
     };
 
-    if (todayIsPerfect) {
+    // Solo sumar si ANTES no era perfecto/bueno y AHORA sí
+    if (!antes.esPerfecto && despues.esPerfecto) {
       state.perfil.diasPerfectos += 1;
       updates.diasPerfectos = increment(1);
     }
-    if (todayIsBueno) {
+    if (!antes.esBueno && despues.esBueno) {
       state.perfil.diasBuenos = (state.perfil.diasBuenos || 0) + 1;
       updates.diasBuenos = increment(1);
     }
 
     await updateDoc(profileRef(), updates);
-
     return { xpGanado, subioNivel, subioRango, calcDespues };
 
   } else {
-    // Desmarcar — restar XP con increment negativo
+    // Desmarcar
     state.completions[date].completados.splice(idx, 1);
     const habit = state.habits.find(h => h.id === id);
     const xpGanado = habit ? (habit.xp || 10) : 10;
@@ -278,23 +283,18 @@ export async function toggleHabit(id) {
     state.perfil.nivel = calc.nivel;
     state.perfil.clase = calc.clase;
 
-    // Actualizar XP snapshot del día
     recalcularXPSnapshot(date);
 
-    // Comprobar si hoy sigue siendo día perfecto y día bueno tras desmarcar
-    const scheduledDes = state.habits.filter(h => !h.archivado && isScheduledForDate(h, date));
-    const siguePerf = scheduledDes.length > 0 && scheduledDes.every(h => state.completions[date].completados.includes(h.id));
-    const dayDataDes = state.completions[date];
-    const xpGdes = dayDataDes.xpGanadoPorCat ? Object.values(dayDataDes.xpGanadoPorCat).reduce((s,v)=>s+v,0) : 0;
-    const xpMdes = dayDataDes.xpMaxPorCat    ? Object.values(dayDataDes.xpMaxPorCat).reduce((s,v)=>s+v,0)    : 0;
-    const sigueBueno = xpMdes > 0 && xpGdes / xpMdes >= 0.8;
+    // Estado DESPUÉS del toggle
+    const despues = calcDayState();
 
     const dpUpdates = {};
-    if (!siguePerf && state.perfil.diasPerfectos > 0) {
+    // Solo restar si ANTES era perfecto/bueno y AHORA ya no
+    if (antes.esPerfecto && !despues.esPerfecto && state.perfil.diasPerfectos > 0) {
       state.perfil.diasPerfectos -= 1;
       dpUpdates.diasPerfectos = increment(-1);
     }
-    if (!sigueBueno && (state.perfil.diasBuenos || 0) > 0) {
+    if (antes.esBueno && !despues.esBueno && (state.perfil.diasBuenos || 0) > 0) {
       state.perfil.diasBuenos -= 1;
       dpUpdates.diasBuenos = increment(-1);
     }
