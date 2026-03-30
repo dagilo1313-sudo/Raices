@@ -44,7 +44,11 @@ window.switchView = (view) => {
     if (display) display.textContent = state.perfil.nombre || '—';
   }
   if (view === 'historico') renderHistorico();
-  if (view === 'stats') renderStats();
+  if (view === 'stats') {
+    // Forzar recálculo completo cada vez que se abre Stats
+    state.statsLoaded = false;
+    renderStats();
+  }
 };
 window.setFilter  = (filter) => { state.activeFilter = filter; renderAll(); };
 

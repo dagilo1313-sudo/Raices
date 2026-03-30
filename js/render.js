@@ -96,16 +96,6 @@ function renderViajero() {
   const vEficiencia   = vXpEficDays > 0 ? Math.round(vXpEficSum/vXpEficDays*100) : 0;
   set('viajero-stat-eficiencia', vEficiencia + '%');
   set('viajero-stat-consistencia', vConsistencia + '%');
-btnNueva.onmouseleave = () => { btnNueva.style.boxShadow = ''; };
-    } else {
-      btnNueva.style.background = '';
-      btnNueva.style.borderColor = '';
-      btnNueva.style.color = '';
-      btnNueva.onmouseenter = null;
-      btnNueva.onmouseleave = null;
-      btnNueva.style.boxShadow = '';
-    }
-  }
   // Navbar HOY gold solo cuando estamos en la vista hoy
   const navHoy = document.getElementById('nav-hoy');
   const enHoy = document.getElementById('view-hoy')?.classList.contains('active');
