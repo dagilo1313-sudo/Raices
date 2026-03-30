@@ -165,7 +165,8 @@ window.onDeleteHabit = (id) => {
       </div>
     </div>
     <style>@keyframes popIn{from{transform:scale(0.8);opacity:0}to{transform:scale(1);opacity:1}}</style>`;
-  const close = () => overlay.remove();
+  const close = () => { overlay.remove(); unlockScroll(); };
+  lockScroll();
   overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
   overlay.querySelector('#btn-cancel-del').addEventListener('click', close);
   overlay.querySelector('#btn-confirm-del').addEventListener('click', async () => {
@@ -356,7 +357,8 @@ window.onAddTarea = () => {
       <style>@keyframes popIn{from{transform:scale(0.8);opacity:0}to{transform:scale(1);opacity:1}}</style>
     </div>`;
   overlay.dataset.overlay = '1';
-  overlay.querySelector('#btn-cancel-tarea').onclick = () => overlay.remove();
+  lockScroll();
+  overlay.querySelector('#btn-cancel-tarea').onclick = () => { overlay.remove(); unlockScroll(); };
   let esUrgente = false;
   window.setUrgencia = (u) => {
     esUrgente = u;
@@ -367,13 +369,13 @@ window.onAddTarea = () => {
     const nombre = document.getElementById('nueva-tarea-input').value.trim();
     if (!nombre) return;
     await createTarea(nombre, esUrgente);
-    overlay.remove();
+    overlay.remove(); unlockScroll();
     // Asegurar panel abierto
     const panel = document.getElementById('tareas-panel');
     if (panel && panel.style.display === 'none') window.onToggleTareas();
     renderTareas();
   };
-  overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
+  overlay.addEventListener('click', e => { if (e.target === overlay) { overlay.remove(); unlockScroll(); } });
   // Enter para confirmar
   overlay.querySelector('input').addEventListener('keydown', e => { if (e.key === 'Enter') window.submitTarea(); });
   document.body.appendChild(overlay);
@@ -390,18 +392,19 @@ window.onBorrarCompletadas = () => {
       <div style="font-size:16px;font-weight:600;color:var(--text);margin-bottom:8px">¿Borrar completadas?</div>
       <div style="font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.5">Se eliminarán ${completadas} tarea${completadas>1?'s':''} completada${completadas>1?'s':''}. Las pendientes se conservan.</div>
       <div style="display:flex;gap:8px">
-        <button onclick="this.closest('[data-overlay]').remove()" style="flex:1;background:transparent;border:1px solid var(--border);border-radius:var(--radius-md);padding:10px;font-size:13px;color:var(--muted);font-family:var(--font-body);cursor:pointer">Cancelar</button>
+        <button onclick="this.closest('[data-overlay]').remove(); window._unlockScroll && window._unlockScroll()" style="flex:1;background:transparent;border:1px solid var(--border);border-radius:var(--radius-md);padding:10px;font-size:13px;color:var(--muted);font-family:var(--font-body);cursor:pointer">Cancelar</button>
         <button id="btn-ok-borrar" style="flex:1;background:rgba(179,92,79,0.15);border:1px solid rgba(179,92,79,0.4);border-radius:var(--radius-md);padding:10px;font-size:13px;font-weight:600;color:#b35c4f;font-family:var(--font-body);cursor:pointer">Borrar</button>
       </div>
     </div>`;
   overlay.dataset.overlay = '1';
   overlay.querySelector('#btn-ok-borrar').addEventListener('click', async () => {
     await borrarTareasCompletadas();
-    overlay.remove();
+    overlay.remove(); unlockScroll();
     renderTareas();
     showToast('Tareas eliminadas 🍂');
   });
-  overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
+  lockScroll();
+  overlay.addEventListener('click', e => { if (e.target === overlay) { overlay.remove(); unlockScroll(); } });
   document.body.appendChild(overlay);
 };
 

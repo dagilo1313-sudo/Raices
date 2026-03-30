@@ -22,6 +22,7 @@ export function openCreateModal() {
   document.getElementById('habit-name-input').value = '';
   document.getElementById('btn-modal-submit').textContent = 'Plantar hábito 🌱';
   renderModalInternals();
+  window._lockScroll && window._lockScroll();
   document.getElementById('modal').classList.add('open');
 }
 
@@ -38,11 +39,13 @@ export function openEditModal(id) {
   document.getElementById('habit-name-input').value = habit.name;
   document.getElementById('btn-modal-submit').textContent = 'Guardar cambios ✓';
   renderModalInternals();
+  window._lockScroll && window._lockScroll();
   document.getElementById('modal').classList.add('open');
 }
 
 // ── Cerrar modal ──
 export function closeModal() {
+  window._unlockScroll && window._unlockScroll();
   document.getElementById('modal').classList.remove('open');
 }
 
