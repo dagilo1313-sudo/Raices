@@ -534,7 +534,7 @@ body::before {
 /* ── Icono SVG de categoría con mask ── */
 .habit-cat-icon {
   display: inline-block;
-  width: 25px;
-  height: 25px;
+  width: 18px;
+  height: 18px;
   flex-shrink: 0;
 }

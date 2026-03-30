@@ -179,7 +179,7 @@
 
     <!-- Última sync discreta -->
     <div id="last-sync" style="text-align:center;font-size:10px;color:var(--border);padding:4px 0 2px"></div>
-    <div style="text-align:center;font-size:9px;color:var(--border);padding:0 0 12px;letter-spacing:1px">v51</div>
+    <div style="text-align:center;font-size:9px;color:var(--border);padding:0 0 12px;letter-spacing:1px">v52</div>
   </div>
 
   <!-- ══ HÁBITOS ══ -->
@@ -562,6 +562,22 @@
         <div style="font-size:13px;color:var(--muted);margin-bottom:12px;line-height:1.5">Borra todos tus hábitos y progreso de forma permanente.</div>
         <button class="btn btn-danger" style="margin-bottom:0" onclick="showResetConfirm1()">Reiniciar todo</button>
       </div>
+      <!-- Resumen mensual y backup -->
+      <div class="card">
+        <div class="card-title">Resumen mensual</div>
+        <div style="font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.6">Genera un resumen de los últimos 30 días y ábrelo en tu cliente de correo para enviártelo.</div>
+        <input class="input-field" id="resumen-email-input" type="email" placeholder="tu@correo.com" style="margin-bottom:10px">
+        <button class="btn btn-primary" style="margin-bottom:0" onclick="enviarResumenMensual()">Abrir resumen en correo ↗</button>
+        <div class="msg-success" id="resumen-ok" style="display:none;margin-top:8px">Abriendo tu cliente de correo...</div>
+        <div class="msg-success" id="resumen-err" style="display:none;margin-top:8px;color:#e05c5c">Introduce un email válido.</div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Backup de datos</div>
+        <div style="font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.6">Descarga todos tus hábitos, progreso y registros diarios en un archivo JSON.</div>
+        <button class="btn btn-secondary" style="margin-bottom:0" onclick="descargarBackup()">Descargar backup completo ↓</button>
+      </div>
+
       <div class="card">
         <button class="btn btn-danger" onclick="logout()" style="margin-bottom:0">Cerrar sesión</button>
       </div>
