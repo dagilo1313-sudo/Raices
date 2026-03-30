@@ -180,6 +180,7 @@ export function openIconPicker() {
   _pickerTempIcon = selectedEmoji;
   const overlay = document.getElementById('icon-picker-overlay');
   if (!overlay) return;
+  window._lockScroll && window._lockScroll();
   overlay.classList.add('open');
   _renderIconPickerTabs();
   _updateIconPickerFooter();
@@ -188,6 +189,7 @@ export function openIconPicker() {
 export function closeIconPicker() {
   const overlay = document.getElementById('icon-picker-overlay');
   if (overlay) overlay.classList.remove('open');
+  window._unlockScroll && window._unlockScroll();
 }
 
 export function confirmIconPicker() {

@@ -119,12 +119,14 @@ export function showChangePassword() {
     </div>
     <style>@keyframes popIn{from{transform:scale(0.8);opacity:0}to{transform:scale(1);opacity:1}}@keyframes fadeIn{from{opacity:0}to{opacity:1}}</style>`;
   ov.addEventListener('click', e => { if (e.target === ov) hideChangePassword(); });
+  window._lockScroll && window._lockScroll();
   document.body.appendChild(ov);
 }
 
 export function hideChangePassword() {
   const ov = document.getElementById('change-password-overlay');
   if (ov) ov.remove();
+  window._unlockScroll && window._unlockScroll();
 }
 
 export async function changePassword() {

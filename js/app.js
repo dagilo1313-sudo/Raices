@@ -1,3 +1,15 @@
+// ── Scroll lock para popups ──
+function lockScroll() {
+  document.body.style.overflow = 'hidden';
+  document.body.style.touchAction = 'none';
+}
+function unlockScroll() {
+  document.body.style.overflow = '';
+  document.body.style.touchAction = '';
+}
+window._lockScroll   = lockScroll;
+window._unlockScroll = unlockScroll;
+
 import { initAuth, toggleAuthMode, handleAuth, showForgotPassword, showLoginForm, sendResetEmail, showChangePassword, hideChangePassword, changePassword, logout } from './auth.js';
 import { toggleHabit, deleteHabit, saveCompletions, resetAllData, resetProgress, createTarea, toggleTarea, borrarTareasCompletadas, getCompletadosForDate, loadAllCompletions, loadMonthCompletions } from './habits.js';
 import { renderAll, renderHabitsList, renderTareas, renderHistorico, renderStats } from './render.js';
@@ -226,16 +238,17 @@ function showConfirmPopup({ title, desc, btnLabel, btnClass, keyword, onConfirm 
       </div>
     </div>
     <style>@keyframes popIn{from{transform:scale(0.8);opacity:0}to{transform:scale(1);opacity:1}}</style>`;
-  ov.querySelector('#popup-cancel-btn').onclick = () => ov.remove();
+  ov.querySelector('#popup-cancel-btn').onclick = () => { ov.remove(); unlockScroll(); };
   ov.querySelector('#popup-ok-btn').onclick = async () => {
     const val = ov.querySelector('#popup-confirm-input').value.trim();
     if (val !== kw) { showToast(`Escribe "${kw}" exactamente`); return; }
     const btn = ov.querySelector('#popup-ok-btn');
     btn.disabled = true; btn.textContent = '...';
     await onConfirm();
-    ov.remove();
+    ov.remove(); unlockScroll();
   };
-  ov.addEventListener('click', e => { if (e.target === ov) ov.remove(); });
+  ov.addEventListener('click', e => { if (e.target === ov) { ov.remove(); unlockScroll(); } });
+  lockScroll();
   document.body.appendChild(ov);
   setTimeout(() => ov.querySelector('#popup-confirm-input').focus(), 100);
 }
@@ -282,10 +295,11 @@ window.showChangeNombre = () => {
       <div class="msg-success" id="cn-success" style="margin-bottom:8px;display:none"></div>
       <input class="input-field" id="cn-input" type="text" placeholder="Tu nombre" value="${current}" maxlength="30">
       <button class="btn btn-primary" onclick="guardarNombrePopup()" style="width:100%;margin-bottom:8px">Guardar</button>
-      <button class="btn btn-secondary" onclick="document.getElementById('change-nombre-overlay').remove()" style="width:100%;margin-bottom:0">Cancelar</button>
+      <button class="btn btn-secondary" onclick="document.getElementById('change-nombre-overlay').remove(); window._unlockScroll && window._unlockScroll()" style="width:100%;margin-bottom:0">Cancelar</button>
     </div>
     <style>@keyframes popIn{from{transform:scale(0.8);opacity:0}to{transform:scale(1);opacity:1}}@keyframes fadeIn{from{opacity:0}to{opacity:1}}</style>`;
-  ov.addEventListener('click', e => { if (e.target === ov) ov.remove(); });
+  ov.addEventListener('click', e => { if (e.target === ov) { ov.remove(); unlockScroll(); } });
+  lockScroll();
   document.body.appendChild(ov);
   setTimeout(() => { const i = document.getElementById('cn-input'); if(i){i.focus();i.select();} }, 100);
 };
@@ -302,7 +316,7 @@ window.guardarNombrePopup = async () => {
     const display = document.getElementById('perfil-nombre-display');
     if (display) display.textContent = nombre;
     if(okEl){okEl.textContent='Nombre actualizado ✓';okEl.style.display='block';}
-    setTimeout(() => { document.getElementById('change-nombre-overlay')?.remove(); }, 1200);
+    setTimeout(() => { document.getElementById('change-nombre-overlay')?.remove(); window._unlockScroll && window._unlockScroll(); }, 1200);
   } catch(e) {
     if(errEl){errEl.textContent='Error al guardar.';errEl.style.display='block';}
   }

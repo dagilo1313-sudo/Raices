@@ -525,7 +525,7 @@ export async function renderStats() {
 
       const loader = document.createElement('div');
       loader.id = 'stats-loader';
-      loader.style.cssText = 'display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px 24px;gap:18px';
+      loader.style.cssText = 'display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;gap:18px';
 
       loader.innerHTML = `
         <style>
@@ -542,8 +542,7 @@ export async function renderStats() {
           <div style="font-size:30px;position:relative;z-index:2;animation:stats-leaf-bounce 2s ease-in-out infinite">🌱</div>
         </div>
         <div style="display:flex;flex-direction:column;align-items:center;gap:5px">
-          <div style="font-size:10px;color:var(--accent);letter-spacing:2.5px;text-transform:uppercase;animation:stats-txt-fade 1.8s ease-in-out infinite">Cargando historial</div>
-          <div style="font-size:9px;color:var(--muted)">Analizando tu progreso</div>
+          <div style="font-size:13px;color:var(--accent);letter-spacing:2.5px;text-transform:uppercase;animation:stats-txt-fade 1.8s ease-in-out infinite">Cargando historial</div>
         </div>`;
 
       header?.insertAdjacentElement('afterend', loader);
@@ -626,8 +625,8 @@ export async function renderStats() {
       });
     }
     const { loadAllCompletions } = await import('./habits.js');
-    await new Promise(r => setTimeout(r, 2000)); // delay testing
     await loadAllCompletions();
+    await new Promise(r => setTimeout(r, 1000)); // 1s extra tras obtener datos
     // Parar animación orbital y restaurar contenido
     if (window._statsOrbitStop) { window._statsOrbitStop(); window._statsOrbitStop = null; }
     const statsView2 = document.getElementById('view-stats');
