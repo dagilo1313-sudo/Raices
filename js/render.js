@@ -72,16 +72,49 @@ function renderViajero() {
     nivelBadgeEl.style.background = claseData.color + '18';
   }
 
-  // Días perfectos y buenos — desde perfil (sin recalcular historial)
+  // Días perfectos y buenos — siempre dorados, desde perfil
   const vDiasPerfectos = state.perfil.diasPerfectos || 0;
   const vDiasBuenos    = state.perfil.diasBuenos    || 0;
-
-  const perfEl = document.getElementById('viajero-stat-perfectos');
-  if (perfEl) { perfEl.textContent = vDiasPerfectos; perfEl.style.color = 'var(--accent2)'; }
+  set('viajero-stat-perfectos', vDiasPerfectos);
   set('viajero-stat-buenos', vDiasBuenos);
 
-  // Eficiencia XP y consistencia — solo del mes actual (máx 31 días en memoria)
-  const currentMonthPrefix = today().substring(0, 7); // 'YYYY-MM'
+  // Rachas actuales — recorrer días hacia atrás desde hoy (solo mes en memoria)
+  let rachaPerfActual = 0, rachaBuenosActual = 0;
+  let perfStop = false, buenosStop = false;
+  for (let i = 0; i <= 90; i++) {
+    const d = new Date(todayStr + 'T12:00:00');
+    d.setDate(d.getDate() - i);
+    const ds = d.toISOString().split('T')[0];
+    const dayData = state.completions[ds];
+    if (!dayData || Array.isArray(dayData)) {
+      if (ds === todayStr) continue; // hoy puede no tener snapshot aún
+      if (!perfStop) perfStop = true;
+      if (!buenosStop) buenosStop = true;
+      if (perfStop && buenosStop) break;
+      continue;
+    }
+    const comp = Array.isArray(dayData.completados) ? dayData.completados.length : 0;
+    const plan = Array.isArray(dayData.planificados) ? dayData.planificados.length : 0;
+    const xpG = dayData.xpGanadoPorCat ? Object.values(dayData.xpGanadoPorCat).reduce((s,v)=>s+v,0) : 0;
+    const xpM = dayData.xpMaxPorCat    ? Object.values(dayData.xpMaxPorCat).reduce((s,v)=>s+v,0)    : 0;
+    if (!perfStop) {
+      if (plan > 0 && comp === plan) rachaPerfActual++;
+      else { perfStop = true; }
+    }
+    if (!buenosStop) {
+      if (xpM > 0 && xpG / xpM >= 0.8) rachaBuenosActual++;
+      else { buenosStop = true; }
+    }
+    if (perfStop && buenosStop) break;
+  }
+  set('viajero-racha-perfectos', rachaPerfActual);
+  set('viajero-racha-buenos', rachaBuenosActual);
+
+  // Color dinámico según día perfecto
+  const accentColor = isPerfectToday ? 'var(--accent2)' : 'var(--accent)';
+
+  // Eficiencia XP y consistencia — solo del mes actual
+  const currentMonthPrefix = today().substring(0, 7);
   let vRatioSum=0, vRatioDays=0, vXpEficSum=0, vXpEficDays=0;
   Object.entries(state.completions).forEach(([k, d]) => {
     if (!k.startsWith(currentMonthPrefix) || !d || Array.isArray(d)) return;
@@ -94,8 +127,13 @@ function renderViajero() {
   });
   const vConsistencia = vRatioDays > 0 ? Math.round(vRatioSum/vRatioDays*100) : 0;
   const vEficiencia   = vXpEficDays > 0 ? Math.round(vXpEficSum/vXpEficDays*100) : 0;
-  set('viajero-stat-eficiencia', vEficiencia + '%');
-  set('viajero-stat-consistencia', vConsistencia + '%');
+
+  // Eficiencia y consistencia — doradas en día perfecto
+  const eficienciaEl = document.getElementById('viajero-stat-eficiencia');
+  const consistenciaEl = document.getElementById('viajero-stat-consistencia');
+  if (eficienciaEl)   { eficienciaEl.textContent = vEficiencia + '%';   eficienciaEl.style.color = accentColor; }
+  if (consistenciaEl) { consistenciaEl.textContent = vConsistencia + '%'; consistenciaEl.style.color = accentColor; }
+
   // Navbar HOY gold solo cuando estamos en la vista hoy
   const navHoy = document.getElementById('nav-hoy');
   const enHoy = document.getElementById('view-hoy')?.classList.contains('active');
@@ -103,24 +141,46 @@ function renderViajero() {
 
   // Cuadrado 3en1 de HOY
   const xpHoyTriple = xpHoy;
-  const xpMaxTriple = xpMaxHoy;
   const pctTriple = exitoPct;
   const completadosHoy = scheduledHoy.filter(h => isCompleted(h.id, todayStr)).length;
-  const gold3 = isPerfectToday ? 'var(--accent2)' : 'var(--accent)';
   const setTriple = (id, val, color) => {
     const el = document.getElementById(id);
     if (el) { el.textContent = val; el.style.color = color || ''; }
   };
-  setTriple('hoy-stat-done', `${completadosHoy}/${scheduledHoy.length}`, gold3);
-  setTriple('hoy-stat-xp', `+${xpHoyTriple} XP`, gold3);
-  setTriple('hoy-stat-pct', `${pctTriple}%`, gold3);
+  setTriple('hoy-stat-done', `${completadosHoy}/${scheduledHoy.length}`, accentColor);
+  setTriple('hoy-stat-xp', `+${xpHoyTriple} XP`, accentColor);
+  setTriple('hoy-stat-pct', `${pctTriple}%`, accentColor);
   const triple = document.getElementById('hoy-triple');
   if (triple) {
     triple.style.borderColor = isPerfectToday ? 'rgba(196,168,79,0.35)' : '';
   }
-  // XP label gold
+  // XP label — dorado en día perfecto
   const xpLabelEl = document.getElementById('viajero-xp-label');
-  if (xpLabelEl) xpLabelEl.style.color = isPerfectToday ? 'var(--accent2)' : '';
+  if (xpLabelEl) xpLabelEl.style.color = accentColor;
+
+  // Barra XP fill — dorada en día perfecto
+  const xpFillEl = document.getElementById('viajero-xp-fill');
+  if (xpFillEl) xpFillEl.style.background = accentColor;
+
+  // Barra lateral del viajero — dorada en día perfecto
+  const viajeroCard = document.querySelector('.viajero-card');
+  if (viajeroCard) {
+    viajeroCard.style.borderColor = isPerfectToday ? 'rgba(196,168,79,0.4)' : '';
+    // Barra lateral via style tag
+    let latStyle = document.getElementById('viajero-lat-style');
+    if (!latStyle) { latStyle = document.createElement('style'); latStyle.id = 'viajero-lat-style'; document.head.appendChild(latStyle); }
+    latStyle.textContent = isPerfectToday
+      ? '.viajero-card::before { background: var(--accent2) !important; }'
+      : '.viajero-card::before { background: var(--accent) !important; }';
+  }
+
+  // Tareas toggle — dorado en día perfecto
+  const tareasToggle = document.getElementById('tareas-toggle');
+  if (tareasToggle) {
+    tareasToggle.style.borderColor = isPerfectToday ? 'rgba(196,168,79,0.35)' : '';
+    const tareasTitle = document.getElementById('tareas-titulo');
+    if (tareasTitle) tareasTitle.style.color = accentColor;
+  }
 
 
 }
