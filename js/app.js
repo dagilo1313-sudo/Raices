@@ -4,7 +4,7 @@ import { renderAll, renderHabitsList, renderTareas, renderHistorico } from './re
 import { showToast, showConfetti, showXPFloat, switchView } from './ui.js';
 import { openCreateModal, openEditModal, closeModal, closeModalOutside, submitModal, selectEmoji, selectNoIcon, selectCategory, selectXP, toggleDay, selectAllDays, openIconPicker, closeIconPicker, confirmIconPicker, clearIconPicker } from './modal.js';
 import { state, getCompletionMessage, today, CLASES } from './state.js';
-import { descargarBackup } from './resumen.js';
+import { descargarBackup, onBackupFileSelected, confirmarRestaurar } from './resumen.js';
 
 // ── Exponer funciones al HTML ──
 window.toggleAuthMode     = toggleAuthMode;
@@ -17,6 +17,8 @@ window.hideChangePassword = hideChangePassword;
 window.changePassword     = changePassword;
 window.logout                = logout;
 window.descargarBackup       = descargarBackup;
+window.onBackupFileSelected  = onBackupFileSelected;
+window.confirmarRestaurar    = confirmarRestaurar;
 
 window.openCreateModal    = openCreateModal;
 window.closeModal         = closeModal;

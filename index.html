@@ -179,7 +179,7 @@
 
     <!-- Última sync discreta -->
     <div id="last-sync" style="text-align:center;font-size:10px;color:var(--border);padding:4px 0 2px"></div>
-    <div style="text-align:center;font-size:9px;color:var(--border);padding:0 0 12px;letter-spacing:1px">v53</div>
+    <div style="text-align:center;font-size:9px;color:var(--border);padding:0 0 12px;letter-spacing:1px">v54</div>
   </div>
 
   <!-- ══ HÁBITOS ══ -->
@@ -554,7 +554,16 @@
       <div class="card">
         <div class="card-title">Backup de datos</div>
         <div style="font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.6">Descarga todos tus hábitos, progreso y registros diarios en un archivo JSON.</div>
-        <button class="btn btn-secondary" style="margin-bottom:0" onclick="descargarBackup()">Descargar backup completo ↓</button>
+        <button class="btn btn-secondary" style="margin-bottom:12px" onclick="descargarBackup()">Descargar backup completo ↓</button>
+
+        <div style="height:1px;background:var(--border);margin-bottom:14px"></div>
+
+        <div style="font-size:13px;color:var(--muted);margin-bottom:12px;line-height:1.6">Restaura un backup anterior. Se sobreescribirán todos tus datos actuales.</div>
+        <input type="file" id="backup-file-input" accept=".json" style="display:none" onchange="onBackupFileSelected(this)">
+        <button class="btn btn-secondary" style="margin-bottom:8px" onclick="document.getElementById('backup-file-input').click()">Seleccionar archivo de backup</button>
+        <div id="backup-filename" style="font-size:11px;color:var(--muted);margin-bottom:8px;display:none"></div>
+        <button class="btn btn-primary" id="btn-restaurar" style="display:none;margin-bottom:8px" onclick="confirmarRestaurar()">Restaurar backup ↑</button>
+        <div id="backup-status" style="font-size:12px;margin-top:4px;display:none"></div>
       </div>
 
       <div class="card">
