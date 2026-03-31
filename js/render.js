@@ -1289,53 +1289,48 @@ function renderStatsForDate(dateStr) {
   renderCatStats(dateStr, habitsSource);
 }
 
-function renderStatsDayHabits(dateStr, completedIds, scheduledHabits) {
+function renderStatsDayHabits(dateStr, completedIds, scheduledHabits) { // completedIds ya viene como array limpio
   const sl = document.getElementById('stats-day-habits');
   if (!sl) return;
   const isPerfectDay = scheduledHabits.length > 0 && scheduledHabits.every(h => completedIds.includes(h.id));
   sl.classList.toggle('perfect-day', isPerfectDay);
   const isToday = dateStr === today();
   if (!scheduledHabits.length) {
-    sl.innerHTML = '<div class="empty-state"><div class="empty-icon">📅</div><div class="empty-text">Sin hábitos programados para este día.</div></div>';
+    sl.innerHTML = `<div class="empty-state"><div class="empty-icon">📅</div><div class="empty-text">Sin hábitos programados para este día.</div></div>`;
     return;
   }
-
-  const CAT = ['fisico','disciplina','energia','inteligencia','identidad'];
-  const cmp = (a, b) => {
-    const ca = CAT.includes(a.category) ? CAT.indexOf(a.category) : 99;
-    const cb = CAT.includes(b.category) ? CAT.indexOf(b.category) : 99;
-    if (ca !== cb) return ca - cb;
-    return (b.xp || 10) - (a.xp || 10);
-  };
-
-  const grupoComp = scheduledHabits.filter(h =>  completedIds.includes(h.id)).sort(cmp);
-  const grupoPend = scheduledHabits.filter(h => !completedIds.includes(h.id)).sort(cmp);
-  const ordenados = [...grupoComp, ...grupoPend];
+  const catOrder = Object.keys(CATEGORIES);
+  // Ordenar: por categoría, y dentro completados primero
+  const ordenados = [...scheduledHabits].sort((a, b) => {
+    const catA = catOrder.indexOf(a.category);
+    const catB = catOrder.indexOf(b.category);
+    if (catA !== catB) return catA - catB;
+    const doneA = completedIds.includes(a.id) ? 0 : 1;
+    const doneB = completedIds.includes(b.id) ? 0 : 1;
+    return doneA - doneB;
+  });
 
   let html = '';
-  let inPendientes = false;
   let lastCat = null;
-
   ordenados.forEach(h => {
     const done = completedIds.includes(h.id);
-    if (!done && !inPendientes && grupoComp.length > 0 && grupoPend.length > 0) {
-      inPendientes = true;
-      lastCat = null;
-      html += '<div style="height:1px;background:var(--border);margin:8px 0;opacity:0.5"></div>';
-    }
     const cat = CATEGORIES[h.category] || CATEGORIES.disciplina;
     if (h.category !== lastCat) {
-      html += '<div class="cat-group-label cat-' + h.category + '">' + cat.label + '</div>';
+      if (lastCat !== null) html += '';
+      html += `<div class="cat-group-label cat-${h.category}">${cat.label}</div>`;
       lastCat = h.category;
     }
-    html += '<div class="habit-card ' + (done?'done':'') + '" style="cursor:default">'
-      + habitIconHTML(h)
-      + '<div class="habit-info"><div class="habit-name">' + h.name + '</div>'
-      + '<div class="habit-meta">'
-      + (isToday ? '<span class="xp-badge xp-' + h.xp + '">+' + h.xp + ' XP</span>' : '')
-      + '</div></div>'
-      + '<div class="check-circle" style="flex-shrink:0">' + (done?'✓':'') + '</div>'
-      + '</div>';
+    html += `
+      <div class="habit-card ${done?'done':''}" style="cursor:default">
+        ${habitIconHTML(h)}
+        <div class="habit-info">
+          <div class="habit-name">${h.name}</div>
+          <div class="habit-meta">
+            ${isToday ? `<span class="xp-badge xp-${h.xp}">+${h.xp} XP</span>` : ''}
+          </div>
+        </div>
+        <div class="check-circle" style="flex-shrink:0">${done?'✓':''}</div>
+      </div>`;
   });
   sl.innerHTML = html;
 }
@@ -1378,6 +1373,38 @@ function renderCatStats(dateStr, habitsSource) {
       </div>`;
   }).join('');
 
+  // Todos los hábitos del día debajo: completados primero, luego pendientes
+  // Cada bloque ordenado por categoría: fisico → disciplina → energia → inteligencia → identidad
+  const allScheduled = habitsSource.filter(h => isScheduledForDate(h, dateStr));
+  const _cdAll = getCompletadosForDate(dateStr);
+  const _CAT = ['fisico','disciplina','energia','inteligencia','identidad'];
+  const _sortCat = (a, b) => {
+    const ia = _CAT.indexOf(a.category); const ib = _CAT.indexOf(b.category);
+    return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib);
+  };
+  const allOrdenados = [
+    ...allScheduled.filter(h =>  _cdAll.includes(h.id)).sort(_sortCat),
+    ...allScheduled.filter(h => !_cdAll.includes(h.id)).sort(_sortCat),
+  ];
+  const completedIds2 = _cdAll;
+  if (allOrdenados.length) {
+    cl.innerHTML += allOrdenados.map(h => {
+      const isDone = completedIds2.includes(h.id);
+      const cat = CATEGORIES[h.category] || CATEGORIES.disciplina;
+      return `
+        <div class="habit-card ${isDone?'done':''}" style="cursor:default;margin-bottom:6px">
+          ${habitIconHTML(h)}
+          <div class="habit-info">
+            <div class="habit-name">${h.name}</div>
+            <div class="habit-meta">
+              <span class="cat-badge cat-${h.category}">${cat.label}</span>
+              ${isToday ? `<span class="xp-badge xp-${h.xp}">+${h.xp} XP</span>` : ''}
+            </div>
+          </div>
+          <div class="check-circle" style="flex-shrink:0">${isDone?'✓':''}</div>
+        </div>`;
+    }).join('');
+  }
 }
 
 // ── Panel de rangos ──
