@@ -1301,6 +1301,9 @@ function renderStatsDayHabits(dateStr, completedIds, scheduledHabits) { // compl
   }
   const catOrder = ['fisico','disciplina','energia','inteligencia','identidad'];
 
+  // DEBUG — ver qué categorías tienen los hábitos
+  console.log('scheduledHabits:', scheduledHabits.map(h => ({name: h.name, cat: h.category, xp: h.xp})));
+
   // Paso 1: separar
   const grupoComp = [];
   const grupoPend = [];
