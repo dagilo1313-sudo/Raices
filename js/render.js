@@ -638,7 +638,6 @@ export async function renderStats() {
     }
     const { loadAllCompletions } = await import('./habits.js');
     await loadAllCompletions();
-    await new Promise(r => setTimeout(r, 1000)); // 1s extra tras obtener datos
     // Parar animación orbital y restaurar contenido
     if (window._statsOrbitStop) { window._statsOrbitStop(); window._statsOrbitStop = null; }
     const statsView2 = document.getElementById('view-stats');
