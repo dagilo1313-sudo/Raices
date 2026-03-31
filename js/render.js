@@ -1289,7 +1289,7 @@ function renderStatsForDate(dateStr) {
   renderCatStats(dateStr, habitsSource);
 }
 
-function renderStatsDayHabits(dateStr, completedIds, scheduledHabits) { // completedIds ya viene como array limpio
+function renderStatsDayHabits(dateStr, completedIds, scheduledHabits) {
   const sl = document.getElementById('stats-day-habits');
   if (!sl) return;
   const isPerfectDay = scheduledHabits.length > 0 && scheduledHabits.every(h => completedIds.includes(h.id));
@@ -1299,34 +1299,22 @@ function renderStatsDayHabits(dateStr, completedIds, scheduledHabits) { // compl
     sl.innerHTML = `<div class="empty-state"><div class="empty-icon">📅</div><div class="empty-text">Sin hábitos programados para este día.</div></div>`;
     return;
   }
-  const catOrder = ['fisico','disciplina','energia','inteligencia','identidad'];
 
-  // DEBUG — ver qué categorías tienen los hábitos
-  console.log('scheduledHabits:', scheduledHabits.map(h => ({name: h.name, cat: h.category, xp: h.xp})));
+  // Separar en completados y pendientes
+  const grupoComp = scheduledHabits.filter(h => completedIds.includes(h.id));
+  const grupoPend = scheduledHabits.filter(h => !completedIds.includes(h.id));
 
-  // Paso 1: separar
-  const grupoComp = [];
-  const grupoPend = [];
-  scheduledHabits.forEach(h => {
-    if (completedIds.includes(h.id)) grupoComp.push(h);
-    else grupoPend.push(h);
-  });
-
-  // Paso 2: ordenar cada grupo por categoría, luego XP desc
-  const ordenarGrupo = (arr) => {
-    return arr.slice().sort((a, b) => {
-      const iA = catOrder.indexOf(a.category);
-      const iB = catOrder.indexOf(b.category);
-      const cA = iA === -1 ? 99 : iA;
-      const cB = iB === -1 ? 99 : iB;
-      if (cA !== cB) return cA - cB;
-      return (b.xp || 10) - (a.xp || 10);
-    });
+  // Ordenar cada grupo: categoría (fisico→disciplina→energia→inteligencia→identidad), luego XP desc
+  const CAT = ['fisico','disciplina','energia','inteligencia','identidad'];
+  const cmp = (a, b) => {
+    const ca = CAT.includes(a.category) ? CAT.indexOf(a.category) : 99;
+    const cb = CAT.includes(b.category) ? CAT.indexOf(b.category) : 99;
+    if (ca !== cb) return ca - cb;
+    return (b.xp || 10) - (a.xp || 10);
   };
-
-  const completados = ordenarGrupo(grupoComp);
-  const pendientes  = ordenarGrupo(grupoPend);
-  const ordenados   = [...completados, ...pendientes];
+  grupoComp.sort(cmp);
+  grupoPend.sort(cmp);
+  const ordenados = [...grupoComp, ...grupoPend];
 
   let html = '';
   // Separador visual entre grupos si hay de ambos tipos
