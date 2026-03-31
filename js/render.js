@@ -1373,18 +1373,12 @@ function renderCatStats(dateStr, habitsSource) {
       </div>`;
   }).join('');
 
-  // Todos los hábitos del día debajo: completados primero, luego pendientes
-  // Cada bloque ordenado por categoría: fisico → disciplina → energia → inteligencia → identidad
+  // Todos los hábitos del día debajo: completados primero, luego pendientes, con cat-badge
   const allScheduled = habitsSource.filter(h => isScheduledForDate(h, dateStr));
   const _cdAll = getCompletadosForDate(dateStr);
-  const _CAT = ['fisico','disciplina','energia','inteligencia','identidad'];
-  const _sortCat = (a, b) => {
-    const ia = _CAT.indexOf(a.category); const ib = _CAT.indexOf(b.category);
-    return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib);
-  };
   const allOrdenados = [
-    ...allScheduled.filter(h =>  _cdAll.includes(h.id)).sort(_sortCat),
-    ...allScheduled.filter(h => !_cdAll.includes(h.id)).sort(_sortCat),
+    ...allScheduled.filter(h => _cdAll.includes(h.id)),
+    ...allScheduled.filter(h => !_cdAll.includes(h.id)),
   ];
   const completedIds2 = _cdAll;
   if (allOrdenados.length) {
