@@ -32,8 +32,19 @@ export async function loadData() {
   try {
     const mk = currentMonthKey();
     state.currentMonthKey = mk;
-    const snap = await getDoc(compsMonthRef(mk));
-    state.completions = snap.exists() ? snap.data() : {};
+    // Calcular mes anterior
+    const now = new Date(today() + 'T12:00:00');
+    now.setDate(1);
+    now.setMonth(now.getMonth() - 1);
+    const prevMk = now.toISOString().substring(0, 7);
+    // Cargar mes actual y mes anterior en paralelo
+    const [snapCurr, snapPrev] = await Promise.all([
+      getDoc(compsMonthRef(mk)),
+      getDoc(compsMonthRef(prevMk)),
+    ]);
+    state.completions = {};
+    if (snapPrev.exists()) Object.assign(state.completions, snapPrev.data());
+    if (snapCurr.exists()) Object.assign(state.completions, snapCurr.data());
   } catch(e) { console.error('Error cargando completions del mes:', e); }
 
   try {
