@@ -123,11 +123,12 @@ function renderViajero() {
     const plan = Array.isArray(d.planificados) ? d.planificados.length : 0;
     const xpG = d.xpGanadoPorCat ? Object.values(d.xpGanadoPorCat).reduce((s,v)=>s+v,0) : 0;
     const xpM = d.xpMaxPorCat    ? Object.values(d.xpMaxPorCat).reduce((s,v)=>s+v,0)    : 0;
-    if (plan > 0) { vRatioSum += comp/plan; vRatioDays++; }
-    if (xpM > 0)  { vXpEficSum += xpG/xpM; vXpEficDays++; }
+    // Siempre contar el día — 0% si no hay planificados
+    vRatioSum += plan > 0 ? comp/plan : 0; vRatioDays++;
+    vXpEficSum += xpM > 0 ? xpG/xpM : 0; vXpEficDays++;
     if (k >= hace7) {
-      if (plan > 0) { v7RatioSum += comp/plan; v7RatioDays++; }
-      if (xpM > 0)  { v7XpEficSum += xpG/xpM; v7XpEficDays++; }
+      v7RatioSum += plan > 0 ? comp/plan : 0; v7RatioDays++;
+      v7XpEficSum += xpM > 0 ? xpG/xpM : 0; v7XpEficDays++;
     }
   });
   const vConsistencia   = vRatioDays   > 0 ? Math.round(vRatioSum/vRatioDays*100)     : 0;
