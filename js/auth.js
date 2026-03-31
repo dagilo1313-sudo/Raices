@@ -10,7 +10,7 @@ import {
   EmailAuthProvider,
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { state } from './state.js';
-import { loadData } from './habits.js';
+import { loadData, rellenarDiasVacios } from './habits.js';
 import { renderAll } from './render.js';
 import { showMsg, clearMsg } from './ui.js';
 
@@ -25,6 +25,7 @@ export function initAuth() {
       document.getElementById('profile-email').textContent = user.email;
       // Cargar datos ANTES de mostrar la app
       await loadData();
+      await rellenarDiasVacios();
       // Solo ahora ocultamos loading y mostramos la app
       document.getElementById('loading-screen').style.display = 'none';
       document.getElementById('app').style.display = 'block';

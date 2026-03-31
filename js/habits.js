@@ -32,18 +32,16 @@ export async function loadData() {
   try {
     const mk = currentMonthKey();
     state.currentMonthKey = mk;
-    // Calcular mes anterior
-    const now = new Date(today() + 'T12:00:00');
-    now.setDate(1);
-    now.setMonth(now.getMonth() - 1);
-    const prevMk = now.toISOString().substring(0, 7);
-    // Cargar mes actual y mes anterior en paralelo
-    const [snapCurr, snapPrev] = await Promise.all([
-      getDoc(compsMonthRef(mk)),
-      getDoc(compsMonthRef(prevMk)),
-    ]);
+    // Mes anterior
+    const prevDate = new Date(today() + 'T12:00:00');
+    prevDate.setDate(1);
+    prevDate.setMonth(prevDate.getMonth() - 1);
+    const prevMk = prevDate.toISOString().substring(0, 7);
+    // Cargar los dos meses
     state.completions = {};
+    const snapPrev = await getDoc(compsMonthRef(prevMk));
     if (snapPrev.exists()) Object.assign(state.completions, snapPrev.data());
+    const snapCurr = await getDoc(compsMonthRef(mk));
     if (snapCurr.exists()) Object.assign(state.completions, snapCurr.data());
   } catch(e) { console.error('Error cargando completions del mes:', e); }
 
@@ -109,6 +107,83 @@ export async function loadMonthCompletions(monthKey) {
     Object.assign(state.completions, monthData);
     state.historicMonthKey = monthKey;
   } catch(e) { console.error('Error cargando mes:', monthKey, e); }
+}
+
+
+// ── Rellenar días sin completion desde el último registrado hasta hoy ──
+export async function rellenarDiasVacios() {
+  const todayStr = today();
+
+  // Encontrar el último día con completion
+  const diasConData = Object.keys(state.completions)
+    .filter(k => /^\d{4}-\d{2}-\d{2}$/.test(k))
+    .sort();
+
+  // Construir snapshot vacío con hábitos activos actuales
+  const buildEmptyDay = (dateStr) => {
+    const scheduled = state.habits.filter(h => !h.archivado && isScheduledForDate(h, dateStr));
+    const planificados = scheduled.map(h => h.id);
+    const xpMaxPorCat = {};
+    scheduled.forEach(h => {
+      const cat = h.category || 'disciplina';
+      xpMaxPorCat[cat] = (xpMaxPorCat[cat] || 0) + (h.xp || 10);
+    });
+    return {
+      completados: [],
+      planificados,
+      xpTotal: 0,
+      xpGanadoPorCat: {},
+      xpMaxPorCat,
+      updatedAt: new Date().toISOString(),
+    };
+  };
+
+  if (diasConData.length === 0) {
+    // No hay ningún día — crear solo hoy vacío
+    state.completions[todayStr] = buildEmptyDay(todayStr);
+    const mk = currentMonthKey();
+    const monthData = {};
+    Object.entries(state.completions).forEach(([k, v]) => {
+      if (/^\d{4}-\d{2}-\d{2}$/.test(k)) monthData[k] = v;
+    });
+    await setDoc(compsMonthRef(mk), monthData);
+    return;
+  }
+
+  const lastDay = diasConData[diasConData.length - 1];
+  if (lastDay >= todayStr) return; // ya está al día
+
+  // Generar días faltantes entre lastDay+1 y hoy
+  const diasNuevos = {};
+  const cursor = new Date(lastDay + 'T12:00:00');
+  cursor.setDate(cursor.getDate() + 1);
+  while (cursor.toISOString().split('T')[0] <= todayStr) {
+    const ds = cursor.toISOString().split('T')[0];
+    if (!state.completions[ds]) {
+      diasNuevos[ds] = buildEmptyDay(ds);
+      state.completions[ds] = diasNuevos[ds];
+    }
+    cursor.setDate(cursor.getDate() + 1);
+  }
+
+  if (Object.keys(diasNuevos).length === 0) return;
+
+  // Agrupar por mes y guardar solo los meses afectados
+  const byMonth = {};
+  Object.entries(diasNuevos).forEach(([k]) => {
+    const mk = k.substring(0, 7);
+    if (!byMonth[mk]) byMonth[mk] = {};
+  });
+  // Para cada mes afectado, recopilar todos sus días de state.completions
+  for (const mk of Object.keys(byMonth)) {
+    const monthData = {};
+    Object.entries(state.completions).forEach(([k, v]) => {
+      if (k.startsWith(mk)) monthData[k] = v;
+    });
+    await setDoc(compsMonthRef(mk), monthData);
+  }
+
+  console.log(`Rellenados ${Object.keys(diasNuevos).length} días vacíos hasta hoy`);
 }
 
 // ── Helper: leer completados (compatible con formato antiguo array y nuevo objeto) ──
