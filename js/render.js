@@ -76,7 +76,8 @@ function renderViajero() {
   const vDiasPerfectos = state.perfil.diasPerfectos || 0;
   const vDiasBuenos    = state.perfil.diasBuenos    || 0;
   set('viajero-stat-perfectos', vDiasPerfectos);
-  set('viajero-stat-buenos', vDiasBuenos);
+  const buenosEl = document.getElementById('viajero-stat-buenos');
+  if (buenosEl) { buenosEl.textContent = vDiasBuenos; buenosEl.style.color = 'var(--accent)'; }
 
   // Rachas actuales — recorrer días hacia atrás desde hoy (solo mes en memoria)
   let rachaPerfActual = 0, rachaBuenosActual = 0;
@@ -107,15 +108,15 @@ function renderViajero() {
     }
     if (perfStop && buenosStop) break;
   }
-  set('viajero-racha-perfectos', rachaPerfActual);
-  set('viajero-racha-buenos', rachaBuenosActual);
 
   // Color dinámico según día perfecto
   const accentColor = isPerfectToday ? 'var(--accent2)' : 'var(--accent)';
 
-  // Eficiencia XP y consistencia — solo del mes actual
+  // Eficiencia XP y consistencia — mes actual + últimos 7 días
   const currentMonthPrefix = today().substring(0, 7);
+  const hace7 = (() => { const d = new Date(todayStr+'T12:00:00'); d.setDate(d.getDate()-6); return d.toISOString().split('T')[0]; })();
   let vRatioSum=0, vRatioDays=0, vXpEficSum=0, vXpEficDays=0;
+  let v7RatioSum=0, v7RatioDays=0, v7XpEficSum=0, v7XpEficDays=0;
   Object.entries(state.completions).forEach(([k, d]) => {
     if (!k.startsWith(currentMonthPrefix) || !d || Array.isArray(d)) return;
     const comp = Array.isArray(d.completados) ? d.completados.length : 0;
@@ -124,15 +125,25 @@ function renderViajero() {
     const xpM = d.xpMaxPorCat    ? Object.values(d.xpMaxPorCat).reduce((s,v)=>s+v,0)    : 0;
     if (plan > 0) { vRatioSum += comp/plan; vRatioDays++; }
     if (xpM > 0)  { vXpEficSum += xpG/xpM; vXpEficDays++; }
+    if (k >= hace7) {
+      if (plan > 0) { v7RatioSum += comp/plan; v7RatioDays++; }
+      if (xpM > 0)  { v7XpEficSum += xpG/xpM; v7XpEficDays++; }
+    }
   });
-  const vConsistencia = vRatioDays > 0 ? Math.round(vRatioSum/vRatioDays*100) : 0;
-  const vEficiencia   = vXpEficDays > 0 ? Math.round(vXpEficSum/vXpEficDays*100) : 0;
+  const vConsistencia   = vRatioDays   > 0 ? Math.round(vRatioSum/vRatioDays*100)     : 0;
+  const vEficiencia     = vXpEficDays  > 0 ? Math.round(vXpEficSum/vXpEficDays*100)   : 0;
+  const vConsistencia7d = v7RatioDays  > 0 ? Math.round(v7RatioSum/v7RatioDays*100)   : 0;
+  const vEficiencia7d   = v7XpEficDays > 0 ? Math.round(v7XpEficSum/v7XpEficDays*100) : 0;
 
   // Eficiencia y consistencia — doradas en día perfecto
   const eficienciaEl = document.getElementById('viajero-stat-eficiencia');
   const consistenciaEl = document.getElementById('viajero-stat-consistencia');
-  if (eficienciaEl)   { eficienciaEl.textContent = vEficiencia + '%';   eficienciaEl.style.color = accentColor; }
-  if (consistenciaEl) { consistenciaEl.textContent = vConsistencia + '%'; consistenciaEl.style.color = accentColor; }
+  const eficiencia7dEl = document.getElementById('viajero-stat-eficiencia-7d');
+  const consistencia7dEl = document.getElementById('viajero-stat-consistencia-7d');
+  if (eficienciaEl)    { eficienciaEl.textContent    = vEficiencia + '%';    eficienciaEl.style.color    = accentColor; }
+  if (consistenciaEl)  { consistenciaEl.textContent  = vConsistencia + '%';  consistenciaEl.style.color  = accentColor; }
+  if (eficiencia7dEl)  { eficiencia7dEl.textContent  = vEficiencia7d + '%';  eficiencia7dEl.style.color  = accentColor; }
+  if (consistencia7dEl){ consistencia7dEl.textContent= vConsistencia7d + '%';consistencia7dEl.style.color= accentColor; }
 
   // Navbar HOY gold solo cuando estamos en la vista hoy
   const navHoy = document.getElementById('nav-hoy');
