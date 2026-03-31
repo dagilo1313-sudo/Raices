@@ -9,28 +9,22 @@
   <meta name="theme-color" content="#8fb339">
   <title>Raíces — Tus Hábitos</title>
   <link rel="manifest" href="manifest.json">
-  <link rel="apple-touch-icon" href="assets/favicon/apple-touch-icon.png">
-  <link rel="icon" type="image/png" href="assets/favicon/apple-touch-icon.png">
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <link rel="apple-touch-icon" href="assets/icon-192.png">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/variables.css">
   <link rel="stylesheet" href="css/components.css">
   <link rel="stylesheet" href="css/layout.css">
 </head>
 <body>
 
+<!-- ── Loading ── -->
 <div id="loading-screen">
-  <div style="display:flex;flex-direction:column;align-items:center;gap:32px">
-    <div style="position:relative;width:100px;height:100px;display:flex;align-items:center;justify-content:center">
-      <div style="position:absolute;inset:0;border-radius:50%;border:1px solid rgba(143,179,57,0.25)" id="ls-ring1"></div>
-      <div style="position:absolute;inset:-14px;border-radius:50%;border:1px solid rgba(143,179,57,0.12)" id="ls-ring2"></div>
-      <div style="position:absolute;inset:8px;border-radius:50%;background:rgba(143,179,57,0.05)"></div>
-      <canvas id="loading-canvas" width="200" height="200" style="position:absolute;inset:-50px;width:200px;height:200px;pointer-events:none"></canvas>
-      <div style="font-size:30px;position:relative;z-index:2">🌱</div>
-    </div>
-    <div class="loading-sub" style="letter-spacing:5px;font-size:13px;animation:ls-txt 1.8s ease-in-out infinite">CRECE HOY</div>
-  </div>
+  <div class="loading-logo">🌿</div>
+  <div class="loading-sub">Raíces</div>
+  <div class="spinner"></div>
 </div>
 
+<!-- ── Auth ── -->
 <div id="auth-screen" style="display:none">
   <div class="auth-logo">🌿</div>
   <div class="auth-tagline">Tu jardín de hábitos</div>
@@ -43,6 +37,7 @@
       <input class="input-field" id="auth-password" type="password" placeholder="Contraseña" autocomplete="current-password">
       <button class="btn btn-primary" id="auth-btn" onclick="handleAuth()">Entrar</button>
       <button class="btn btn-secondary" onclick="showForgotPassword()">¿Olvidaste tu contraseña?</button>
+      <div class="auth-switch" id="auth-switch">¿Sin cuenta? <span onclick="toggleAuthMode()">Regístrate</span></div>
     </div>
     <div id="forgot-form" style="display:none">
       <input class="input-field" id="forgot-email" type="email" placeholder="Tu email">
@@ -52,158 +47,102 @@
   </div>
 </div>
 
+<!-- ── App ── -->
 <div class="app" id="app">
 
-  <!-- ══ HOY ══ -->
+  <!-- ══ Vista: HOY ══ -->
   <div class="view active" id="view-hoy">
     <header>
       <div class="header-top">
         <div>
-          <canvas id="title-canvas" width="140" height="46" style="display:block"></canvas>
+          <div class="logo">Raíces</div>
+          <div class="logo-sub">Tu jardín de hábitos</div>
+        </div>
+        <div class="header-right">
+          <div class="date-badge" id="date-display"></div>
         </div>
       </div>
     </header>
 
+    <div class="week-strip" id="week-strip"></div>
 
-    <!-- Banner debug (visible solo en modo testing) -->
-    <div id="debug-banner" class="debug-header-banner" style="display:none">
-      ⚠️ Modo testing — sistema cree que hoy es <strong id="debug-banner-date"></strong>
-    </div>
-
-    <!-- Fecha encima del viajero -->
-    <div style="display:flex;justify-content:flex-end;padding:6px 24px 0">
-      <div class="date-badge" id="date-display"></div>
-    </div>
-
-    <!-- Viajero card -->
-    <div class="viajero-card" style="transition:opacity 0.3s,transform 0.3s;margin-top:8px">
+    <!-- Viajero -->
+    <div class="viajero-card">
       <div class="viajero-top-row">
-        <!-- Avatar clickable → va al perfil -->
-        <div class="viajero-avatar-wrap" onclick="switchView('perfil')" style="cursor:pointer" title="Ver perfil">
+        <div class="viajero-avatar-wrap">
           <div class="viajero-avatar" id="viajero-avatar-emoji">🌿</div>
         </div>
         <div class="viajero-info">
-          <div class="viajero-nombre" id="viajero-nombre" style="font-family:var(--font-body);font-size:22px;font-weight:700;line-height:1.1">David</div>
-          <div class="viajero-clase" id="viajero-clase" style="font-weight:700;font-size:9px;letter-spacing:3px;margin-top:2px">Iniciado</div>
+          <div class="viajero-clase" id="viajero-clase">Iniciado</div>
+          <div class="viajero-nombre">Viajero</div>
         </div>
-        <div class="viajero-nivel-badge" id="viajero-nivel-badge" onclick="openRangosPanel()" title="Ver rangos y niveles">Nivel 1</div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div class="viajero-nivel-badge" id="viajero-nivel-badge">Nivel 1</div>
+          <button class="btn-rangos-info" onclick="openRangosPanel()" title="Ver rangos y niveles">ℹ</button>
+        </div>
       </div>
-      <!-- Barra XP entre avatar y stats -->
+      <div class="viajero-stats-grid">
+        <div class="viajero-stat">
+          <div class="viajero-stat-num" id="viajero-streak">0</div>
+          <div class="viajero-stat-lbl">Racha</div>
+        </div>
+        <div class="viajero-stat">
+          <div class="viajero-stat-num" id="viajero-xp-total">0</div>
+          <div class="viajero-stat-lbl">XP hoy</div>
+        </div>
+        <div class="viajero-stat">
+          <div class="viajero-stat-num" id="viajero-exito">0%</div>
+          <div class="viajero-stat-lbl">Éxito</div>
+        </div>
+      </div>
       <div class="viajero-xp-bar-wrap">
         <div class="viajero-xp-hdr">
           <span>XP al siguiente nivel</span>
-          <span id="viajero-xp-label">0 / 100</span>
+          <span id="viajero-xp-label">0 / 500</span>
         </div>
         <div class="viajero-xp-track">
           <div class="viajero-xp-fill" id="viajero-xp-fill"></div>
         </div>
       </div>
-      <!-- Fila 1: Días perfectos + Días buenos — estilo B -->
-      <div class="viajero-stats-grid viajero-grid-2" style="margin-bottom:6px">
-        <div class="viajero-stat" style="position:relative;overflow:visible;padding:12px 14px;text-align:left">
-          <canvas id="sparks-hoy" width="72" height="72" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-52%);pointer-events:none;z-index:0"></canvas>
-          <div class="viajero-stat-lbl" style="position:relative;z-index:1;margin-bottom:6px">Días perfectos ✦</div>
-          <div style="display:flex;align-items:flex-end;justify-content:space-between;position:relative;z-index:1">
-            <div>
-              <div style="font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:2px">Total</div>
-              <div class="viajero-stat-num viajero-stat-md" id="viajero-stat-perfectos" style="color:var(--accent2)">0</div>
-            </div>
-            <div style="text-align:right">
-              <div style="font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:2px">Racha</div>
-              <div style="font-size:18px;font-weight:700;color:var(--accent2);opacity:0.65;line-height:1" id="viajero-racha-perfectos">0</div>
-            </div>
-          </div>
-        </div>
-        <div class="viajero-stat" style="padding:12px 14px;text-align:left">
-          <div class="viajero-stat-lbl" style="margin-bottom:6px">Días buenos</div>
-          <div style="display:flex;align-items:flex-end;justify-content:space-between">
-            <div>
-              <div style="font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:2px">Total</div>
-              <div class="viajero-stat-num viajero-stat-md" id="viajero-stat-buenos" style="color:var(--accent)">0</div>
-            </div>
-            <div style="text-align:right">
-              <div style="font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:2px">Racha</div>
-              <div style="font-size:18px;font-weight:700;color:var(--accent);opacity:0.65;line-height:1" id="viajero-racha-buenos">0</div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- Fila 2: Eficiencia XP mes + Consistencia mes -->
-      <div class="viajero-stats-grid viajero-grid-2">
-        <div class="viajero-stat">
-          <div class="viajero-stat-num viajero-stat-md" id="viajero-stat-eficiencia">—</div>
-          <div class="viajero-stat-lbl">XP mes</div>
-        </div>
-        <div class="viajero-stat">
-          <div class="viajero-stat-num viajero-stat-md" id="viajero-stat-consistencia">—</div>
-          <div class="viajero-stat-lbl">Consistencia mes</div>
-        </div>
+    </div>
 
+    <!-- <div class="streak-bar">
+      <div class="streak-icon">🌿</div>
+      <div class="streak-text">
+        <div class="streak-number" id="global-streak">0</div>
+        <div class="streak-label">días en racha</div>
+      </div>
+      <div class="streak-dots" id="streak-dots"></div>
+    </div> -->
+
+    <!-- <div class="xp-bar">
+      <div class="xp-icon">⚡</div>
+      <div class="xp-text">
+        <div class="xp-number" id="total-xp">0</div>
+        <div class="xp-label">XP total <span class="xp-today" id="today-xp"></span></div>
+      </div>
+    </div> -->
+
+    <div style="text-align:center;font-size:13px;color:#2a3020;letter-spacing:8px;margin:4px 0 8px">— ⚔ —</div>
+
+    <div class="progress-section">
+      <div class="progress-header">
+        <span class="progress-title">Progreso de hoy</span>
+        <span class="progress-count" id="progress-text">0 / 0</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="progress-bar" style="width:0%"></div>
       </div>
     </div>
 
-    <div class="week-strip" id="week-strip" style="margin-top:8px"></div>
+    <div class="cat-tabs" id="cat-tabs"></div>
 
-    <!-- Separador superior tareas -->
-    <div style="display:flex;align-items:center;gap:10px;margin:10px 20px 10px">
-      <div style="flex:1;height:1px;background:#2a3020"></div>
-      <span style="font-size:8px;color:#2a3020">◆</span>
-      <div style="flex:1;height:1px;background:#2a3020"></div>
-    </div>
-
-    <!-- ══ TAREAS ══ -->
-    <div style="margin:10px 24px 0">
-      <!-- Toggle header -->
-      <div id="tareas-toggle" class="tareas-toggle" onclick="onToggleTareas()">
-        <div style="display:flex;align-items:center;gap:10px">
-          <span style="font-size:13px;font-weight:700;color:var(--accent)" id="tareas-titulo">Tareas</span>
-          <span id="tareas-count" style="font-size:10px;color:var(--muted);background:var(--card2);border:0.5px solid var(--border);border-radius:20px;padding:2px 8px">Sin tareas</span>
-        </div>
-        <span id="tareas-chevron" style="font-size:10px;color:var(--muted);transition:transform 0.25s">▼</span>
-      </div>
-
-      <!-- Panel desplegable -->
-      <div id="tareas-panel" class="tareas-panel" style="display:none">
-        <div style="padding:8px 12px;border-bottom:0.5px solid var(--border);display:flex;justify-content:space-between;align-items:center">
-          <button class="btn-borrar-tareas" onclick="onBorrarCompletadas()">Borrar completadas</button>
-          <button class="btn btn-primary btn-sm" onclick="onAddTarea()">+ Nueva</button>
-        </div>
-        <div id="tareas-lista"></div>
-      </div>
-    </div>
-
-    <!-- Score cards HOY -->
-    <div class="hoy-score-grid" style="margin-top:16px">
-      <div class="hoy-sc-card" id="hoy-sc-hab">
-        <div class="hoy-sc-bar-lat" id="hoy-sc-bar-lat-hab"></div>
-        <div class="hoy-sc-lbl">Hábitos hoy</div>
-        <div class="hoy-sc-big" id="hoy-sc-hab-val">0/0</div>
-        <div class="hoy-sc-sub" id="hoy-sc-hab-pct">0% completado</div>
-        <div class="hoy-sc-track"><div class="hoy-sc-fill" id="hoy-sc-hab-bar" style="width:0%"></div></div>
-      </div>
-      <div class="hoy-sc-card" id="hoy-sc-xp">
-        <div class="hoy-sc-bar-lat" id="hoy-sc-bar-lat-xp"></div>
-        <div class="hoy-sc-lbl">XP hoy</div>
-        <div class="hoy-sc-big" id="hoy-sc-xp-val">+0</div>
-        <div class="hoy-sc-sub" id="hoy-sc-xp-pct">0% del máximo</div>
-        <div class="hoy-sc-track"><div class="hoy-sc-fill" id="hoy-sc-xp-bar" style="width:0%"></div></div>
-      </div>
-    </div>
-
-
-
-    <div class="cat-tabs" id="cat-tabs" style="margin-top:6px;margin-bottom:4px"></div>
-
-    <div class="section" style="margin-top:0;padding-top:0">
+    <div class="section">
       <div id="habits-list"></div>
     </div>
-
-    <!-- Última sync discreta -->
-    <div id="last-sync" style="text-align:center;font-size:10px;color:var(--border);padding:4px 0 2px"></div>
-    <div style="text-align:center;font-size:9px;color:var(--border);padding:0 0 12px;letter-spacing:1px">v74</div>
   </div>
 
-  <!-- ══ HÁBITOS ══ -->
+  <!-- ══ Vista: HÁBITOS (gestión) ══ -->
   <div class="view" id="view-habitos">
     <header>
       <div class="header-top">
@@ -213,6 +152,7 @@
         </div>
       </div>
     </header>
+
     <div class="section">
       <div class="section-header">
         <span class="section-label">Todos los hábitos</span>
@@ -222,7 +162,7 @@
     </div>
   </div>
 
-  <!-- ══ STATS ══ -->
+  <!-- ══ Vista: ESTADÍSTICAS ══ -->
   <div class="view" id="view-stats">
     <header>
       <div class="header-top">
@@ -233,249 +173,27 @@
       </div>
     </header>
 
-    <!-- DÍAS PERFECTOS -->
-    <div class="stats-sep"><div class="stats-sep-line"></div><div class="stats-sep-label">Días perfectos ✦</div><div class="stats-sep-line"></div></div>
-
-    <div class="racha-card gold-racha">
-      <div class="rc-header">
-        <div class="rc-title" style="color:var(--accent2)">Días perfectos ✦</div>
-        <div class="rc-total-badge" style="color:var(--accent2);background:rgba(196,168,79,0.1);border-color:rgba(196,168,79,0.25)" id="stat-dias-perfectos-badge">— total</div>
+    <!-- Globales -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-value" id="stat-total-done">0</div>
+        <div class="stat-label">Completados</div>
       </div>
-      <div class="rc-main">
-        <div class="rc-racha-block">
-          <div class="rc-racha-lbl">Racha actual</div>
-          <div class="rc-racha-val" style="color:var(--accent2)" id="stat-perf-racha-actual">—</div>
-        </div>
-        <div class="rc-divider-v"></div>
-        <div class="rc-racha-block">
-          <div class="rc-racha-lbl">Mejor racha</div>
-          <div class="rc-racha-val" style="color:rgba(196,168,79,0.55)" id="stat-perf-racha-mejor">—</div>
-        </div>
+      <div class="stat-card">
+        <div class="stat-value" id="stat-total-xp">0</div>
+        <div class="stat-label">XP Total ⚡</div>
       </div>
-      <div class="rc-dots" id="rc-dots-perf"></div>
-      <div class="rc-triple">
-        <div class="rc-ti">
-          <div class="rc-ti-num" style="color:var(--accent2)" id="stat-perfectos-semana">—</div>
-          <div class="rc-ti-lbl">Por semana</div>
-        </div>
-        <div class="rc-ti" style="border-left:1px solid var(--border)">
-          <div class="rc-ti-num" style="color:var(--accent2)" id="stat-perfectos-mes">—</div>
-          <div class="rc-ti-lbl">Por mes</div>
-        </div>
-        <div class="rc-ti" style="border-left:1px solid var(--border)">
-          <div class="rc-ti-num" style="color:var(--accent2)" id="stat-dias-perfectos">—</div>
-          <div class="rc-ti-lbl">Total</div>
-        </div>
+      <div class="stat-card">
+        <div class="stat-value" id="stat-best-streak">0</div>
+        <div class="stat-label">Racha actual</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="stat-habits-count">0</div>
+        <div class="stat-label">Hábitos activos</div>
       </div>
     </div>
 
-    <!-- DÍAS BUENOS -->
-    <div class="stats-sep"><div class="stats-sep-line"></div><div class="stats-sep-label">Días buenos · ≥80% XP</div><div class="stats-sep-line"></div></div>
-
-    <div class="racha-card green-racha">
-      <div class="rc-header">
-        <div class="rc-title" style="color:var(--accent)">Días buenos ≥80% XP</div>
-        <div class="rc-total-badge" style="color:var(--accent);background:rgba(143,179,57,0.1);border-color:rgba(143,179,57,0.25)" id="stat-dias-buenos-badge">— total</div>
-      </div>
-      <div class="rc-main">
-        <div class="rc-racha-block">
-          <div class="rc-racha-lbl">Racha actual</div>
-          <div class="rc-racha-val" style="color:var(--accent)" id="stat-buenos-racha-actual">—</div>
-        </div>
-        <div class="rc-divider-v"></div>
-        <div class="rc-racha-block">
-          <div class="rc-racha-lbl">Mejor racha</div>
-          <div class="rc-racha-val" style="color:rgba(143,179,57,0.55)" id="stat-buenos-racha-mejor">—</div>
-        </div>
-      </div>
-      <div class="rc-dots" id="rc-dots-buenos"></div>
-      <div class="rc-triple">
-        <div class="rc-ti">
-          <div class="rc-ti-num" style="color:var(--accent)" id="stat-buenos-semana">—</div>
-          <div class="rc-ti-lbl">Por semana</div>
-        </div>
-        <div class="rc-ti" style="border-left:1px solid var(--border)">
-          <div class="rc-ti-num" style="color:var(--accent)" id="stat-buenos-mes">—</div>
-          <div class="rc-ti-lbl">Por mes</div>
-        </div>
-        <div class="rc-ti" style="border-left:1px solid var(--border)">
-          <div class="rc-ti-num" style="color:var(--accent)" id="stat-dias-buenos">—</div>
-          <div class="rc-ti-lbl">Total</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- EXPERIENCIA -->
-    <div class="stats-sep"><div class="stats-sep-line"></div><div class="stats-sep-label">Experiencia</div><div class="stats-sep-line"></div></div>
-
-    <div class="racha-card" style="border-color:rgba(143,179,57,0.2)">
-      <div class="rc-header">
-        <div class="rc-title" style="color:var(--accent)">Experiencia</div>
-        <div class="snarr-trend" id="stat-tendencia-xp"></div>
-      </div>
-      <div class="xpm-main-simple">
-        <div class="xpm-lbl">Eficiencia media</div>
-        <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:12px">
-          <div class="xpm-big" id="stat-eficiencia-big">—</div>
-          <div style="display:flex;flex-direction:column;align-items:flex-end;padding-bottom:6px;gap:2px">
-            <div style="font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase">Este mes</div>
-            <div style="font-size:22px;font-weight:700;color:var(--accent);opacity:0.6" id="stat-eficiencia-mes">—</div>
-          </div>
-        </div>
-      </div>
-      <div class="rc-triple">
-        <div class="rc-ti">
-          <div class="rc-ti-num" id="stat-nivel-actual" style="font-size:16px;color:var(--accent)">—</div>
-          <div class="rc-ti-lbl" id="stat-rango-actual">—</div>
-        </div>
-        <div class="rc-ti" style="border-left:1px solid var(--border)">
-          <div class="rc-ti-num" style="color:var(--accent)" id="stat-xp-media-dia-pill">—</div>
-          <div class="rc-ti-lbl">XP por día</div>
-          <div style="display:flex;align-items:baseline;gap:3px;margin-top:2px">
-            <div style="font-size:11px;font-weight:600;color:var(--accent);opacity:0.55" id="stat-xp-dia-30d">—</div>
-            <div style="font-size:9px;color:var(--dim)">30d</div>
-          </div>
-        </div>
-        <div class="rc-ti" style="border-left:1px solid var(--border)">
-          <div class="rc-ti-num" style="color:var(--accent)" id="stat-xp-total-lifetime">—</div>
-          <div class="rc-ti-lbl">XP total</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Progreso al siguiente nivel -->
-    <div class="scat-card" id="stat-nivel-card">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-        <div>
-          <div class="scat-title" style="margin-bottom:2px" id="stat-nivel-titulo">Progreso al siguiente nivel</div>
-          <div style="font-size:11px;color:var(--muted)" id="stat-nivel-subtitulo">—</div>
-        </div>
-        <div style="text-align:right">
-          <div style="font-size:22px;font-weight:700;color:var(--accent)" id="stat-nivel-pct">—</div>
-          <div style="font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase">completado</div>
-        </div>
-      </div>
-      <div style="height:6px;background:var(--dim);border-radius:6px;overflow:hidden;margin-bottom:10px">
-        <div id="stat-nivel-bar" style="height:100%;border-radius:6px;background:var(--accent);transition:width 0.6s ease;width:0%"></div>
-      </div>
-      <div style="display:flex;justify-content:space-between;align-items:baseline">
-        <div style="font-size:11px;color:var(--muted)" id="stat-nivel-xp-actual">—</div>
-        <div style="font-size:11px;color:var(--muted)" id="stat-nivel-dias-restantes">—</div>
-      </div>
-    </div>
-
-    <!-- Gráfica XP últimos 7 días (% real) -->
-    <div class="scat-card">
-      <div class="scat-title">XP por día · últimos 7</div>
-      <div class="sdias-grid" id="stat-dias-semana">
-        <div class="sdia"><div class="sdia-bar-wrap"><div class="sdia-bar" style="height:0%"></div></div><div class="sdia-name">L</div></div>
-        <div class="sdia"><div class="sdia-bar-wrap"><div class="sdia-bar" style="height:0%"></div></div><div class="sdia-name">M</div></div>
-        <div class="sdia"><div class="sdia-bar-wrap"><div class="sdia-bar" style="height:0%"></div></div><div class="sdia-name">X</div></div>
-        <div class="sdia"><div class="sdia-bar-wrap"><div class="sdia-bar" style="height:0%"></div></div><div class="sdia-name">J</div></div>
-        <div class="sdia"><div class="sdia-bar-wrap"><div class="sdia-bar" style="height:0%"></div></div><div class="sdia-name">V</div></div>
-        <div class="sdia"><div class="sdia-bar-wrap"><div class="sdia-bar" style="height:0%"></div></div><div class="sdia-name">S</div></div>
-        <div class="sdia"><div class="sdia-bar-wrap"><div class="sdia-bar" style="height:0%"></div></div><div class="sdia-name">D</div></div>
-      </div>
-    </div>
-
-    <!-- XP medio por categoría -->
-    <div class="scat-card">
-      <div class="scat-title">XP medio diario por categoría</div>
-      <div class="scats-grid" id="stat-xp-cats"></div>
-    </div>
-
-    <!-- HÁBITOS -->
-    <div class="stats-sep"><div class="stats-sep-line"></div><div class="stats-sep-label">Hábitos</div><div class="stats-sep-line"></div></div>
-
-    <!-- Card narrativa hábitos — estilo racha -->
-    <div class="racha-card" style="border-color:rgba(143,179,57,0.2)">
-      <div class="rc-header">
-        <div class="rc-title" style="color:var(--accent)">Hábitos</div>
-        <div class="snarr-trend" id="stat-tendencia-hab"></div>
-      </div>
-      <div class="xpm-main-simple">
-        <div class="xpm-lbl">Consistencia</div>
-        <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:12px">
-          <div class="xpm-big" id="stat-consistencia-global">—</div>
-          <div style="display:flex;flex-direction:column;align-items:flex-end;padding-bottom:6px;gap:2px">
-            <div style="font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase">Este mes</div>
-            <div style="font-size:22px;font-weight:700;color:var(--accent);opacity:0.6" id="stat-consistencia-mes">—</div>
-          </div>
-        </div>
-      </div>
-      <div class="rc-triple">
-        <div class="rc-ti">
-          <div class="rc-ti-num" style="color:var(--accent)" id="stat-habits-count">0</div>
-          <div class="rc-ti-lbl">Activos</div>
-        </div>
-        <div class="rc-ti" style="border-left:1px solid var(--border)">
-          <div class="rc-ti-num" style="color:var(--accent)" id="stat-media-habitos">—</div>
-          <div class="rc-ti-lbl">Por día</div>
-          <div style="display:flex;align-items:baseline;gap:3px;margin-top:2px">
-            <div style="font-size:11px;font-weight:600;color:var(--accent);opacity:0.55" id="stat-media-habitos-30d">—</div>
-            <div style="font-size:9px;color:var(--dim)">30d</div>
-          </div>
-        </div>
-        <div class="rc-ti" style="border-left:1px solid var(--border)">
-          <div class="rc-ti-num" style="color:var(--accent)" id="stat-total-completados">—</div>
-          <div class="rc-ti-lbl">Total completados</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Hábitos en riesgo -->
-    <div class="scat-card" id="stat-riesgo-card" style="display:none">
-      <div class="scat-title">⚠ Hábitos en riesgo</div>
-      <div id="stat-riesgo-list"></div>
-    </div>
-
-    <!-- Insights hábitos: 2 mejores + 2 peores -->
-    <div class="scat-card">
-      <div class="scat-title">Hábitos destacados</div>
-      <div id="stat-insights-hab"></div>
-    </div>
-
-    <!-- Consistencia por categoría -->
-    <div class="scat-card">
-      <div class="scat-title">% de hábitos completados por categoría</div>
-      <div class="scats-grid" id="stat-consistencia-cats"></div>
-    </div>
-
-    <!-- RECORRIDO -->
-    <div class="stats-sep"><div class="stats-sep-line"></div><div class="stats-sep-label">Recorrido</div><div class="stats-sep-line"></div></div>
-
-    <div class="scat-card" style="padding:0;overflow:hidden;">
-      <div class="rec-row">
-        <div class="rec-lbl">Días usando Raíces</div>
-        <div><div class="rec-val" id="stat-dias-raices">—</div></div>
-      </div>
-      <div class="rec-row">
-        <div class="rec-lbl">Mejor día de la semana</div>
-        <div><div class="rec-val" id="stat-mejor-dia" style="color:var(--accent)">—</div><div class="rec-sub" id="stat-mejor-dia-pct"></div></div>
-      </div>
-      <div class="rec-row">
-        <div class="rec-lbl">Día más flojo</div>
-        <div><div class="rec-val" id="stat-peor-dia" style="color:#e05c5c">—</div><div class="rec-sub" id="stat-peor-dia-pct"></div></div>
-      </div>
-      <div class="rec-row">
-        <div class="rec-lbl">XP no recogido</div>
-        <div><div class="rec-val" id="stat-xp-perdido" style="color:var(--muted)">—</div><div class="rec-sub">del máximo posible</div></div>
-      </div>
-    </div>
-
-  </div>
-
-  <!-- ══ HISTÓRICO ══ -->
-  <div class="view" id="view-historico">
-    <header>
-      <div class="header-top">
-        <div>
-          <div class="logo" style="font-size:26px">Histórico</div>
-          <div class="logo-sub">Tu registro diario</div>
-        </div>
-      </div>
-    </header>
-
+    <!-- Calendario -->
     <div class="cal-wrapper">
       <div class="cal-header">
         <div class="cal-nav">
@@ -486,49 +204,55 @@
         <button class="cal-today-btn" onclick="calGoToday()">Hoy</button>
       </div>
       <div class="cal-weekdays">
-        <div class="cal-weekday">L</div><div class="cal-weekday">M</div>
-        <div class="cal-weekday">X</div><div class="cal-weekday">J</div>
-        <div class="cal-weekday">V</div><div class="cal-weekday">S</div>
+        <div class="cal-weekday">L</div>
+        <div class="cal-weekday">M</div>
+        <div class="cal-weekday">X</div>
+        <div class="cal-weekday">J</div>
+        <div class="cal-weekday">V</div>
+        <div class="cal-weekday">S</div>
         <div class="cal-weekday">D</div>
       </div>
       <div class="cal-grid" id="cal-grid"></div>
     </div>
 
+    <!-- Resumen del día seleccionado -->
     <div class="section">
       <div class="section-header">
         <span class="section-label" id="stats-date-label">Hoy</span>
       </div>
     </div>
 
-    <div class="score-card" id="hist-triple">
-      <div class="score-half green-half">
-        <div class="sc-lbl">Hábitos</div>
-        <div class="sc-num" id="stat-day-done">0/0</div>
-        <div class="sc-pct" id="stat-day-pct">0% completado</div>
-        <div class="sc-bar"><div class="sc-fill" id="stat-day-bar" style="width:0%"></div></div>
+    <div class="stats-day-summary">
+      <div class="stats-day-card">
+        <div class="stats-day-value" id="stat-day-done">0/0</div>
+        <div class="stats-day-label">Completados</div>
       </div>
-      <div class="score-half xp-half">
-        <div class="sc-lbl">XP ganado</div>
-        <div class="sc-num" id="stat-day-xp">+0 xp</div>
-        <div class="sc-pct" id="stat-day-xp-pct">0% del máximo</div>
-        <div class="sc-bar"><div class="sc-fill" id="stat-xp-bar" style="width:0%"></div></div>
+      <div class="stats-day-card">
+        <div class="stats-day-value" id="stat-day-xp">+0 XP</div>
+        <div class="stats-day-label">XP ganado</div>
+      </div>
+      <div class="stats-day-card">
+        <div class="stats-day-value" id="stat-day-pct">0%</div>
+        <div class="stats-day-label">Éxito</div>
       </div>
     </div>
 
     <div class="section">
-      <div class="section-header"><span class="section-label">Por categoría</span></div>
+      <div class="section-header">
+        <span class="section-label">Por categoría</span>
+      </div>
       <div id="cat-stats-list"></div>
     </div>
 
     <div class="section">
-      <div class="section-header"><span class="section-label">Hábitos del día</span></div>
+      <div class="section-header">
+        <span class="section-label">Hábitos del día</span>
+      </div>
       <div id="stats-day-habits"></div>
     </div>
-
-    <div id="stats-no-registro" style="display:none;text-align:center;padding:32px 24px"></div>
   </div>
 
-  <!-- ══ PERFIL ══ -->
+  <!-- ══ Vista: PERFIL ══ -->
   <div class="view" id="view-perfil">
     <header>
       <div class="header-top">
@@ -538,12 +262,8 @@
         </div>
       </div>
     </header>
+
     <div class="profile-section">
-      <div class="card">
-        <div class="card-title">Tu nombre</div>
-        <div id="perfil-nombre-display" style="font-size:15px;color:var(--muted);padding:10px 0 14px;line-height:1">—</div>
-        <button class="btn btn-secondary" style="margin-bottom:0" onclick="showChangeNombre()">Cambiar nombre</button>
-      </div>
 
       <div class="card">
         <div class="card-title">Cuenta</div>
@@ -551,117 +271,84 @@
         <button class="btn btn-primary" style="margin-bottom:0" onclick="showChangePassword()">Cambiar contraseña</button>
       </div>
 
-      <!-- Testing -->
-      <div class="card" id="debug-card">
-        <div class="card-title">Modo testing</div>
-        <div style="font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.5">Simula que hoy es una fecha pasada. Útil para testear días perfectos, XP y stats.</div>
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-          <span style="font-size:14px;color:var(--text)">Activar modo testing</span>
-          <div class="toggle-switch" id="debug-toggle" onclick="onToggleDebug()">
-            <div class="toggle-knob"></div>
-          </div>
-        </div>
-        <div id="debug-date-wrap" style="display:none">
-          <input type="date" class="input-field" id="debug-date-input" style="margin-bottom:8px" onchange="onDebugDateChange(this.value)">
-          <div id="debug-active-banner" style="display:none;background:rgba(196,168,79,0.15);border:1px solid rgba(196,168,79,0.4);border-radius:var(--radius-md);padding:10px 14px;font-size:12px;color:var(--accent2);line-height:1.5">
-            ⚠️ Modo testing activo — el sistema cree que hoy es <strong id="debug-date-label"></strong>
-          </div>
-        </div>
+      <div class="card" id="change-password-card" style="display:none">
+        <div class="card-title">Nueva contraseña</div>
+        <div class="msg-error" id="cp-error"></div>
+        <div class="msg-success" id="cp-success"></div>
+        <input class="input-field" id="cp-current" type="password" placeholder="Contraseña actual">
+        <input class="input-field" id="cp-new" type="password" placeholder="Nueva contraseña">
+        <input class="input-field" id="cp-confirm" type="password" placeholder="Confirmar nueva contraseña">
+        <button class="btn btn-primary" onclick="changePassword()" style="margin-bottom:8px">Guardar</button>
+        <button class="btn btn-secondary" onclick="hideChangePassword()" style="margin-bottom:0">Cancelar</button>
       </div>
 
-      <div class="card">
-        <div class="card-title">Backup de datos</div>
-        <div style="font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.6">Descarga todos tus hábitos, progreso y registros diarios en un archivo JSON.</div>
-        <button class="btn btn-secondary" style="margin-bottom:12px" onclick="descargarBackup()">Descargar backup completo ↓</button>
-
-        <div style="height:1px;background:var(--border);margin-bottom:14px"></div>
-
-        <div style="font-size:13px;color:var(--muted);margin-bottom:12px;line-height:1.6">Restaura un backup anterior. Se sobreescribirán todos tus datos actuales.</div>
-        <input type="file" id="backup-file-input" accept=".json" style="display:none" onchange="onBackupFileSelected(this)">
-        <button class="btn btn-secondary" style="margin-bottom:8px" onclick="document.getElementById('backup-file-input').click()">Seleccionar archivo de backup</button>
-        <div id="backup-filename" style="font-size:11px;color:var(--muted);margin-bottom:8px;display:none"></div>
-        <button class="btn btn-primary" id="btn-restaurar" style="display:none;margin-bottom:8px" onclick="confirmarRestaurarPopup()">Restaurar backup ↑</button>
-        <div id="backup-status" style="font-size:12px;margin-top:4px;display:none"></div>
-      </div>
-
+      <!-- Reset de datos -->
       <div class="card">
         <div class="card-title">Zona peligrosa</div>
 
-        <div style="font-size:13px;color:var(--muted);margin-bottom:12px;line-height:1.5">Borra tu XP, nivel y días perfectos, pero mantiene todos tus hábitos.</div>
-        <button class="btn btn-secondary" style="margin-bottom:0" onclick="showResetProgressConfirm()">Reiniciar solo el progreso</button>
+        <div id="reset-confirm-1">
+          <div style="font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.5">
+            Borra todos tus hábitos y progreso de forma permanente. Solo afecta a tu cuenta.
+          </div>
+          <button class="btn btn-danger" style="margin-bottom:0" onclick="showResetConfirm1()">Reiniciar todos los datos</button>
+        </div>
 
-        <div style="height:1px;background:var(--border);margin:16px 0"></div>
-
-        <div style="font-size:13px;color:var(--muted);margin-bottom:12px;line-height:1.5">Borra todos tus hábitos y progreso de forma permanente.</div>
-        <button class="btn btn-danger" style="margin-bottom:0" onclick="showResetConfirm1()">Reiniciar todo</button>
+        <div id="reset-confirm-2">
+          <div class="reset-warning">
+            ⚠️ Esta acción es <strong>irreversible</strong>. Se borrarán todos tus hábitos, rachas y progreso. ¿Estás seguro?
+          </div>
+          <button class="btn btn-danger" id="btn-confirm-reset" style="margin-bottom:8px" onclick="confirmReset()">Sí, borrar todo</button>
+          <button class="btn btn-secondary" style="margin-bottom:0" onclick="cancelReset()">Cancelar</button>
+        </div>
       </div>
+
       <div class="card">
         <button class="btn btn-danger" onclick="logout()" style="margin-bottom:0">Cerrar sesión</button>
       </div>
+
     </div>
   </div>
 
+  <!-- ── Nav bar (4 pestañas) ── -->
   <nav class="nav-bar">
     <div class="nav-item active" id="nav-hoy" onclick="switchView('hoy')">
-      <div class="nav-icon">☉</div>Hoy
-    </div>
-    <div class="nav-item" id="nav-stats" onclick="switchView('stats')">
-      <div class="nav-icon nav-icon-lg">⚡︎</div>Stats
-    </div>
-    <div class="nav-item" id="nav-historico" onclick="switchView('historico')">
-      <div class="nav-icon nav-icon-lg">◷</div>Histórico
+      <div class="nav-icon">🌿</div>Hoy
     </div>
     <div class="nav-item" id="nav-habitos" onclick="switchView('habitos')">
-      <div class="nav-icon nav-icon-lg">⚙︎</div>Hábitos
+      <div class="nav-icon">📗</div>Hábitos
+    </div>
+    <div class="nav-item" id="nav-stats" onclick="switchView('stats')">
+      <div class="nav-icon">⚡</div>Stats
     </div>
     <div class="nav-item" id="nav-perfil" onclick="switchView('perfil')">
-      <div class="nav-icon nav-icon-lg">♛</div>Perfil
+      <div class="nav-icon">👤</div>Perfil
     </div>
   </nav>
 
-</div>
+</div><!-- /app -->
 
-<!-- Modal hábito -->
+<!-- ── Modal crear/editar hábito ── -->
 <div class="modal-overlay" id="modal" onclick="closeModalOutside(event)">
   <div class="modal">
     <div class="modal-handle"></div>
     <div class="modal-title" id="modal-title">Planta un nuevo hábito</div>
+
     <label class="modal-label">Nombre</label>
     <input class="input-field" id="habit-name-input" placeholder="Nombre del hábito..." maxlength="40">
-    <label class="modal-label">Icono</label>
-    <div class="icon-input-wrap" onclick="openIconPicker()">
-      <div class="icon-input-preview" id="icon-preview-display">—</div>
-      <div class="icon-input-label">Toca para elegir símbolo</div>
-      <div class="icon-input-arrow">›</div>
-    </div>
 
-    <!-- Popup selector de iconos (oculto) -->
-    <div class="icon-picker-overlay" id="icon-picker-overlay" onclick="if(event.target===this)closeIconPicker()">
-      <div class="icon-picker-sheet">
-        <div class="icon-picker-header">
-          <div class="icon-picker-title">Elige un símbolo</div>
-          <div class="icon-picker-tabs" id="icon-picker-tabs"></div>
-        </div>
-        <div class="icon-picker-grid" id="icon-picker-grid"></div>
-        <div class="icon-picker-footer">
-          <div class="icon-picker-selected-wrap">
-            <div class="icon-picker-selected-preview" id="icon-picker-preview">—</div>
-            <div class="icon-picker-selected-lbl" id="icon-picker-lbl">Sin icono</div>
-          </div>
-          <div style="display:flex;gap:8px">
-            <button class="btn btn-secondary btn-sm" onclick="clearIconPicker()">Sin icono</button>
-            <button class="btn btn-primary btn-sm" onclick="confirmIconPicker()">Elegir</button>
-          </div>
-        </div>
-      </div>
-    </div>
+    <label class="modal-label">Icono</label>
+    <div class="emoji-grid" id="emoji-grid"></div>
+
     <label class="modal-label">Categoría</label>
     <div class="chips-row" id="cat-chips"></div>
+
     <label class="modal-label">Dificultad · XP</label>
     <div class="chips-row" id="xp-chips"></div>
+
     <label class="modal-label">Días de la semana</label>
     <div class="modal-hint" id="days-label">Todos los días</div>
     <div class="chips-row" id="days-chips"></div>
+
     <button class="btn btn-primary" id="btn-modal-submit" onclick="submitModal()">Plantar hábito 🌱</button>
     <button class="btn btn-secondary" onclick="closeModal()" style="margin-bottom:0">Cancelar</button>
   </div>
@@ -669,17 +356,17 @@
 
 <div class="toast" id="toast"></div>
 
-<!-- Panel Rangos -->
-<div class="modal-overlay rangos-sheet" id="rangos-overlay" onclick="if(event.target===this)closeRangosPanel()">
-  <div class="modal rangos-modal">
-    <div class="modal-handle" style="display:block"></div>
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+<!-- ── Panel Rangos ── -->
+<div class="modal-overlay" id="rangos-overlay" onclick="if(event.target===this)closeRangosPanel()">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
       <div class="modal-title" style="margin:0">Rangos y Niveles</div>
       <button onclick="closeRangosPanel()" style="background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;padding:0">×</button>
     </div>
-    <div style="font-size:12px;color:var(--muted);margin-bottom:16px;line-height:1.6">
-      6 rangos · 30 niveles cada uno · ~100.000 XP por rango<br>
-      <span style="color:var(--accent)">XP(n) = 100 × n<sup>1.26</sup></span> · Nivel 1→2: 100 XP · Nivel 30→31: 7.264 XP
+    <div style="font-size:12px;color:var(--muted);margin-bottom:20px;line-height:1.5">
+      Cada rango tiene 30 niveles. El XP necesario crece con cada nivel.<br>
+      Fórmula: <span style="color:var(--accent);font-family:monospace">XP(n) = 100 × n¹·⁸</span>
     </div>
     <div id="rangos-content"></div>
   </div>
@@ -687,181 +374,10 @@
 
 <script>
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./service-worker.js');
+    navigator.serviceWorker.register('/service-worker.js');
   }
-</script>
-<script>
-(function(){
-  const cv=document.getElementById('title-canvas');
-  if(!cv)return;
-  const dpr=Math.min(window.devicePixelRatio||1,2);
-  const W=140,H=46;
-  cv.width=W*dpr; cv.height=H*dpr;
-  cv.style.width=W+'px'; cv.style.height=H+'px';
-  const ctx=cv.getContext('2d');
-  ctx.scale(dpr,dpr);
-  const G='#8fb339',GO='#c4a84f',G2='#3d6b1a',GO2='#7a5c10';
-  const particles=[];
-  let t=0;
-  window._titlePerfect=false;
-  function spawnP(){
-    const fast=window._titlePerfect;
-    const speed=fast?1.5:0.2;
-    const decay=fast?(.012+Math.random()*.015):(.004+Math.random()*.005);
-    particles.push({x:15+Math.random()*110,y:H/2+8,vx:(Math.random()-.5)*speed,vy:(-.3-Math.random()*1.5)*speed,life:1,decay,size:1+Math.random()*2.5,col:Math.random()>.4?GO:G});
-  }
-  function frame(){
-    t+=.02;ctx.clearRect(0,0,W,H);
-    if(Math.random()<(window._titlePerfect?.35:.07))spawnP();
-    for(let i=particles.length-1;i>=0;i--){
-      const p=particles[i];
-      p.x+=p.vx;p.y+=p.vy;p.vy+=window._titlePerfect?.02:.004;p.life-=p.decay;
-      if(p.life<=0){particles.splice(i,1);continue;}
-      ctx.save();ctx.globalAlpha=p.life*.7;ctx.beginPath();ctx.arc(p.x,p.y,p.size*p.life,0,Math.PI*2);ctx.fillStyle=p.col;ctx.fill();ctx.restore();
-    }
-    ctx.font='700 32px DM Sans,sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
-    const grad=ctx.createLinearGradient(10,0,130,0);
-    grad.addColorStop(0,G2);grad.addColorStop(.35,G);grad.addColorStop(.65,GO);grad.addColorStop(1,GO2);
-    ctx.fillStyle=grad;ctx.fillText('Raíces',W/2,H/2+1);
-    ctx.globalAlpha=Math.sin(t)*.04+.04;ctx.fillStyle='#f0d060';ctx.fillText('Raíces',W/2,H/2+1);ctx.globalAlpha=1;
-    requestAnimationFrame(frame);
-  }
-  frame();
-})();
-</script>
-<script>
-(function(){
-  // Añadir animaciones CSS
-  const s = document.createElement('style');
-  s.textContent = `
-    @keyframes ls-txt{0%,100%{opacity:0.3}50%{opacity:1}}
-    @keyframes ls-ring1{0%,100%{opacity:0.08;transform:scale(1)}50%{opacity:0.2;transform:scale(1.07)}}
-    @keyframes ls-ring2{0%,100%{opacity:0.05;transform:scale(1)}50%{opacity:0.12;transform:scale(1.13)}}
-  `;
-  document.head.appendChild(s);
-  const r1 = document.getElementById('ls-ring1');
-  const r2 = document.getElementById('ls-ring2');
-  if (r1) r1.style.animation = 'ls-ring1 2s ease-in-out infinite';
-  if (r2) r2.style.animation = 'ls-ring2 2s ease-in-out infinite 0.5s';
-
-  const cv = document.getElementById('loading-canvas');
-  if (!cv) return;
-  const ctx = cv.getContext('2d');
-  const W = 200, H = 200, cx = W/2, cy = H/2;
-
-  // Mismo motor que stats loader
-  const orbits = [
-    { r: 38, n: 5,  speed: 0.030,  offset: 0,          size: 2.0, hue: 44, alpha: 0.9 },
-    { r: 54, n: 8,  speed: -0.020, offset: Math.PI/4,  size: 1.5, hue: 38, alpha: 0.6 },
-  ];
-
-  const particles = [];
-  orbits.forEach(o => {
-    for (let i = 0; i < o.n; i++) {
-      particles.push({
-        angle: (i / o.n) * Math.PI * 2 + (o.offset || 0),
-        speed: o.speed * (0.85 + Math.random() * 0.3),
-        r: o.r, size: o.size * (0.8 + Math.random() * 0.4),
-        hue: o.hue + Math.random() * 14,
-        alpha: o.alpha, trail: [],
-      });
-    }
-  });
-
-  let alive = true;
-  function frame() {
-    if (!alive) return;
-    ctx.clearRect(0, 0, W, H);
-    orbits.forEach(o => {
-      ctx.beginPath(); ctx.arc(cx, cy, o.r, 0, Math.PI*2);
-      ctx.strokeStyle = 'rgba(143,179,57,0.06)'; ctx.lineWidth = 1; ctx.stroke();
-    });
-    particles.forEach(p => {
-      p.angle += p.speed;
-      const x = cx + Math.cos(p.angle) * p.r;
-      const y = cy + Math.sin(p.angle) * p.r * 0.88;
-      p.trail.push({x, y});
-      if (p.trail.length > 10) p.trail.shift();
-      p.trail.forEach((pt, ti) => {
-        const frac = ti / p.trail.length;
-        ctx.beginPath(); ctx.arc(pt.x, pt.y, p.size * frac * 0.8, 0, Math.PI*2);
-        ctx.fillStyle = `hsla(${p.hue},90%,68%,${frac * p.alpha * 0.45})`; ctx.fill();
-      });
-      const g = ctx.createRadialGradient(x, y, 0, x, y, p.size*3);
-      g.addColorStop(0, `hsla(${p.hue+8},100%,90%,${p.alpha})`);
-      g.addColorStop(0.4, `hsla(${p.hue},95%,66%,${p.alpha*0.8})`);
-      g.addColorStop(1, `hsla(${p.hue-8},80%,40%,0)`);
-      ctx.beginPath(); ctx.arc(x, y, p.size, 0, Math.PI*2);
-      ctx.fillStyle = g; ctx.fill();
-    });
-    requestAnimationFrame(frame);
-  }
-  frame();
-  window._stopLoader = function(){ alive = false; };
-})();
 </script>
 <script type="module" src="js/app.js"></script>
-<script>
-(function(){
-  function makeOrbitalSparks(canvasId, getActive) {
-    const cv = document.getElementById(canvasId);
-    if (!cv) return;
-    const dpr = Math.min(window.devicePixelRatio||1,2);
-    const W = cv.width, H = cv.height;
-    cv.width = W*dpr; cv.height = H*dpr;
-    cv.style.width = W+'px'; cv.style.height = H+'px';
-    const ctx = cv.getContext('2d');
-    ctx.scale(dpr,dpr);
-    const cx = W/2, cy = H/2;
-    let t = 0;
-    function frame() {
-      t += 0.022;
-      ctx.clearRect(0, 0, W, H);
-      const active = getActive();
-      if (active) {
-        const n = 6;
-        const rad = 22;
-        for (let i = 0; i < n; i++) {
-          const baseA = (i/n) * Math.PI * 2;
-          const a = baseA + t * (1 + i * 0.06);
-          const pulse = Math.sin(t * 2.2 + i * 1.1) * 0.5 + 0.5;
-          const r = rad + Math.sin(t * 1.4 + i) * 1.2;
-          const x = cx + Math.cos(a) * r;
-          const y = cy + Math.sin(a) * r * 0.75;
-          const hue = 40 + i * 5 + pulse * 14;
-          const size = 1.2 + pulse * 1.4;
-          // glow
-          ctx.save();
-          ctx.globalAlpha = pulse * 0.18;
-          ctx.beginPath(); ctx.arc(x, y, size * 3.5, 0, Math.PI * 2);
-          ctx.fillStyle = `hsl(${hue},100%,62%)`; ctx.fill();
-          // core
-          ctx.globalAlpha = 0.35 + pulse * 0.6;
-          ctx.beginPath(); ctx.arc(x, y, size, 0, Math.PI * 2);
-          const g = ctx.createRadialGradient(x, y, 0, x, y, size * 2.5);
-          g.addColorStop(0, `hsla(${hue+6},100%,84%,1)`);
-          g.addColorStop(0.5, `hsla(${hue},95%,64%,.8)`);
-          g.addColorStop(1, `hsla(${hue-8},80%,42%,0)`);
-          ctx.fillStyle = g; ctx.fill();
-          ctx.restore();
-        }
-      }
-      requestAnimationFrame(frame);
-    }
-    frame();
-  }
 
-  // HOY — solo cuando isPerfectToday
-  setTimeout(() => {
-    makeOrbitalSparks('sparks-hoy', () => {
-      const el = document.getElementById('viajero-stat-perfectos');
-      const val = parseInt(el?.textContent || '0');
-      // activo si hay días perfectos Y el día actual es perfecto
-      return val > 0 && window._isPerfectToday === true;
-    });
-
-  }, 800);
-})();
-</script>
 </body>
 </html>
