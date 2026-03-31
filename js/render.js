@@ -1296,15 +1296,10 @@ function renderStatsDayHabits(dateStr, completedIds, scheduledHabits) {
   sl.classList.toggle('perfect-day', isPerfectDay);
   const isToday = dateStr === today();
   if (!scheduledHabits.length) {
-    sl.innerHTML = `<div class="empty-state"><div class="empty-icon">📅</div><div class="empty-text">Sin hábitos programados para este día.</div></div>`;
+    sl.innerHTML = '<div class="empty-state"><div class="empty-icon">📅</div><div class="empty-text">Sin hábitos programados para este día.</div></div>';
     return;
   }
 
-  // Separar en completados y pendientes
-  const grupoComp = scheduledHabits.filter(h => completedIds.includes(h.id));
-  const grupoPend = scheduledHabits.filter(h => !completedIds.includes(h.id));
-
-  // Ordenar cada grupo: categoría (fisico→disciplina→energia→inteligencia→identidad), luego XP desc
   const CAT = ['fisico','disciplina','energia','inteligencia','identidad'];
   const cmp = (a, b) => {
     const ca = CAT.includes(a.category) ? CAT.indexOf(a.category) : 99;
@@ -1312,38 +1307,35 @@ function renderStatsDayHabits(dateStr, completedIds, scheduledHabits) {
     if (ca !== cb) return ca - cb;
     return (b.xp || 10) - (a.xp || 10);
   };
-  grupoComp.sort(cmp);
-  grupoPend.sort(cmp);
+
+  const grupoComp = scheduledHabits.filter(h =>  completedIds.includes(h.id)).sort(cmp);
+  const grupoPend = scheduledHabits.filter(h => !completedIds.includes(h.id)).sort(cmp);
   const ordenados = [...grupoComp, ...grupoPend];
 
   let html = '';
-  // Separador visual entre grupos si hay de ambos tipos
   let inPendientes = false;
   let lastCat = null;
+
   ordenados.forEach(h => {
     const done = completedIds.includes(h.id);
-    // Añadir separador al empezar los pendientes
     if (!done && !inPendientes && grupoComp.length > 0 && grupoPend.length > 0) {
       inPendientes = true;
-      lastCat = null; // resetear categoría para mostrar cabecera de nuevo
-      html += `<div style="height:1px;background:var(--border);margin:8px 0;opacity:0.5"></div>`;
+      lastCat = null;
+      html += '<div style="height:1px;background:var(--border);margin:8px 0;opacity:0.5"></div>';
     }
     const cat = CATEGORIES[h.category] || CATEGORIES.disciplina;
     if (h.category !== lastCat) {
-      html += `<div class="cat-group-label cat-${h.category}">${cat.label}</div>`;
+      html += '<div class="cat-group-label cat-' + h.category + '">' + cat.label + '</div>';
       lastCat = h.category;
     }
-    html += `
-      <div class="habit-card ${done?'done':''}" style="cursor:default">
-        ${habitIconHTML(h)}
-        <div class="habit-info">
-          <div class="habit-name">${h.name}</div>
-          <div class="habit-meta">
-            ${isToday ? `<span class="xp-badge xp-${h.xp}">+${h.xp} XP</span>` : ''}
-          </div>
-        </div>
-        <div class="check-circle" style="flex-shrink:0">${done?'✓':''}</div>
-      </div>`;
+    html += '<div class="habit-card ' + (done?'done':'') + '" style="cursor:default">'
+      + habitIconHTML(h)
+      + '<div class="habit-info"><div class="habit-name">' + h.name + '</div>'
+      + '<div class="habit-meta">'
+      + (isToday ? '<span class="xp-badge xp-' + h.xp + '">+' + h.xp + ' XP</span>' : '')
+      + '</div></div>'
+      + '<div class="check-circle" style="flex-shrink:0">' + (done?'✓':'') + '</div>'
+      + '</div>';
   });
   sl.innerHTML = html;
 }
@@ -1386,13 +1378,20 @@ function renderCatStats(dateStr, habitsSource) {
       </div>`;
   }).join('');
 
-  // Todos los hábitos del día debajo: completados primero, luego pendientes, con cat-badge
+  // Todos los hábitos del día: completados primero, luego pendientes
+  // Dentro de cada grupo: por categoría, luego XP desc
   const allScheduled = habitsSource.filter(h => isScheduledForDate(h, dateStr));
   const _cdAll = getCompletadosForDate(dateStr);
-  const allOrdenados = [
-    ...allScheduled.filter(h => _cdAll.includes(h.id)),
-    ...allScheduled.filter(h => !_cdAll.includes(h.id)),
-  ];
+  const CAT_ORDER = ['fisico','disciplina','energia','inteligencia','identidad'];
+  const sortHabs = (a, b) => {
+    const ca = CAT_ORDER.includes(a.category) ? CAT_ORDER.indexOf(a.category) : 99;
+    const cb = CAT_ORDER.includes(b.category) ? CAT_ORDER.indexOf(b.category) : 99;
+    if (ca !== cb) return ca - cb;
+    return (b.xp || 10) - (a.xp || 10);
+  };
+  const compGroup = allScheduled.filter(h =>  _cdAll.includes(h.id)).sort(sortHabs);
+  const pendGroup = allScheduled.filter(h => !_cdAll.includes(h.id)).sort(sortHabs);
+  const allOrdenados = [...compGroup, ...pendGroup];
   const completedIds2 = _cdAll;
   if (allOrdenados.length) {
     cl.innerHTML += allOrdenados.map(h => {
