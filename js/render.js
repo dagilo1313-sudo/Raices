@@ -440,8 +440,14 @@ function renderHabits() {
     return;
   }
 
-  // Ordenar por XP de mayor a menor
-  scheduled.sort((a, b) => (b.xp || 10) - (a.xp || 10));
+  // Ordenar por categoría (fisico→disciplina→energia→inteligencia→identidad), luego XP desc
+  const _CAT_HOY = ['fisico','disciplina','energia','inteligencia','identidad'];
+  scheduled.sort((a, b) => {
+    const ca = _CAT_HOY.includes(a.category) ? _CAT_HOY.indexOf(a.category) : 99;
+    const cb = _CAT_HOY.includes(b.category) ? _CAT_HOY.indexOf(b.category) : 99;
+    if (ca !== cb) return ca - cb;
+    return (b.xp || 10) - (a.xp || 10);
+  });
 
   let html = '', lastCat = null;
   scheduled.forEach(h => {
@@ -1212,7 +1218,7 @@ function renderStatsForDate(dateStr) {
     ? state.habits
     : planificados
       ? state.allHabits.filter(h => planificados.includes(h.id))
-      : state.allHabits.filter(h => isScheduledForDate(h, dateStr));
+      : state.allHabits.filter(h => !h.archivado && isScheduledForDate(h, dateStr));
   const completedIds = getCompletadosForDate(dateStr);
   const scheduledHabits = isToday ? habitsSource.filter(h => isScheduledForDate(h, dateStr)) : habitsSource;
   const done = scheduledHabits.filter(h => completedIds.includes(h.id)).length;
@@ -1373,12 +1379,18 @@ function renderCatStats(dateStr, habitsSource) {
       </div>`;
   }).join('');
 
-  // Todos los hábitos del día debajo: completados primero, luego pendientes, con cat-badge
+  // Todos los hábitos del día debajo: completados primero, luego pendientes
+  // Cada bloque ordenado por categoría: fisico → disciplina → energia → inteligencia → identidad
   const allScheduled = habitsSource.filter(h => isScheduledForDate(h, dateStr));
   const _cdAll = getCompletadosForDate(dateStr);
+  const _CAT = ['fisico','disciplina','energia','inteligencia','identidad'];
+  const _sortCat = (a, b) => {
+    const ia = _CAT.indexOf(a.category); const ib = _CAT.indexOf(b.category);
+    return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib);
+  };
   const allOrdenados = [
-    ...allScheduled.filter(h => _cdAll.includes(h.id)),
-    ...allScheduled.filter(h => !_cdAll.includes(h.id)),
+    ...allScheduled.filter(h =>  _cdAll.includes(h.id)).sort(_sortCat),
+    ...allScheduled.filter(h => !_cdAll.includes(h.id)).sort(_sortCat),
   ];
   const completedIds2 = _cdAll;
   if (allOrdenados.length) {

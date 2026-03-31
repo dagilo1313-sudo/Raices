@@ -19,12 +19,15 @@
 <body>
 
 <div id="loading-screen">
-  <div id="loading-inner" style="display:flex;flex-direction:column;align-items:center;gap:32px">
-    <div style="position:relative;width:120px;height:120px;display:flex;align-items:center;justify-content:center">
-      <canvas id="loading-canvas" width="240" height="240" style="position:absolute;inset:-60px;width:240px;height:240px;pointer-events:none"></canvas>
-      <div id="loading-leaf" style="font-size:38px;position:relative;z-index:2">🌱</div>
+  <div style="display:flex;flex-direction:column;align-items:center;gap:32px">
+    <div style="position:relative;width:100px;height:100px;display:flex;align-items:center;justify-content:center">
+      <div style="position:absolute;inset:0;border-radius:50%;border:1px solid rgba(143,179,57,0.25)" id="ls-ring1"></div>
+      <div style="position:absolute;inset:-14px;border-radius:50%;border:1px solid rgba(143,179,57,0.12)" id="ls-ring2"></div>
+      <div style="position:absolute;inset:8px;border-radius:50%;background:rgba(143,179,57,0.05)"></div>
+      <canvas id="loading-canvas" width="200" height="200" style="position:absolute;inset:-50px;width:200px;height:200px;pointer-events:none"></canvas>
+      <div style="font-size:30px;position:relative;z-index:2">🌱</div>
     </div>
-    <div class="loading-sub" style="letter-spacing:6px;font-size:14px">RAÍCES</div>
+    <div class="loading-sub" style="letter-spacing:5px;font-size:13px;animation:ls-txt 1.8s ease-in-out infinite">CRECE HOY</div>
   </div>
 </div>
 
@@ -149,7 +152,7 @@
     </div>
 
     <!-- ══ TAREAS ══ -->
-    <div style="margin:10px 24px 8px">
+    <div style="margin:10px 24px 0">
       <!-- Toggle header -->
       <div id="tareas-toggle" class="tareas-toggle" onclick="onToggleTareas()">
         <div style="display:flex;align-items:center;gap:10px">
@@ -170,7 +173,7 @@
     </div>
 
     <!-- Score cards HOY -->
-    <div class="hoy-score-grid">
+    <div class="hoy-score-grid" style="margin-top:16px">
       <div class="hoy-sc-card" id="hoy-sc-hab">
         <div class="hoy-sc-bar-lat" id="hoy-sc-bar-lat-hab"></div>
         <div class="hoy-sc-lbl">Hábitos hoy</div>
@@ -189,15 +192,15 @@
 
 
 
-    <div class="cat-tabs" id="cat-tabs"></div>
+    <div class="cat-tabs" id="cat-tabs" style="margin-top:6px;margin-bottom:4px"></div>
 
-    <div class="section">
+    <div class="section" style="margin-top:0;padding-top:0">
       <div id="habits-list"></div>
     </div>
 
     <!-- Última sync discreta -->
     <div id="last-sync" style="text-align:center;font-size:10px;color:var(--border);padding:4px 0 2px"></div>
-    <div style="text-align:center;font-size:9px;color:var(--border);padding:0 0 12px;letter-spacing:1px">v68</div>
+    <div style="text-align:center;font-size:9px;color:var(--border);padding:0 0 12px;letter-spacing:1px">v82</div>
   </div>
 
   <!-- ══ HÁBITOS ══ -->
@@ -723,16 +726,28 @@
 </script>
 <script>
 (function(){
+  // Añadir animaciones CSS
+  const s = document.createElement('style');
+  s.textContent = `
+    @keyframes ls-txt{0%,100%{opacity:0.3}50%{opacity:1}}
+    @keyframes ls-ring1{0%,100%{opacity:0.08;transform:scale(1)}50%{opacity:0.2;transform:scale(1.07)}}
+    @keyframes ls-ring2{0%,100%{opacity:0.05;transform:scale(1)}50%{opacity:0.12;transform:scale(1.13)}}
+  `;
+  document.head.appendChild(s);
+  const r1 = document.getElementById('ls-ring1');
+  const r2 = document.getElementById('ls-ring2');
+  if (r1) r1.style.animation = 'ls-ring1 2s ease-in-out infinite';
+  if (r2) r2.style.animation = 'ls-ring2 2s ease-in-out infinite 0.5s';
+
   const cv = document.getElementById('loading-canvas');
   if (!cv) return;
   const ctx = cv.getContext('2d');
-  const W = 240, H = 240, cx = W/2, cy = H/2;
+  const W = 200, H = 200, cx = W/2, cy = H/2;
 
-  // Mismo motor orbital que stats loader
+  // Mismo motor que stats loader
   const orbits = [
-    { r: 52, n: 7,  speed: 0.030,  offset: 0,           size: 2.8, hue: 44, alpha: 1.0 },
-    { r: 72, n: 10, speed: -0.020, offset: Math.PI/5,   size: 2.2, hue: 38, alpha: 0.8 },
-    { r: 88, n: 5,  speed: 0.042,  offset: Math.PI/3,   size: 1.6, hue: 50, alpha: 0.55 },
+    { r: 38, n: 5,  speed: 0.030,  offset: 0,          size: 2.0, hue: 44, alpha: 0.9 },
+    { r: 54, n: 8,  speed: -0.020, offset: Math.PI/4,  size: 1.5, hue: 38, alpha: 0.6 },
   ];
 
   const particles = [];
@@ -752,26 +767,21 @@
   function frame() {
     if (!alive) return;
     ctx.clearRect(0, 0, W, H);
-
-    // Guía tenue
     orbits.forEach(o => {
       ctx.beginPath(); ctx.arc(cx, cy, o.r, 0, Math.PI*2);
       ctx.strokeStyle = 'rgba(143,179,57,0.06)'; ctx.lineWidth = 1; ctx.stroke();
     });
-
     particles.forEach(p => {
       p.angle += p.speed;
       const x = cx + Math.cos(p.angle) * p.r;
       const y = cy + Math.sin(p.angle) * p.r * 0.88;
       p.trail.push({x, y});
-      if (p.trail.length > 12) p.trail.shift();
-
+      if (p.trail.length > 10) p.trail.shift();
       p.trail.forEach((pt, ti) => {
         const frac = ti / p.trail.length;
         ctx.beginPath(); ctx.arc(pt.x, pt.y, p.size * frac * 0.8, 0, Math.PI*2);
         ctx.fillStyle = `hsla(${p.hue},90%,68%,${frac * p.alpha * 0.45})`; ctx.fill();
       });
-
       const g = ctx.createRadialGradient(x, y, 0, x, y, p.size*3);
       g.addColorStop(0, `hsla(${p.hue+8},100%,90%,${p.alpha})`);
       g.addColorStop(0.4, `hsla(${p.hue},95%,66%,${p.alpha*0.8})`);
@@ -779,7 +789,6 @@
       ctx.beginPath(); ctx.arc(x, y, p.size, 0, Math.PI*2);
       ctx.fillStyle = g; ctx.fill();
     });
-
     requestAnimationFrame(frame);
   }
   frame();
