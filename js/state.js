@@ -1,16 +1,25 @@
 // ── Estado global ──
 export const state = {
   currentUser: null,
-  habits: [],
-  completions: {},
+  habits: [],       // activos (no archivados)
+  allHabits: [],    // todos incluyendo archivados
+  completions: {},  // solo el mes actual cargado para HOY
+  statsCompletions: {}, // histórico completo cargado al abrir Stats
+  statsLoaded: false,   // si el histórico completo ya fue cargado
   activeFilter: 'all',
   selectedDate: null,
-  // Perfil del viajero (se carga/guarda en Firestore)
+  debugDate: null,
+  currentMonthKey: null, // 'YYYY-MM' del mes cargado actualmente
+  historicMonthKey: null, // 'YYYY-MM' del mes cargado en Histórico
   perfil: {
     xpTotal: 0,
     nivel: 1,
-    clase: 0, // índice en CLASES
+    clase: 0,
+    diasPerfectos: 0,
+    diasBuenos: 0,
+    nombre: 'David',
   },
+  tareas: [],
 };
 
 // ── Sistema de niveles ──
@@ -25,14 +34,15 @@ export const CLASES = [
 
 export const NIVELES_POR_CLASE = 30;
 
-// XP necesario para pasar del nivel n al n+1
-export const xpParaNivel = (n) => Math.round(100 * Math.pow(n, 1.8));
+// Fórmula: 100 * n^1.260 → suma total ~100.075 en 30 niveles
+// Nivel 1→2: 100 XP · Nivel 30→31: 7.264 XP
+export const xpParaNivel = (n) => Math.round(100 * Math.pow(n, 1.260));
 
 // XP total para completar una clase entera (niveles 1→30)
 export const xpTotalClase = () => {
   let total = 0;
   for (let n = 1; n <= NIVELES_POR_CLASE; n++) total += xpParaNivel(n);
-  return total;
+  return total; // ~100.075
 };
 
 // Calcula clase, nivel y xp actual a partir del xpTotal acumulado
@@ -88,15 +98,130 @@ export const DAYS_OF_WEEK = [
 
 export const JS_DAY_TO_KEY = ['dom', 'lun', 'mar', 'mie', 'jue', 'vie', 'sab'];
 
-export const EMOJIS = [
-  '🏃','💧','📚','🧘','🍎','💪','✍️','🎸',
-  '🌿','😴','🧠','🥗','☕','🎨','🚴','🏊',
-  '🧹','📝','💊','🌞','🎯','🤸','🏋️','🫁',
-  '❤️','🧴','🌳','🍵','⚡','🔥','🎵','🌊',
-];
+export const EMOJIS = []; // legacy — no usado
+
+export const SYMBOL_CATEGORIES = {
+  'Estrellas y formas': [
+    '★','☆','✦','✧','✩','✪','✫','✬','✭','✮','✯','✰','⍟','✡︎',
+    '✢','✣','✤','✥','✦','✧','✨︎','✩','✪','✫','✬','✭','✮','✯',
+    '❋','✾','❇︎','❈','❉','❊','⁂','⁎','⁑','※','⊛','⊜','⊝','⊞',
+    '◈','◉','◎','◍','◌','○','◊','◉','⦿','⦾','⦽','⦼','⧆','⧇',
+  ],
+  'Círculos y puntos': [
+    '●','○','◐','◑','◒','◓','◔','◕','◖','◗','◘','◙','◚','◛',
+    '⬤','◯','⊙','⊚','⊛','⊜','⊝','⊕','⊗','⊘','⊖','⊞','⊟','⊠',
+    '◉','◎','◍','◌','○','◊','⦿','⦾','⦻','⦺','⦹','⦸','⦷','⦶',
+    '⭕︎','⭘','⭗','⭖','⭑','⭒','⭐︎','⊡','⊟','⊞','⊝','⊜','⊛','⊚',
+  ],
+  'Cuadrados y rectángulos': [
+    '■','□','▪︎','▫︎','◼︎','◻︎','▮','▯','▰','▱','▲','△','▴','▵',
+    '▶︎','▷','▸','▹','►','▻','▼','▽','▾','▿','◀︎','◁','◂','◃',
+    '◄','◅','◆','◇','◈','◉','◊','○','◌','◍','◎','●','◐','◑',
+    '⬛︎','⬜︎','⬝','⬞','⬟','⬠','⬡','⬢','⬣','⬤','⬥','⬦','⬧','⬨',
+    '❏','❐','❑','❒','⊞','⊟','⊠','⊡','▣','▤','▥','▦','▧','▨','▩',
+  ],
+  'Flechas rectas': [
+    '↑','↓','←','→','↔','↕','↖','↗','↘','↙','↚','↛','↜','↝',
+    '⬆︎','⬇︎','⬅︎','➡︎','⬈','⬉','⬊','⬋','⬌','⬍','⤴︎','⤵︎','⤶','⤷',
+    '⇑','⇓','⇐','⇒','⇔','⇕','⇖','⇗','⇘','⇙','⇚','⇛','⇜','⇝',
+    '➤','➥','➦','➧','➨','➩','➪','➫','➬','➭','➮','➯','➱','➲',
+    '➳','➴','➵','➶','➷','➸','➹','➺','➻','➼','➽','➾','⇢','⇣',
+  ],
+  'Flechas curvas y dobles': [
+    '↶','↷','↺','↻','⟳','⟲','↩','↪','↫','↬','↭','↮','↯','↰',
+    '↱','↲','↳','↴','↵','↸','↹','⇄','⇅','⇆','⇇','⇈','⇉','⇊',
+    '⇋','⇌','⇍','⇎','⇏','⇐','⇒','⇤','⇥','⇦','⇧','⇨','⇩','⇪',
+    '⤴︎','⤵︎','⤸','⤹','⤺','⤻','⤼','⤽','⤾','⤿','⥀','⥁','⥂','⥃',
+  ],
+  'Marcas y cruces': [
+    '✓','✔︎','✕','✖︎','✗','✘','✙','✚','✛','✜','✝︎','✞','✟','✠',
+    '✡︎','✢','✣','✤','✥','✦','✧','✩','✪','✫','✬','✭','✮','✯',
+    '✰','✱','✲','✳︎','✴︎','✵','✶','✷','✸','✹','✺','✻','✼','✽',
+    '✾','✿','❀','❁','❂','❃','❄︎','❅','❆','❇︎','❈','❉','❊','❋',
+    '❌︎','❍','❎︎','❏','❐','❑','❒','❓︎','❔︎','❕︎','❖','❗︎','❘','❙',
+  ],
+  'Matemáticas': [
+    '∞','≈','≠','≡','≤','≥','≪','≫','≬','≭','≮','≯','≰','≱',
+    '∑','∏','∂','∇','√','∛','∜','∝','∫','∬','∭','∮','∯','∰',
+    '∀','∃','∄','∅','∆','∇','∈','∉','∊','∋','∌','∍','∎','∏',
+    '∐','∑','−','∓','∔','∕','∖','∗','∘','∙','√','∛','∜','∝',
+    '⊂','⊃','⊄','⊅','⊆','⊇','⊈','⊉','⊊','⊋','⊌','⊍','⊎','⊏',
+    '⊐','⊑','⊒','⊓','⊔','⊕','⊖','⊗','⊘','⊙','⊚','⊛','⊜','⊝',
+  ],
+  'Astronomía y clima': [
+    '☀︎','☁︎','☂︎','☃︎','☄︎','☇︎','☈︎','☉','☊','☋','☌','☍','☽','☾',
+    '♈︎','♉︎','♊︎','♋︎','♌︎','♍︎','♎︎','♏︎','♐︎','♑︎','♒︎','♓︎','⛎︎','⛢',
+    '⚡︎','❄︎','❅','❆','☼','☛︎','☚︎','☞︎','☟︎','☝︎','☜︎','⊙','⊚','⊛',
+    '⛭','⛬','⛫','⛪︎','⛩︎','⛨','⛧','⛦','⛥','⛤','⛣','⛡','⛟','⛞',
+  ],
+  'Naturaleza y plantas': [
+    '⚘','✿','❀','❁','❃','❋','✾','⚜︎','⚛︎','☘︎','⚪︎','⚫︎','⚬','⚭',
+    '⚮','⚯','⚰︎','⚱︎','⚲','⚳','⚴','⚵','⚶','⚷','⚸','⚹','⚺','⚻',
+    '⚼','⚽︎','⚾︎','⚿','⛀','⛁','⛂','⛃','⛄︎','⛅︎','⛆','⛇','⛈','⛉',
+    '⛊','⛋','⛌','⛍','⛎︎','⛏︎','⛐','⛑︎','⛒','⛓︎','⛔︎','⛕','⛖','⛗',
+  ],
+  'Música': [
+    '♩','♪','♫','♬','♭','♮','♯','𝄞','𝄡','𝄢','𝄣','𝄤','𝄥','𝄦',
+    '𝄫','𝄪','𝄩','𝄨','𝄧','𝆏','𝆐','𝆑','𝆒','𝆓','𝆔','𝆕','𝆖','𝆗',
+  ],
+  'Escritura y edición': [
+    '✎','✏︎','✐','✑','✒︎','✓','✔︎','✕','✖︎','✗','✘','✙','✚','✛',
+    '⌂','⌃','⌄','⌅','⌆','⌇','⌈','⌉','⌊','⌋','⌌','⌍','⌎','⌏',
+    '⌐','⌑','⌒','⌓','⌔','⌕','⌖','⌗','⌘','⌙','⌚︎','⌛︎','⌜','⌝',
+    '⌞','⌟','⌠','⌡','⌢','⌣','⌤','⌥','⌦','⌧','⌨','⌫','⌬','⌭',
+  ],
+  'Teclado y tecnología': [
+    '⌘','⌥','⇧','⌃','⎋','⌫','⌦','⏎','⌤','⎈','⎇','⎊','⎌','⎍',
+    '⎎','⎏','⎐','⎑','⎒','⎓','⎔','⎕','⎖','⎗','⎘','⎙','⎚','⎛',
+    '⎜','⎝','⎞','⎟','⎠','⎡','⎢','⎣','⎤','⎥','⎦','⎧','⎨','⎩',
+    '⎪','⎫','⎬','⎭','⎮','⎯','⎰','⎱','⎲','⎳','⎴','⎵','⎶','⎷',
+    '⎸','⎹','⎺','⎻','⎼','⎽','⎾','⎿','⏀','⏁','⏂','⏃','⏄','⏅',
+    '⏆','⏇','⏈','⏉','⏊','⏋','⏌','⏍','⏎','⏏','⏐','⏑','⏒','⏓',
+  ],
+  'Herramientas y objetos': [
+    '⚙︎','⚗︎','⚒︎','⚔︎','⚓︎','⚑︎','⚐︎','⚏','⚎','⚍','⚌','⚋','⚊','⚉',
+    '⚈','⚇','⚆','⚅','⚄','⚃','⚂','⚁','⚀','⛿','⛾','⛽︎','⛼','⛻',
+    '⛺︎','⛹︎','⛸︎','⛷︎','⛶','⛵︎','⛴︎','⛳︎','⛲︎','⛱︎','⛰︎','⛯','⛮','⛭',
+    '⛬','⛫','⛪︎','⛩︎','⛨','⛧','⛦','⛥','⛤','⛣','⛡','⛟','⛞','⛝',
+  ],
+  'Corazones y amor': [
+    '♥︎','♡','❤︎','❥','❦','❧','💔','❣︎','❢','❡','❠','❟','❞','❝',
+    '❜','❛','❚','❙','❘','❗︎','❖','❕︎','❔︎','❓︎','❒','❑','❐','❏',
+    '❎︎','❍','❌︎','❋','❊','❉','❈','❇︎','❆','❅','❄︎','❃','❂','❁',
+    '❀','✿','✾','✽','✼','✻','✺','✹','✸','✷','✶','✵','✴︎','✳︎',
+  ],
+  'Signos y puntuación': [
+    '§','¶','†','‡','‰','‱','′','″','‴','‵','‶','‷','‸','‹',
+    '›','«','»','‼','⁇','⁈','⁉','⁊','⁋','⁌','⁍','⁎','⁏','⁐',
+    '⁑','⁒','⁓','⁔','⁕','⁖','⁗','⁘','⁙','⁚','⁛','⁜','⁝','⁞',
+    '℃','℉','™','©','®','℗','℘','℞','℟','℠','℡','™','℣','ℤ',
+    '№','℅','℆','℈','℉','ℊ','ℋ','ℌ','ℍ','ℎ','ℏ','ℐ','ℑ','ℒ',
+  ],
+  'Números circulados': [
+    '①','②','③','④','⑤','⑥','⑦','⑧','⑨','⑩','⑪','⑫','⑬','⑭',
+    '⑮','⑯','⑰','⑱','⑲','⑳','⓪','⓫','⓬','⓭','⓮','⓯','⓰','⓱',
+    '⓲','⓳','⓴','⑴','⑵','⑶','⑷','⑸','⑹','⑺','⑻','⑼','⑽','⑾',
+    '⑿','⒀','⒁','⒂','⒃','⒄','⒅','⒆','⒇','⒈','⒉','⒊','⒋','⒌',
+    '⒍','⒎','⒏','⒐','⒑','⒒','⒓','⒔','⒕','⒖','⒗','⒘','⒙','⒚',
+  ],
+  'Romanos y griegos': [
+    'Ⅰ','Ⅱ','Ⅲ','Ⅳ','Ⅴ','Ⅵ','Ⅶ','Ⅷ','Ⅸ','Ⅹ','Ⅺ','Ⅻ','ⅰ','ⅱ',
+    'ⅲ','ⅳ','ⅴ','ⅵ','ⅶ','ⅷ','ⅸ','ⅹ','ⅺ','ⅻ','α','β','γ','δ',
+    'ε','ζ','η','θ','ι','κ','λ','μ','ν','ξ','ο','π','ρ','σ',
+    'τ','υ','φ','χ','ψ','ω','Α','Β','Γ','Δ','Ε','Ζ','Η','Θ',
+    'Ι','Κ','Λ','Μ','Ν','Ξ','Ο','Π','Ρ','Σ','Τ','Υ','Φ','Χ',
+    'Ψ','Ω','Ъ','Ю','Я','Ф','Э','Ю','Я','Ā','Ē','Ī','Ō','Ū',
+  ],
+  'Braille y especiales': [
+    '⠀','⠁','⠂','⠃','⠄','⠅','⠆','⠇','⠈','⠉','⠊','⠋','⠌','⠍',
+    '⠎','⠏','⠐','⠑','⠒','⠓','⠔','⠕','⠖','⠗','⠘','⠙','⠚','⠛',
+    '⠜','⠝','⠞','⠟','⠠','⠡','⠢','⠣','⠤','⠥','⠦','⠧','⠨','⠩',
+    '⠪','⠫','⠬','⠭','⠮','⠯','⠰','⠱','⠲','⠳','⠴','⠵','⠶','⠷',
+  ],
+};
 
 // ── Helpers de fecha ──
-export const today = () => new Date().toISOString().split('T')[0];
+export const today = () => state.debugDate || new Date().toISOString().split('T')[0];
 export const getActiveDate = () => state.selectedDate || today();
 
 export const isScheduledForDate = (habit, dateStr) => {
@@ -106,51 +231,52 @@ export const isScheduledForDate = (habit, dateStr) => {
   return habit.days.includes(dayKey);
 };
 
-export const isCompleted = (habitId, date) =>
-  state.completions[date] && state.completions[date].includes(habitId);
+// ── Helper local: completados de un día (compatible ambos formatos) ──
+const _comp = (dateStr) => {
+  const d = state.completions[dateStr];
+  if (!d) return [];
+  return Array.isArray(d) ? d : (d.completados || []);
+};
+
+export const isCompleted = (habitId, date) => _comp(date).includes(habitId);
 
 export const getHabitStreak = (habitId) => {
   let streak = 0;
   const d = new Date();
   while (true) {
     const ds = d.toISOString().split('T')[0];
-    if (state.completions[ds] && state.completions[ds].includes(habitId)) {
+    if (_comp(ds).includes(habitId)) {
       streak++; d.setDate(d.getDate() - 1);
     } else break;
   }
   return streak;
 };
 
-export const getGlobalStreak = () => {
-  if (!state.habits.length) return 0;
-  let streak = 0;
-  const d = new Date();
-  while (true) {
-    const ds = d.toISOString().split('T')[0];
-    if (state.completions[ds] && state.completions[ds].length > 0) {
-      streak++; d.setDate(d.getDate() - 1);
-    } else break;
-  }
-  return streak;
-};
+
 
 export const getXPForDate = (dateStr) => {
-  const completedIds = state.completions[dateStr] || [];
+  const completados = _comp(dateStr);
   return state.habits
-    .filter(h => completedIds.includes(h.id))
+    .filter(h => !h.archivado && completados.includes(h.id))
     .reduce((sum, h) => sum + (h.xp || 10), 0);
 };
 
 export const getTodayXP = () => getXPForDate(today());
 
+export const getMaxXPForDate = (dateStr) => {
+  return state.habits
+    .filter(h => !h.archivado && isScheduledForDate(h, dateStr))
+    .reduce((sum, h) => sum + (h.xp || 10), 0);
+};
+
 export const getInsight = () => {
   const todayStr = today();
-  const todayHabits = state.habits.filter(h => isScheduledForDate(h, todayStr));
+  const todayHabits = state.habits.filter(h => !h.archivado && isScheduledForDate(h, todayStr));
   const total = todayHabits.length;
   const done = todayHabits.filter(h => isCompleted(h.id, todayStr)).length;
   const xp = getTodayXP();
   if (!total) return { icon: '🌱', text: 'Los pequeños pasos de hoy son las raíces del mañana. ¡Empieza tu primer hábito!' };
-  if (done === total) return { icon: '🌳', text: `¡Perfecto! +${xp} XP ganados hoy. Tus raíces crecen profundo.` };
+  if (done === total) return { icon: '🌳', text: `¡Día perfecto! +${xp} XP ganados hoy. Tus raíces crecen profundo.` };
   if (!done) return { icon: '🌿', text: `Tienes ${total} hábito${total > 1 ? 's' : ''} esperando. ¡Cada acción suma XP!` };
   return { icon: '💧', text: `${done} de ${total} completados · +${xp} XP. Riega tus hábitos.` };
 };

@@ -18,19 +18,24 @@ let authMode = 'login';
 
 export function initAuth() {
   onAuthStateChanged(auth, async (user) => {
-    document.getElementById('loading-screen').style.display = 'none';
+    if (window._stopLoader) window._stopLoader();
     if (user) {
       state.currentUser = user;
       document.getElementById('auth-screen').style.display = 'none';
-      document.getElementById('app').style.display = 'block';
       document.getElementById('profile-email').textContent = user.email;
+      // Cargar datos ANTES de mostrar la app
       await loadData();
+      // Solo ahora ocultamos loading y mostramos la app
+      document.getElementById('loading-screen').style.display = 'none';
+      document.getElementById('app').style.display = 'block';
       renderAll();
     } else {
       state.currentUser = null;
       state.habits = [];
+      state.allHabits = [];
       state.completions = {};
       state.perfil = { xpTotal: 0, nivel: 1, clase: 0 };
+      document.getElementById('loading-screen').style.display = 'none';
       document.getElementById('app').style.display = 'none';
       document.getElementById('auth-screen').style.display = 'flex';
       const btn = document.getElementById('auth-btn');
@@ -61,16 +66,13 @@ export async function handleAuth() {
   if (!email || !password) { showMsg('auth-error', 'Rellena todos los campos.'); return; }
   btn.disabled = true; btn.textContent = '...';
   try {
-    if (authMode === 'login') await signInWithEmailAndPassword(auth, email, password);
-    else await createUserWithEmailAndPassword(auth, email, password);
+    await signInWithEmailAndPassword(auth, email, password);
   } catch (e) {
     btn.disabled = false;
-    btn.textContent = authMode === 'login' ? 'Entrar' : 'Registrarse';
+    btn.textContent = 'Entrar';
     const msgs = {
       'auth/user-not-found': 'No existe cuenta con ese email.',
       'auth/wrong-password': 'Contraseña incorrecta.',
-      'auth/email-already-in-use': 'Ese email ya está registrado.',
-      'auth/weak-password': 'La contraseña debe tener al menos 6 caracteres.',
       'auth/invalid-email': 'Email no válido.',
       'auth/invalid-credential': 'Email o contraseña incorrectos.',
     };
@@ -101,19 +103,36 @@ export async function sendResetEmail() {
 }
 
 export function showChangePassword() {
-  document.getElementById('change-password-card').style.display = 'block';
+  const ov = document.createElement('div');
+  ov.id = 'change-password-overlay';
+  ov.style.cssText = 'position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.65);display:flex;align-items:center;justify-content:center;padding:24px;animation:fadeIn 0.2s ease';
+  ov.innerHTML = `
+    <div style="background:var(--card2);border:1px solid var(--border);border-radius:20px;padding:28px 24px;max-width:320px;width:100%;animation:popIn 0.35s cubic-bezier(0.34,1.56,0.64,1)">
+      <div style="font-size:16px;font-weight:700;color:var(--text);margin-bottom:18px;text-align:center">Cambiar contraseña</div>
+      <div class="msg-error" id="cp-error" style="margin-bottom:8px"></div>
+      <div class="msg-success" id="cp-success" style="margin-bottom:8px"></div>
+      <input class="input-field" id="cp-current" type="password" placeholder="Contraseña actual">
+      <input class="input-field" id="cp-new" type="password" placeholder="Nueva contraseña">
+      <input class="input-field" id="cp-confirm" type="password" placeholder="Confirmar nueva contraseña">
+      <button class="btn btn-primary" onclick="changePassword()" style="width:100%;margin-bottom:8px">Guardar</button>
+      <button class="btn btn-secondary" onclick="hideChangePassword()" style="width:100%;margin-bottom:0">Cancelar</button>
+    </div>
+    <style>@keyframes popIn{from{transform:scale(0.8);opacity:0}to{transform:scale(1);opacity:1}}@keyframes fadeIn{from{opacity:0}to{opacity:1}}</style>`;
+  ov.addEventListener('click', e => { if (e.target === ov) hideChangePassword(); });
+  window._lockScroll && window._lockScroll();
+  document.body.appendChild(ov);
 }
 
 export function hideChangePassword() {
-  document.getElementById('change-password-card').style.display = 'none';
-  ['cp-current', 'cp-new', 'cp-confirm'].forEach(id => document.getElementById(id).value = '');
-  clearMsg('cp-error'); clearMsg('cp-success');
+  const ov = document.getElementById('change-password-overlay');
+  if (ov) ov.remove();
+  window._unlockScroll && window._unlockScroll();
 }
 
 export async function changePassword() {
-  const cur = document.getElementById('cp-current').value;
-  const nw = document.getElementById('cp-new').value;
-  const conf = document.getElementById('cp-confirm').value;
+  const cur = document.getElementById('cp-current')?.value;
+  const nw = document.getElementById('cp-new')?.value;
+  const conf = document.getElementById('cp-confirm')?.value;
   clearMsg('cp-error'); clearMsg('cp-success');
   if (!cur || !nw || !conf) { showMsg('cp-error', 'Rellena todos los campos.'); return; }
   if (nw !== conf) { showMsg('cp-error', 'Las contraseñas no coinciden.'); return; }
