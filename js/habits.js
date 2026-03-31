@@ -110,14 +110,9 @@ export async function loadMonthCompletions(monthKey) {
 }
 
 
-// ── Rellenar días sin completion desde el último registrado hasta hoy ──
+// ── Rellenar días sin completion desde el último registrado hasta hoy (o fecha debug) ──
 export async function rellenarDiasVacios() {
-  const todayStr = today();
-
-  // Encontrar el último día con completion
-  const diasConData = Object.keys(state.completions)
-    .filter(k => /^\d{4}-\d{2}-\d{2}$/.test(k))
-    .sort();
+  const todayStr = today(); // respeta modo debug
 
   // Construir snapshot vacío con hábitos activos actuales
   const buildEmptyDay = (dateStr) => {
@@ -128,62 +123,61 @@ export async function rellenarDiasVacios() {
       const cat = h.category || 'disciplina';
       xpMaxPorCat[cat] = (xpMaxPorCat[cat] || 0) + (h.xp || 10);
     });
-    return {
-      completados: [],
-      planificados,
-      xpTotal: 0,
-      xpGanadoPorCat: {},
-      xpMaxPorCat,
-      updatedAt: new Date().toISOString(),
-    };
+    return { completados: [], planificados, xpTotal: 0, xpGanadoPorCat: {}, xpMaxPorCat, updatedAt: new Date().toISOString() };
   };
 
-  if (diasConData.length === 0) {
-    // No hay ningún día — crear solo hoy vacío
+  // Buscar el último día registrado en TODO Firestore (no solo en memoria)
+  // Para esto usamos statsCompletions si está cargado, si no buscamos en completions
+  const allKeys = Object.keys(
+    state.statsLoaded ? { ...state.statsCompletions, ...state.completions } : state.completions
+  ).filter(k => /^\d{4}-\d{2}-\d{2}$/.test(k)).sort();
+
+  let lastDay = allKeys.length > 0 ? allKeys[allKeys.length - 1] : null;
+
+  // Si el último día es posterior o igual a hoy, nada que hacer
+  if (lastDay && lastDay >= todayStr) return;
+
+  // Si no hay ningún día, crear solo hoy vacío
+  if (!lastDay) {
     state.completions[todayStr] = buildEmptyDay(todayStr);
-    const mk = currentMonthKey();
-    const monthData = {};
-    Object.entries(state.completions).forEach(([k, v]) => {
-      if (/^\d{4}-\d{2}-\d{2}$/.test(k)) monthData[k] = v;
-    });
-    await setDoc(compsMonthRef(mk), monthData);
+    await setDoc(compsMonthRef(todayStr.substring(0, 7)), { [todayStr]: state.completions[todayStr] });
+    console.log('Creado día de hoy vacío');
     return;
   }
 
-  const lastDay = diasConData[diasConData.length - 1];
-  if (lastDay >= todayStr) return; // ya está al día
-
-  // Generar días faltantes entre lastDay+1 y hoy
+  // Generar todos los días faltantes entre lastDay+1 y todayStr
   const diasNuevos = {};
   const cursor = new Date(lastDay + 'T12:00:00');
   cursor.setDate(cursor.getDate() + 1);
-  while (cursor.toISOString().split('T')[0] <= todayStr) {
+  while (true) {
     const ds = cursor.toISOString().split('T')[0];
+    if (ds > todayStr) break;
     if (!state.completions[ds]) {
-      diasNuevos[ds] = buildEmptyDay(ds);
-      state.completions[ds] = diasNuevos[ds];
+      const empty = buildEmptyDay(ds);
+      diasNuevos[ds] = empty;
+      state.completions[ds] = empty;
     }
     cursor.setDate(cursor.getDate() + 1);
   }
 
   if (Object.keys(diasNuevos).length === 0) return;
 
-  // Agrupar por mes y guardar solo los meses afectados
+  // Agrupar por mes y guardar en Firestore
   const byMonth = {};
-  Object.entries(diasNuevos).forEach(([k]) => {
+  Object.keys(diasNuevos).forEach(k => {
     const mk = k.substring(0, 7);
     if (!byMonth[mk]) byMonth[mk] = {};
+    byMonth[mk][k] = diasNuevos[k];
   });
-  // Para cada mes afectado, recopilar todos sus días de state.completions
-  for (const mk of Object.keys(byMonth)) {
-    const monthData = {};
-    Object.entries(state.completions).forEach(([k, v]) => {
-      if (k.startsWith(mk)) monthData[k] = v;
-    });
-    await setDoc(compsMonthRef(mk), monthData);
+
+  for (const [mk, days] of Object.entries(byMonth)) {
+    // Fusionar con lo que ya existe en ese mes en Firestore
+    const existing = await getDoc(compsMonthRef(mk));
+    const merged = existing.exists() ? { ...existing.data(), ...days } : days;
+    await setDoc(compsMonthRef(mk), merged);
   }
 
-  console.log(`Rellenados ${Object.keys(diasNuevos).length} días vacíos hasta hoy`);
+  console.log(`Rellenados ${Object.keys(diasNuevos).length} días vacíos hasta ${todayStr}`);
 }
 
 // ── Helper: leer completados (compatible con formato antiguo array y nuevo objeto) ──

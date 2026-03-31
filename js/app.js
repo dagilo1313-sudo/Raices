@@ -447,7 +447,7 @@ window.onToggleDebug = () => {
   }
 };
 
-window.onDebugDateChange = (dateStr) => {
+window.onDebugDateChange = async (dateStr) => {
   if (!dateStr) return;
   state.debugDate = dateStr;
 
@@ -463,6 +463,8 @@ window.onDebugDateChange = (dateStr) => {
   document.getElementById('debug-banner').style.display = 'block';
   document.getElementById('debug-banner-date').textContent = label;
 
+  // Rellenar días vacíos hasta la fecha de debug y luego renderizar
+  await rellenarDiasVacios();
   renderAll();
 };
 
