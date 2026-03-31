@@ -301,7 +301,7 @@ header {
 .lifetime-divider { width: 1px; height: 36px; background: var(--border); flex-shrink: 0; }
 
 /* ── Category filter tabs ── */
-.cat-tabs { display: flex; gap: 8px; padding: 0 24px; margin-bottom: 6px; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+.cat-tabs { display: flex; gap: 8px; padding: 0 24px; margin-bottom: 12px; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
 .cat-tabs::-webkit-scrollbar { display: none; }
 .cat-tab { flex-shrink: 0; padding: 6px 14px; border-radius: var(--radius-full); border: 1px solid var(--border); background: var(--card); color: var(--muted); font-size: 12px; font-weight: 500; cursor: pointer; transition: all 0.2s; font-family: var(--font-body); }
 .cat-tab.active-all { border-color: var(--accent); color: var(--accent); background: var(--glow); }
@@ -471,7 +471,7 @@ header {
 .sc-fill{height:100%;border-radius:3px;transition:width 0.5s ease;}
 
 /* ── Score cards HOY ── */
-.hoy-score-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 24px;margin-bottom:8px;}
+.hoy-score-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 24px;margin-bottom:14px;}
 .hoy-sc-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 14px 14px 18px;position:relative;overflow:hidden;display:flex;flex-direction:column;gap:4px;}
 .hoy-sc-bar-lat{position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:3px 0 0 3px;background:var(--accent);transition:background 0.3s;}
 .hoy-sc-lbl{font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;}
