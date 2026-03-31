@@ -483,7 +483,13 @@ export function renderHabitsList() {
     return;
   }
   const catOrder = Object.keys(CATEGORIES);
-  const sorted = [...state.habits].filter(h => !h.archivado).sort((a, b) => (b.xp || 10) - (a.xp || 10));
+  const _CAT_LIST = ['fisico','disciplina','energia','inteligencia','identidad'];
+  const sorted = [...state.habits].filter(h => !h.archivado).sort((a, b) => {
+    const ca = _CAT_LIST.includes(a.category) ? _CAT_LIST.indexOf(a.category) : 99;
+    const cb = _CAT_LIST.includes(b.category) ? _CAT_LIST.indexOf(b.category) : 99;
+    if (ca !== cb) return ca - cb;
+    return (b.xp || 10) - (a.xp || 10);
+  });
   let html = '', lastCat = null;
   sorted.forEach(h => {
     if (h.category !== lastCat) {
