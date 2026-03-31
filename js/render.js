@@ -1323,7 +1323,7 @@ function renderStatsDayHabits(dateStr, completedIds, scheduledHabits) {
   ordenados.forEach(h => {
     const done = completedIds.includes(h.id);
     // Añadir separador al empezar los pendientes
-    if (!done && !inPendientes && completados.length > 0 && pendientes.length > 0) {
+    if (!done && !inPendientes && grupoComp.length > 0 && grupoPend.length > 0) {
       inPendientes = true;
       lastCat = null; // resetear categoría para mostrar cabecera de nuevo
       html += `<div style="height:1px;background:var(--border);margin:8px 0;opacity:0.5"></div>`;
