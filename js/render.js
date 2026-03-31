@@ -16,7 +16,6 @@ export function renderAll() {
   renderHabits();
   renderLastSync();
   renderHabitsList();
-  renderStats();
   renderHistorico();
 }
 
@@ -117,17 +116,20 @@ function renderViajero() {
   const hace7 = (() => { const d = new Date(todayStr+'T12:00:00'); d.setDate(d.getDate()-6); return d.toISOString().split('T')[0]; })();
   let vRatioSum=0, vRatioDays=0, vXpEficSum=0, vXpEficDays=0;
   let v7RatioSum=0, v7RatioDays=0, v7XpEficSum=0, v7XpEficDays=0;
-  // Usar el prefijo del mes de la fecha actual (respeta modo debug)
   const mesActualPrefix = todayStr.substring(0, 7);
   Object.entries(state.completions).forEach(([k, d]) => {
-    if (!k.startsWith(mesActualPrefix) || !d || Array.isArray(d)) return;
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(k) || !d || Array.isArray(d)) return;
     const comp = Array.isArray(d.completados) ? d.completados.length : 0;
     const plan = Array.isArray(d.planificados) ? d.planificados.length : 0;
     const xpG = d.xpGanadoPorCat ? Object.values(d.xpGanadoPorCat).reduce((s,v)=>s+v,0) : 0;
     const xpM = d.xpMaxPorCat    ? Object.values(d.xpMaxPorCat).reduce((s,v)=>s+v,0)    : 0;
-    if (plan > 0) { vRatioSum += comp/plan; vRatioDays++; }
-    if (xpM > 0)  { vXpEficSum += xpG/xpM; vXpEficDays++; }
-    if (k >= hace7) {
+    // Media del mes — solo días del mes actual
+    if (k.startsWith(mesActualPrefix)) {
+      if (plan > 0) { vRatioSum += comp/plan; vRatioDays++; }
+      if (xpM > 0)  { vXpEficSum += xpG/xpM; vXpEficDays++; }
+    }
+    // Media 7 días — cualquier día dentro de la ventana (incluye mes anterior)
+    if (k >= hace7 && k <= todayStr) {
       if (plan > 0) { v7RatioSum += comp/plan; v7RatioDays++; }
       if (xpM > 0)  { v7XpEficSum += xpG/xpM; v7XpEficDays++; }
     }

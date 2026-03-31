@@ -11,7 +11,7 @@ window._lockScroll   = lockScroll;
 window._unlockScroll = unlockScroll;
 
 import { initAuth, toggleAuthMode, handleAuth, showForgotPassword, showLoginForm, sendResetEmail, showChangePassword, hideChangePassword, changePassword, logout } from './auth.js';
-import { toggleHabit, deleteHabit, saveCompletions, resetAllData, resetProgress, createTarea, toggleTarea, borrarTareasCompletadas, getCompletadosForDate, loadAllCompletions, loadMonthCompletions, rellenarDiasVacios } from './habits.js';
+import { toggleHabit, deleteHabit, saveCompletions, resetAllData, resetProgress, createTarea, toggleTarea, borrarTareasCompletadas, getCompletadosForDate, loadAllCompletions, loadMonthCompletions, rellenarDiasVacios, loadMonthsForDate } from './habits.js';
 import { renderAll, renderHabitsList, renderTareas, renderHistorico, renderStats, renderRangosPanel } from './render.js';
 import { showToast, showConfetti, showXPFloat, switchView } from './ui.js';
 import { openCreateModal, openEditModal, closeModal, closeModalOutside, submitModal, selectEmoji, selectNoIcon, selectCategory, selectXP, toggleDay, selectAllDays, openIconPicker, closeIconPicker, confirmIconPicker, clearIconPicker } from './modal.js';
@@ -463,6 +463,8 @@ window.onDebugDateChange = async (dateStr) => {
   document.getElementById('debug-banner').style.display = 'block';
   document.getElementById('debug-banner-date').textContent = label;
 
+  // Cargar los 2 meses alrededor de la fecha de debug si no están en memoria
+  await loadMonthsForDate(dateStr);
   // Rellenar días vacíos hasta la fecha de debug y luego renderizar
   await rellenarDiasVacios();
   renderAll();

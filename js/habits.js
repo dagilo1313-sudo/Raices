@@ -110,6 +110,28 @@ export async function loadMonthCompletions(monthKey) {
 }
 
 
+
+// ── Cargar los 2 meses alrededor de una fecha (para modo debug) ──
+export async function loadMonthsForDate(dateStr) {
+  const mk = dateStr.substring(0, 7);
+  const prevDate = new Date(dateStr + 'T12:00:00');
+  prevDate.setDate(1);
+  prevDate.setMonth(prevDate.getMonth() - 1);
+  const prevMk = prevDate.toISOString().substring(0, 7);
+  // Solo cargar si no están ya en memoria
+  const alreadyHasCurrent = Object.keys(state.completions).some(k => k.startsWith(mk));
+  const alreadyHasPrev    = Object.keys(state.completions).some(k => k.startsWith(prevMk));
+  if (alreadyHasCurrent && alreadyHasPrev) return;
+  if (!alreadyHasPrev) {
+    const snap = await getDoc(compsMonthRef(prevMk));
+    if (snap.exists()) Object.assign(state.completions, snap.data());
+  }
+  if (!alreadyHasCurrent) {
+    const snap = await getDoc(compsMonthRef(mk));
+    if (snap.exists()) Object.assign(state.completions, snap.data());
+  }
+}
+
 // ── Rellenar días sin completion desde el último registrado hasta hoy (o fecha debug) ──
 export async function rellenarDiasVacios() {
   const todayStr = today(); // respeta modo debug
