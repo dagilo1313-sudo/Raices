@@ -1497,7 +1497,7 @@ export function renderRangosPanel() {
       html += `
         <div class="rango-futuro-info">
           <span>Nv.1 → Nv.30</span>
-          <span>100 XP → ${xpParaNivel(30).toLocaleString()} XP</span>
+          <span>50 XP → ${xpParaNivel(30).toLocaleString()} XP</span>
         </div>`;
     }
 
