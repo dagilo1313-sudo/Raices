@@ -25,10 +25,9 @@ export function initAuth() {
       document.getElementById('profile-email').textContent = user.email;
       // Cargar datos ANTES de mostrar la app
       await loadData();
-      // Restaurar modo debug si estaba activo
+      // Restaurar UI de debug si estaba activo (debugDate ya está en state desde loadData)
       if (state.debugDate) {
-        await loadMonthsForDate(state.debugDate);
-        // Mostrar banners de debug
+        const dateLabel = new Date(state.debugDate + 'T12:00:00').toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
         const banner = document.getElementById('debug-banner');
         const activeBanner = document.getElementById('debug-active-banner');
         const toggleEl = document.getElementById('debug-toggle');
@@ -36,7 +35,6 @@ export function initAuth() {
         const input = document.getElementById('debug-date-input');
         const label = document.getElementById('debug-date-label');
         const bannerDate = document.getElementById('debug-banner-date');
-        const dateLabel = new Date(state.debugDate + 'T12:00:00').toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
         if (banner) { banner.style.display = 'block'; if (bannerDate) bannerDate.textContent = dateLabel; }
         if (activeBanner) { activeBanner.style.display = 'block'; if (label) label.textContent = dateLabel; }
         if (toggleEl) toggleEl.classList.add('on');

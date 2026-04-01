@@ -263,7 +263,7 @@ function renderWeek() {
   const strip = document.getElementById('week-strip');
   if (!strip) return;
   const days = ['D', 'L', 'M', 'X', 'J', 'V', 'S'];
-  const now = new Date();
+  const now = new Date(today() + 'T12:00:00'); // respeta modo debug
   let html = '';
   for (let i = 6; i >= 0; i--) {
     const d = new Date(now);

@@ -29,22 +29,7 @@ export async function loadData() {
     state.habits = state.allHabits.filter(h => !h.archivado);
   } catch(e) { console.error('Error cargando hábitos:', e); }
 
-  try {
-    const mk = currentMonthKey();
-    state.currentMonthKey = mk;
-    // Mes anterior
-    const prevDate = new Date(today() + 'T12:00:00');
-    prevDate.setDate(1);
-    prevDate.setMonth(prevDate.getMonth() - 1);
-    const prevMk = prevDate.toISOString().substring(0, 7);
-    // Cargar los dos meses
-    state.completions = {};
-    const snapPrev = await getDoc(compsMonthRef(prevMk));
-    if (snapPrev.exists()) Object.assign(state.completions, snapPrev.data());
-    const snapCurr = await getDoc(compsMonthRef(mk));
-    if (snapCurr.exists()) Object.assign(state.completions, snapCurr.data());
-  } catch(e) { console.error('Error cargando completions del mes:', e); }
-
+  // Leer perfil PRIMERO para restaurar debugDate antes de calcular qué meses cargar
   try {
     const p = await getDoc(profileRef());
     if (p.exists()) {
@@ -55,7 +40,7 @@ export async function loadData() {
       state.perfil.diasPerfectos = data.diasPerfectos || 0;
       state.perfil.diasBuenos    = data.diasBuenos    || 0;
       state.perfil.nombre        = data.nombre        || 'David';
-      // Restaurar modo debug si estaba activo
+      // Restaurar modo debug ANTES de cargar completions
       if (data.debugDate) state.debugDate = data.debugDate;
     } else {
       await setDoc(profileRef(), { xpTotal: 0, nivel: 1, clase: 0, diasPerfectos: 0 });
@@ -64,6 +49,21 @@ export async function loadData() {
   } catch(e) {
     console.error('Error con perfil:', e);
   }
+
+  // Cargar completions — DESPUÉS del perfil para que today() respete debugDate
+  try {
+    const mk = currentMonthKey(); // ahora sí respeta debugDate
+    state.currentMonthKey = mk;
+    const prevDate = new Date(today() + 'T12:00:00');
+    prevDate.setDate(1);
+    prevDate.setMonth(prevDate.getMonth() - 1);
+    const prevMk = prevDate.toISOString().substring(0, 7);
+    state.completions = {};
+    const snapPrev = await getDoc(compsMonthRef(prevMk));
+    if (snapPrev.exists()) Object.assign(state.completions, snapPrev.data());
+    const snapCurr = await getDoc(compsMonthRef(mk));
+    if (snapCurr.exists()) Object.assign(state.completions, snapCurr.data());
+  } catch(e) { console.error('Error cargando completions del mes:', e); }
 
   // Cargar tareas
   try {
