@@ -258,11 +258,18 @@ header {
 .day-dot.gray    { background: #3a3e32; }
 
 /* ── Habit card ── */
-.habit-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 14px 16px; margin-bottom: 10px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: all 0.25s; position: relative; overflow: hidden; animation: slideIn 0.3s ease; }
-.habit-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--border); border-radius: 3px 0 0 3px; transition: background 0.25s; }
-.habit-card:hover { border-color: #3a4530; transform: translateX(2px); }
-.habit-card.done { border-color: rgba(143,179,57,0.3); background: linear-gradient(135deg, var(--card) 0%, rgba(143,179,57,0.05) 100%); }
+.habit-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 10px 14px; margin-bottom: 8px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: border-color 0.25s, background 0.25s, transform 0.15s cubic-bezier(.34,1.56,.64,1); position: relative; overflow: hidden; animation: slideIn 0.3s ease; }
+.habit-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--border); border-radius: 3px 0 0 3px; transition: background 0.3s; }
+.habit-card::after { content: ''; position: absolute; inset: 0; border-radius: var(--radius-lg); background: linear-gradient(105deg, transparent 25%, rgba(143,179,57,0.0) 35%, rgba(143,179,57,0.2) 45%, rgba(196,168,79,0.15) 50%, rgba(143,179,57,0.2) 55%, rgba(143,179,57,0.0) 65%, transparent 75%); background-size: 300% 100%; background-position: 200% 0; pointer-events: none; transition: none; }
+.habit-card.sweeping::after { transition: background-position 0.55s cubic-bezier(.4,0,.2,1); background-position: -100% 0; }
+.habit-card:active { transform: scale(0.987); }
+.habit-card.done { border-color: rgba(143,179,57,0.3); background: linear-gradient(135deg, #111b0c 0%, #0e1410 100%); }
 .habit-card.done::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--accent); border-radius: 3px 0 0 3px; }
+.habit-card.done[data-cat="fisico"]::before { background: var(--cat-fisico); }
+.habit-card.done[data-cat="disciplina"]::before { background: var(--cat-disciplina); }
+.habit-card.done[data-cat="energia"]::before { background: var(--cat-energia); }
+.habit-card.done[data-cat="inteligencia"]::before { background: var(--cat-inteligencia); }
+.habit-card.done[data-cat="identidad"]::before { background: var(--cat-identidad); }
 .habit-emoji { font-size: 22px; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: var(--card2); border-radius: var(--radius-md); flex-shrink: 0; transition: transform 0.2s; }
 .habit-card:hover .habit-emoji { transform: scale(1.1); }
 .habit-info { flex: 1; min-width: 0; }
@@ -271,8 +278,10 @@ header {
 .habit-meta { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
 .habit-streak-mini { font-size: 11px; color: var(--muted); }
 .habit-actions { display: flex; gap: 6px; flex-shrink: 0; }
-.check-circle { width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); color: transparent; font-size: 14px; }
-.habit-card.done .check-circle { background: var(--accent); border-color: var(--accent); color: white; box-shadow: 0 0 12px rgba(143,179,57,0.4); }
+.check-circle { width: 26px; height: 26px; border-radius: 50%; border: 2px solid var(--muted,#3a4245); display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: border-color 0.25s, background 0.25s, transform 0.3s cubic-bezier(0.34,1.56,0.64,1); }
+.check-circle .check-svg { opacity: 0; transform: scale(0) rotate(-20deg); transition: opacity 0.2s 0.05s, transform 0.25s 0.05s cubic-bezier(0.34,1.56,0.64,1); }
+.habit-card.done .check-circle { background: var(--accent); border-color: var(--accent); transform: scale(1.15); box-shadow: 0 0 10px rgba(143,179,57,0.35); }
+.habit-card.done .check-circle .check-svg { opacity: 1; transform: scale(1) rotate(0deg); }
 /* ── Día perfecto: todo en dorado ── */
 #habits-list.perfect-day .habit-card.done { border-color: rgba(196,168,79,0.35); background: linear-gradient(135deg, var(--card) 0%, rgba(196,168,79,0.07) 100%); }
 #habits-list.perfect-day .habit-card.done::before { background: var(--accent2); }

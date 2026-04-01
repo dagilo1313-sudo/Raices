@@ -115,6 +115,15 @@ window.onToggleHabit = (id) => {
   // 2. Render inmediato — no espera a Firestore
   renderAll();
 
+  // 3b. Sweep shine en la card del hábito recién marcado
+  requestAnimationFrame(() => {
+    const row = document.querySelector(`.habit-card[onclick*="'${id}'"]`);
+    if (row && row.classList.contains('done')) {
+      row.classList.remove('sweeping');
+      requestAnimationFrame(() => row.classList.add('sweeping'));
+    }
+  });
+
   // 3. Guardar en Firestore en background
   saveCompletions().catch(err => logError('saveCompletions', err));
 };
