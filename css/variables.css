@@ -1,7 +1,160 @@
-@import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap');
-
 :root {
-  /* Base dark fantasy */
+  /* Base */
+  --bg: #0d0f0a;
+  --surface: #141710;
+  --card: #1a1e14;
+  --card2: #1f2419;
+  --border: #2a3020;
+  --text: #d4d9c4;
+  --muted: #6b7560;
+  --accent: #a8d840;
+  --accent2: #e8c840;
+  --accent3: #8ac035;
+  --danger: #b35c4f;
+  --glow: rgba(143, 179, 57, 0.15);
+
+  /* Categorías */
+  --cat-fisico: #e05c5c;
+  --cat-fisico-bg: rgba(224, 92, 92, 0.12);
+  --cat-fisico-border: rgba(224, 92, 92, 0.3);
+
+  --cat-disciplina: #5c8ae0;
+  --cat-disciplina-bg: rgba(92, 138, 224, 0.12);
+  --cat-disciplina-border: rgba(92, 138, 224, 0.3);
+
+  --cat-energia: #e0a85c;
+  --cat-energia-bg: rgba(224, 168, 92, 0.12);
+  --cat-energia-border: rgba(224, 168, 92, 0.3);
+
+  --cat-inteligencia: #a05ce0;
+  --cat-inteligencia-bg: rgba(160, 92, 224, 0.12);
+  --cat-inteligencia-border: rgba(160, 92, 224, 0.3);
+
+  --cat-identidad: #5ce0b8;
+  --cat-identidad-bg: rgba(92, 224, 184, 0.12);
+  --cat-identidad-border: rgba(92, 224, 184, 0.3);
+
+  /* XP */
+  --xp-10: #6b7560;
+  --xp-25: #8fb339;
+  --xp-50: #c4a84f;
+
+  /* Tipografía */
+  --font-display: 'Playfair Display', serif;
+  --font-body: 'DM Sans', sans-serif;
+
+  /* Radios */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-full: 999px;
+}
+
+/* ── Tema claro (paleta C — blanco puro) ── */
+[data-theme="light"] {
+  --bg: #ffffff;
+  --surface: #f4f6f0;
+  --card: #f2f4ee;
+  --card2: #e8edd8;
+  --border: #d8e0c8;
+  --text: #1a2010;
+  --muted: #7a8a68;
+  --accent: #7cb832;
+  --accent2: #f0c830;
+  --accent3: #689c28;
+  --danger: #a03830;
+  --glow: rgba(114, 160, 48, 0.15);
+
+  --cat-fisico: #f05a54;
+  --cat-fisico-bg: rgba(240, 90, 84, 0.12);
+  --cat-fisico-border: rgba(240, 90, 84, 0.4);
+  --cat-disciplina: #5090f8;
+  --cat-disciplina-bg: rgba(80, 144, 248, 0.12);
+  --cat-disciplina-border: rgba(80, 144, 248, 0.4);
+  --cat-energia: #f0b840;
+  --cat-energia-bg: rgba(240, 184, 64, 0.12);
+  --cat-energia-border: rgba(240, 184, 64, 0.4);
+  --cat-inteligencia: #b870f0;
+  --cat-inteligencia-bg: rgba(184, 112, 240, 0.12);
+  --cat-inteligencia-border: rgba(184, 112, 240, 0.4);
+  --cat-identidad: #28dca8;
+  --cat-identidad-bg: rgba(40, 220, 168, 0.12);
+  --cat-identidad-border: rgba(40, 220, 168, 0.4);
+
+  --xp-10: #8a9878;
+  --xp-25: #7cb832;
+  --xp-50: #e8b830;
+}
+
+/* ── Overrides light ── */
+[data-theme="light"] .nav-bar { background: rgba(244,246,240,0.96); }
+[data-theme="light"] .habit-card.done { background: linear-gradient(135deg, #e4f0cc 0%, #dce8c4 100%); }
+[data-theme="light"] .hoy-sc-track,
+[data-theme="light"] .sc-bar,
+[data-theme="light"] .scat-bar-wrap,
+[data-theme="light"] .prog-track,
+[data-theme="light"] .viajero-xp-track { background: #d8e0c8; }
+[data-theme="light"] .viajero-xp-fill { background: linear-gradient(to right, var(--accent3), var(--accent)); }
+[data-theme="light"] .day-num.day-gray { border-color: #c0cca8; color: #8a9878; background: rgba(192,204,168,0.2); }
+[data-theme="light"] .day-dot.gray { background: #c0cca8; }
+[data-theme="light"] .check-circle .check-svg polyline,
+[data-theme="light"] #habits-list.perfect-day .habit-card.done .check-circle .check-svg polyline { stroke: #ffffff; }
+
+/* Texto menos negro */
+[data-theme="light"] { --text: #2e3820; }
+
+/* Nombre hábito desmarcado más gris */
+[data-theme="light"] .habit-name { color: #7a8870; }
+[data-theme="light"] .habit-card.done .habit-name { color: var(--accent); }
+[data-theme="light"] #habits-list.perfect-day .habit-card.done .habit-name { color: var(--accent2); }
+
+/* Hábito completado — sombreado verde */
+[data-theme="light"] .habit-card.done {
+  background: linear-gradient(135deg, rgba(114,184,50,0.18) 0%, rgba(114,184,50,0.10) 100%);
+  border-color: rgba(114,184,50,0.35);
+}
+/* Hábito completado día perfecto — sombreado dorado */
+[data-theme="light"] #habits-list.perfect-day .habit-card.done {
+  background: linear-gradient(135deg, rgba(212,160,32,0.18) 0%, rgba(212,160,32,0.10) 100%);
+  border-color: rgba(212,160,32,0.35);
+}
+
+/* Botones notif (día perfecto y nivel) — fondo claro */
+[data-theme="light"] #btn-dia-perfecto-ok {
+  background: rgba(212,160,32,0.15);
+}
+[data-theme="light"] #levelup-notif button {
+  color: #ffffff !important;
+}
+
+/* Logo animado en light — verde y dorado más neon */
+[data-theme="light"] .logo-animated {
+  background: linear-gradient(90deg, #72c020, #e8c020, #72c020);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: logoShimmer 3s linear infinite;
+}
+[data-theme="light"] .logo {
+  color: #72c020;
+}
+
+/* Popups de día perfecto y nivel — fondo de overlay más claro en light */
+[data-theme="light"] #dia-perfecto-notif > div,
+[data-theme="light"] #levelup-notif > div,
+[data-theme="light"] #pwd-confirm-overlay > div {
+  background: #ffffff;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.15);
+}
+[data-theme="light"] #btn-dia-perfecto-ok {
+  background: rgba(212,160,32,0.18) !important;
+  color: var(--accent2) !important;
+}
+
+/* ══ Dark Fantasy theme ══ */
+[data-theme="fantasy"] {
   --bg:      #08060e;
   --surface: #0d0b18;
   --card:    #0d0b18;
@@ -16,36 +169,108 @@
   --danger:  #8b1a1a;
   --glow:    rgba(201,168,76,0.12);
 
-  /* Categorías */
-  --cat-fisico:             #e05c5c;
-  --cat-fisico-bg:          rgba(224,92,92,0.10);
-  --cat-fisico-border:      rgba(224,92,92,0.30);
-  --cat-disciplina:         #7b4fcf;
-  --cat-disciplina-bg:      rgba(123,79,207,0.10);
-  --cat-disciplina-border:  rgba(123,79,207,0.30);
-  --cat-energia:            #e0a85c;
-  --cat-energia-bg:         rgba(224,168,92,0.10);
-  --cat-energia-border:     rgba(224,168,92,0.30);
-  --cat-inteligencia:       #a87fe8;
-  --cat-inteligencia-bg:    rgba(168,127,232,0.10);
-  --cat-inteligencia-border:rgba(168,127,232,0.30);
-  --cat-identidad:          #5ce0b8;
-  --cat-identidad-bg:       rgba(92,224,184,0.10);
-  --cat-identidad-border:   rgba(92,224,184,0.30);
+  --cat-fisico:              #e05c5c;
+  --cat-fisico-bg:           rgba(224,92,92,0.10);
+  --cat-fisico-border:       rgba(224,92,92,0.30);
+  --cat-disciplina:          #7b4fcf;
+  --cat-disciplina-bg:       rgba(123,79,207,0.10);
+  --cat-disciplina-border:   rgba(123,79,207,0.30);
+  --cat-energia:             #e0a85c;
+  --cat-energia-bg:          rgba(224,168,92,0.10);
+  --cat-energia-border:      rgba(224,168,92,0.30);
+  --cat-inteligencia:        #a87fe8;
+  --cat-inteligencia-bg:     rgba(168,127,232,0.10);
+  --cat-inteligencia-border: rgba(168,127,232,0.30);
+  --cat-identidad:           #5ce0b8;
+  --cat-identidad-bg:        rgba(92,224,184,0.10);
+  --cat-identidad-border:    rgba(92,224,184,0.30);
 
-  /* XP */
   --xp-10: #5a5080;
   --xp-25: #7b4fcf;
   --xp-50: #c9a84c;
 
-  /* Tipografía */
   --font-display: 'Cinzel Decorative', serif;
   --font-body:    'Crimson Pro', serif;
-
-  /* Radios */
-  --radius-sm:   6px;
-  --radius-md:   10px;
-  --radius-lg:   14px;
-  --radius-xl:   18px;
-  --radius-full: 999px;
 }
+
+/* ── Fantasy overrides — elementos específicos ── */
+
+/* Fuentes en fantasy */
+[data-theme="fantasy"] .logo,
+[data-theme="fantasy"] .logo-animated { font-family: 'Cinzel Decorative', serif; font-size: 24px; letter-spacing: 0; }
+[data-theme="fantasy"] .logo-animated {
+  background: linear-gradient(90deg, #c9a84c, #a87fe8, #c9a84c);
+  background-size: 200% auto;
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  animation: logoShimmer 4s linear infinite;
+}
+[data-theme="fantasy"] .logo-sub { font-style: italic; font-family: 'Crimson Pro', serif; }
+[data-theme="fantasy"] .nav-item { font-family: 'Cinzel Decorative', serif; font-size: 7px; letter-spacing: 1px; }
+[data-theme="fantasy"] .section-label,
+[data-theme="fantasy"] .progress-title,
+[data-theme="fantasy"] .pf-group-lbl,
+[data-theme="fantasy"] .stats-sep-label,
+[data-theme="fantasy"] .cat-tab,
+[data-theme="fantasy"] .card-title,
+[data-theme="fantasy"] .viajero-stat-lbl { font-family: 'Cinzel Decorative', serif; font-size: 8px; letter-spacing: 1px; }
+[data-theme="fantasy"] .viajero-nombre { font-family: 'Cinzel Decorative', serif; font-size: 15px; }
+[data-theme="fantasy"] .viajero-clase { font-family: 'Cinzel Decorative', serif; font-style: italic; color: var(--accent2); }
+[data-theme="fantasy"] .viajero-nivel-badge { font-family: 'Cinzel Decorative', serif; font-size: 9px; background: rgba(201,168,76,0.08); border-color: rgba(201,168,76,0.3); letter-spacing: 1px; }
+[data-theme="fantasy"] .viajero-stat-num { font-family: 'Cinzel Decorative', serif; font-size: 20px; }
+[data-theme="fantasy"] .habit-name { font-family: 'Crimson Pro', serif; font-size: 15px; }
+[data-theme="fantasy"] .habit-card.done .habit-name { font-style: italic; }
+[data-theme="fantasy"] .modal-title { font-family: 'Cinzel Decorative', serif; font-size: 16px; color: var(--accent); letter-spacing: 1px; }
+[data-theme="fantasy"] .auth-logo { font-family: 'Cinzel Decorative', serif; }
+[data-theme="fantasy"] .auth-title { font-family: 'Cinzel Decorative', serif; font-size: 18px; color: var(--accent); }
+[data-theme="fantasy"] .btn { font-family: 'Cinzel Decorative', serif; font-size: 10px; letter-spacing: 1.5px; border-radius: 999px; }
+[data-theme="fantasy"] .pf-btn { font-family: 'Cinzel Decorative', serif; font-size: 10px; letter-spacing: 0.5px; border-radius: 999px; }
+[data-theme="fantasy"] .xp-badge { font-family: 'Crimson Pro', serif; font-style: italic; }
+
+/* Navbar */
+[data-theme="fantasy"] .nav-bar { background: rgba(8,6,14,0.96); }
+
+/* Cards */
+[data-theme="fantasy"] .habit-card { border-color: #2a2245; border-width: 0.5px; }
+[data-theme="fantasy"] .habit-card.done { border-color: rgba(201,168,76,0.25); background: linear-gradient(135deg, #110e1e 0%, #0d0b18 100%); }
+[data-theme="fantasy"] .viajero-card { border-color: #2a2245; border-width: 0.5px; }
+
+/* Barras vacías */
+[data-theme="fantasy"] .hoy-sc-track,
+[data-theme="fantasy"] .sc-bar,
+[data-theme="fantasy"] .scat-bar-wrap,
+[data-theme="fantasy"] .prog-track,
+[data-theme="fantasy"] .viajero-xp-track { background: #1a1a3a; }
+
+/* Progress fill — purple to gold */
+[data-theme="fantasy"] .progress-fill,
+[data-theme="fantasy"] .viajero-xp-fill { background: linear-gradient(to right, #7b4fcf, #c9a84c); }
+
+/* Días semana */
+[data-theme="fantasy"] .day-num.day-gray { border-color: #2a2245; color: #4a4070; background: rgba(42,34,69,0.2); }
+[data-theme="fantasy"] .day-dot.gray { background: #2a2245; }
+[data-theme="fantasy"] .rc-dot { background: #2a2245; }
+
+/* Check circle — gold en fantasy */
+[data-theme="fantasy"] .habit-card.done .check-circle { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 10px rgba(201,168,76,0.4); }
+[data-theme="fantasy"] #habits-list.perfect-day .habit-card.done .check-circle { background: var(--accent2); border-color: var(--accent2); }
+
+/* Viajero line pulse */
+[data-theme="fantasy"] .viajero-card::after {
+  content: '';
+  position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+  background: linear-gradient(to bottom, transparent, rgba(201,168,76,0.8), transparent);
+  animation: dfLinePulse 3s ease-in-out infinite;
+}
+@keyframes dfLinePulse { 0%,100%{opacity:0;transform:translateY(-100%)} 50%{opacity:1;transform:translateY(100%)} }
+
+/* Avatar glow — gold/purple */
+[data-theme="fantasy"] .viajero-avatar-wrap,
+[data-theme="fantasy"] .user-avatar { animation: dfAvatarGlow 3s ease-in-out infinite; }
+@keyframes dfAvatarGlow {
+  0%,100% { box-shadow: 0 0 0 0 rgba(201,168,76,0); border-color: #c9a84c; }
+  40%     { box-shadow: 0 0 0 5px rgba(201,168,76,0.15), 0 0 12px rgba(201,168,76,0.10); border-color: #c9a84c; }
+  60%     { box-shadow: 0 0 0 7px rgba(123,79,207,0.12), 0 0 16px rgba(123,79,207,0.08); border-color: #a87fe8; }
+}
+
+/* Separador ornamental */
+[data-theme="fantasy"] .seccion-separador { font-family: 'Cinzel Decorative', serif; color: #2a2245; letter-spacing: 8px; }

@@ -89,7 +89,7 @@ export function showConfetti() {
 
 export function showXPFloat(habitId, xp) {
   // Color según peso del hábito
-  const color = xp >= 50 ? '#c9a84c' : xp >= 25 ? '#7b4fcf' : '#5a5080';
+  const color = xp >= 50 ? '#c4a84f' : xp >= 25 ? '#8fb339' : '#5a6b5a';
 
   const card = document.getElementById('habit-' + habitId);
   let startX, startY;
