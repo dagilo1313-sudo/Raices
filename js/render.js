@@ -735,8 +735,12 @@ export function renderHistorico() {
 
 function renderLifetimeStats() {
   const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
-  // Usar statsCompletions (histórico completo) si está disponible
-  const comps = state.statsLoaded ? state.statsCompletions : state.completions;
+  // Usar statsCompletions (histórico completo) si está disponible, filtrado por <= hoy
+  const _todayStr = today();
+  const _rawComps = state.statsLoaded ? state.statsCompletions : state.completions;
+  const comps = Object.fromEntries(
+    Object.entries(_rawComps).filter(([k]) => !/^\d{4}-\d{2}-\d{2}$/.test(k) || k <= _todayStr)
+  );
   const xpTotal = state.perfil.xpTotal || 0;
   const habActivos = state.habits.filter(h => !h.archivado).length;
   const nivelActual = state.perfil.nivel || 1;
