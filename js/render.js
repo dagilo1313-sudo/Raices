@@ -1005,25 +1005,39 @@ function renderLifetimeStats() {
   set('stat-eficiencia-big', xpEficGlobal+'%');
   set('stat-eficiencia-pill', xpEficGlobal+'% eficiencia');
 
-  // Eficiencia XP y consistencia hábitos últimos 30 días
+  // Eficiencia XP y consistencia hábitos últimos 30 y 7 días — denominador fijo
   const hace30str = (() => { const d = new Date(today()+'T12:00:00'); d.setDate(d.getDate()-30); return d.toISOString().split('T')[0]; })();
-  let xpEfic30Sum=0, xpEfic30Days=0;
-  let hab30Sum=0, hab30Days=0, habCount30=0, habDays30=0;
+  const hace7stats = (() => { const d = new Date(today()+'T12:00:00'); d.setDate(d.getDate()-6);  return d.toISOString().split('T')[0]; })();
+  let xpEfic30Sum=0, hab30Sum=0, habCount30=0, habDays30=0;
+  let xpEfic7Sum=0,  hab7Sum=0;
+  const todayForStats = today();
   sorted.forEach(k => {
-    if (k < hace30str) return;
+    if (k < hace30str || k > todayForStats) return;
     const d = comps[k];
     if (!d || Array.isArray(d)) return;
     const xpG = d.xpGanadoPorCat ? Object.values(d.xpGanadoPorCat).reduce((s,v)=>s+v,0) : 0;
     const xpM = d.xpMaxPorCat    ? Object.values(d.xpMaxPorCat).reduce((s,v)=>s+v,0)    : 0;
-    if (xpM > 0) { xpEfic30Sum += xpG/xpM; xpEfic30Days++; }
     const comp = Array.isArray(d.completados) ? d.completados.length : 0;
     const plan = Array.isArray(d.planificados) ? d.planificados.length : 0;
-    if (plan > 0) { hab30Sum += comp/plan; hab30Days++; habCount30 += comp; habDays30++; }
+    // 30d — siempre suma (0 si no hay datos)
+    xpEfic30Sum += xpM > 0 ? xpG/xpM : 0;
+    hab30Sum    += plan > 0 ? comp/plan : 0;
+    if (plan > 0) { habCount30 += comp; habDays30++; }
+    // 7d
+    if (k >= hace7stats) {
+      xpEfic7Sum += xpM > 0 ? xpG/xpM : 0;
+      hab7Sum    += plan > 0 ? comp/plan : 0;
+    }
   });
-  const xpEfic30 = xpEfic30Days>0 ? Math.round(xpEfic30Sum/xpEfic30Days*100) : xpEficGlobal;
-  const hab30 = hab30Days>0 ? Math.round(hab30Sum/hab30Days*100) : consistGlobal;
+  // Dividir siempre entre 30 y 7
+  const xpEfic30 = Math.round(xpEfic30Sum / 30 * 100);
+  const hab30    = Math.round(hab30Sum    / 30 * 100);
+  const xpEfic7  = Math.round(xpEfic7Sum / 7  * 100);
+  const hab7     = Math.round(hab7Sum     / 7  * 100);
   const mediaHab30 = habDays30>0 ? (habCount30/habDays30).toFixed(1) : '—';
   set('stat-media-habitos-30d', mediaHab30);
+  set('stat-eficiencia-7d',   xpEfic7 + '%');
+  set('stat-consistencia-7d', hab7 + '%');
 
   // Eficiencia XP y consistencia del mes actual (desde state.completions — siempre cargado)
   const mesActualPrefix = today().substring(0, 7);
