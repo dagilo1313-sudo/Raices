@@ -15,7 +15,7 @@ import { toggleHabit, deleteHabit, saveCompletions, resetAllData, resetProgress,
 import { renderAll, renderHabitsList, renderTareas, renderHistorico, renderStats, renderRangosPanel } from './render.js';
 import { showToast, showConfetti, showXPFloat, switchView } from './ui.js';
 import { openCreateModal, openEditModal, closeModal, closeModalOutside, submitModal, selectEmoji, selectNoIcon, selectCategory, selectXP, toggleDay, selectAllDays, openIconPicker, closeIconPicker, confirmIconPicker, clearIconPicker } from './modal.js';
-import { state, getCompletionMessage, today, CLASES } from './state.js';
+import { state, getCompletionMessage, today, CLASES, isScheduledForDate } from './state.js';
 import { descargarBackup, onBackupFileSelected, confirmarRestaurar } from './resumen.js';
 
 // ── Exponer funciones al HTML ──
@@ -84,11 +84,10 @@ async function logError(context, error) {
 }
 window.onToggleHabit = (id) => {
   // 1. Actualizar estado en memoria inmediatamente
-  toggleHabit(id).then(result => {
+  toggleHabit(id).then(async result => {
     // Animaciones post-toggle (no bloquean la UI)
     if (result.xpGanado > 0) {
       showXPFloat(id, result.xpGanado);
-      const { isScheduledForDate, today } = await import('./state.js');
       const todayStr = today();
       const scheduled = state.habits.filter(h => !h.archivado && isScheduledForDate(h, todayStr));
       const completedToday = getCompletadosForDate(todayStr);
