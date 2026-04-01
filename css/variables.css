@@ -90,3 +90,33 @@
   --xp-25: #5a7a2a;
   --xp-50: #8a6a1a;
 }
+
+/* Overrides light — elementos con colores hardcodeados */
+[data-theme="light"] .nav-bar {
+  background: rgba(232,237,224,0.95);
+}
+[data-theme="light"] .habit-card.done {
+  background: linear-gradient(135deg, #d4e0c0 0%, #ccd8b8 100%);
+}
+[data-theme="light"] .hoy-sc-track,
+[data-theme="light"] .sc-bar,
+[data-theme="light"] .scat-bar-wrap,
+[data-theme="light"] .viajero-xp-track,
+[data-theme="light"] .prog-track {
+  background: #c4ceb4;
+}
+[data-theme="light"] .day-num.day-gray {
+  border-color: #b0baa0;
+  color: #8a9a70;
+  background: rgba(176,186,160,0.2);
+}
+[data-theme="light"] .day-dot.gray {
+  background: #b0baa0;
+}
+[data-theme="light"] .viajero-xp-fill {
+  background: linear-gradient(to right, var(--accent3), var(--accent));
+}
+[data-theme="light"] .check-circle .check-svg polyline,
+[data-theme="light"] #habits-list.perfect-day .habit-card.done .check-circle .check-svg polyline {
+  stroke: #f0f2eb;
+}
