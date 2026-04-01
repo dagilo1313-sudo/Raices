@@ -174,9 +174,21 @@ export function renderViajero() {
   const xpLabelEl = document.getElementById('viajero-xp-label');
   if (xpLabelEl) xpLabelEl.style.color = accentColor;
 
-  // Barra XP fill — dorada en día perfecto
+  // Barra XP fill — width según progreso al siguiente nivel + dorada en día perfecto
   const xpFillEl = document.getElementById('viajero-xp-fill');
-  if (xpFillEl) xpFillEl.style.background = accentColor;
+  if (xpFillEl) {
+    const xpPct = calc.esMaximo ? 100 : (calc.xpSiguiente > 0 ? Math.round(calc.xpActual / calc.xpSiguiente * 100) : 0);
+    xpFillEl.style.width = xpPct + '%';
+    xpFillEl.style.background = isPerfectToday ? 'var(--accent2)' : '';
+  }
+  // Label XP — xpActual / xpSiguiente
+  const xpLabelEl2 = document.getElementById('viajero-xp-label');
+  if (xpLabelEl2) {
+    xpLabelEl2.textContent = calc.esMaximo
+      ? 'Máximo alcanzado'
+      : `${calc.xpActual.toLocaleString('es-ES')} / ${calc.xpSiguiente.toLocaleString('es-ES')} XP`;
+    xpLabelEl2.style.color = accentColor;
+  }
 
   // Barra lateral del viajero — dorada en día perfecto
   const viajeroCard = document.querySelector('.viajero-card');
