@@ -435,16 +435,17 @@ window.onToggleDebug = () => {
     document.getElementById('debug-date-input').value = '';
     renderAll();
   } else {
-    // Activar — mostrar selector de fecha
+    // Activar — mostrar selector sin fecha por defecto
     toggle.classList.add('on');
     wrap.style.display = 'block';
-    // Poner fecha de ayer por defecto
-    const ayer = new Date();
-    ayer.setDate(ayer.getDate() - 1);
-    const ayerStr = ayer.toISOString().split('T')[0];
-    document.getElementById('debug-date-input').value = ayerStr;
-    window.onDebugDateChange(ayerStr);
+    document.getElementById('debug-date-input').value = '';
   }
+};
+
+window.onConfirmDebugDate = () => {
+  const val = document.getElementById('debug-date-input').value;
+  if (!val) { showToast('Selecciona una fecha primero'); return; }
+  window.onDebugDateChange(val);
 };
 
 window.onDebugDateChange = async (dateStr) => {
