@@ -531,7 +531,7 @@ export function renderHabitToggle(id, isDone) {
   } else {
     card.classList.remove('done');
   }
-  // Recalcular si el día es perfecto y actualizar habits-list y cat-tabs
+  // Recalcular si el día es perfecto
   const todayStr = today();
   const scheduled = state.habits.filter(h => !h.archivado && isScheduledForDate(h, todayStr));
   const allCompleted = scheduled.length > 0 && scheduled.every(h => isCompleted(h.id, todayStr));
@@ -539,6 +539,15 @@ export function renderHabitToggle(id, isDone) {
   const tabs = document.getElementById('cat-tabs');
   if (list) list.classList.toggle('perfect-day', allCompleted);
   if (tabs) tabs.classList.toggle('perfect-day', allCompleted);
+
+  // Si el día YA NO es perfecto, resetear check-circle de todas las cards done
+  // para que vuelvan al color verde en lugar del dorado
+  if (!allCompleted && list) {
+    list.querySelectorAll('.habit-card.done .check-circle').forEach(cc => {
+      cc.style.background = '';
+      cc.style.borderColor = '';
+    });
+  }
 }
 
 // ── Vista HÁBITOS (gestión) ──
