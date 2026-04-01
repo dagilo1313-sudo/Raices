@@ -341,7 +341,7 @@ function renderProgress() {
 
   // Hábitos card
   set('hoy-sc-hab-val', total ? `${done}/${total}` : '0/0');
-  set('hoy-sc-hab-pct', `${pct}% completado`);
+  set('hoy-sc-hab-pct', `${pct}%`);
   setColor('hoy-sc-hab-val', color);
   setColor('hoy-sc-hab-pct', color);
   setBg('hoy-sc-bar-lat-hab', isPerfect ? '#c4a84f' : 'var(--accent)');
@@ -351,7 +351,7 @@ function renderProgress() {
 
   // XP card
   set('hoy-sc-xp-val', `+${xpHoy}`);
-  set('hoy-sc-xp-pct', `${xpPct}% del máximo`);
+  set('hoy-sc-xp-pct', `${xpPct}%`);
   setColor('hoy-sc-xp-val', color);
   setColor('hoy-sc-xp-pct', color);
   setBg('hoy-sc-bar-lat-xp', isPerfect ? '#c4a84f' : 'var(--accent)');
