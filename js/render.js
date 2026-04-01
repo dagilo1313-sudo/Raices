@@ -1015,7 +1015,7 @@ function renderLifetimeStats() {
   };
 
   // Perfectos: 100% hábitos completados
-  renderDots('rc-dots-perf', 'var(--accent2)', '#1a1f10', (ds, dayData) => {
+  renderDots('rc-dots-perf', 'var(--accent2)', 'var(--card)', (ds, dayData) => {
     if (!dayData || Array.isArray(dayData)) return false;
     const comp = Array.isArray(dayData.completados) ? dayData.completados.length : 0;
     const plan = Array.isArray(dayData.planificados) ? dayData.planificados.length : 0;
@@ -1023,7 +1023,7 @@ function renderLifetimeStats() {
   });
 
   // Buenos: ≥80% XP
-  renderDots('rc-dots-buenos', 'var(--accent)', '#1a1f10', (ds, dayData) => {
+  renderDots('rc-dots-buenos', 'var(--accent)', 'var(--card)', (ds, dayData) => {
     if (!dayData || Array.isArray(dayData)) {
       if (ds === today()) {
         const sched = state.habits.filter(h => !h.archivado && isScheduledForDate(h, ds));
