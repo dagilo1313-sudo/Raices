@@ -71,10 +71,9 @@
     </div>
 
     <!-- Fecha encima del viajero -->
-    <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 24px 0">
-      <div id="conn-indicator" style="display:flex;align-items:center;justify-content:center;width:8px;height:8px;border-radius:50%;background:#8fb339;flex-shrink:0;transition:background .4s"></div>
-      <div style="flex:1"></div>
-      <div class="date-badge" id="date-display"></div>
+    <div style="display:flex;justify-content:flex-end;align-items:center;gap:8px;padding:6px 24px 0">
+      <div id="conn-indicator" style="width:7px;height:7px;border-radius:50%;background:#8fb339;flex-shrink:0;transition:background .4s"></div>
+      <div class="date-badge" id="date-display" onclick="openNoFumarPopup()" style="cursor:pointer"></div>
     </div>
 
     <!-- Viajero card -->
@@ -212,7 +211,7 @@
 
     <!-- Última sync discreta -->
     <div id="last-sync" style="text-align:center;font-size:10px;color:var(--border);padding:4px 0 2px"></div>
-    <div style="text-align:center;font-size:11px;color:var(--muted);padding:0 0 12px;letter-spacing:2px">v110</div>
+    <div style="text-align:center;font-size:11px;color:var(--muted);padding:0 0 12px;letter-spacing:2px">v112</div>
   </div>
 
   <!-- ══ HÁBITOS ══ -->
@@ -671,6 +670,28 @@
     </div>
   </nav>
 
+</div>
+
+<!-- Popup No Fumar -->
+<div id="nofumar-overlay" style="display:none;position:fixed;inset:0;z-index:9990;background:rgba(0,0,0,0.75)" onclick="if(event.target===this)closeNoFumarPopup()">
+  <div style="position:absolute;bottom:0;left:0;right:0;background:var(--card);border-radius:20px 20px 0 0;padding:24px 20px 40px;max-height:85vh;overflow-y:auto">
+    <div style="width:36px;height:4px;border-radius:4px;background:var(--border);margin:0 auto 20px"></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+      <div style="font-size:18px;font-weight:700;color:var(--text)">Días sin fumar</div>
+      <div style="font-size:36px;font-weight:800;color:var(--accent)" id="nofumar-count">—</div>
+    </div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:20px" id="nofumar-desde"></div>
+    <!-- Nav calendario -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+      <button onclick="nofumarPrevMonth()" style="background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:8px;width:32px;height:32px;cursor:pointer;font-size:16px">‹</button>
+      <div style="font-size:13px;font-weight:600;color:var(--text)" id="nofumar-month-lbl"></div>
+      <button onclick="nofumarNextMonth()" style="background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:8px;width:32px;height:32px;cursor:pointer;font-size:16px">›</button>
+    </div>
+    <!-- Grid días semana -->
+    <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:6px" id="nofumar-weekdays"></div>
+    <!-- Grid calendario -->
+    <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px" id="nofumar-cal"></div>
+  </div>
 </div>
 
 <!-- Modal hábito -->

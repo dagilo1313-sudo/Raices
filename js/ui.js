@@ -132,8 +132,8 @@ export function showXPFloat(habitId, xp) {
     s.textContent = `@keyframes xpFloatB {
       0%   { opacity:0; transform:translateY(4px); }
       10%  { opacity:1; transform:translateY(-2px); }
-      85%  { opacity:1; transform:translateY(-30px); }
-      100% { opacity:0; transform:translateY(-36px); }
+      85%  { opacity:1; transform:translateY(-18px); }
+      100% { opacity:0; transform:translateY(-22px); }
     }`;
     document.head.appendChild(s);
   }
