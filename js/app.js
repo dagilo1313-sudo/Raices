@@ -132,11 +132,11 @@ function showDiaPerfectoNotif(onClose) {
   el.id = 'dia-perfecto-notif';
   el.style.cssText = 'position:fixed;inset:0;z-index:300;background:rgba(0,0,0,0.65);display:flex;align-items:center;justify-content:center;padding:24px;animation:fadeIn 0.3s ease';
   el.innerHTML = `
-    <div style="background:var(--card2);border:1.5px solid var(--accent2);border-radius:20px;padding:28px 24px;text-align:center;max-width:300px;width:100%;animation:popIn 0.4s cubic-bezier(0.34,1.56,0.64,1);box-shadow:0 0 32px rgba(196,168,79,0.12)">
-      <div style="font-size:40px;margin-bottom:10px">🌳</div>
-      <div style="font-size:18px;color:var(--accent2);margin-bottom:6px;font-weight:700">¡Día perfecto!</div>
-      <div style="font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.5">Has completado todos tus hábitos de hoy. ¡Tus raíces crecen profundo!</div>
-      <button id="btn-dia-perfecto-ok" style="background:rgba(196,168,79,0.15);color:var(--accent2);border:1.5px solid var(--accent2);border-radius:var(--radius-full);padding:10px 28px;font-size:13px;font-weight:700;font-family:var(--font-body);cursor:pointer;transition:background 0.2s">¡Genial!</button>
+    <div style="background:var(--card2);border:0.5px solid rgba(201,168,76,0.4);border-radius:20px;padding:32px 28px;text-align:center;max-width:300px;width:100%;animation:popIn 0.4s cubic-bezier(0.34,1.56,0.64,1);box-shadow:0 0 40px rgba(201,168,76,0.1),0 0 80px rgba(123,79,207,0.06)">
+      <div style="font-size:38px;margin-bottom:12px">🌳</div>
+      <div style="font-size:14px;color:var(--accent);margin-bottom:6px;font-weight:700;font-family:var(--font-display);letter-spacing:2px;text-transform:uppercase">Día Perfecto</div>
+      <div style="font-size:14px;color:var(--muted);margin-bottom:24px;line-height:1.6;font-family:var(--font-body);font-style:italic">Has completado todos tus hábitos de hoy. Tus raíces crecen profundo.</div>
+      <button id="btn-dia-perfecto-ok" style="background:rgba(201,168,76,0.12);color:var(--accent);border:0.5px solid rgba(201,168,76,0.4);border-radius:var(--radius-full);padding:10px 28px;font-size:10px;font-weight:400;font-family:var(--font-display);cursor:pointer;letter-spacing:2px;text-transform:uppercase">¡ Genial !</button>
     </div>
     <style>@keyframes popIn{from{transform:scale(0.7);opacity:0}to{transform:scale(1);opacity:1}}</style>`;
   el.querySelector('#btn-dia-perfecto-ok').addEventListener('click', () => {
@@ -159,7 +159,7 @@ function showLevelUpNotif(titulo, subtitulo, desc, color) {
       <div style="font-size:22px;color:${color};margin-bottom:8px;font-weight:700">${titulo}</div>
       <div style="font-size:13px;color:var(--text);margin-bottom:6px;font-weight:600">${subtitulo}</div>
       <div style="font-size:13px;color:var(--muted);margin-bottom:28px;line-height:1.5">${desc}</div>
-      <button onclick="document.getElementById('levelup-notif').remove()" style="background:${color};color:#fff;border:none;border-radius:var(--radius-full);padding:12px 32px;font-size:14px;font-weight:700;font-family:var(--font-body);cursor:pointer">¡A seguir!</button>
+      <button onclick="document.getElementById('levelup-notif').remove()" style="background:rgba(201,168,76,0.12);color:var(--accent);border:0.5px solid rgba(201,168,76,0.4);border-radius:var(--radius-full);padding:10px 28px;font-size:10px;font-weight:400;font-family:var(--font-display);cursor:pointer;letter-spacing:2px;text-transform:uppercase">¡ A seguir !</button>
     </div>
     <style>@keyframes popIn{from{transform:scale(0.7);opacity:0}to{transform:scale(1);opacity:1}}</style>`;
   el.addEventListener('click', e => { if (e.target === el) el.remove(); });
@@ -675,14 +675,33 @@ window.setTheme = async (pref) => {
 };
 
 function initTheme() {
-  const saved = localStorage.getItem(THEME_KEY) || 'dark';
-  applyTheme(saved);
-  // Escuchar cambios del sistema para modo Auto
-  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
-    if (localStorage.getItem(THEME_KEY) === 'auto') applyTheme('auto');
+  // Dark Fantasy — solo modo oscuro
+  document.documentElement.removeAttribute('data-theme');
+  ['auto','dark','light'].forEach(t => {
+    document.getElementById('theme-' + t)?.classList.toggle('active', t === 'dark');
   });
+}
+
+
+// ── Dark Fantasy — partículas de fondo ──
+function initDFParticles() {
+  const container = document.getElementById('df-particles');
+  if (!container) return;
+  const colors = ['#7b4fcf','#c9a84c','#a87fe8','#8b1a1a','#5a4090'];
+  for (let i = 0; i < 20; i++) {
+    const p = document.createElement('div');
+    p.className = 'df-p';
+    const left = 5 + Math.random() * 90;
+    const dur  = 12 + Math.random() * 16;
+    const delay = -Math.random() * 20;
+    const dx = (Math.random() - 0.5) * 70 + 'px';
+    const color = colors[Math.floor(Math.random() * colors.length)];
+    p.style.cssText = `left:${left}%;bottom:${Math.random()*30}%;animation-duration:${dur}s;animation-delay:${delay}s;--dx:${dx};background:${color}`;
+    container.appendChild(p);
+  }
 }
 
 // ── Arrancar ──
 initTheme();
+initDFParticles();
 initAuth();

@@ -13,6 +13,9 @@
   <link rel="apple-touch-icon" href="assets/favicon/apple-touch-icon.png">
   <link rel="icon" type="image/png" href="assets/favicon/apple-touch-icon.png">
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/variables.css">
   <link rel="stylesheet" href="css/components.css">
   <link rel="stylesheet" href="css/layout.css">
@@ -34,7 +37,7 @@
 
 <div id="auth-screen" style="display:none">
   <div class="auth-logo">🌿</div>
-  <div class="auth-tagline">Tu jardín de hábitos</div>
+  <div class="auth-tagline" style="font-style:italic;font-family:'Crimson Pro',serif;">Tu jardín de hábitos</div>
   <div class="auth-box">
     <div class="auth-title" id="auth-title">Bienvenido de vuelta</div>
     <div class="msg-error" id="auth-error"></div>
@@ -54,6 +57,9 @@
 </div>
 
 <div class="app" id="app">
+  <div class="df-bg-glow" id="df-glow1"></div>
+  <div class="df-bg-glow df-bg-glow2" id="df-glow2"></div>
+  <div class="df-particles" id="df-particles"></div>
 
   <!-- ══ HOY ══ -->
   <div class="view active" id="view-hoy">
@@ -217,7 +223,7 @@
 
     <!-- Última sync discreta -->
     <div id="last-sync" style="text-align:center;font-size:10px;color:var(--border);padding:4px 0 2px"></div>
-    <div style="text-align:center;font-size:11px;color:var(--muted);padding:0 0 12px;letter-spacing:2px">v118</div>
+    <div style="text-align:center;font-size:11px;color:var(--muted);padding:0 0 12px;letter-spacing:2px">Dark Fantasy v1</div>
   </div>
 
   <!-- ══ HÁBITOS ══ -->
@@ -226,7 +232,7 @@
       <div class="header-top">
         <div>
           <div class="logo" style="font-size:26px">Hábitos</div>
-          <div class="logo-sub">Gestiona tus hábitos</div>
+          <div class="logo-sub">el jardín del viajero</div>
         </div>
       </div>
     </header>
@@ -552,7 +558,7 @@
       <div class="header-top">
         <div>
           <div class="logo" style="font-size:26px">Perfil</div>
-          <div class="logo-sub">Tu cuenta</div>
+          <div class="logo-sub">el viajero</div>
         </div>
       </div>
     </header>
@@ -606,15 +612,7 @@
               <div class="theme-lbl">Oscuro</div>
               <div class="theme-check" id="check-dark"></div>
             </div>
-            <div class="theme-card" id="theme-light" onclick="setTheme('light')">
-              <div class="theme-preview theme-preview-light">
-                <div style="height:4px;width:55%;background:rgba(90,122,42,.6);border-radius:2px;margin-bottom:3px"></div>
-                <div style="height:3px;width:80%;background:rgba(0,0,0,.12);border-radius:2px;margin-bottom:2px"></div>
-                <div style="height:3px;width:65%;background:rgba(0,0,0,.12);border-radius:2px"></div>
-              </div>
-              <div class="theme-lbl">Claro</div>
-              <div class="theme-check" id="check-light"></div>
-            </div>
+
           </div>
         </div>
       </div>

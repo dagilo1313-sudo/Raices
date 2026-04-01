@@ -51,7 +51,7 @@ body::before {
 
 /* ── Inputs ── */
 .input-field { width: 100%; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 12px 16px; color: var(--text); font-family: var(--font-body); font-size: 15px; margin-bottom: 12px; outline: none; transition: border-color 0.2s; }
-.input-field:focus { border-color: var(--accent); }
+.input-field:focus { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(201,168,76,0.08); }
 .input-field::placeholder { color: var(--muted); }
 .input-field.error { border-color: var(--danger); }
 
@@ -167,9 +167,9 @@ body::before {
 .cal-day.cal-future .cal-day-inner { color: var(--border); }
 
 /* Estados del día en calendario */
-.cal-day.cal-golden .cal-day-inner { background: rgba(196,168,79,0.2); color: var(--accent2); border-color: var(--accent2); font-weight: 700; }
+.cal-day.cal-golden .cal-day-inner { background: rgba(201,168,76,0.15); color: var(--accent); border-color: var(--accent); font-weight: 700; }
 .cal-day.cal-green .cal-day-inner  { background: rgba(143,179,57,0.15); color: var(--accent); border-color: var(--accent); font-weight: 600; }
-.cal-day.cal-gray .cal-day-inner { border-color: var(--border); color: var(--muted); background: rgba(0,0,0,0.04); }
+.cal-day.cal-gray .cal-day-inner { border-color: #2a2245; color: #4a4070; background: rgba(42,34,69,0.15); }
 
 .cal-dot { width: 4px; height: 4px; border-radius: 50%; }
 .cal-dot-green { background: var(--accent); }

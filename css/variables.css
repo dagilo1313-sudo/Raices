@@ -1,154 +1,51 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap');
+
 :root {
-  /* Base */
-  --bg: #0d0f0a;
-  --surface: #141710;
-  --card: #1a1e14;
-  --card2: #1f2419;
-  --border: #2a3020;
-  --text: #d4d9c4;
-  --muted: #6b7560;
-  --accent: #a8d840;
-  --accent2: #e8c840;
-  --accent3: #8ac035;
-  --danger: #b35c4f;
-  --glow: rgba(143, 179, 57, 0.15);
+  /* Base dark fantasy */
+  --bg:      #08060e;
+  --surface: #0d0b18;
+  --card:    #0d0b18;
+  --card2:   #110e1e;
+  --border:  #2a2245;
+  --dim:     #1a1a3a;
+  --text:    #d4c9f0;
+  --muted:   #6b6090;
+  --accent:  #c9a84c;
+  --accent2: #a87fe8;
+  --accent3: #7b4fcf;
+  --danger:  #8b1a1a;
+  --glow:    rgba(201,168,76,0.12);
 
   /* Categorías */
-  --cat-fisico: #e05c5c;
-  --cat-fisico-bg: rgba(224, 92, 92, 0.12);
-  --cat-fisico-border: rgba(224, 92, 92, 0.3);
-
-  --cat-disciplina: #5c8ae0;
-  --cat-disciplina-bg: rgba(92, 138, 224, 0.12);
-  --cat-disciplina-border: rgba(92, 138, 224, 0.3);
-
-  --cat-energia: #e0a85c;
-  --cat-energia-bg: rgba(224, 168, 92, 0.12);
-  --cat-energia-border: rgba(224, 168, 92, 0.3);
-
-  --cat-inteligencia: #a05ce0;
-  --cat-inteligencia-bg: rgba(160, 92, 224, 0.12);
-  --cat-inteligencia-border: rgba(160, 92, 224, 0.3);
-
-  --cat-identidad: #5ce0b8;
-  --cat-identidad-bg: rgba(92, 224, 184, 0.12);
-  --cat-identidad-border: rgba(92, 224, 184, 0.3);
+  --cat-fisico:             #e05c5c;
+  --cat-fisico-bg:          rgba(224,92,92,0.10);
+  --cat-fisico-border:      rgba(224,92,92,0.30);
+  --cat-disciplina:         #7b4fcf;
+  --cat-disciplina-bg:      rgba(123,79,207,0.10);
+  --cat-disciplina-border:  rgba(123,79,207,0.30);
+  --cat-energia:            #e0a85c;
+  --cat-energia-bg:         rgba(224,168,92,0.10);
+  --cat-energia-border:     rgba(224,168,92,0.30);
+  --cat-inteligencia:       #a87fe8;
+  --cat-inteligencia-bg:    rgba(168,127,232,0.10);
+  --cat-inteligencia-border:rgba(168,127,232,0.30);
+  --cat-identidad:          #5ce0b8;
+  --cat-identidad-bg:       rgba(92,224,184,0.10);
+  --cat-identidad-border:   rgba(92,224,184,0.30);
 
   /* XP */
-  --xp-10: #6b7560;
-  --xp-25: #8fb339;
-  --xp-50: #c4a84f;
+  --xp-10: #5a5080;
+  --xp-25: #7b4fcf;
+  --xp-50: #c9a84c;
 
   /* Tipografía */
-  --font-display: 'Playfair Display', serif;
-  --font-body: 'DM Sans', sans-serif;
+  --font-display: 'Cinzel Decorative', serif;
+  --font-body:    'Crimson Pro', serif;
 
   /* Radios */
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
-  --radius-xl: 20px;
+  --radius-sm:   6px;
+  --radius-md:   10px;
+  --radius-lg:   14px;
+  --radius-xl:   18px;
   --radius-full: 999px;
-}
-
-/* ── Tema claro (paleta C — blanco puro) ── */
-[data-theme="light"] {
-  --bg: #ffffff;
-  --surface: #f4f6f0;
-  --card: #f2f4ee;
-  --card2: #e8edd8;
-  --border: #d8e0c8;
-  --text: #1a2010;
-  --muted: #7a8a68;
-  --accent: #7cb832;
-  --accent2: #f0c830;
-  --accent3: #689c28;
-  --danger: #a03830;
-  --glow: rgba(114, 160, 48, 0.15);
-
-  --cat-fisico: #f05a54;
-  --cat-fisico-bg: rgba(240, 90, 84, 0.12);
-  --cat-fisico-border: rgba(240, 90, 84, 0.4);
-  --cat-disciplina: #5090f8;
-  --cat-disciplina-bg: rgba(80, 144, 248, 0.12);
-  --cat-disciplina-border: rgba(80, 144, 248, 0.4);
-  --cat-energia: #f0b840;
-  --cat-energia-bg: rgba(240, 184, 64, 0.12);
-  --cat-energia-border: rgba(240, 184, 64, 0.4);
-  --cat-inteligencia: #b870f0;
-  --cat-inteligencia-bg: rgba(184, 112, 240, 0.12);
-  --cat-inteligencia-border: rgba(184, 112, 240, 0.4);
-  --cat-identidad: #28dca8;
-  --cat-identidad-bg: rgba(40, 220, 168, 0.12);
-  --cat-identidad-border: rgba(40, 220, 168, 0.4);
-
-  --xp-10: #8a9878;
-  --xp-25: #7cb832;
-  --xp-50: #e8b830;
-}
-
-/* ── Overrides light ── */
-[data-theme="light"] .nav-bar { background: rgba(244,246,240,0.96); }
-[data-theme="light"] .habit-card.done { background: linear-gradient(135deg, #e4f0cc 0%, #dce8c4 100%); }
-[data-theme="light"] .hoy-sc-track,
-[data-theme="light"] .sc-bar,
-[data-theme="light"] .scat-bar-wrap,
-[data-theme="light"] .prog-track,
-[data-theme="light"] .viajero-xp-track { background: #d8e0c8; }
-[data-theme="light"] .viajero-xp-fill { background: linear-gradient(to right, var(--accent3), var(--accent)); }
-[data-theme="light"] .day-num.day-gray { border-color: #c0cca8; color: #8a9878; background: rgba(192,204,168,0.2); }
-[data-theme="light"] .day-dot.gray { background: #c0cca8; }
-[data-theme="light"] .check-circle .check-svg polyline,
-[data-theme="light"] #habits-list.perfect-day .habit-card.done .check-circle .check-svg polyline { stroke: #ffffff; }
-
-/* Texto menos negro */
-[data-theme="light"] { --text: #2e3820; }
-
-/* Nombre hábito desmarcado más gris */
-[data-theme="light"] .habit-name { color: #7a8870; }
-[data-theme="light"] .habit-card.done .habit-name { color: var(--accent); }
-[data-theme="light"] #habits-list.perfect-day .habit-card.done .habit-name { color: var(--accent2); }
-
-/* Hábito completado — sombreado verde */
-[data-theme="light"] .habit-card.done {
-  background: linear-gradient(135deg, rgba(114,184,50,0.18) 0%, rgba(114,184,50,0.10) 100%);
-  border-color: rgba(114,184,50,0.35);
-}
-/* Hábito completado día perfecto — sombreado dorado */
-[data-theme="light"] #habits-list.perfect-day .habit-card.done {
-  background: linear-gradient(135deg, rgba(212,160,32,0.18) 0%, rgba(212,160,32,0.10) 100%);
-  border-color: rgba(212,160,32,0.35);
-}
-
-/* Botones notif (día perfecto y nivel) — fondo claro */
-[data-theme="light"] #btn-dia-perfecto-ok {
-  background: rgba(212,160,32,0.15);
-}
-[data-theme="light"] #levelup-notif button {
-  color: #ffffff !important;
-}
-
-/* Logo animado en light — verde y dorado más neon */
-[data-theme="light"] .logo-animated {
-  background: linear-gradient(90deg, #72c020, #e8c020, #72c020);
-  background-size: 200% auto;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  animation: logoShimmer 3s linear infinite;
-}
-[data-theme="light"] .logo {
-  color: #72c020;
-}
-
-/* Popups de día perfecto y nivel — fondo de overlay más claro en light */
-[data-theme="light"] #dia-perfecto-notif > div,
-[data-theme="light"] #levelup-notif > div,
-[data-theme="light"] #pwd-confirm-overlay > div {
-  background: #ffffff;
-  box-shadow: 0 8px 40px rgba(0,0,0,0.15);
-}
-[data-theme="light"] #btn-dia-perfecto-ok {
-  background: rgba(212,160,32,0.18) !important;
-  color: var(--accent2) !important;
 }
