@@ -65,45 +65,59 @@ window.switchView = (view) => {
 window.setFilter  = (filter) => { state.activeFilter = filter; renderAll(); };
 
 // ── Toggle hábito con notificación de subida ──
-window.onToggleHabit = async (id) => {
-  const result = await toggleHabit(id);
-  if (result.xpGanado > 0) {
-    // Animación ligera + XP flotante sobre el hábito
-    showXPFloat(id, result.xpGanado);
 
-    // Comprobar si se acaban de completar TODOS los hábitos de hoy
-    const { isScheduledForDate, today } = await import('./state.js');
-    const todayStr = today();
-    const scheduled = state.habits.filter(h => isScheduledForDate(h, todayStr));
-    const completedToday = getCompletadosForDate(todayStr);
-    const diaPerfecto = scheduled.length > 0 && scheduled.every(h => completedToday.includes(h.id));
-
-    if (diaPerfecto && result.subioNivel) {
-      showConfetti();
-      showDiaPerfectoNotif(() => {
-        const claseData = result.subioRango ? CLASES[result.calcDespues.clase] : CLASES[result.calcDespues.clase];
-        showLevelUpNotif(
-          result.subioRango ? '¡Nuevo rango desbloqueado!' : `¡Subiste al nivel ${result.calcDespues.nivel}!`,
-          `${claseData.emoji} ${claseData.nombre}`,
-          `+${result.xpGanado} XP · Sigue así, viajero.`,
-          claseData.color,
-        );
-      });
-    } else if (diaPerfecto) {
-      showConfetti();
-      showDiaPerfectoNotif(null);
-    } else if (result.subioRango) {
-      showConfetti();
-      const claseData = CLASES[result.calcDespues.clase];
-      showLevelUpNotif('¡Nuevo rango desbloqueado!', `${claseData.emoji} ${claseData.nombre}`, `Has alcanzado el rango ${claseData.nombre}. ¡Increíble!`, claseData.color);
-    } else if (result.subioNivel) {
-      showConfetti();
-      const claseData = CLASES[result.calcDespues.clase];
-      showLevelUpNotif(`¡Subiste al nivel ${result.calcDespues.nivel}!`, `${claseData.emoji} ${claseData.nombre}`, `+${result.xpGanado} XP · Sigue así, viajero.`, claseData.color);
+// ── Log de errores en Firestore ──
+async function logError(context, error) {
+  try {
+    const { db } = await import('./firebase.js');
+    const { collection, addDoc } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
+    const uid = state.currentUser?.uid;
+    if (!uid) return;
+    await addDoc(collection(db, 'users', uid, 'errors'), {
+      context,
+      message: error?.message || String(error),
+      stack: error?.stack || null,
+      timestamp: new Date().toISOString(),
+      debugDate: state.debugDate || null,
+    });
+  } catch(e) { /* silencioso */ }
+}
+window.onToggleHabit = (id) => {
+  // 1. Actualizar estado en memoria inmediatamente
+  toggleHabit(id).then(result => {
+    // Animaciones post-toggle (no bloquean la UI)
+    if (result.xpGanado > 0) {
+      showXPFloat(id, result.xpGanado);
+      const { isScheduledForDate, today } = await import('./state.js');
+      const todayStr = today();
+      const scheduled = state.habits.filter(h => !h.archivado && isScheduledForDate(h, todayStr));
+      const completedToday = getCompletadosForDate(todayStr);
+      const diaPerfecto = scheduled.length > 0 && scheduled.every(h => completedToday.includes(h.id));
+      if (diaPerfecto && result.subioNivel) {
+        showConfetti();
+        showDiaPerfectoNotif(() => {
+          const claseData = CLASES[result.calcDespues.clase];
+          showLevelUpNotif(result.subioRango ? '¡Nuevo rango desbloqueado!' : `¡Subiste al nivel ${result.calcDespues.nivel}!`, `${claseData.emoji} ${claseData.nombre}`, `+${result.xpGanado} XP · Sigue así, viajero.`, claseData.color);
+        });
+      } else if (diaPerfecto) {
+        showConfetti(); showDiaPerfectoNotif(null);
+      } else if (result.subioRango) {
+        showConfetti();
+        const claseData = CLASES[result.calcDespues.clase];
+        showLevelUpNotif('¡Nuevo rango desbloqueado!', `${claseData.emoji} ${claseData.nombre}`, `Has alcanzado el rango ${claseData.nombre}. ¡Increíble!`, claseData.color);
+      } else if (result.subioNivel) {
+        showConfetti();
+        const claseData = CLASES[result.calcDespues.clase];
+        showLevelUpNotif(`¡Subiste al nivel ${result.calcDespues.nivel}!`, `${claseData.emoji} ${claseData.nombre}`, `+${result.xpGanado} XP · Sigue así, viajero.`, claseData.color);
+      }
     }
-  }
+  }).catch(err => logError('toggleHabit:' + id, err));
+
+  // 2. Render inmediato — no espera a Firestore
   renderAll();
-  await saveCompletions();
+
+  // 3. Guardar en Firestore en background
+  saveCompletions().catch(err => logError('saveCompletions', err));
 };
 
 function showDiaPerfectoNotif(onClose) {
