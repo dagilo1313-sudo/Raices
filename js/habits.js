@@ -132,18 +132,11 @@ export async function loadMonthsForDate(dateStr) {
   prevDate.setDate(1);
   prevDate.setMonth(prevDate.getMonth() - 1);
   const prevMk = prevDate.toISOString().substring(0, 7);
-  // Solo cargar si no están ya en memoria
-  const alreadyHasCurrent = Object.keys(state.completions).some(k => k.startsWith(mk));
-  const alreadyHasPrev    = Object.keys(state.completions).some(k => k.startsWith(prevMk));
-  if (alreadyHasCurrent && alreadyHasPrev) return;
-  if (!alreadyHasPrev) {
-    const snap = await getDoc(compsMonthRef(prevMk));
-    if (snap.exists()) Object.assign(state.completions, snap.data());
-  }
-  if (!alreadyHasCurrent) {
-    const snap = await getDoc(compsMonthRef(mk));
-    if (snap.exists()) Object.assign(state.completions, snap.data());
-  }
+  // Siempre cargar desde Firestore para tener datos actualizados (rellenados)
+  const snapPrev = await getDoc(compsMonthRef(prevMk));
+  if (snapPrev.exists()) Object.assign(state.completions, snapPrev.data());
+  const snapCurr = await getDoc(compsMonthRef(mk));
+  if (snapCurr.exists()) Object.assign(state.completions, snapCurr.data());
 }
 
 // ── Rellenar días sin completion desde el último registrado hasta hoy (o fecha debug) ──
