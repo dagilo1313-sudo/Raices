@@ -7,9 +7,9 @@
   --border: #2a3020;
   --text: #d4d9c4;
   --muted: #6b7560;
-  --accent: #8fb339;
-  --accent2: #c4a84f;
-  --accent3: #5c8a3c;
+  --accent: #a8d840;
+  --accent2: #e8c840;
+  --accent3: #8ac035;
   --danger: #b35c4f;
   --glow: rgba(143, 179, 57, 0.15);
 
@@ -61,30 +61,30 @@
   --text: #1a2010;
   --muted: #7a8a68;
   --accent: #7cb832;
-  --accent2: #d4a020;
+  --accent2: #f0c830;
   --accent3: #689c28;
   --danger: #a03830;
   --glow: rgba(114, 160, 48, 0.15);
 
-  --cat-fisico: #c03030;
-  --cat-fisico-bg: rgba(192, 48, 48, 0.1);
-  --cat-fisico-border: rgba(192, 48, 48, 0.25);
-  --cat-disciplina: #3060c0;
-  --cat-disciplina-bg: rgba(48, 96, 192, 0.1);
-  --cat-disciplina-border: rgba(48, 96, 192, 0.25);
-  --cat-energia: #b07820;
-  --cat-energia-bg: rgba(176, 120, 32, 0.1);
-  --cat-energia-border: rgba(176, 120, 32, 0.25);
-  --cat-inteligencia: #7030b0;
-  --cat-inteligencia-bg: rgba(112, 48, 176, 0.1);
-  --cat-inteligencia-border: rgba(112, 48, 176, 0.25);
-  --cat-identidad: #1a8a6a;
-  --cat-identidad-bg: rgba(26, 138, 106, 0.1);
-  --cat-identidad-border: rgba(26, 138, 106, 0.25);
+  --cat-fisico: #e0504a;
+  --cat-fisico-bg: rgba(224, 80, 74, 0.1);
+  --cat-fisico-border: rgba(224, 80, 74, 0.3);
+  --cat-disciplina: #4878d8;
+  --cat-disciplina-bg: rgba(72, 120, 216, 0.1);
+  --cat-disciplina-border: rgba(72, 120, 216, 0.3);
+  --cat-energia: #d09030;
+  --cat-energia-bg: rgba(208, 144, 48, 0.1);
+  --cat-energia-border: rgba(208, 144, 48, 0.3);
+  --cat-inteligencia: #9048cc;
+  --cat-inteligencia-bg: rgba(144, 72, 204, 0.1);
+  --cat-inteligencia-border: rgba(144, 72, 204, 0.3);
+  --cat-identidad: #20a880;
+  --cat-identidad-bg: rgba(32, 168, 128, 0.1);
+  --cat-identidad-border: rgba(32, 168, 128, 0.3);
 
   --xp-10: #8a9878;
   --xp-25: #7cb832;
-  --xp-50: #d4a020;
+  --xp-50: #e8b830;
 }
 
 /* ── Overrides light ── */
@@ -103,6 +103,11 @@
 
 /* Texto menos negro */
 [data-theme="light"] { --text: #2e3820; }
+
+/* Nombre hábito desmarcado más gris */
+[data-theme="light"] .habit-name { color: #7a8870; }
+[data-theme="light"] .habit-card.done .habit-name { color: var(--accent); }
+[data-theme="light"] #habits-list.perfect-day .habit-card.done .habit-name { color: var(--accent2); }
 
 /* Hábito completado — sombreado verde */
 [data-theme="light"] .habit-card.done {
