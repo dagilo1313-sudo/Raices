@@ -11,7 +11,7 @@ window._lockScroll   = lockScroll;
 window._unlockScroll = unlockScroll;
 
 import { initAuth, toggleAuthMode, handleAuth, showForgotPassword, showLoginForm, sendResetEmail, showChangePassword, hideChangePassword, changePassword, logout } from './auth.js';
-import { toggleHabit, deleteHabit, saveCompletions, resetAllData, resetProgress, createTarea, toggleTarea, borrarTareasCompletadas, getCompletadosForDate, loadAllCompletions, loadMonthCompletions, rellenarDiasVacios, loadMonthsForDate } from './habits.js';
+import { toggleHabit, deleteHabit, saveCompletions, resetAllData, resetProgress, createTarea, toggleTarea, borrarTareasCompletadas, getCompletadosForDate, loadAllCompletions, loadMonthCompletions, rellenarDiasVacios, loadMonthsForDate, saveDebugDate, clearDebugDate } from './habits.js';
 import { renderAll, renderHabitsList, renderTareas, renderHistorico, renderStats, renderRangosPanel } from './render.js';
 import { showToast, showConfetti, showXPFloat, switchView } from './ui.js';
 import { openCreateModal, openEditModal, closeModal, closeModalOutside, submitModal, selectEmoji, selectNoIcon, selectCategory, selectXP, toggleDay, selectAllDays, openIconPicker, closeIconPicker, confirmIconPicker, clearIconPicker } from './modal.js';
@@ -420,20 +420,36 @@ window.guardarNombrePerfil = async (nombreParam) => {
 };
 
 // ── Modo testing ──
-window.onToggleDebug = () => {
+window.onToggleDebug = async () => {
   const toggle = document.getElementById('debug-toggle');
   const wrap = document.getElementById('debug-date-wrap');
   const isOn = toggle.classList.contains('on');
 
   if (isOn) {
-    // Desactivar
+    // Desactivar — borrar de Firestore y mostrar popup
     toggle.classList.remove('on');
     wrap.style.display = 'none';
-    state.debugDate = null;
     document.getElementById('debug-active-banner').style.display = 'none';
-    document.getElementById('debug-banner').style.display = 'none';
     document.getElementById('debug-date-input').value = '';
-    renderAll();
+    await clearDebugDate();
+    state.debugDate = null;
+    // Popup de desactivación
+    lockScroll();
+    const realDate = new Date().toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+    const popup = document.createElement('div');
+    popup.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.8);display:flex;align-items:center;justify-content:center;padding:24px';
+    popup.innerHTML = `
+      <div style="background:var(--card2);border:1px solid rgba(143,179,57,0.3);border-radius:16px;padding:28px 24px;max-width:320px;width:100%;text-align:center">
+        <div style="font-size:28px;margin-bottom:12px">✅</div>
+        <div style="font-size:16px;font-weight:700;color:var(--accent);margin-bottom:8px">Debugger desactivado</div>
+        <div style="font-size:13px;color:var(--muted);margin-bottom:6px">Volvemos a la fecha actual</div>
+        <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:20px">${realDate}</div>
+        <button onclick="this.closest('div[style]').remove(); window._unlockScroll && window._unlockScroll(); window.location.reload();" style="width:100%;background:rgba(143,179,57,0.15);border:1.5px solid rgba(143,179,57,0.4);border-radius:var(--radius-md);padding:12px;font-size:14px;font-weight:700;color:var(--accent);font-family:var(--font-body);cursor:pointer">
+          Pulsa para recargar ↻
+        </button>
+      </div>`;
+    document.body.appendChild(popup);
+    return;
   } else {
     // Activar — mostrar selector sin fecha por defecto
     toggle.classList.add('on');
@@ -479,6 +495,9 @@ window.onDebugDateChange = async (dateStr) => {
   await loadMonthsForDate(dateStr);
 
   setMsg('Rellenando días vacíos...');
+
+  // Guardar fecha debug en Firestore
+  await saveDebugDate(dateStr);
 
   // Rellenar días vacíos hasta la fecha de debug
   await rellenarDiasVacios();

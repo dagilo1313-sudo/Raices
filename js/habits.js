@@ -55,6 +55,8 @@ export async function loadData() {
       state.perfil.diasPerfectos = data.diasPerfectos || 0;
       state.perfil.diasBuenos    = data.diasBuenos    || 0;
       state.perfil.nombre        = data.nombre        || 'David';
+      // Restaurar modo debug si estaba activo
+      if (data.debugDate) state.debugDate = data.debugDate;
     } else {
       await setDoc(profileRef(), { xpTotal: 0, nivel: 1, clase: 0, diasPerfectos: 0 });
       state.perfil = { xpTotal: 0, nivel: 1, clase: 0, diasPerfectos: 0 };
@@ -110,6 +112,18 @@ export async function loadMonthCompletions(monthKey) {
 }
 
 
+
+
+// ── Guardar fecha de debug en Firestore ──
+export async function saveDebugDate(dateStr) {
+  await updateDoc(profileRef(), { debugDate: dateStr });
+}
+
+// ── Borrar fecha de debug de Firestore ──
+export async function clearDebugDate() {
+  const { deleteField } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
+  await updateDoc(profileRef(), { debugDate: deleteField() });
+}
 
 // ── Cargar los 2 meses alrededor de una fecha (para modo debug) ──
 export async function loadMonthsForDate(dateStr) {
