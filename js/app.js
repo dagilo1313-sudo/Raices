@@ -451,22 +451,45 @@ window.onDebugDateChange = async (dateStr) => {
   if (!dateStr) return;
   state.debugDate = dateStr;
 
-  // Formatear fecha para mostrar
   const d = new Date(dateStr + 'T12:00:00');
   const label = d.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
 
-  // Banner en perfil
+  // Mostrar loader en el debug-card
+  const debugCard = document.getElementById('debug-card');
+  let loaderEl = document.getElementById('debug-fill-loader');
+  if (!loaderEl) {
+    loaderEl = document.createElement('div');
+    loaderEl.id = 'debug-fill-loader';
+    loaderEl.style.cssText = 'margin-top:12px;padding:12px 14px;background:rgba(143,179,57,0.08);border:1px solid rgba(143,179,57,0.2);border-radius:var(--radius-md);font-size:12px;color:var(--muted);display:flex;flex-direction:column;gap:6px';
+    debugCard?.appendChild(loaderEl);
+  }
+
+  const setMsg = (msg) => {
+    if (loaderEl) loaderEl.innerHTML = '<div style="display:flex;align-items:center;gap:8px"><div style="width:12px;height:12px;border:2px solid rgba(143,179,57,0.3);border-top-color:var(--accent);border-radius:50%;animation:spin 0.7s linear infinite;flex-shrink:0"></div><span>' + msg + '</span></div><style>@keyframes spin{to{transform:rotate(360deg)}}</style>';
+  };
+  const setSuccess = (msg) => {
+    if (loaderEl) loaderEl.innerHTML = '<div style="color:var(--accent);font-size:12px">✓ ' + msg + '</div>';
+    setTimeout(() => { if (loaderEl) { loaderEl.remove(); loaderEl = null; } }, 2500);
+  };
+
+  setMsg('Cargando meses...');
+
+  // Cargar los 2 meses alrededor de la fecha de debug
+  await loadMonthsForDate(dateStr);
+
+  setMsg('Rellenando días vacíos...');
+
+  // Rellenar días vacíos hasta la fecha de debug
+  await rellenarDiasVacios();
+
+  // Banners
   document.getElementById('debug-active-banner').style.display = 'block';
   document.getElementById('debug-date-label').textContent = label;
-
-  // Banner en vista HOY
   document.getElementById('debug-banner').style.display = 'block';
   document.getElementById('debug-banner-date').textContent = label;
 
-  // Cargar los 2 meses alrededor de la fecha de debug si no están en memoria
-  await loadMonthsForDate(dateStr);
-  // Rellenar días vacíos hasta la fecha de debug y luego renderizar
-  await rellenarDiasVacios();
+  setSuccess('Listo · ' + label);
+
   renderAll();
 };
 

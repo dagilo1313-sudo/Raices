@@ -16,7 +16,6 @@ export function renderAll() {
   renderHabits();
   renderLastSync();
   renderHabitsList();
-  renderHistorico();
 }
 
 // ── Fecha ──
@@ -112,7 +111,6 @@ function renderViajero() {
   const accentColor = isPerfectToday ? 'var(--accent2)' : 'var(--accent)';
 
   // Eficiencia XP y consistencia — mes actual + últimos 7 días
-  const currentMonthPrefix = today().substring(0, 7);
   const hace7 = (() => { const d = new Date(todayStr+'T12:00:00'); d.setDate(d.getDate()-6); return d.toISOString().split('T')[0]; })();
   let vRatioSum=0, vRatioDays=0, vXpEficSum=0, vXpEficDays=0;
   let v7RatioSum=0, v7RatioDays=0, v7XpEficSum=0, v7XpEficDays=0;
