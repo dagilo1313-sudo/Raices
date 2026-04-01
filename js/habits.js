@@ -299,13 +299,17 @@ function recalcularXPSnapshot(date) {
 
 // ── Guardar completions ──
 export async function saveCompletions() {
-  // Guardar solo el mes actual
+  // Guardar solo el día actual — no el mes entero
+  const dateStr = today();
   const mk = currentMonthKey();
-  const monthData = {};
-  Object.entries(state.completions).forEach(([k, v]) => {
-    if (/^\d{4}-\d{2}-\d{2}$/.test(k)) monthData[k] = v;
-  });
-  await setDoc(compsMonthRef(mk), monthData);
+  const dayData = state.completions[dateStr];
+  if (!dayData) return;
+  try {
+    // updateDoc falla si el documento no existe — usar setDoc merge
+    await setDoc(compsMonthRef(mk), { [dateStr]: dayData }, { merge: true });
+  } catch(e) {
+    console.error('saveCompletions error:', e);
+  }
 }
 
 // ── Toggle completado ──

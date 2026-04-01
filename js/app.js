@@ -571,5 +571,15 @@ window.onDebugDateChange = async (dateStr) => {
   document.body.appendChild(popup);
 };
 
+
+// ── Indicador de conexión ──
+function updateOfflineIndicator() {
+  const el = document.getElementById('offline-indicator');
+  if (!el) return;
+  el.style.display = navigator.onLine ? 'none' : 'flex';
+}
+window.addEventListener('online',  updateOfflineIndicator);
+window.addEventListener('offline', updateOfflineIndicator);
+
 // ── Arrancar ──
 initAuth();
