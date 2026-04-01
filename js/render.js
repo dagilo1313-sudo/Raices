@@ -22,7 +22,7 @@ export function renderAll() {
 function renderDate() {
   const el = document.getElementById('date-display');
   if (!el) return;
-  const d = new Date();
+  const d = new Date(today() + 'T12:00:00'); // respeta modo debug
   const weekday = d.toLocaleDateString('es-ES', { weekday: 'long' });
   const day = d.getDate();
   const month = d.toLocaleDateString('es-ES', { month: 'short' });
