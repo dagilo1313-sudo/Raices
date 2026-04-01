@@ -88,41 +88,49 @@ export function showConfetti() {
 }
 
 export function showXPFloat(habitId, xp) {
-  // Color según peso del XP
   const color = xp >= 50 ? '#c4a84f' : xp >= 25 ? '#8fb339' : '#6b7560';
-  // Buscar el elemento del hábito en la lista
+
+  // Buscar la card del hábito para anclar el float
+  const card = document.getElementById('habit-' + habitId);
+  let startX, startY;
+  if (card) {
+    const rect = card.getBoundingClientRect();
+    startX = rect.right - 60;
+    startY = rect.top + rect.height / 2;
+  } else {
+    startX = window.innerWidth / 2;
+    startY = window.innerHeight * 0.45;
+  }
+
   const el = document.createElement('div');
   el.style.cssText = `
     position:fixed;
-    left:50%;
-    top:45%;
-    transform:translate(-50%,-50%);
-    font-family:'DM Sans',sans-serif;
-    font-size:38px;
+    left:${startX}px;
+    top:${startY}px;
+    transform:translateY(0);
+    font-size:15px;
     font-weight:700;
     color:${color};
     pointer-events:none;
     z-index:9999;
-    opacity:1;
-    text-shadow:0 2px 16px ${color}66;
-    animation:xpFloat 0.9s ease-out forwards;
+    opacity:0;
+    animation:xpFloatRow 0.85s cubic-bezier(.2,0,.4,1) forwards;
   `;
   el.textContent = `+${xp} XP`;
   document.body.appendChild(el);
 
-  // Inyectar keyframes si no existen
   if (!document.getElementById('xp-float-style')) {
     const s = document.createElement('style');
     s.id = 'xp-float-style';
-    s.textContent = `@keyframes xpFloat {
-      0%   { opacity:0; transform:translate(-50%,-50%) scale(0.6); }
-      15%  { opacity:1; transform:translate(-50%,-60%) scale(1.1); }
-      40%  { opacity:0.9; transform:translate(-50%,-70%) scale(1); }
-      100% { opacity:0; transform:translate(-50%,-90%) scale(0.85); }
+    s.textContent = `@keyframes xpFloatRow {
+      0%   { opacity:0;   transform:translateY(0px); }
+      15%  { opacity:1;   transform:translateY(-6px); }
+      70%  { opacity:1;   transform:translateY(-22px); }
+      100% { opacity:0;   transform:translateY(-32px); }
     }`;
     document.head.appendChild(s);
   }
-  setTimeout(() => el.remove(), 900);
+  setTimeout(() => el.remove(), 850);
 }
 
 // ── Router de vistas ──
