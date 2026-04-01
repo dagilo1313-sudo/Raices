@@ -50,3 +50,43 @@
   --radius-xl: 20px;
   --radius-full: 999px;
 }
+
+/* ── Tema claro ── */
+[data-theme="light"] {
+  --bg: #f0f2eb;
+  --surface: #e8ede0;
+  --card: #e2e8d8;
+  --card2: #d8e0ca;
+  --border: #c4ceb4;
+  --text: #2a3018;
+  --muted: #6b7a50;
+  --accent: #5a7a2a;
+  --accent2: #8a6a1a;
+  --accent3: #4a6520;
+  --danger: #a03830;
+  --glow: rgba(90, 122, 42, 0.15);
+
+  --cat-fisico: #c03030;
+  --cat-fisico-bg: rgba(192, 48, 48, 0.1);
+  --cat-fisico-border: rgba(192, 48, 48, 0.25);
+
+  --cat-disciplina: #3060c0;
+  --cat-disciplina-bg: rgba(48, 96, 192, 0.1);
+  --cat-disciplina-border: rgba(48, 96, 192, 0.25);
+
+  --cat-energia: #b07820;
+  --cat-energia-bg: rgba(176, 120, 32, 0.1);
+  --cat-energia-border: rgba(176, 120, 32, 0.25);
+
+  --cat-inteligencia: #7030b0;
+  --cat-inteligencia-bg: rgba(112, 48, 176, 0.1);
+  --cat-inteligencia-border: rgba(112, 48, 176, 0.25);
+
+  --cat-identidad: #1a8a6a;
+  --cat-identidad-bg: rgba(26, 138, 106, 0.1);
+  --cat-identidad-border: rgba(26, 138, 106, 0.25);
+
+  --xp-10: #7a8a60;
+  --xp-25: #5a7a2a;
+  --xp-50: #8a6a1a;
+}

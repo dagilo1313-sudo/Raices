@@ -584,5 +584,50 @@ window.addEventListener('offline', updateOfflineIndicator);
 document.addEventListener('DOMContentLoaded', updateOfflineIndicator);
 
 
+
+// ── Sistema de temas ──
+const THEME_KEY = 'raices-theme';
+
+function applyTheme(pref) {
+  const root = document.documentElement;
+  if (pref === 'light') {
+    root.setAttribute('data-theme', 'light');
+  } else if (pref === 'dark') {
+    root.removeAttribute('data-theme');
+  } else {
+    // Auto — usar preferencia del sistema
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    if (prefersDark) root.removeAttribute('data-theme');
+    else root.setAttribute('data-theme', 'light');
+  }
+  // Actualizar UI del selector
+  ['auto','dark','light'].forEach(t => {
+    document.getElementById('theme-' + t)?.classList.toggle('active', t === pref);
+  });
+}
+
+window.setTheme = async (pref) => {
+  localStorage.setItem(THEME_KEY, pref);
+  applyTheme(pref);
+  // Guardar en Firestore si hay usuario
+  if (state.currentUser) {
+    try {
+      const { db } = await import('./firebase.js');
+      const { doc, updateDoc } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
+      await updateDoc(doc(db, 'users', state.currentUser.uid, 'profile', 'data'), { theme: pref });
+    } catch(e) { /* silencioso */ }
+  }
+};
+
+function initTheme() {
+  const saved = localStorage.getItem(THEME_KEY) || 'dark';
+  applyTheme(saved);
+  // Escuchar cambios del sistema para modo Auto
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+    if (localStorage.getItem(THEME_KEY) === 'auto') applyTheme('auto');
+  });
+}
+
 // ── Arrancar ──
+initTheme();
 initAuth();

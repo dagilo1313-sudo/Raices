@@ -41,6 +41,13 @@ export async function loadData() {
       state.perfil.diasBuenos    = data.diasBuenos    || 0;
       state.perfil.nombre        = data.nombre        || 'David';
       state.perfil.diasSinFumar  = data.diasSinFumar  || 0;
+      // Sincronizar tema desde Firestore si difiere del local
+      if (data.theme) {
+        const localTheme = localStorage.getItem('raices-theme');
+        if (!localTheme || localTheme !== data.theme) {
+          localStorage.setItem('raices-theme', data.theme);
+        }
+      }
       // Restaurar modo debug ANTES de cargar completions
       if (data.debugDate) state.debugDate = data.debugDate;
     } else {

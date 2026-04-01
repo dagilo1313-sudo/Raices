@@ -217,7 +217,7 @@
 
     <!-- Última sync discreta -->
     <div id="last-sync" style="text-align:center;font-size:10px;color:var(--border);padding:4px 0 2px"></div>
-    <div style="text-align:center;font-size:11px;color:var(--muted);padding:0 0 12px;letter-spacing:2px">v113</div>
+    <div style="text-align:center;font-size:11px;color:var(--muted);padding:0 0 12px;letter-spacing:2px">v114</div>
   </div>
 
   <!-- ══ HÁBITOS ══ -->
@@ -580,6 +580,42 @@
             <div class="pf-row-sub">••••••••</div>
           </div>
           <button class="pf-btn pf-btn-ghost" onclick="showChangePassword()">Cambiar</button>
+        </div>
+      </div>
+
+      <!-- Apariencia -->
+      <div class="pf-group">
+        <div class="pf-group-lbl">Apariencia</div>
+        <div class="pf-row pf-row-last" style="flex-direction:column;align-items:stretch;gap:12px">
+          <div style="display:flex;gap:8px">
+            <div class="theme-card" id="theme-auto" onclick="setTheme('auto')">
+              <div class="theme-preview theme-preview-auto">
+                <div style="height:4px;width:55%;background:rgba(143,179,57,.3);border-radius:2px;margin-bottom:3px"></div>
+                <div style="height:3px;width:80%;background:rgba(255,255,255,.1);border-radius:2px;margin-bottom:2px"></div>
+                <div style="height:3px;width:65%;background:rgba(255,255,255,.1);border-radius:2px"></div>
+              </div>
+              <div class="theme-lbl">Auto</div>
+              <div class="theme-check" id="check-auto"></div>
+            </div>
+            <div class="theme-card" id="theme-dark" onclick="setTheme('dark')">
+              <div class="theme-preview theme-preview-dark">
+                <div style="height:4px;width:55%;background:rgba(143,179,57,.5);border-radius:2px;margin-bottom:3px"></div>
+                <div style="height:3px;width:80%;background:rgba(255,255,255,.12);border-radius:2px;margin-bottom:2px"></div>
+                <div style="height:3px;width:65%;background:rgba(255,255,255,.12);border-radius:2px"></div>
+              </div>
+              <div class="theme-lbl">Oscuro</div>
+              <div class="theme-check" id="check-dark"></div>
+            </div>
+            <div class="theme-card" id="theme-light" onclick="setTheme('light')">
+              <div class="theme-preview theme-preview-light">
+                <div style="height:4px;width:55%;background:rgba(90,122,42,.6);border-radius:2px;margin-bottom:3px"></div>
+                <div style="height:3px;width:80%;background:rgba(0,0,0,.12);border-radius:2px;margin-bottom:2px"></div>
+                <div style="height:3px;width:65%;background:rgba(0,0,0,.12);border-radius:2px"></div>
+              </div>
+              <div class="theme-lbl">Claro</div>
+              <div class="theme-check" id="check-light"></div>
+            </div>
+          </div>
         </div>
       </div>
 
