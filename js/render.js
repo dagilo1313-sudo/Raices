@@ -128,14 +128,17 @@ function renderViajero() {
     }
     // Media 7 días — cualquier día dentro de la ventana (incluye mes anterior)
     if (k >= hace7 && k <= todayStr) {
-      if (plan > 0) { v7RatioSum += comp/plan; v7RatioDays++; }
-      if (xpM > 0)  { v7XpEficSum += xpG/xpM; v7XpEficDays++; }
+      v7RatioSum  += plan > 0 ? comp/plan : 0;
+      v7XpEficSum += xpM  > 0 ? xpG/xpM  : 0;
+      v7RatioDays++;
+      v7XpEficDays++;
     }
   });
   const vConsistencia   = vRatioDays   > 0 ? Math.round(vRatioSum/vRatioDays*100)     : 0;
   const vEficiencia     = vXpEficDays  > 0 ? Math.round(vXpEficSum/vXpEficDays*100)   : 0;
-  const vConsistencia7d = v7RatioDays  > 0 ? Math.round(v7RatioSum/v7RatioDays*100)   : 0;
-  const vEficiencia7d   = v7XpEficDays > 0 ? Math.round(v7XpEficSum/v7XpEficDays*100) : 0;
+  // Siempre dividir entre 7 — los días sin datos cuentan como 0%
+  const vConsistencia7d = Math.round(v7RatioSum  / 7 * 100);
+  const vEficiencia7d   = Math.round(v7XpEficSum / 7 * 100);
 
   // Eficiencia y consistencia — doradas en día perfecto
   const eficienciaEl = document.getElementById('viajero-stat-eficiencia');
