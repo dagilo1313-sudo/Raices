@@ -1436,31 +1436,36 @@ function renderCatStats(dateStr, habitsSource) {
   const snapGanado = !isToday ? getXPGanadoPorCat(dateStr) : null;
   const snapMax    = !isToday ? getXPMaxPorCat(dateStr)    : null;
 
-  cl.innerHTML = Object.entries(CATEGORIES).map(([key, cat]) => {
+  // Construir filas estilo B — una sola card con filas por categoría
+  const catRows = Object.entries(CATEGORIES).map(([key, cat]) => {
     const catHabits = habitsSource.filter(h => h.category === key && isScheduledForDate(h, dateStr));
     if (!catHabits.length && !snapMax?.[key]) return '';
     const done = catHabits.filter(h => completedIds.includes(h.id)).length;
     const total = catHabits.length;
-    // Usar snapshot si existe, sino calcular live
     const xpEarned = snapGanado ? (snapGanado[key] || 0) : catHabits.filter(h => completedIds.includes(h.id)).reduce((s, h) => s + (h.xp||10), 0);
     const xpMax    = snapMax    ? (snapMax[key]    || 0) : catHabits.reduce((s, h) => s + (h.xp||10), 0);
     if (xpMax === 0 && !total) return '';
     const pct = xpMax > 0 ? Math.round(xpEarned / xpMax * 100) : 0;
+    const isLast = key === 'identidad';
     return `
-      <div style="margin-bottom:16px">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;padding:0 2px">
-          <div class="cat-group-label cat-${key}" style="margin:0">${cat.label}</div>
-          <div style="display:flex;align-items:center;gap:8px">
-            ${xpEarned > 0 ? `<span class="xp-badge xp-50">+${xpEarned} XP</span>` : ''}
-            <span style="font-size:16px;font-weight:700;color:var(--cat-${key})">${pct}%</span>
+      <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;${isLast ? '' : 'border-bottom:1px solid var(--border);'}">
+        <span class="cat-group-label cat-${key}" style="margin:0;min-width:100px;flex-shrink:0;font-size:9px;letter-spacing:1.5px">${cat.label}</span>
+        <div style="flex:1;display:flex;flex-direction:column;gap:3px">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <span style="font-size:11px;color:var(--muted)">${done} / ${total}</span>
+            <span style="font-size:13px;font-weight:700;color:var(--cat-${key})">${pct}%</span>
+          </div>
+          <div style="height:3px;background:var(--border);border-radius:3px;overflow:hidden">
+            <div style="height:100%;width:${pct}%;background:var(--cat-${key});border-radius:3px;transition:width 0.6s"></div>
           </div>
         </div>
-        <div style="height:4px;background:var(--border);border-radius:4px;overflow:hidden;margin-bottom:4px">
-          <div style="height:100%;width:${pct}%;background:var(--cat-${key});border-radius:4px;transition:width 0.6s"></div>
-        </div>
-        <div style="font-size:11px;color:var(--muted);padding:0 2px;margin-bottom:8px">${done} / ${total} hábitos</div>
+        <span style="font-size:11px;color:var(--muted);min-width:50px;text-align:right;flex-shrink:0">${xpEarned > 0 ? '+'+xpEarned+' XP' : ''}</span>
       </div>`;
-  }).join('');
+  }).filter(Boolean).join('');
+
+  cl.innerHTML = catRows
+    ? `<div style="background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:16px">${catRows}</div>`
+    : '';
 
   // Todos los hábitos del día debajo: completados primero, luego pendientes
   // Cada bloque ordenado por categoría: fisico → disciplina → energia → inteligencia → identidad
