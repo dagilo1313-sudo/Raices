@@ -561,3 +561,19 @@ header {
 
 /* ── XP/Hábitos main simple (sin divider lateral) ── */
 .xpm-main-simple{margin-bottom:16px;}
+
+/* ── Perfil rows ── */
+.pf-group{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:10px;}
+.pf-group-danger{border-color:rgba(229,92,92,0.2);}
+.pf-group-lbl{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);padding:14px 18px 4px;}
+.pf-lbl-danger{color:rgba(229,92,92,0.5);}
+.pf-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 18px;border-bottom:1px solid var(--border);}
+.pf-row-last{border-bottom:none;}
+.pf-row-left{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1;}
+.pf-row-title{font-size:14px;color:var(--text);font-weight:500;}
+.pf-row-sub{font-size:12px;color:var(--muted);}
+.pf-title-danger{color:var(--cat-fisico);}
+.pf-btn{padding:7px 14px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font-body);white-space:nowrap;flex-shrink:0;border:none;transition:opacity .2s;}
+.pf-btn:active{opacity:.7;}
+.pf-btn-ghost{background:transparent;border:1.5px solid rgba(143,179,57,0.35);color:var(--accent);}
+.pf-btn-danger{background:transparent;border:1.5px solid rgba(229,92,92,0.35);color:var(--cat-fisico);}

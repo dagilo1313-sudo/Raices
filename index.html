@@ -210,7 +210,7 @@
 
     <!-- Última sync discreta -->
     <div id="last-sync" style="text-align:center;font-size:10px;color:var(--border);padding:4px 0 2px"></div>
-    <div style="text-align:center;font-size:11px;color:var(--muted);padding:0 0 12px;letter-spacing:2px">v102</div>
+    <div style="text-align:center;font-size:11px;color:var(--muted);padding:0 0 12px;letter-spacing:2px">v105</div>
   </div>
 
   <!-- ══ HÁBITOS ══ -->
@@ -550,68 +550,104 @@
       </div>
     </header>
     <div class="profile-section">
-      <div class="card">
-        <div class="card-title">Tu nombre</div>
-        <div id="perfil-nombre-display" style="font-size:15px;color:var(--muted);padding:10px 0 14px;line-height:1">—</div>
-        <button class="btn btn-secondary" style="margin-bottom:0" onclick="showChangeNombre()">Cambiar nombre</button>
-      </div>
 
-      <div class="card">
-        <div class="card-title">Cuenta</div>
-        <div style="font-size:14px;color:var(--muted);margin-bottom:16px" id="profile-email"></div>
-        <button class="btn btn-primary" style="margin-bottom:0" onclick="showChangePassword()">Cambiar contraseña</button>
-      </div>
-
-      <!-- Testing -->
-      <div class="card" id="debug-card">
-        <div class="card-title">Modo testing</div>
-        <div style="font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.5">Simula que hoy es una fecha pasada. Útil para testear días perfectos, XP y stats.</div>
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-          <span style="font-size:14px;color:var(--text)">Activar modo testing</span>
-          <div class="toggle-switch" id="debug-toggle" onclick="onToggleDebug()">
-            <div class="toggle-knob"></div>
+      <!-- Cuenta -->
+      <div class="pf-group">
+        <div class="pf-group-lbl">Cuenta</div>
+        <div class="pf-row">
+          <div class="pf-row-left">
+            <div class="pf-row-title">Nombre</div>
+            <div class="pf-row-sub" id="perfil-nombre-display">—</div>
+          </div>
+          <button class="pf-btn pf-btn-ghost" onclick="showChangeNombre()">Cambiar</button>
+        </div>
+        <div class="pf-row">
+          <div class="pf-row-left">
+            <div class="pf-row-title">Correo</div>
+            <div class="pf-row-sub" id="profile-email"></div>
           </div>
         </div>
-        <div id="debug-date-wrap" style="display:none">
-          <div style="display:flex;gap:8px;margin-bottom:8px">
+        <div class="pf-row pf-row-last">
+          <div class="pf-row-left">
+            <div class="pf-row-title">Contraseña</div>
+            <div class="pf-row-sub">••••••••</div>
+          </div>
+          <button class="pf-btn pf-btn-ghost" onclick="showChangePassword()">Cambiar</button>
+        </div>
+      </div>
+
+      <!-- Herramientas -->
+      <div class="pf-group" id="debug-card">
+        <div class="pf-group-lbl">Herramientas</div>
+        <div class="pf-row">
+          <div class="pf-row-left">
+            <div class="pf-row-title">Modo testing</div>
+            <div class="pf-row-sub">Simula una fecha distinta</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <div id="debug-active-banner" style="display:none;font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;background:rgba(196,168,79,0.12);border:1px solid rgba(196,168,79,0.25);color:var(--accent2)">Activo · <span id="debug-date-label"></span></div>
+            <div class="toggle-switch" id="debug-toggle" onclick="onToggleDebug()"><div class="toggle-knob"></div></div>
+          </div>
+        </div>
+        <div id="debug-date-wrap" style="display:none;padding:0 18px 14px">
+          <div style="display:flex;gap:8px">
             <input type="date" class="input-field" id="debug-date-input" style="flex:1">
             <button onclick="onConfirmDebugDate()" style="background:rgba(196,168,79,0.15);border:1.5px solid rgba(196,168,79,0.4);border-radius:var(--radius-md);padding:0 16px;font-size:13px;font-weight:700;color:var(--accent2);font-family:var(--font-body);cursor:pointer;white-space:nowrap">Ir ↗</button>
           </div>
-          <div id="debug-active-banner" style="display:none;background:rgba(196,168,79,0.15);border:1px solid rgba(196,168,79,0.4);border-radius:var(--radius-md);padding:10px 14px;font-size:12px;color:var(--accent2);line-height:1.5">
-            ⚠️ Modo testing activo — el sistema cree que hoy es <strong id="debug-date-label"></strong>
-          </div>
         </div>
       </div>
 
-      <div class="card">
-        <div class="card-title">Backup de datos</div>
-        <div style="font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.6">Descarga todos tus hábitos, progreso y registros diarios en un archivo JSON.</div>
-        <button class="btn btn-secondary" style="margin-bottom:12px" onclick="descargarBackup()">Descargar backup completo ↓</button>
-
-        <div style="height:1px;background:var(--border);margin-bottom:14px"></div>
-
-        <div style="font-size:13px;color:var(--muted);margin-bottom:12px;line-height:1.6">Restaura un backup anterior. Se sobreescribirán todos tus datos actuales.</div>
-        <input type="file" id="backup-file-input" accept=".json" style="display:none" onchange="onBackupFileSelected(this)">
-        <button class="btn btn-secondary" style="margin-bottom:8px" onclick="document.getElementById('backup-file-input').click()">Seleccionar archivo de backup</button>
-        <div id="backup-filename" style="font-size:11px;color:var(--muted);margin-bottom:8px;display:none"></div>
-        <button class="btn btn-primary" id="btn-restaurar" style="display:none;margin-bottom:8px" onclick="confirmarRestaurarPopup()">Restaurar backup ↑</button>
-        <div id="backup-status" style="font-size:12px;margin-top:4px;display:none"></div>
+      <!-- Datos -->
+      <div class="pf-group">
+        <div class="pf-group-lbl">Datos</div>
+        <div class="pf-row">
+          <div class="pf-row-left">
+            <div class="pf-row-title">Backup</div>
+            <div class="pf-row-sub">Descarga un JSON con todo</div>
+          </div>
+          <button class="pf-btn pf-btn-ghost" onclick="descargarBackup()">Descargar ↓</button>
+        </div>
+        <div class="pf-row pf-row-last">
+          <div class="pf-row-left">
+            <div class="pf-row-title">Restaurar</div>
+            <div class="pf-row-sub" id="backup-filename">Importa desde un JSON</div>
+          </div>
+          <input type="file" id="backup-file-input" accept=".json" style="display:none" onchange="onBackupFileSelected(this)">
+          <button class="pf-btn pf-btn-ghost" id="btn-restaurar-sel" onclick="document.getElementById('backup-file-input').click()">Seleccionar ↑</button>
+          <button class="pf-btn pf-btn-ghost" id="btn-restaurar" style="display:none" onclick="confirmarRestaurarPopup()">Restaurar ↑</button>
+        </div>
+        <div id="backup-status" style="font-size:12px;padding:0 18px 10px;display:none"></div>
       </div>
 
-      <div class="card">
-        <div class="card-title">Zona peligrosa</div>
-
-        <div style="font-size:13px;color:var(--muted);margin-bottom:12px;line-height:1.5">Borra tu XP, nivel y días perfectos, pero mantiene todos tus hábitos.</div>
-        <button class="btn btn-secondary" style="margin-bottom:0" onclick="showResetProgressConfirm()">Reiniciar solo el progreso</button>
-
-        <div style="height:1px;background:var(--border);margin:16px 0"></div>
-
-        <div style="font-size:13px;color:var(--muted);margin-bottom:12px;line-height:1.5">Borra todos tus hábitos y progreso de forma permanente.</div>
-        <button class="btn btn-danger" style="margin-bottom:0" onclick="showResetConfirm1()">Reiniciar todo</button>
+      <!-- Zona peligrosa -->
+      <div class="pf-group pf-group-danger">
+        <div class="pf-group-lbl pf-lbl-danger">Zona de peligro</div>
+        <div class="pf-row">
+          <div class="pf-row-left">
+            <div class="pf-row-title pf-title-danger">Reiniciar progreso</div>
+            <div class="pf-row-sub">Borra XP, nivel y días perfectos</div>
+          </div>
+          <button class="pf-btn pf-btn-danger" onclick="showResetProgressConfirm()">Reiniciar</button>
+        </div>
+        <div class="pf-row pf-row-last">
+          <div class="pf-row-left">
+            <div class="pf-row-title pf-title-danger">Borrar todo</div>
+            <div class="pf-row-sub">Elimina hábitos y datos</div>
+          </div>
+          <button class="pf-btn pf-btn-danger" onclick="showResetConfirm1()">Borrar</button>
+        </div>
       </div>
-      <div class="card">
-        <button class="btn btn-danger" onclick="logout()" style="margin-bottom:0">Cerrar sesión</button>
+
+      <!-- Cerrar sesión -->
+      <div class="pf-group pf-group-danger">
+        <div class="pf-row pf-row-last">
+          <div class="pf-row-left">
+            <div class="pf-row-title pf-title-danger">Cerrar sesión</div>
+          </div>
+          <button class="pf-btn pf-btn-danger" onclick="logout()">Salir</button>
+        </div>
       </div>
+
     </div>
   </div>
 
