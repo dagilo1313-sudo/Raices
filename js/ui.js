@@ -88,49 +88,53 @@ export function showConfetti() {
 }
 
 export function showXPFloat(habitId, xp) {
-  const color = xp >= 50 ? '#c4a84f' : xp >= 25 ? '#8fb339' : '#6b7560';
-
-  // Buscar la card del hábito para anclar el float
   const card = document.getElementById('habit-' + habitId);
   let startX, startY;
   if (card) {
     const rect = card.getBoundingClientRect();
-    startX = rect.right - 60;
+    startX = rect.right - 80;
     startY = rect.top + rect.height / 2;
   } else {
     startX = window.innerWidth / 2;
     startY = window.innerHeight * 0.45;
   }
 
+  // Estilo B: número dorado grande + XP pequeño
   const el = document.createElement('div');
   el.style.cssText = `
     position:fixed;
     left:${startX}px;
     top:${startY}px;
-    transform:translateY(0);
-    font-size:15px;
-    font-weight:700;
-    color:${color};
+    display:flex;
+    align-items:baseline;
+    gap:2px;
     pointer-events:none;
     z-index:9999;
     opacity:0;
-    animation:xpFloatRow 0.85s cubic-bezier(.2,0,.4,1) forwards;
+    animation:xpFloatB 1.1s linear forwards;
   `;
-  el.textContent = `+${xp} XP`;
+  const big = document.createElement('span');
+  big.style.cssText = 'font-size:18px;font-weight:800;color:#c4a84f;';
+  big.textContent = `+${xp}`;
+  const sm = document.createElement('span');
+  sm.style.cssText = 'font-size:10px;font-weight:700;color:#c4a84f;opacity:0.65;';
+  sm.textContent = 'XP';
+  el.appendChild(big);
+  el.appendChild(sm);
   document.body.appendChild(el);
 
   if (!document.getElementById('xp-float-style')) {
     const s = document.createElement('style');
     s.id = 'xp-float-style';
-    s.textContent = `@keyframes xpFloatRow {
-      0%   { opacity:0;   transform:translateY(0px); }
-      15%  { opacity:1;   transform:translateY(-6px); }
-      70%  { opacity:1;   transform:translateY(-22px); }
-      100% { opacity:0;   transform:translateY(-32px); }
+    s.textContent = `@keyframes xpFloatB {
+      0%   { opacity:0; transform:translateY(4px); }
+      10%  { opacity:1; transform:translateY(-2px); }
+      85%  { opacity:1; transform:translateY(-30px); }
+      100% { opacity:0; transform:translateY(-36px); }
     }`;
     document.head.appendChild(s);
   }
-  setTimeout(() => el.remove(), 850);
+  setTimeout(() => el.remove(), 1100);
 }
 
 // ── Router de vistas ──
