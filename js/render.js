@@ -1001,8 +1001,8 @@ function renderLifetimeStats() {
       const active = checkFn(ds, dayData);
       const dot = document.createElement('div');
       dot.className = 'rc-dot';
-      dot.style.background = active ? dotColor : '#1a1f10';
-      dot.style.border = active ? 'none' : '1px solid #2a3020';
+      dot.style.background = active ? dotColor : 'var(--border)';
+      dot.style.border = active ? 'none' : '1px solid var(--border)';
       dot.title = d.toLocaleDateString('es-ES', {weekday:'short', day:'numeric'});
       dots.push(dot);
     }
@@ -1426,7 +1426,7 @@ function renderStatsDayHabits(dateStr, completedIds, scheduledHabits) { // compl
             ${isToday ? `<span class="xp-badge xp-${h.xp}">+${h.xp} XP</span>` : ''}
           </div>
         </div>
-        <div class="check-circle" style="flex-shrink:0">${done?'✓':''}</div>
+        <div class="check-circle" style="flex-shrink:0"><svg class="check-svg" width="10" height="10" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="#07090a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
       </div>`;
   });
   sl.innerHTML = html;
@@ -1503,7 +1503,7 @@ function renderCatStats(dateStr, habitsSource) {
               ${isToday ? `<span class="xp-badge xp-${h.xp}">+${h.xp} XP</span>` : ''}
             </div>
           </div>
-          <div class="check-circle" style="flex-shrink:0">${isDone?'✓':''}</div>
+          <div class="check-circle" style="flex-shrink:0"><svg class="check-svg" width="10" height="10" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="#07090a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
         </div>`;
     }).join('');
   }

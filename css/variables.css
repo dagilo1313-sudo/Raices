@@ -55,16 +55,16 @@
 [data-theme="light"] {
   --bg: #ffffff;
   --surface: #f4f6f0;
-  --card: #f4f6f0;
-  --card2: #edf0e8;
-  --border: #d0d8c4;
+  --card: #f2f4ee;
+  --card2: #e8edd8;
+  --border: #d8e0c8;
   --text: #1a2010;
   --muted: #7a8a68;
-  --accent: #628530;
-  --accent2: #9a7220;
-  --accent3: #527020;
+  --accent: #7cb832;
+  --accent2: #d4a020;
+  --accent3: #689c28;
   --danger: #a03830;
-  --glow: rgba(98, 133, 48, 0.15);
+  --glow: rgba(114, 160, 48, 0.15);
 
   --cat-fisico: #c03030;
   --cat-fisico-bg: rgba(192, 48, 48, 0.1);
@@ -83,31 +83,20 @@
   --cat-identidad-border: rgba(26, 138, 106, 0.25);
 
   --xp-10: #8a9878;
-  --xp-25: #628530;
-  --xp-50: #9a7220;
+  --xp-25: #7cb832;
+  --xp-50: #d4a020;
 }
 
-/* ── Overrides light — elementos con colores hardcodeados ── */
-[data-theme="light"] .nav-bar {
-  background: rgba(244,246,240,0.96);
-}
-[data-theme="light"] .habit-card.done {
-  background: linear-gradient(135deg, #e8f0d8 0%, #e0ead0 100%);
-}
+/* ── Overrides light ── */
+[data-theme="light"] .nav-bar { background: rgba(244,246,240,0.96); }
+[data-theme="light"] .habit-card.done { background: linear-gradient(135deg, #e4f0cc 0%, #dce8c4 100%); }
 [data-theme="light"] .hoy-sc-track,
 [data-theme="light"] .sc-bar,
 [data-theme="light"] .scat-bar-wrap,
-[data-theme="light"] .prog-track {
-  background: #d0d8c4;
-}
-[data-theme="light"] .viajero-xp-track { background: #d0d8c4; }
+[data-theme="light"] .prog-track,
+[data-theme="light"] .viajero-xp-track { background: #d8e0c8; }
 [data-theme="light"] .viajero-xp-fill { background: linear-gradient(to right, var(--accent3), var(--accent)); }
-[data-theme="light"] .day-num.day-gray {
-  border-color: #bcc8a8;
-  color: #8a9a78;
-  background: rgba(188,200,168,0.2);
-}
-[data-theme="light"] .day-dot.gray { background: #bcc8a8; }
+[data-theme="light"] .day-num.day-gray { border-color: #c0cca8; color: #8a9878; background: rgba(192,204,168,0.2); }
+[data-theme="light"] .day-dot.gray { background: #c0cca8; }
 [data-theme="light"] .check-circle .check-svg polyline,
 [data-theme="light"] #habits-list.perfect-day .habit-card.done .check-circle .check-svg polyline { stroke: #ffffff; }
-[data-theme="light"] .rc-dot { background: #d0d8c4; }

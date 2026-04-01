@@ -291,7 +291,62 @@ function showReloadPopup(emoji, title, msg) {
     </div>`;
   document.body.appendChild(popup);
 }
-window.showResetProgressConfirm = () => showConfirmPopup({
+
+// ── Confirmación con contraseña para acciones destructivas ──
+function showPasswordConfirm({ title, desc, onConfirm }) {
+  lockScroll();
+  const ov = document.createElement('div');
+  ov.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.75);display:flex;align-items:center;justify-content:center;padding:24px';
+  ov.innerHTML = `
+    <div style="background:var(--card2);border:1px solid rgba(229,92,92,0.3);border-radius:20px;padding:28px 24px;max-width:320px;width:100%;text-align:center">
+      <div style="font-size:22px;margin-bottom:12px">⚠️</div>
+      <div style="font-size:16px;font-weight:700;color:var(--text);margin-bottom:8px">${title}</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.5">${desc}</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:10px;text-align:left">Introduce tu contraseña para confirmar</div>
+      <input id="pwd-confirm-input" type="password" class="input-field" placeholder="Contraseña" style="margin-bottom:16px">
+      <div id="pwd-confirm-error" style="font-size:12px;color:#e05c5c;margin-bottom:10px;display:none">Contraseña incorrecta</div>
+      <div style="display:flex;gap:8px">
+        <button onclick="document.getElementById('pwd-confirm-overlay').remove();unlockScroll();" style="flex:1;background:transparent;border:1px solid var(--border);border-radius:var(--radius-md);padding:10px;font-size:13px;color:var(--muted);font-family:var(--font-body);cursor:pointer">Cancelar</button>
+        <button id="pwd-confirm-ok" style="flex:1;background:rgba(229,92,92,0.15);border:1.5px solid rgba(229,92,92,0.4);border-radius:var(--radius-md);padding:10px;font-size:13px;font-weight:700;color:#e05c5c;font-family:var(--font-body);cursor:pointer">Confirmar</button>
+      </div>
+    </div>`;
+  ov.id = 'pwd-confirm-overlay';
+  document.body.appendChild(ov);
+
+  const input = document.getElementById('pwd-confirm-input');
+  const errEl = document.getElementById('pwd-confirm-error');
+  const okBtn = document.getElementById('pwd-confirm-ok');
+
+  input.focus();
+
+  const verify = async () => {
+    const pwd = input.value;
+    if (!pwd) { errEl.style.display = 'block'; errEl.textContent = 'Introduce tu contraseña'; return; }
+    okBtn.textContent = '...';
+    okBtn.disabled = true;
+    try {
+      const { getAuth, EmailAuthProvider, reauthenticateWithCredential } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js');
+      const user = getAuth().currentUser;
+      const cred = EmailAuthProvider.credential(user.email, pwd);
+      await reauthenticateWithCredential(user, cred);
+      ov.remove();
+      unlockScroll();
+      onConfirm();
+    } catch(e) {
+      errEl.style.display = 'block';
+      errEl.textContent = 'Contraseña incorrecta';
+      okBtn.textContent = 'Confirmar';
+      okBtn.disabled = false;
+      input.value = '';
+      input.focus();
+    }
+  };
+
+  okBtn.addEventListener('click', verify);
+  input.addEventListener('keydown', e => { if (e.key === 'Enter') verify(); });
+}
+
+window.showResetProgressConfirm = () => showPasswordConfirm({
   title: 'Reiniciar progreso',
   desc: 'Se borrará tu XP, nivel y días perfectos. Los hábitos se conservan.',
   btnLabel: 'Borrar progreso',
