@@ -118,17 +118,6 @@ window.onToggleHabit = (id) => {
   const ahoraCompletado = !eraCompletado;
   renderHabitToggle(id, ahoraCompletado);
 
-  // 3. Sweep shine si se acaba de marcar
-  if (ahoraCompletado) {
-    requestAnimationFrame(() => {
-      const card = document.getElementById('habit-' + id);
-      if (card) {
-        card.classList.remove('sweeping');
-        requestAnimationFrame(() => card.classList.add('sweeping'));
-      }
-    });
-  }
-
   // 4. Actualizar contadores (progreso, viajero, XP bar) — sin tocar la lista
   renderProgress();
   renderViajero();

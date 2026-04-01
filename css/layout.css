@@ -258,11 +258,8 @@ header {
 .day-dot.gray    { background: #3a3e32; }
 
 /* ── Habit card ── */
-.habit-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 10px 14px; margin-bottom: 8px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: border-color 0.25s, background 0.25s, transform 0.15s cubic-bezier(.34,1.56,.64,1); position: relative; overflow: hidden; animation: slideIn 0.3s ease; }
+.habit-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 7px 14px; margin-bottom: 6px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: border-color 0.25s, background 0.25s; position: relative; overflow: hidden; animation: slideIn 0.3s ease; }
 .habit-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--border); border-radius: 3px 0 0 3px; transition: background 0.3s; }
-.habit-card::after { content: ''; position: absolute; inset: 0; border-radius: var(--radius-lg); background: linear-gradient(105deg, transparent 25%, rgba(143,179,57,0.0) 35%, rgba(143,179,57,0.2) 45%, rgba(196,168,79,0.15) 50%, rgba(143,179,57,0.2) 55%, rgba(143,179,57,0.0) 65%, transparent 75%); background-size: 300% 100%; background-position: 200% 0; pointer-events: none; transition: none; }
-.habit-card.sweeping::after { transition: background-position 0.55s cubic-bezier(.4,0,.2,1); background-position: -100% 0; }
-.habit-card:active { transform: scale(0.987); }
 .habit-card.done { border-color: rgba(143,179,57,0.3); background: linear-gradient(135deg, #111b0c 0%, #0e1410 100%); }
 .habit-card.done::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--accent); border-radius: 3px 0 0 3px; }
 .habit-card.done[data-cat="fisico"]::before { background: var(--cat-fisico); }
@@ -270,8 +267,7 @@ header {
 .habit-card.done[data-cat="energia"]::before { background: var(--cat-energia); }
 .habit-card.done[data-cat="inteligencia"]::before { background: var(--cat-inteligencia); }
 .habit-card.done[data-cat="identidad"]::before { background: var(--cat-identidad); }
-.habit-emoji { font-size: 22px; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: var(--card2); border-radius: var(--radius-md); flex-shrink: 0; transition: transform 0.2s; }
-.habit-card:hover .habit-emoji { transform: scale(1.1); }
+.habit-emoji { font-size: 18px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; background: var(--card2); border-radius: var(--radius-md); flex-shrink: 0; }
 .habit-info { flex: 1; min-width: 0; }
 .habit-name { font-size: 15px; font-weight: 500; color: var(--text); margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .habit-card.done .habit-name { color: var(--accent); }
