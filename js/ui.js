@@ -88,18 +88,21 @@ export function showConfetti() {
 }
 
 export function showXPFloat(habitId, xp) {
+  // Color según peso del hábito
+  const color = xp >= 50 ? '#c4a84f' : xp >= 25 ? '#8fb339' : '#6b9e6e';
+
   const card = document.getElementById('habit-' + habitId);
   let startX, startY;
   if (card) {
     const rect = card.getBoundingClientRect();
-    startX = rect.right - 80;
+    // Más a la izquierda — alejado del tick
+    startX = rect.right - 110;
     startY = rect.top + rect.height / 2;
   } else {
     startX = window.innerWidth / 2;
     startY = window.innerHeight * 0.45;
   }
 
-  // Estilo B: número dorado grande + XP pequeño
   const el = document.createElement('div');
   el.style.cssText = `
     position:fixed;
@@ -114,10 +117,10 @@ export function showXPFloat(habitId, xp) {
     animation:xpFloatB 1.1s linear forwards;
   `;
   const big = document.createElement('span');
-  big.style.cssText = 'font-size:18px;font-weight:800;color:#c4a84f;';
+  big.style.cssText = `font-size:18px;font-weight:800;color:${color};`;
   big.textContent = `+${xp}`;
   const sm = document.createElement('span');
-  sm.style.cssText = 'font-size:10px;font-weight:700;color:#c4a84f;opacity:0.65;';
+  sm.style.cssText = `font-size:10px;font-weight:700;color:${color};opacity:0.65;`;
   sm.textContent = 'XP';
   el.appendChild(big);
   el.appendChild(sm);

@@ -72,10 +72,7 @@
 
     <!-- Fecha encima del viajero -->
     <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 24px 0">
-      <div id="offline-indicator" style="display:none;align-items:center;gap:5px;font-size:10px;font-weight:600;color:#e05c5c;letter-spacing:.5px">
-        <div style="width:6px;height:6px;border-radius:50%;background:#e05c5c;flex-shrink:0"></div>
-        SIN CONEXIÓN
-      </div>
+      <div id="conn-indicator" style="display:flex;align-items:center;justify-content:center;width:8px;height:8px;border-radius:50%;background:#8fb339;flex-shrink:0;transition:background .4s"></div>
       <div style="flex:1"></div>
       <div class="date-badge" id="date-display"></div>
     </div>
@@ -215,7 +212,7 @@
 
     <!-- Última sync discreta -->
     <div id="last-sync" style="text-align:center;font-size:10px;color:var(--border);padding:4px 0 2px"></div>
-    <div style="text-align:center;font-size:11px;color:var(--muted);padding:0 0 12px;letter-spacing:2px">v109</div>
+    <div style="text-align:center;font-size:11px;color:var(--muted);padding:0 0 12px;letter-spacing:2px">v110</div>
   </div>
 
   <!-- ══ HÁBITOS ══ -->

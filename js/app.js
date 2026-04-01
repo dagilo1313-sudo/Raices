@@ -574,12 +574,14 @@ window.onDebugDateChange = async (dateStr) => {
 
 // ── Indicador de conexión ──
 function updateOfflineIndicator() {
-  const el = document.getElementById('offline-indicator');
+  const el = document.getElementById('conn-indicator');
   if (!el) return;
-  el.style.display = navigator.onLine ? 'none' : 'flex';
+  el.style.background = navigator.onLine ? '#8fb339' : '#e05c5c';
 }
 window.addEventListener('online',  updateOfflineIndicator);
 window.addEventListener('offline', updateOfflineIndicator);
+// Inicializar al arrancar
+document.addEventListener('DOMContentLoaded', updateOfflineIndicator);
 
 // ── Arrancar ──
 initAuth();
