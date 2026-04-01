@@ -488,9 +488,30 @@ window.onDebugDateChange = async (dateStr) => {
   document.getElementById('debug-banner').style.display = 'block';
   document.getElementById('debug-banner-date').textContent = label;
 
-  setSuccess('Listo · ' + label);
+  // Quitar loader
+  if (loaderEl) loaderEl.remove();
 
   renderAll();
+
+  // Popup de confirmación — sin opción de cancelar, fondo bloqueado
+  lockScroll();
+  const popup = document.createElement('div');
+  popup.id = 'debug-done-popup';
+  popup.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.8);display:flex;align-items:center;justify-content:center;padding:24px';
+  popup.innerHTML = `
+    <div style="background:var(--card2);border:1px solid rgba(196,168,79,0.35);border-radius:16px;padding:28px 24px;max-width:320px;width:100%;text-align:center">
+      <div style="font-size:28px;margin-bottom:12px">🧪</div>
+      <div style="font-size:16px;font-weight:700;color:var(--accent2);margin-bottom:8px">Modo testing activo</div>
+      <div style="font-size:13px;color:var(--text);margin-bottom:6px">Ahora estamos en</div>
+      <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:16px">${label}</div>
+      <div style="font-size:12px;color:var(--muted);line-height:1.5;margin-bottom:20px;padding:10px 12px;background:rgba(143,179,57,0.06);border-radius:8px;border:1px solid rgba(143,179,57,0.12)">
+        Se han rellenado los días vacíos entre el último día registrado y esta fecha con hábitos sin completar.
+      </div>
+      <button onclick="document.getElementById('debug-done-popup').remove(); window._unlockScroll && window._unlockScroll(); window.location.reload();" style="width:100%;background:rgba(196,168,79,0.15);border:1.5px solid rgba(196,168,79,0.5);border-radius:var(--radius-md);padding:12px;font-size:14px;font-weight:700;color:var(--accent2);font-family:var(--font-body);cursor:pointer">
+        Pulsa para recargar ↻
+      </button>
+    </div>`;
+  document.body.appendChild(popup);
 };
 
 // ── Arrancar ──
