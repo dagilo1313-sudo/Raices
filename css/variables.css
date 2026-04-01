@@ -128,6 +128,19 @@
   color: #ffffff !important;
 }
 
+/* Logo animado en light — verde y dorado más neon */
+[data-theme="light"] .logo-animated {
+  background: linear-gradient(90deg, #72c020, #e8c020, #72c020);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: logoShimmer 3s linear infinite;
+}
+[data-theme="light"] .logo {
+  color: #72c020;
+}
+
 /* Popups de día perfecto y nivel — fondo de overlay más claro en light */
 [data-theme="light"] #dia-perfecto-notif > div,
 [data-theme="light"] #levelup-notif > div,

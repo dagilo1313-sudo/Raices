@@ -470,8 +470,9 @@ function renderHabits() {
   let scheduled = state.habits.filter(h => !h.archivado && isScheduledForDate(h, todayStr));
   if (state.activeFilter !== 'all') scheduled = scheduled.filter(h => h.category === state.activeFilter);
 
-  // Día perfecto: todos completados → clase golden en el contenedor
-  const allCompleted = scheduled.length > 0 && scheduled.every(h => isCompleted(h.id, todayStr));
+  // Día perfecto: se calcula sobre TODOS los hábitos del día, no solo los del filtro
+  const allScheduled = state.habits.filter(h => !h.archivado && isScheduledForDate(h, todayStr));
+  const allCompleted = allScheduled.length > 0 && allScheduled.every(h => isCompleted(h.id, todayStr));
   list.classList.toggle('perfect-day', allCompleted);
 
   if (!scheduled.length) {
