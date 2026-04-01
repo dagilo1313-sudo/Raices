@@ -159,7 +159,7 @@ function showLevelUpNotif(titulo, subtitulo, desc, color) {
       <div style="font-size:22px;color:${color};margin-bottom:8px;font-weight:700">${titulo}</div>
       <div style="font-size:13px;color:var(--text);margin-bottom:6px;font-weight:600">${subtitulo}</div>
       <div style="font-size:13px;color:var(--muted);margin-bottom:28px;line-height:1.5">${desc}</div>
-      <button onclick="document.getElementById('levelup-notif').remove()" style="background:${color};color:#0d0f0a;border:none;border-radius:var(--radius-full);padding:12px 32px;font-size:14px;font-weight:700;font-family:var(--font-body);cursor:pointer">¡A seguir!</button>
+      <button onclick="document.getElementById('levelup-notif').remove()" style="background:${color};color:#fff;border:none;border-radius:var(--radius-full);padding:12px 32px;font-size:14px;font-weight:700;font-family:var(--font-body);cursor:pointer">¡A seguir!</button>
     </div>
     <style>@keyframes popIn{from{transform:scale(0.7);opacity:0}to{transform:scale(1);opacity:1}}</style>`;
   el.addEventListener('click', e => { if (e.target === el) el.remove(); });

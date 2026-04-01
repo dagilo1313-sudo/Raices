@@ -100,3 +100,25 @@
 [data-theme="light"] .day-dot.gray { background: #c0cca8; }
 [data-theme="light"] .check-circle .check-svg polyline,
 [data-theme="light"] #habits-list.perfect-day .habit-card.done .check-circle .check-svg polyline { stroke: #ffffff; }
+
+/* Texto menos negro */
+[data-theme="light"] { --text: #2e3820; }
+
+/* Hábito completado — sombreado verde */
+[data-theme="light"] .habit-card.done {
+  background: linear-gradient(135deg, #e4f0cc 0%, #dce8c4 100%);
+  border-color: rgba(114,184,50,0.35);
+}
+/* Hábito completado día perfecto — sombreado dorado */
+[data-theme="light"] #habits-list.perfect-day .habit-card.done {
+  background: linear-gradient(135deg, #f0e8cc 0%, #e8dcb8 100%);
+  border-color: rgba(212,160,32,0.35);
+}
+
+/* Botones notif (día perfecto y nivel) — fondo claro */
+[data-theme="light"] #btn-dia-perfecto-ok {
+  background: rgba(212,160,32,0.15);
+}
+[data-theme="light"] #levelup-notif button {
+  color: #ffffff !important;
+}
