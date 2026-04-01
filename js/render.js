@@ -77,14 +77,6 @@ export function renderViajero() {
   const buenosEl = document.getElementById('viajero-stat-buenos');
   if (buenosEl) { buenosEl.textContent = vDiasBuenos; buenosEl.style.color = 'var(--accent)'; }
 
-  // Días sin fumar
-  const nofumarEl = document.getElementById('viajero-stat-nofumar');
-  if (nofumarEl) {
-    const dsf = state.perfil.diasSinFumar || 0;
-    nofumarEl.textContent = dsf;
-    nofumarEl.style.color = accentColor;
-  }
-
   // Rachas actuales — recorrer días hacia atrás desde hoy (solo mes en memoria)
   let rachaPerfActual = 0, rachaBuenosActual = 0;
   let perfStop = false, buenosStop = false;
@@ -117,6 +109,14 @@ export function renderViajero() {
 
   // Color dinámico según día perfecto
   const accentColor = isPerfectToday ? 'var(--accent2)' : 'var(--accent)';
+
+  // Días sin fumar
+  const nofumarEl = document.getElementById('viajero-stat-nofumar');
+  if (nofumarEl) {
+    const dsf = state.perfil.diasSinFumar || 0;
+    nofumarEl.textContent = dsf;
+    nofumarEl.style.color = accentColor;
+  }
 
   // Eficiencia XP y consistencia — mes actual + últimos 7 días
   const hace7 = (() => { const d = new Date(todayStr+'T12:00:00'); d.setDate(d.getDate()-6); return d.toISOString().split('T')[0]; })();
