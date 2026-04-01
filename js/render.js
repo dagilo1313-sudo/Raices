@@ -77,6 +77,14 @@ export function renderViajero() {
   const buenosEl = document.getElementById('viajero-stat-buenos');
   if (buenosEl) { buenosEl.textContent = vDiasBuenos; buenosEl.style.color = 'var(--accent)'; }
 
+  // Días sin fumar
+  const nofumarEl = document.getElementById('viajero-stat-nofumar');
+  if (nofumarEl) {
+    const dsf = state.perfil.diasSinFumar || 0;
+    nofumarEl.textContent = dsf;
+    nofumarEl.style.color = accentColor;
+  }
+
   // Rachas actuales — recorrer días hacia atrás desde hoy (solo mes en memoria)
   let rachaPerfActual = 0, rachaBuenosActual = 0;
   let perfStop = false, buenosStop = false;

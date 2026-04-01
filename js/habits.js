@@ -40,6 +40,7 @@ export async function loadData() {
       state.perfil.diasPerfectos = data.diasPerfectos || 0;
       state.perfil.diasBuenos    = data.diasBuenos    || 0;
       state.perfil.nombre        = data.nombre        || 'David';
+      state.perfil.diasSinFumar  = data.diasSinFumar  || 0;
       // Restaurar modo debug ANTES de cargar completions
       if (data.debugDate) state.debugDate = data.debugDate;
     } else {
@@ -385,6 +386,13 @@ export async function toggleHabit(id) {
       updates.diasBuenos = increment(1);
     }
 
+    // Días sin fumar — sumar si el hábito se llama "no fumar"
+    const habitNF = state.habits.find(h => h.id === id);
+    if (habitNF && habitNF.name && habitNF.name.toLowerCase().trim() === 'no fumar') {
+      state.perfil.diasSinFumar = (state.perfil.diasSinFumar || 0) + 1;
+      updates.diasSinFumar = increment(1);
+    }
+
     await updateDoc(profileRef(), updates);
     return { xpGanado, subioNivel, subioRango, calcDespues };
 
@@ -413,6 +421,16 @@ export async function toggleHabit(id) {
     if (antes.esBueno && !despues.esBueno && (state.perfil.diasBuenos || 0) > 0) {
       state.perfil.diasBuenos -= 1;
       dpUpdates.diasBuenos = increment(-1);
+    }
+
+    // Días sin fumar — restar si el hábito se llama "no fumar"
+    const habitNFD = state.habits.find(h => h.id === id);
+    if (habitNFD && habitNFD.name && habitNFD.name.toLowerCase().trim() === 'no fumar') {
+      const curr = state.perfil.diasSinFumar || 0;
+      if (curr > 0) {
+        state.perfil.diasSinFumar = curr - 1;
+        dpUpdates.diasSinFumar = increment(-1);
+      }
     }
 
     await updateDoc(profileRef(), {
