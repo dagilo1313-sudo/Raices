@@ -32,7 +32,7 @@ function renderDate() {
 }
 
 // ── Viajero ──
-function renderViajero() {
+export function renderViajero() {
   const { xpTotal } = state.perfil;
   const calc = calcularNivel(xpTotal);
   const claseData = CLASES[calc.clase] || CLASES[0];
@@ -306,7 +306,7 @@ function renderWeek() {
 }
 
 // ── XP Bar ──
-function renderXPBar() {
+export function renderXPBar() {
   const xpTotal = state.perfil.xpTotal;
   const todayXP = getTodayXP();
   const todayStr = today();
@@ -320,7 +320,7 @@ function renderXPBar() {
 }
 
 // ── Progreso ──
-function renderProgress() {
+export function renderProgress() {
   const todayStr = today();
   const todayHabits = state.habits.filter(h => !h.archivado && isScheduledForDate(h, todayStr));
   const total = todayHabits.length;
@@ -485,7 +485,7 @@ function renderHabits() {
     const done = isCompleted(h.id, todayStr);
     const streak = getHabitStreak(h.id);
     html += `
-      <div class="habit-card ${done ? 'done' : ''}" data-cat="${h.category || 'disciplina'}" onclick="window.onToggleHabit('${h.id}')">
+      <div class="habit-card ${done ? 'done' : ''}" id="habit-${h.id}" data-cat="${h.category || 'disciplina'}" onclick="window.onToggleHabit('${h.id}')">
         ${habitIconHTML(h)}
         <div class="habit-info">
           <div class="habit-name">${h.name}</div>
@@ -498,6 +498,18 @@ function renderHabits() {
       </div>`;
   });
   list.innerHTML = html;
+}
+
+
+// ── Toggle visual de un hábito sin regenerar la lista ──
+export function renderHabitToggle(id, isDone) {
+  const card = document.getElementById('habit-' + id);
+  if (!card) return;
+  if (isDone) {
+    card.classList.add('done');
+  } else {
+    card.classList.remove('done');
+  }
 }
 
 // ── Vista HÁBITOS (gestión) ──

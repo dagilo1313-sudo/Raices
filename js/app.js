@@ -12,7 +12,7 @@ window._unlockScroll = unlockScroll;
 
 import { initAuth, toggleAuthMode, handleAuth, showForgotPassword, showLoginForm, sendResetEmail, showChangePassword, hideChangePassword, changePassword, logout } from './auth.js';
 import { toggleHabit, deleteHabit, saveCompletions, resetAllData, resetProgress, createTarea, toggleTarea, borrarTareasCompletadas, getCompletadosForDate, loadAllCompletions, loadMonthCompletions, rellenarDiasVacios, loadMonthsForDate, saveDebugDate, clearDebugDate } from './habits.js';
-import { renderAll, renderHabitsList, renderTareas, renderHistorico, renderStats, renderRangosPanel } from './render.js';
+import { renderAll, renderHabitsList, renderTareas, renderHistorico, renderStats, renderRangosPanel, renderHabitToggle, renderProgress, renderViajero, renderXPBar } from './render.js';
 import { showToast, showConfetti, showXPFloat, switchView } from './ui.js';
 import { openCreateModal, openEditModal, closeModal, closeModalOutside, submitModal, selectEmoji, selectNoIcon, selectCategory, selectXP, toggleDay, selectAllDays, openIconPicker, closeIconPicker, confirmIconPicker, clearIconPicker } from './modal.js';
 import { state, getCompletionMessage, today, CLASES, isScheduledForDate } from './state.js';
@@ -84,11 +84,13 @@ async function logError(context, error) {
 }
 window.onToggleHabit = (id) => {
   // 1. Actualizar estado en memoria inmediatamente
+  const todayStr = today();
+  const completadosAntes = getCompletadosForDate(todayStr);
+  const eraCompletado = completadosAntes.includes(id);
+
   toggleHabit(id).then(async result => {
-    // Animaciones post-toggle (no bloquean la UI)
     if (result.xpGanado > 0) {
       showXPFloat(id, result.xpGanado);
-      const todayStr = today();
       const scheduled = state.habits.filter(h => !h.archivado && isScheduledForDate(h, todayStr));
       const completedToday = getCompletadosForDate(todayStr);
       const diaPerfecto = scheduled.length > 0 && scheduled.every(h => completedToday.includes(h.id));
@@ -112,19 +114,27 @@ window.onToggleHabit = (id) => {
     }
   }).catch(err => logError('toggleHabit:' + id, err));
 
-  // 2. Render inmediato — no espera a Firestore
-  renderAll();
+  // 2. Actualizar solo la card tocada — sin regenerar la lista
+  const ahoraCompletado = !eraCompletado;
+  renderHabitToggle(id, ahoraCompletado);
 
-  // 3b. Sweep shine en la card del hábito recién marcado
-  requestAnimationFrame(() => {
-    const row = document.querySelector(`.habit-card[onclick*="'${id}'"]`);
-    if (row && row.classList.contains('done')) {
-      row.classList.remove('sweeping');
-      requestAnimationFrame(() => row.classList.add('sweeping'));
-    }
-  });
+  // 3. Sweep shine si se acaba de marcar
+  if (ahoraCompletado) {
+    requestAnimationFrame(() => {
+      const card = document.getElementById('habit-' + id);
+      if (card) {
+        card.classList.remove('sweeping');
+        requestAnimationFrame(() => card.classList.add('sweeping'));
+      }
+    });
+  }
 
-  // 3. Guardar en Firestore en background
+  // 4. Actualizar contadores (progreso, viajero, XP bar) — sin tocar la lista
+  renderProgress();
+  renderViajero();
+  renderXPBar();
+
+  // 5. Guardar en Firestore en background
   saveCompletions().catch(err => logError('saveCompletions', err));
 };
 
