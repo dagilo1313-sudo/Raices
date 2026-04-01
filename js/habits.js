@@ -178,6 +178,7 @@ export async function rellenarDiasVacios() {
   const diasNuevos = {};
   const cursor = new Date(lastDay + 'T12:00:00');
   cursor.setDate(cursor.getDate() + 1);
+  let _loopCount = 0;
   while (true) {
     const ds = cursor.toISOString().split('T')[0];
     if (ds > todayStr) break;
@@ -187,6 +188,8 @@ export async function rellenarDiasVacios() {
       state.completions[ds] = empty;
     }
     cursor.setDate(cursor.getDate() + 1);
+    // Ceder control al navegador cada 50 iteraciones para no congelar la animación
+    if (++_loopCount % 50 === 0) await new Promise(r => setTimeout(r, 0));
   }
 
   if (Object.keys(diasNuevos).length === 0) return;
