@@ -66,21 +66,21 @@
   --danger: #a03830;
   --glow: rgba(114, 160, 48, 0.15);
 
-  --cat-fisico: #e8726e;
-  --cat-fisico-bg: rgba(232, 114, 110, 0.12);
-  --cat-fisico-border: rgba(232, 114, 110, 0.35);
-  --cat-disciplina: #6090e8;
-  --cat-disciplina-bg: rgba(96, 144, 232, 0.12);
-  --cat-disciplina-border: rgba(96, 144, 232, 0.35);
-  --cat-energia: #e0a840;
-  --cat-energia-bg: rgba(224, 168, 64, 0.12);
-  --cat-energia-border: rgba(224, 168, 64, 0.35);
-  --cat-inteligencia: #a868e0;
-  --cat-inteligencia-bg: rgba(168, 104, 224, 0.12);
-  --cat-inteligencia-border: rgba(168, 104, 224, 0.35);
-  --cat-identidad: #38c898;
-  --cat-identidad-bg: rgba(56, 200, 152, 0.12);
-  --cat-identidad-border: rgba(56, 200, 152, 0.35);
+  --cat-fisico: #f05a54;
+  --cat-fisico-bg: rgba(240, 90, 84, 0.12);
+  --cat-fisico-border: rgba(240, 90, 84, 0.4);
+  --cat-disciplina: #5090f8;
+  --cat-disciplina-bg: rgba(80, 144, 248, 0.12);
+  --cat-disciplina-border: rgba(80, 144, 248, 0.4);
+  --cat-energia: #f0b840;
+  --cat-energia-bg: rgba(240, 184, 64, 0.12);
+  --cat-energia-border: rgba(240, 184, 64, 0.4);
+  --cat-inteligencia: #b870f0;
+  --cat-inteligencia-bg: rgba(184, 112, 240, 0.12);
+  --cat-inteligencia-border: rgba(184, 112, 240, 0.4);
+  --cat-identidad: #28dca8;
+  --cat-identidad-bg: rgba(40, 220, 168, 0.12);
+  --cat-identidad-border: rgba(40, 220, 168, 0.4);
 
   --xp-10: #8a9878;
   --xp-25: #7cb832;
@@ -109,15 +109,15 @@
 [data-theme="light"] .habit-card.done .habit-name { color: var(--accent); }
 [data-theme="light"] #habits-list.perfect-day .habit-card.done .habit-name { color: var(--accent2); }
 
-/* Hábito completado — sombreado verde muy suave */
+/* Hábito completado — sombreado verde */
 [data-theme="light"] .habit-card.done {
-  background: linear-gradient(135deg, rgba(114,184,50,0.08) 0%, rgba(114,184,50,0.05) 100%);
-  border-color: rgba(114,184,50,0.25);
+  background: linear-gradient(135deg, rgba(114,184,50,0.18) 0%, rgba(114,184,50,0.10) 100%);
+  border-color: rgba(114,184,50,0.35);
 }
-/* Hábito completado día perfecto — sombreado dorado muy suave */
+/* Hábito completado día perfecto — sombreado dorado */
 [data-theme="light"] #habits-list.perfect-day .habit-card.done {
-  background: linear-gradient(135deg, rgba(212,160,32,0.08) 0%, rgba(212,160,32,0.05) 100%);
-  border-color: rgba(212,160,32,0.25);
+  background: linear-gradient(135deg, rgba(212,160,32,0.18) 0%, rgba(212,160,32,0.10) 100%);
+  border-color: rgba(212,160,32,0.35);
 }
 
 /* Botones notif (día perfecto y nivel) — fondo claro */
@@ -126,4 +126,16 @@
 }
 [data-theme="light"] #levelup-notif button {
   color: #ffffff !important;
+}
+
+/* Popups de día perfecto y nivel — fondo de overlay más claro en light */
+[data-theme="light"] #dia-perfecto-notif > div,
+[data-theme="light"] #levelup-notif > div,
+[data-theme="light"] #pwd-confirm-overlay > div {
+  background: #ffffff;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.15);
+}
+[data-theme="light"] #btn-dia-perfecto-ok {
+  background: rgba(212,160,32,0.18) !important;
+  color: var(--accent2) !important;
 }

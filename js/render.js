@@ -540,8 +540,10 @@ export function renderHabitToggle(id, isDone) {
   if (list) list.classList.toggle('perfect-day', allCompleted);
   if (tabs) tabs.classList.toggle('perfect-day', allCompleted);
 
+  // Redibujar los tabs para actualizar clase active-all-perfect
+  renderCatTabs();
+
   // Si el día YA NO es perfecto, resetear check-circle de todas las cards done
-  // para que vuelvan al color verde en lugar del dorado
   if (!allCompleted && list) {
     list.querySelectorAll('.habit-card.done .check-circle').forEach(cc => {
       cc.style.background = '';
