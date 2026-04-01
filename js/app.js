@@ -197,7 +197,7 @@ window.closeRangosPanel = () => {
 };
 
 // ── Calendario ──
-window.selectDate = (dateStr) => { state.selectedDate = dateStr; renderAll(); };
+window.selectDate = (dateStr) => { state.selectedDate = dateStr; renderHistorico(); };
 window.calPrevMonth = async () => {
   const base = state.selectedDate || today();
   const d = new Date(base + 'T12:00:00');
@@ -254,13 +254,29 @@ function showConfirmPopup({ title, desc, btnLabel, btnClass, keyword, onConfirm 
   setTimeout(() => ov.querySelector('#popup-confirm-input').focus(), 100);
 }
 
+
+function showReloadPopup(emoji, title, msg) {
+  lockScroll();
+  const popup = document.createElement('div');
+  popup.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.8);display:flex;align-items:center;justify-content:center;padding:24px';
+  popup.innerHTML = `
+    <div style="background:var(--card2);border:1px solid rgba(229,92,92,0.3);border-radius:16px;padding:28px 24px;max-width:320px;width:100%;text-align:center">
+      <div style="font-size:28px;margin-bottom:12px">${emoji}</div>
+      <div style="font-size:16px;font-weight:700;color:var(--text);margin-bottom:8px">${title}</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.5">${msg}</div>
+      <button onclick="this.closest('div[style]').remove(); window._unlockScroll && window._unlockScroll(); window.location.reload();" style="width:100%;background:rgba(229,92,92,0.12);border:1.5px solid rgba(229,92,92,0.4);border-radius:var(--radius-md);padding:12px;font-size:14px;font-weight:700;color:#e05c5c;font-family:var(--font-body);cursor:pointer">
+        Pulsa para recargar ↻
+      </button>
+    </div>`;
+  document.body.appendChild(popup);
+}
 window.showResetProgressConfirm = () => showConfirmPopup({
   title: 'Reiniciar progreso',
   desc: 'Se borrará tu XP, nivel y días perfectos. Los hábitos se conservan.',
   btnLabel: 'Borrar progreso',
   btnClass: 'btn btn-danger',
   keyword: 'reiniciar progreso',
-  onConfirm: async () => { await resetProgress(); renderAll(); showToast('Progreso eliminado 🍂'); }
+  onConfirm: async () => { await resetProgress(); showReloadPopup('🍂', 'Progreso eliminado', 'Los datos de progreso han sido reiniciados.'); }
 });
 
 window.showResetConfirm1 = () => showConfirmPopup({
@@ -269,7 +285,7 @@ window.showResetConfirm1 = () => showConfirmPopup({
   btnLabel: 'Sí, borrar todo',
   btnClass: 'btn btn-danger',
   keyword: 'reiniciar todo',
-  onConfirm: async () => { await resetAllData(); renderAll(); showToast('Datos eliminados 🍂'); }
+  onConfirm: async () => { await resetAllData(); showReloadPopup('🍂', 'Todo eliminado', 'Todos los datos han sido borrados permanentemente.'); }
 });
 
 // ── Restaurar backup con popup igual que resets ──
