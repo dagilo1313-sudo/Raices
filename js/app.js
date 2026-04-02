@@ -165,9 +165,9 @@ function showDiaPerfectoNotif(onClose) {
   el.innerHTML = `
     <div style="background:var(--card2);border:1.5px solid ${borderColor};border-radius:20px;padding:28px 24px;text-align:center;max-width:300px;width:100%;animation:popIn 0.4s cubic-bezier(0.34,1.56,0.64,1);box-shadow:0 0 32px ${shadowColor}">
       <div style="font-size:40px;margin-bottom:10px">${emoji}</div>
-      <div style="font-size:18px;color:${btnColor};margin-bottom:6px;font-weight:700">¡Día perfecto!</div>
-      <div style="font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.5">Has completado todos tus hábitos de hoy. ¡Tus raíces crecen profundo!</div>
-      <button id="btn-dia-perfecto-ok" style="background:${btnBg};color:${btnColor};border:1.5px solid ${borderColor};border-radius:var(--radius-full);padding:10px 28px;font-size:13px;font-weight:700;font-family:var(--font-body);cursor:pointer;transition:background 0.2s">¡Genial!</button>
+      <div style="font-size:25px;color:${btnColor};margin-bottom:6px;font-weight:700">¡Día perfecto!</div>
+      <div style="font-size:16px;color:var(--muted);margin-bottom:20px;line-height:1.5">Has completado todos tus hábitos de hoy. ¡Tus raíces crecen profundo!</div>
+      <button id="btn-dia-perfecto-ok" style="background:${btnBg};color:${btnColor};border:1.5px solid ${borderColor};border-radius:var(--radius-full);padding:10px 28px;font-size:17px;font-weight:700;font-family:var(--font-body);cursor:pointer;transition:background 0.2s">¡Genial!</button>
     </div>
     <style>@keyframes popIn{from{transform:scale(0.7);opacity:0}to{transform:scale(1);opacity:1}}</style>`;
   el.querySelector('#btn-dia-perfecto-ok').addEventListener('click', () => {
