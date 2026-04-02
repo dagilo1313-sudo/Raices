@@ -2,7 +2,7 @@
   --bg: #08060e;
   --surface: #0d0b18;
   --card: #0d0b18;
-  --card2: #16122a;
+  --card2: #110e1e;
   --border: #2a2245;
   --text: #d4c9f0;
   --muted: #6b6090;
@@ -10,7 +10,7 @@
   --accent2: #7b4fcf;
   --accent3: #a8862a;
   --danger: #e05c5c;
-  --glow: rgba(201,168,76,0.12);
+  --glow: rgba(201, 168, 76, 0.12);
 
   --cat-fisico: #e05c5c;
   --cat-fisico-bg: rgba(224,92,92,0.12);
