@@ -400,12 +400,13 @@ body::before {
 .tareas-toggle:hover { border-color: var(--accent); }
 .tareas-toggle.open {
   border-radius: 10px 10px 0 0;
-  border-color: var(--border);
+  border-color: var(--accent2);
+  border-bottom-color: var(--border);
 }
 
 .tareas-panel {
   background: var(--card);
-  border: 1px solid var(--border);
+  border: 1px solid var(--accent2);
   border-top: 1px solid var(--border);
   border-radius: 0 0 10px 10px;
   overflow: hidden;
