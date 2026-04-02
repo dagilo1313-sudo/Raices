@@ -266,7 +266,7 @@ header {
 .habit-card[data-cat="energia"]::before { background: var(--cat-energia-border); }
 .habit-card[data-cat="inteligencia"]::before { background: var(--cat-inteligencia-border); }
 .habit-card[data-cat="identidad"]::before { background: var(--cat-identidad-border); }
-.habit-card.done { border-color: rgb(201 168 76 / 25%); background: linear-gradient(135deg, #111b0c 0%, #0e1410 100%); }
+.habit-card.done { border-color: rgb(201 168 76 / 25%); background: linear-gradient(135deg, #110e1e 0%, #0d0b18 100%); }
 .habit-card.done::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--accent); border-radius: 3px 0 0 3px; }
 .habit-card.done[data-cat="fisico"]::before { background: var(--cat-fisico); }
 .habit-card.done[data-cat="disciplina"]::before { background: var(--cat-disciplina); }
