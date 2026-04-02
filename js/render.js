@@ -565,51 +565,52 @@ function renderHabits() {
 export function renderHabitToggle(id, isDone) {
   const card = document.getElementById('habit-' + id);
   if (!card) return;
-  const isFantasyToggle = document.documentElement.getAttribute('data-theme') === 'fantasy';
 
   if (isDone) {
     card.classList.add('done');
 
-    // Fantasy: XP badge rising sparks + pop, emoji & name glow
-    if (isFantasyToggle) {
-      const badge = card.querySelector('.xp-badge');
-      if (badge) {
-        badge.style.animation = 'none';
-        badge.offsetHeight;
-        badge.style.animation = 'xpBadgePop 0.4s cubic-bezier(0.34,1.56,0.64,1)';
-        // Rising sparks
-        const habit = state.habits.find(h => h.id === id);
-        const xpVal = habit ? (habit.xp || 10) : 10;
-        const color = xpVal >= 50 ? '#c9a84c' : xpVal >= 25 ? '#5cb85c' : '#5a5080';
-        const rect = badge.getBoundingClientRect();
-        for (let i = 0; i < 6; i++) {
-          const spark = document.createElement('div');
-          spark.style.cssText = `position:fixed;width:${2+Math.random()*3}px;height:${2+Math.random()*3}px;border-radius:50%;background:${color};pointer-events:none;z-index:9999;left:${rect.left+rect.width/2}px;top:${rect.top+rect.height/2}px`;
-          document.body.appendChild(spark);
-          const dx = (Math.random() - 0.5) * 24;
-          const dy = -(15 + Math.random() * 20);
-          const dur = 400 + Math.random() * 300;
-          spark.animate([
-            { transform: 'translate(0,0) scale(1)', opacity: 1 },
-            { transform: `translate(${dx}px,${dy}px) scale(0.3)`, opacity: 0 }
-          ], { duration: dur, easing: 'ease-out', fill: 'forwards' });
-          setTimeout(() => spark.remove(), dur + 50);
-        }
+    // XP badge pop + rising sparks + emoji & name glow (all themes)
+    const badge = card.querySelector('.xp-badge');
+    if (badge) {
+      badge.style.animation = 'none';
+      badge.offsetHeight;
+      badge.style.animation = 'xpBadgePop 0.4s cubic-bezier(0.34,1.56,0.64,1)';
+      // Rising sparks
+      const isFantasyToggle = document.documentElement.getAttribute('data-theme') === 'fantasy';
+      const habit = state.habits.find(h => h.id === id);
+      const xpVal = habit ? (habit.xp || 10) : 10;
+      const color = isFantasyToggle
+        ? (xpVal >= 50 ? '#c9a84c' : xpVal >= 25 ? '#5cb85c' : '#5a5080')
+        : (xpVal >= 50 ? '#c4a84f' : xpVal >= 25 ? '#8fb339' : '#6b7560');
+      const rect = badge.getBoundingClientRect();
+      for (let i = 0; i < 6; i++) {
+        const spark = document.createElement('div');
+        spark.style.cssText = `position:fixed;width:${2+Math.random()*3}px;height:${2+Math.random()*3}px;border-radius:50%;background:${color};pointer-events:none;z-index:9999;left:${rect.left+rect.width/2}px;top:${rect.top+rect.height/2}px`;
+        document.body.appendChild(spark);
+        const dx = (Math.random() - 0.5) * 24;
+        const dy = -(15 + Math.random() * 20);
+        const dur = 400 + Math.random() * 300;
+        spark.animate([
+          { transform: 'translate(0,0) scale(1)', opacity: 1 },
+          { transform: `translate(${dx}px,${dy}px) scale(0.3)`, opacity: 0 }
+        ], { duration: dur, easing: 'ease-out', fill: 'forwards' });
+        setTimeout(() => spark.remove(), dur + 50);
       }
-      // Emoji glow shine
-      const emoji = card.querySelector('.habit-emoji');
-      if (emoji) {
-        emoji.style.animation = 'none';
-        emoji.offsetHeight;
-        emoji.style.animation = 'xpEmojiGlow 0.6s ease-out';
-      }
-      // Name glow shine
-      const name = card.querySelector('.habit-name');
-      if (name) {
-        name.style.animation = 'none';
-        name.offsetHeight;
-        name.style.animation = 'xpNameGlow 0.6s ease-out';
-      }
+    }
+    // Emoji glow shine
+    const emoji = card.querySelector('.habit-emoji');
+    if (emoji) {
+      emoji.style.animation = 'none';
+      emoji.offsetHeight;
+      emoji.style.animation = 'xpEmojiGlow 0.6s ease-out';
+    }
+    // Name glow shine
+    const name = card.querySelector('.habit-name');
+    if (name) {
+      const isFantasyName = document.documentElement.getAttribute('data-theme') === 'fantasy';
+      name.style.animation = 'none';
+      name.offsetHeight;
+      name.style.animation = (isFantasyName ? 'xpNameGlowGold' : 'xpNameGlow') + ' 0.6s ease-out';
     }
   } else {
     card.classList.remove('done');

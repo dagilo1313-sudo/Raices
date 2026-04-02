@@ -65,15 +65,13 @@ window.switchView = (view) => {
 window.setFilter  = (filter) => {
   state.activeFilter = filter;
   renderAll();
-  // Fantasy: flash glow on the newly active tab
-  if (document.documentElement.getAttribute('data-theme') === 'fantasy') {
-    const tabs = document.getElementById('cat-tabs');
-    if (tabs) {
-      const activeTab = tabs.querySelector('.cat-tab[class*="active-"]');
-      if (activeTab) {
-        activeTab.classList.add('cat-tab-flash');
-        setTimeout(() => activeTab.classList.remove('cat-tab-flash'), 400);
-      }
+  // Flash glow on the newly active tab
+  const tabs = document.getElementById('cat-tabs');
+  if (tabs) {
+    const activeTab = tabs.querySelector('.cat-tab[class*="active-"]');
+    if (activeTab) {
+      activeTab.classList.add('cat-tab-flash');
+      setTimeout(() => activeTab.classList.remove('cat-tab-flash'), 400);
     }
   }
 };
