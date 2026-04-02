@@ -302,3 +302,34 @@
 [data-theme="fantasy"] #title-canvas { display: none !important; }
 [data-theme="fantasy"] .hoy-title-fantasy { display: block !important; font-family: 'Cinzel Decorative', serif; font-size: 29px; font-weight: 700; background: linear-gradient(90deg, #c9a84c, #a87fe8, #c9a84c); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: logoShimmer 4s linear infinite; }
 [data-theme="fantasy"] .hoy-sub-fantasy { display: block !important; font-family: 'Crimson Pro', serif; font-style: italic; color: var(--muted); font-size: 13px; margin-top: 2px; }
+
+/* ── Fantasy: Calendarios — día perfecto púrpura ── */
+/* Semana HOY */
+[data-theme="fantasy"] .day-num.day-golden { background: rgba(123,79,207,0.2) !important; color: var(--accent2) !important; border-color: var(--accent2) !important; }
+[data-theme="fantasy"] .day-dot.perfect { background: var(--accent2) !important; }
+/* Calendario HISTÓRICO */
+[data-theme="fantasy"] .cal-day.cal-golden .cal-day-inner { background: rgba(123,79,207,0.2) !important; color: var(--accent2) !important; border-color: var(--accent2) !important; }
+[data-theme="fantasy"] .cal-dot-gold { background: var(--accent2) !important; }
+
+/* ── Fantasy: HISTÓRICO — barras progreso púrpura en día perfecto ── */
+[data-theme="fantasy"] .sc-fill.fantasy-perfect-bar { background: linear-gradient(to right, #5a3a9e, #7b4fcf) !important; }
+
+/* ── Fantasy: HISTÓRICO — habit cards día perfecto púrpura ── */
+[data-theme="fantasy"] #stats-day-habits.perfect-day .habit-card.done { border-color: rgba(123,79,207,0.35) !important; background: linear-gradient(135deg, var(--card) 0%, rgba(123,79,207,0.07) 100%) !important; }
+[data-theme="fantasy"] #stats-day-habits.perfect-day .habit-card.done::before { background: var(--accent2) !important; }
+[data-theme="fantasy"] #stats-day-habits.perfect-day .habit-card.done .habit-name { color: var(--accent2) !important; }
+[data-theme="fantasy"] #stats-day-habits.perfect-day .habit-card.done .check-circle { background: var(--accent2) !important; border-color: var(--accent2) !important; box-shadow: 0 0 10px rgba(123,79,207,0.4) !important; }
+[data-theme="fantasy"] #cat-stats-list.perfect-day-cats .habit-card.done { border-color: rgba(123,79,207,0.35) !important; background: linear-gradient(135deg, var(--card) 0%, rgba(123,79,207,0.07) 100%) !important; }
+[data-theme="fantasy"] #cat-stats-list.perfect-day-cats .habit-card.done::before { background: var(--accent2) !important; }
+[data-theme="fantasy"] #cat-stats-list.perfect-day-cats .habit-card.done .habit-name { color: var(--accent2) !important; }
+[data-theme="fantasy"] #cat-stats-list.perfect-day-cats .habit-card.done .check-circle { background: var(--accent2) !important; border-color: var(--accent2) !important; box-shadow: 0 0 10px rgba(123,79,207,0.4) !important; }
+
+/* ── Fantasy: HOY — tareas card púrpura en día perfecto ── */
+[data-theme="fantasy"] .tareas-toggle.fantasy-perfect-tareas { border-color: rgba(123,79,207,0.5) !important; }
+[data-theme="fantasy"] .tareas-toggle.fantasy-perfect-tareas #tareas-titulo { color: var(--accent2) !important; }
+[data-theme="fantasy"] .tareas-toggle.fantasy-perfect-tareas.open { border-color: rgba(123,79,207,0.5) !important; border-bottom-color: var(--border) !important; }
+[data-theme="fantasy"] .tareas-panel.fantasy-perfect-tareas { border-color: rgba(123,79,207,0.3) !important; }
+[data-theme="fantasy"] .tareas-panel.fantasy-perfect-tareas .tarea-check { border-color: rgba(123,79,207,0.4) !important; }
+[data-theme="fantasy"] .tareas-panel.fantasy-perfect-tareas .tarea-item:hover .tarea-check { border-color: var(--accent2) !important; }
+[data-theme="fantasy"] .tareas-panel.fantasy-perfect-tareas .tarea-item.done .tarea-check { background: var(--accent2) !important; border-color: var(--accent2) !important; }
+[data-theme="fantasy"] .tareas-panel.fantasy-perfect-tareas .btn-primary { background: var(--accent2) !important; color: var(--bg) !important; }

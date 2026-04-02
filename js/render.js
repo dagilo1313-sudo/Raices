@@ -212,6 +212,7 @@ export function renderViajero() {
 
   // Tareas toggle — dorado en día perfecto
   const tareasToggle = document.getElementById('tareas-toggle');
+  const isFantasyViajero = document.documentElement.getAttribute('data-theme') === 'fantasy';
   if (tareasToggle) {
     tareasToggle.style.borderColor = isPerfectToday ? 'rgba(196,168,79,0.5)' : '';
     const tareasTitle = document.getElementById('tareas-titulo');
@@ -226,6 +227,10 @@ export function renderViajero() {
       btnNuevaReal.style.background = isPerfectToday ? 'var(--accent2)' : '';
       btnNuevaReal.style.color = isPerfectToday ? 'var(--bg)' : '';
     }
+    // Fantasy: toggle purple class on tareas
+    const fantasyPerfectTareas = isPerfectToday && isFantasyViajero;
+    tareasToggle.classList.toggle('fantasy-perfect-tareas', fantasyPerfectTareas);
+    if (tareasPanel) tareasPanel.classList.toggle('fantasy-perfect-tareas', fantasyPerfectTareas);
   }
 
 
@@ -1370,12 +1375,15 @@ function renderStatsForDate(dateStr) {
   setGold('stat-day-xp', `+${xp} xp`);
   setGold('stat-day-pct', `${pct}% completado`);
   setGold('stat-day-xp-pct', `${xpPct}% del máximo`);
-  // Barras de progreso del score card — doradas si día perfecto
-  const barColor = isPerfectStats ? 'linear-gradient(to right,#c4a84f,#e8c96e)' : 'var(--accent)';
+  // Barras de progreso del score card — doradas si día perfecto (púrpura en fantasy)
+  const isFantasyStats = document.documentElement.getAttribute('data-theme') === 'fantasy';
+  const barColor = isPerfectStats
+    ? (isFantasyStats ? 'linear-gradient(to right,#5a3a9e,#7b4fcf)' : 'linear-gradient(to right,#c4a84f,#e8c96e)')
+    : 'var(--accent)';
   const barHab = document.getElementById('stat-day-bar');
   const barXp  = document.getElementById('stat-xp-bar');
-  if (barHab) { barHab.style.width = pct + '%'; barHab.style.background = barColor; }
-  if (barXp)  { barXp.style.width  = xpPct + '%'; barXp.style.background = barColor; }
+  if (barHab) { barHab.style.width = pct + '%'; barHab.style.background = barColor; barHab.classList.toggle('fantasy-perfect-bar', isPerfectStats && isFantasyStats); }
+  if (barXp)  { barXp.style.width  = xpPct + '%'; barXp.style.background = barColor; barXp.classList.toggle('fantasy-perfect-bar', isPerfectStats && isFantasyStats); }
 
   // Si no es hoy y no hay ningún dato para ese día → Día no registrado
   const sinRegistro = !isToday && completedIds.length === 0 && !getPlanificadosForDate(dateStr);
