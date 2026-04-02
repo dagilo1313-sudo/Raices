@@ -274,7 +274,7 @@ header {
 .habit-name { font-size: 15px; font-weight: 500; color: var(--text); margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .habit-card.done .habit-name { color: var(--accent); }
 .habit-meta { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
-.habit-streak-mini { font-size: 11px; color: var(--muted); }
+.habit-streak-mini { font-size: 12px; color: var(--muted); }
 .habit-actions { display: flex; gap: 6px; flex-shrink: 0; }
 .check-circle { width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid var(--muted,#3a4245); display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: border-color 0.25s, background 0.25s, transform 0.3s cubic-bezier(0.34,1.56,0.64,1); }
 .check-circle .check-svg { opacity: 0; transform: scale(0) rotate(-20deg); transition: opacity 0.2s 0.05s, transform 0.25s 0.05s cubic-bezier(0.34,1.56,0.64,1); }
@@ -485,7 +485,7 @@ header {
 .hoy-score-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 24px;margin-bottom:20px;}
 .hoy-sc-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 14px 10px 18px;position:relative;overflow:hidden;display:flex;flex-direction:column;gap:4px;}
 .hoy-sc-bar-lat{position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:3px 0 0 3px;background:var(--accent);transition:background 0.3s;}
-.hoy-sc-lbl{font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:2px;}
+.hoy-sc-lbl{font-size:14px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:2px;}
 .hoy-sc-body{display:flex;align-items:flex-end;justify-content:space-between;flex:1;}
 .hoy-sc-big{font-size:28px;font-weight:700;color:var(--accent);line-height:1;transition:color 0.3s;}
 .hoy-sc-pct{font-size:18px;font-weight:700;color:var(--accent);opacity:0.65;line-height:1;transition:color 0.3s;}

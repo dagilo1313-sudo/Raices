@@ -217,7 +217,7 @@
 [data-theme="fantasy"] .stats-sep-label,
 [data-theme="fantasy"] .cat-tab,
 [data-theme="fantasy"] .card-title,
-[data-theme="fantasy"] .viajero-stat-lbl { font-family: 'Cinzel Decorative', serif; font-size: 10px; letter-spacing: 1px; }
+[data-theme="fantasy"] .viajero-stat-lbl { font-family: 'Cinzel Decorative', serif; font-size: 12px; letter-spacing: 1px; }
 [data-theme="fantasy"] .viajero-nombre { font-family: 'Cinzel Decorative', serif; font-size: 18px; }
 [data-theme="fantasy"] .viajero-clase { font-family: 'Cinzel Decorative', serif; font-style: italic; color: var(--accent2); font-size: 13px; }
 [data-theme="fantasy"] .viajero-nivel-badge { font-family: 'Cinzel Decorative', serif; font-size: 11px; background: rgba(201,168,76,0.08); border-color: rgba(201,168,76,0.3); letter-spacing: 1px; }
