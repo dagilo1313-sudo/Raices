@@ -198,6 +198,9 @@ export function renderViajero() {
     xpLabelEl2.style.color = accentColor;
   }
 
+  // Fantasy theme check
+  const isFantasyViajero = document.documentElement.getAttribute('data-theme') === 'fantasy';
+
   // Barra lateral del viajero — dorada en día perfecto
   const viajeroCard = document.querySelector('.viajero-card');
   if (viajeroCard) {
@@ -208,11 +211,16 @@ export function renderViajero() {
     latStyle.textContent = isPerfectToday
       ? '.viajero-card::before { background: var(--accent2) !important; }'
       : '.viajero-card::before { background: var(--accent) !important; }';
+    // Fantasy: viajero card purple border on perfect day
+    viajeroCard.classList.toggle('fantasy-perfect-viajero', isPerfectToday && isFantasyViajero);
   }
 
-  // Tareas toggle — dorado en día perfecto
+  // Fantasy: separator swords
+  const sepIcon = document.getElementById('hoy-sep-icon');
+  if (sepIcon) sepIcon.textContent = isFantasyViajero ? '⚔' : '◆';
+
+  // Tareas toggle — dorado en día perfecto (púrpura en fantasy)
   const tareasToggle = document.getElementById('tareas-toggle');
-  const isFantasyViajero = document.documentElement.getAttribute('data-theme') === 'fantasy';
   if (tareasToggle) {
     tareasToggle.style.borderColor = isPerfectToday ? 'rgba(196,168,79,0.5)' : '';
     const tareasTitle = document.getElementById('tareas-titulo');
@@ -1211,15 +1219,25 @@ function renderLifetimeStats() {
     }
     const bars=diasGrid.querySelectorAll('.sdia-bar');
     const labels=diasGrid.querySelectorAll('.sdia-name');
+    const isFantasyChart = document.documentElement.getAttribute('data-theme') === 'fantasy';
     last7.forEach((d,i)=>{
       if (bars[i]) {
         const h=Math.max(4, d.ratio*100); // % real, no normalizado
         bars[i].style.height=h+'%';
-        const r=Math.round(143+(196-143)*d.ratio);
-        const g=Math.round(179+(168-179)*d.ratio);
-        const b=Math.round(57+(79-57)*d.ratio);
-        const op=0.35+d.ratio*0.65;
-        bars[i].style.background=`rgba(${r},${g},${b},${op})`;
+        if (isFantasyChart) {
+          // Fantasy: gold(low) → purple(high)
+          const r=Math.round(201+(123-201)*d.ratio);
+          const g=Math.round(168+(79-168)*d.ratio);
+          const b=Math.round(76+(207-76)*d.ratio);
+          const op=0.4+d.ratio*0.6;
+          bars[i].style.background=`rgba(${r},${g},${b},${op})`;
+        } else {
+          const r=Math.round(143+(196-143)*d.ratio);
+          const g=Math.round(179+(168-179)*d.ratio);
+          const b=Math.round(57+(79-57)*d.ratio);
+          const op=0.35+d.ratio*0.65;
+          bars[i].style.background=`rgba(${r},${g},${b},${op})`;
+        }
       }
       if (labels[i]) labels[i].textContent=d.label;
     });

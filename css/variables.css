@@ -176,9 +176,9 @@
   --cat-fisico:              #e05c5c;
   --cat-fisico-bg:           rgba(224,92,92,0.10);
   --cat-fisico-border:       rgba(224,92,92,0.30);
-  --cat-disciplina:          #7b4fcf;
-  --cat-disciplina-bg:       rgba(123,79,207,0.10);
-  --cat-disciplina-border:   rgba(123,79,207,0.30);
+  --cat-disciplina:          #5cb85c;
+  --cat-disciplina-bg:       rgba(92,184,92,0.10);
+  --cat-disciplina-border:   rgba(92,184,92,0.30);
   --cat-energia:             #e0a85c;
   --cat-energia-bg:          rgba(224,168,92,0.10);
   --cat-energia-border:      rgba(224,168,92,0.30);
@@ -270,21 +270,21 @@
 }
 @keyframes dfLinePulse { 0%,100%{opacity:0;transform:translateY(-100%)} 50%{opacity:1;transform:translateY(100%)} }
 
-/* Avatar glow — gold/purple */
+/* Avatar glow — purple only in fantasy */
 [data-theme="fantasy"] .viajero-avatar-wrap,
 [data-theme="fantasy"] .user-avatar { animation: dfAvatarGlow 3s ease-in-out infinite; }
 @keyframes dfAvatarGlow {
-  0%,100% { box-shadow: 0 0 0 0 rgba(201,168,76,0); border-color: #c9a84c; }
-  40%     { box-shadow: 0 0 0 5px rgba(201,168,76,0.15), 0 0 12px rgba(201,168,76,0.10); border-color: #c9a84c; }
-  60%     { box-shadow: 0 0 0 7px rgba(123,79,207,0.12), 0 0 16px rgba(123,79,207,0.08); border-color: #a87fe8; }
+  0%,100% { box-shadow: 0 0 0 0 rgba(123,79,207,0); border-color: #7b4fcf; }
+  40%     { box-shadow: 0 0 0 5px rgba(123,79,207,0.15), 0 0 12px rgba(123,79,207,0.10); border-color: #7b4fcf; }
+  60%     { box-shadow: 0 0 0 7px rgba(168,127,232,0.12), 0 0 16px rgba(168,127,232,0.08); border-color: #a87fe8; }
 }
 
 /* Separador ornamental */
 [data-theme="fantasy"] .seccion-separador { font-family: 'Cinzel Decorative', serif; color: #2a2245; letter-spacing: 8px; }
 
 /* ── Fantasy: Stats — mejor racha colores ── */
-[data-theme="fantasy"] #stat-perf-racha-mejor { color: #5a3a9e !important; }
-[data-theme="fantasy"] #stat-buenos-racha-mejor { color: #9a7a2a !important; }
+[data-theme="fantasy"] #stat-perf-racha-mejor { color: #3d2570 !important; }
+[data-theme="fantasy"] #stat-buenos-racha-mejor { color: #6b5518 !important; }
 
 /* ── Fantasy: HOY — día perfecto → púrpura ── */
 [data-theme="fantasy"] #habits-list.perfect-day .habit-card.done { border-color: rgba(123,79,207,0.35) !important; background: linear-gradient(135deg, var(--card) 0%, rgba(123,79,207,0.07) 100%) !important; }
@@ -333,3 +333,26 @@
 [data-theme="fantasy"] .tareas-panel.fantasy-perfect-tareas .tarea-item:hover .tarea-check { border-color: var(--accent2) !important; }
 [data-theme="fantasy"] .tareas-panel.fantasy-perfect-tareas .tarea-item.done .tarea-check { background: var(--accent2) !important; border-color: var(--accent2) !important; }
 [data-theme="fantasy"] .tareas-panel.fantasy-perfect-tareas .btn-primary { background: var(--accent2) !important; color: var(--bg) !important; }
+
+/* ── Fantasy: HOY — cat-tabs día perfecto → dorado ── */
+[data-theme="fantasy"] .cat-tab.active-all-perfect { border-color: var(--accent) !important; color: var(--accent) !important; background: rgba(201,168,76,0.12) !important; }
+[data-theme="fantasy"] .cat-tabs.perfect-day .cat-tab.active-all-perfect,
+[data-theme="fantasy"] .cat-tabs.perfect-day .cat-tab[class*="active-"] { border-color: var(--accent) !important; color: var(--accent) !important; background: rgba(201,168,76,0.08) !important; }
+
+/* ── Fantasy: HOY — tareas hover púrpura en día perfecto ── */
+[data-theme="fantasy"] .tareas-toggle.fantasy-perfect-tareas:hover { border-color: var(--accent2) !important; box-shadow: 0 0 12px rgba(123,79,207,0.25) !important; }
+
+/* ── Fantasy: HOY — viajero card borde púrpura en día perfecto ── */
+[data-theme="fantasy"] .viajero-card.fantasy-perfect-viajero { border-color: rgba(123,79,207,0.4) !important; }
+[data-theme="fantasy"] .viajero-card.fantasy-perfect-viajero::before { background: var(--accent2) !important; }
+
+/* ── Fantasy: STATS — barra nivel siempre dorada ── */
+[data-theme="fantasy"] #stat-nivel-bar { background: linear-gradient(to right, #a8862a, #c9a84c) !important; }
+[data-theme="fantasy"] #stat-nivel-pct { color: var(--accent) !important; }
+
+/* ── Fantasy: HÁBITOS — botón + Nuevo dorado ── */
+[data-theme="fantasy"] #view-habitos .btn-primary { background: var(--accent) !important; color: var(--bg) !important; border-color: var(--accent) !important; }
+[data-theme="fantasy"] #view-habitos .btn-primary:hover { background: #e0c05a !important; box-shadow: 0 0 10px rgba(201,168,76,0.3) !important; }
+
+/* ── Fantasy: HOY separador — espadas ── */
+[data-theme="fantasy"] .hoy-separator-icon { font-size: 12px !important; }
