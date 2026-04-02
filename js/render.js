@@ -927,7 +927,8 @@ function renderLifetimeStats() {
      'stat-buenos-semana','stat-buenos-mes',
      'stat-consistencia-global','stat-media-habitos','stat-total-completados',
      'stat-xp-media-dia-pill','stat-eficiencia-big',
-     'stat-dias-raices','stat-mejor-dia','stat-peor-dia','stat-xp-perdido'].forEach(id => set(id,'—'));
+     'stat-dias-raices','stat-mejor-dia','stat-peor-dia','stat-xp-perdido',
+     'stat-rec-eficiencia','stat-rec-habdia'].forEach(id => set(id,'—'));
     return;
   }
 
@@ -1366,6 +1367,10 @@ function renderLifetimeStats() {
   set('stat-peor-dia', diasSemana[peorIdx]||'—');
   const peorSubEl=document.getElementById('stat-peor-dia-pct'); if(peorSubEl) peorSubEl.textContent=peorPct+'% de media';
   set('stat-xp-perdido', '–'+Math.round(xpTotalLost).toLocaleString('es-ES')+' xp');
+
+  // Recorrido — campos extra
+  set('stat-rec-eficiencia', xpEficGlobal+'%');
+  set('stat-rec-habdia', habitosDays>0 ? (habitosSum/habitosDays).toFixed(1) : '—');
 
 
 }

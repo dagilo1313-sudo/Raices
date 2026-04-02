@@ -232,7 +232,7 @@
 
     <!-- Última sync discreta -->
     <div id="last-sync" style="text-align:center;font-size:12px;color:var(--muted);padding:4px 0 2px"></div>
-    <div style="text-align:center;font-size:11px;color:var(--muted);padding:0 0 12px;letter-spacing:2px">v4.0</div>
+    <div style="text-align:center;font-size:11px;color:var(--muted);padding:0 0 12px;letter-spacing:2px">v5.0</div>
   </div>
 
   <!-- ══ HÁBITOS ══ -->
@@ -472,22 +472,39 @@
     </div>
 
     <!-- RECORRIDO -->
-    <div class="scat-card" style="padding:0;overflow:hidden;">
-      <div class="rec-row">
-        <div class="rec-lbl">Días usando Raíces</div>
-        <div><div class="rec-val" id="stat-dias-raices">—</div></div>
+    <div class="racha-card gold-bar-racha">
+      <div class="rc-header" style="margin-bottom:8px">
+        <div class="rc-title" style="color:var(--accent)">Recorrido</div>
       </div>
-      <div class="rec-row">
-        <div class="rec-lbl">Mejor día de la semana</div>
-        <div><div class="rec-val" id="stat-mejor-dia" style="color:var(--accent)">—</div><div class="rec-sub" id="stat-mejor-dia-pct"></div></div>
+      <div class="rc-triple" style="border-top:none;padding-top:0">
+        <div class="rc-ti">
+          <div class="rc-ti-num" style="font-size:22px;color:var(--accent)" id="stat-dias-raices">—</div>
+          <div class="rc-ti-lbl">Días en Raíces</div>
+        </div>
+        <div class="rc-ti" style="border-left:1px solid var(--border)">
+          <div class="rc-ti-num" style="font-size:22px;color:var(--accent)" id="stat-mejor-dia">—</div>
+          <div class="rc-ti-lbl">Mejor día</div>
+          <div class="rc-ti-sub" id="stat-mejor-dia-pct" style="font-size:11px;color:var(--muted);margin-top:2px"></div>
+        </div>
+        <div class="rc-ti" style="border-left:1px solid var(--border)">
+          <div class="rc-ti-num" style="font-size:22px;color:#e05c5c" id="stat-peor-dia">—</div>
+          <div class="rc-ti-lbl">Peor día</div>
+          <div class="rc-ti-sub" id="stat-peor-dia-pct" style="font-size:11px;color:var(--muted);margin-top:2px"></div>
+        </div>
       </div>
-      <div class="rec-row">
-        <div class="rec-lbl">Día más flojo</div>
-        <div><div class="rec-val" id="stat-peor-dia" style="color:#e05c5c">—</div><div class="rec-sub" id="stat-peor-dia-pct"></div></div>
-      </div>
-      <div class="rec-row">
-        <div class="rec-lbl">XP no recogido</div>
-        <div><div class="rec-val" id="stat-xp-perdido" style="color:var(--muted)">—</div><div class="rec-sub">del máximo posible</div></div>
+      <div class="rc-triple">
+        <div class="rc-ti">
+          <div class="rc-ti-num" style="color:var(--muted)" id="stat-xp-perdido">—</div>
+          <div class="rc-ti-lbl">XP perdido</div>
+        </div>
+        <div class="rc-ti" style="border-left:1px solid var(--border)">
+          <div class="rc-ti-num" style="color:var(--accent)" id="stat-rec-eficiencia">—</div>
+          <div class="rc-ti-lbl">Eficiencia global</div>
+        </div>
+        <div class="rc-ti" style="border-left:1px solid var(--border)">
+          <div class="rc-ti-num" style="color:var(--accent)" id="stat-rec-habdia">—</div>
+          <div class="rc-ti-lbl">Hábitos / día</div>
+        </div>
       </div>
     </div>
 
