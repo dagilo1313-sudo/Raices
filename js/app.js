@@ -144,15 +144,21 @@ window.onToggleHabit = (id) => {
 };
 
 function showDiaPerfectoNotif(onClose) {
+  const isFantasy = document.documentElement.getAttribute('data-theme') === 'fantasy';
+  const borderColor = isFantasy ? '#7b4fcf' : 'var(--accent2)';
+  const shadowColor = isFantasy ? 'rgba(123,79,207,0.2)' : 'rgba(196,168,79,0.12)';
+  const btnBg = isFantasy ? 'rgba(123,79,207,0.15)' : 'rgba(196,168,79,0.15)';
+  const btnColor = isFantasy ? '#7b4fcf' : 'var(--accent2)';
+  const emoji = isFantasy ? '⚔' : '🌳';
   const el = document.createElement('div');
   el.id = 'dia-perfecto-notif';
   el.style.cssText = 'position:fixed;inset:0;z-index:300;background:rgba(0,0,0,0.65);display:flex;align-items:center;justify-content:center;padding:24px;animation:fadeIn 0.3s ease';
   el.innerHTML = `
-    <div style="background:var(--card2);border:1.5px solid var(--accent2);border-radius:20px;padding:28px 24px;text-align:center;max-width:300px;width:100%;animation:popIn 0.4s cubic-bezier(0.34,1.56,0.64,1);box-shadow:0 0 32px rgba(196,168,79,0.12)">
-      <div style="font-size:40px;margin-bottom:10px">🌳</div>
-      <div style="font-size:18px;color:var(--accent2);margin-bottom:6px;font-weight:700">¡Día perfecto!</div>
+    <div style="background:var(--card2);border:1.5px solid ${borderColor};border-radius:20px;padding:28px 24px;text-align:center;max-width:300px;width:100%;animation:popIn 0.4s cubic-bezier(0.34,1.56,0.64,1);box-shadow:0 0 32px ${shadowColor}">
+      <div style="font-size:40px;margin-bottom:10px">${emoji}</div>
+      <div style="font-size:18px;color:${btnColor};margin-bottom:6px;font-weight:700">¡Día perfecto!</div>
       <div style="font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.5">Has completado todos tus hábitos de hoy. ¡Tus raíces crecen profundo!</div>
-      <button id="btn-dia-perfecto-ok" style="background:rgba(196,168,79,0.15);color:var(--accent2);border:1.5px solid var(--accent2);border-radius:var(--radius-full);padding:10px 28px;font-size:13px;font-weight:700;font-family:var(--font-body);cursor:pointer;transition:background 0.2s">¡Genial!</button>
+      <button id="btn-dia-perfecto-ok" style="background:${btnBg};color:${btnColor};border:1.5px solid ${borderColor};border-radius:var(--radius-full);padding:10px 28px;font-size:13px;font-weight:700;font-family:var(--font-body);cursor:pointer;transition:background 0.2s">¡Genial!</button>
     </div>
     <style>@keyframes popIn{from{transform:scale(0.7);opacity:0}to{transform:scale(1);opacity:1}}</style>`;
   el.querySelector('#btn-dia-perfecto-ok').addEventListener('click', () => {
