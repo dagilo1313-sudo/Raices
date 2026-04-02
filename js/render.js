@@ -265,17 +265,26 @@ export function renderViajero() {
   const sepIcon = document.getElementById('hoy-sep-icon');
   if (sepIcon) sepIcon.textContent = isFantasyViajero ? '⚔' : '◆';
 
-  // Tareas toggle — dorado en día perfecto (púrpura en fantasy)
+  // Tareas toggle — siempre dorado, púrpura en día perfecto (fantasy)
   const tareasToggle = document.getElementById('tareas-toggle');
   if (tareasToggle) {
-    tareasToggle.style.borderColor = isPerfectToday ? perfectColor + '0.5)' : '';
     const tareasTitle = document.getElementById('tareas-titulo');
-    if (tareasTitle) tareasTitle.style.color = accentColor;
-    // Panel expandido — borde dorado/púrpura en día perfecto
     const tareasPanel = document.getElementById('tareas-panel');
-    if (tareasPanel) tareasPanel.style.borderColor = isPerfectToday ? perfectColor + '0.3)' : '';
-    // Botón Nueva — dorado/púrpura en día perfecto
-    const btnNueva = tareasToggle.closest('.section, div')?.querySelector('.btn-primary.btn-sm');
+
+    if (isPerfectToday) {
+      tareasToggle.style.borderColor = perfectColor + '0.5)';
+      if (tareasTitle) tareasTitle.style.color = 'var(--accent2)';
+      if (tareasPanel) tareasPanel.style.borderColor = perfectColor + '0.5)';
+      // Hover color
+      tareasToggle.dataset.glowColor = perfectColor + '0.3)';
+    } else {
+      tareasToggle.style.borderColor = '';
+      if (tareasTitle) tareasTitle.style.color = '';
+      if (tareasPanel) tareasPanel.style.borderColor = '';
+      tareasToggle.dataset.glowColor = 'rgba(196,168,79,0.3)';
+    }
+
+    // Botón Nueva — púrpura en día perfecto
     const btnNuevaReal = document.querySelector('#tareas-panel .btn-primary');
     if (btnNuevaReal) {
       btnNuevaReal.style.background = isPerfectToday ? 'var(--accent2)' : '';

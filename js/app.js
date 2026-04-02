@@ -476,28 +476,31 @@ window.onToggleTareas = () => {
   if (chevron) chevron.style.transform = isOpen ? '' : 'rotate(180deg)';
   if (toggle) toggle.classList.toggle('open', !isOpen);
 
-  // Flash glow on open — card border + title
+  // Flash glow on open with correct color
   if (!isOpen) {
-    const glowRgba = 'rgba(143,179,57,0.4)';
+    const glowRgba = toggle.dataset.glowColor || 'rgba(196,168,79,0.3)';
+    // Flash toggle
     if (toggle) {
       toggle.animate([
         { boxShadow: '0 0 0 transparent' },
-        { boxShadow: `0 0 14px ${glowRgba}` },
+        { boxShadow: `0 0 16px ${glowRgba}` },
         { boxShadow: '0 0 0 transparent' }
       ], { duration: 400, easing: 'ease-out' });
     }
+    // Flash panel
     if (panel) {
       panel.animate([
-        { boxShadow: '0 0 0 transparent', outline: '0px solid transparent' },
-        { boxShadow: `0 0 18px ${glowRgba}`, outline: `1px solid rgba(143,179,57,0.4)` },
-        { boxShadow: '0 0 0 transparent', outline: '0px solid transparent' }
+        { boxShadow: '0 0 0 transparent' },
+        { boxShadow: `0 0 16px ${glowRgba}` },
+        { boxShadow: '0 0 0 transparent' }
       ], { duration: 500, easing: 'ease-out' });
     }
+    // Flash title
     const title = document.getElementById('tareas-titulo');
     if (title) {
       title.animate([
         { textShadow: 'none' },
-        { textShadow: `0 0 10px ${glowRgba}` },
+        { textShadow: `0 0 12px ${glowRgba}` },
         { textShadow: 'none' }
       ], { duration: 400, easing: 'ease-out' });
     }
