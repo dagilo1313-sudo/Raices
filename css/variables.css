@@ -222,7 +222,7 @@
 [data-theme="fantasy"] .viajero-clase { font-family: 'Cinzel Decorative', serif; font-style: italic; color: var(--accent2); font-size: 13px; }
 [data-theme="fantasy"] .viajero-nivel-badge { font-family: 'Cinzel Decorative', serif; font-size: 11px; background: rgba(201,168,76,0.08); border-color: rgba(201,168,76,0.3); letter-spacing: 1px; }
 [data-theme="fantasy"] .viajero-stat-num { font-family: 'Cinzel Decorative', serif; font-size: 25px; }
-[data-theme="fantasy"] .habit-name { font-family: 'Manrope', sans-serif; font-size: 15px; font-weight: 500; }
+[data-theme="fantasy"] .habit-name { font-family: 'Rubik', sans-serif; font-size: 15px; font-weight: 500; }
 [data-theme="fantasy"] .habit-card.done .habit-name { font-style: normal; }
 [data-theme="fantasy"] .modal-title { font-family: 'Cinzel Decorative', serif; font-size: 19px; color: var(--accent); letter-spacing: 1px; }
 [data-theme="fantasy"] .auth-logo { font-family: 'Cinzel Decorative', serif; }
