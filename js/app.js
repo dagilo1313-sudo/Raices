@@ -119,7 +119,7 @@ window.onToggleHabit = (id) => {
       } else if (diaPerfecto) {
         showConfetti(perfectHue); showDiaPerfectoNotif(null);
       } else if (nuevoBueno) {
-        showDiaBuenoNotif();
+        showConfetti(44); showDiaBuenoNotif();
       } else if (result.subioRango) {
         showConfetti();
         const claseData = CLASES[result.calcDespues.clase];
