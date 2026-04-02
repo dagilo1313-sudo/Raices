@@ -554,7 +554,6 @@ function renderHabits() {
           <div class="habit-name">${h.name}</div>
           <div class="habit-meta">
             <span class="xp-badge xp-${h.xp || 10}">+${h.xp || 10} XP</span>
-            ${streak > 0 ? `<span class="habit-streak-mini">🔥 ${streak}d</span>` : ''}
           </div>
         </div>
         <div class="check-circle"><svg class="check-svg" width="10" height="10" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="#07090a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
@@ -568,8 +567,45 @@ function renderHabits() {
 export function renderHabitToggle(id, isDone) {
   const card = document.getElementById('habit-' + id);
   if (!card) return;
+  const isFantasyToggle = document.documentElement.getAttribute('data-theme') === 'fantasy';
+
   if (isDone) {
     card.classList.add('done');
+
+    // Fantasy: XP badge rising sparks + pop, emoji bounce
+    if (isFantasyToggle) {
+      const badge = card.querySelector('.xp-badge');
+      if (badge) {
+        badge.style.animation = 'none';
+        badge.offsetHeight;
+        badge.style.animation = 'xpBadgePop 0.4s cubic-bezier(0.34,1.56,0.64,1)';
+        // Rising sparks
+        const habit = state.habits.find(h => h.id === id);
+        const xpVal = habit ? (habit.xp || 10) : 10;
+        const color = xpVal >= 50 ? '#c9a84c' : xpVal >= 25 ? '#5cb85c' : '#5a5080';
+        const rect = badge.getBoundingClientRect();
+        for (let i = 0; i < 6; i++) {
+          const spark = document.createElement('div');
+          spark.style.cssText = `position:fixed;width:${2+Math.random()*3}px;height:${2+Math.random()*3}px;border-radius:50%;background:${color};pointer-events:none;z-index:9999;left:${rect.left+rect.width/2}px;top:${rect.top+rect.height/2}px`;
+          document.body.appendChild(spark);
+          const dx = (Math.random() - 0.5) * 24;
+          const dy = -(15 + Math.random() * 20);
+          const dur = 400 + Math.random() * 300;
+          spark.animate([
+            { transform: 'translate(0,0) scale(1)', opacity: 1 },
+            { transform: `translate(${dx}px,${dy}px) scale(0.3)`, opacity: 0 }
+          ], { duration: dur, easing: 'ease-out', fill: 'forwards' });
+          setTimeout(() => spark.remove(), dur + 50);
+        }
+      }
+      // Emoji bounce
+      const emoji = card.querySelector('.habit-emoji');
+      if (emoji) {
+        emoji.style.animation = 'none';
+        emoji.offsetHeight;
+        emoji.style.animation = 'xpEmojiBounce 0.5s cubic-bezier(0.34,1.56,0.64,1)';
+      }
+    }
   } else {
     card.classList.remove('done');
   }
