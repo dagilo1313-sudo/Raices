@@ -62,7 +62,21 @@ window.switchView = (view) => {
     renderStats();
   }
 };
-window.setFilter  = (filter) => { state.activeFilter = filter; renderAll(); };
+window.setFilter  = (filter) => {
+  state.activeFilter = filter;
+  renderAll();
+  // Fantasy: flash glow on the newly active tab
+  if (document.documentElement.getAttribute('data-theme') === 'fantasy') {
+    const tabs = document.getElementById('cat-tabs');
+    if (tabs) {
+      const activeTab = tabs.querySelector('.cat-tab[class*="active-"]');
+      if (activeTab) {
+        activeTab.classList.add('cat-tab-flash');
+        setTimeout(() => activeTab.classList.remove('cat-tab-flash'), 400);
+      }
+    }
+  }
+};
 
 // ── Toggle hábito con notificación de subida ──
 
