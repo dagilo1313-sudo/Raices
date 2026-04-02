@@ -223,7 +223,7 @@
 [data-theme="fantasy"] .viajero-nivel-badge { font-family: 'Cinzel Decorative', serif; font-size: 11px; background: rgba(201,168,76,0.08); border-color: rgba(201,168,76,0.3); letter-spacing: 1px; }
 [data-theme="fantasy"] .viajero-stat-num { font-family: 'Cinzel Decorative', serif; font-size: 23px; }
 [data-theme="fantasy"] .habit-name { font-family: 'Crimson Pro', serif; font-size: 17px; }
-[data-theme="fantasy"] .habit-card.done .habit-name { font-style: italic; }
+[data-theme="fantasy"] .habit-card.done .habit-name { font-style: normal; }
 [data-theme="fantasy"] .modal-title { font-family: 'Cinzel Decorative', serif; font-size: 19px; color: var(--accent); letter-spacing: 1px; }
 [data-theme="fantasy"] .auth-logo { font-family: 'Cinzel Decorative', serif; }
 [data-theme="fantasy"] .auth-title { font-family: 'Cinzel Decorative', serif; font-size: 21px; color: var(--accent); }
@@ -250,7 +250,7 @@
 
 /* Progress fill — purple to gold */
 [data-theme="fantasy"] .progress-fill,
-[data-theme="fantasy"] .viajero-xp-fill { background: linear-gradient(to right, var(--accent3), var(--accent)); }
+[data-theme="fantasy"] .viajero-xp-fill { background: linear-gradient(to right, var(--accent), var(--accent2)); }
 
 /* Días semana */
 [data-theme="fantasy"] .day-num.day-gray { border-color: #2a2245; color: #4a4070; background: rgba(42,34,69,0.2); }
@@ -369,3 +369,8 @@
 [data-theme="fantasy"] #tareas-panel .btn-primary:hover { background: #e0c05a !important; box-shadow: 0 0 10px rgba(201,168,76,0.3) !important; }
 [data-theme="fantasy"] .tareas-panel.fantasy-perfect-tareas .btn-primary { background: var(--accent2) !important; color: var(--bg) !important; border-color: var(--accent2) !important; }
 [data-theme="fantasy"] .tareas-panel.fantasy-perfect-tareas .btn-primary:hover { background: #9a6ae0 !important; box-shadow: 0 0 10px rgba(123,79,207,0.3) !important; }
+
+/* ── Fantasy: Loader colors ── */
+[data-theme="fantasy"] #loading-screen { background: #08060e; }
+[data-theme="fantasy"] { --ls-ring-color: rgba(123,79,207,0.25); --ls-ring2-color: rgba(123,79,207,0.12); --ls-glow-color: rgba(123,79,207,0.05); --ls-text-color: #6b6090; }
+[data-theme="fantasy"] .loading-sub { font-family: 'Cinzel Decorative', serif; font-size: 11px !important; letter-spacing: 4px !important; color: #c9a84c !important; }

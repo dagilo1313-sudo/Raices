@@ -455,7 +455,7 @@ header {
 .scat-desc{font-size:11px;color:var(--dim);font-style:italic;margin-bottom:12px;}
 .scats-grid{display:flex;flex-direction:column;gap:10px;}
 .scat-row{display:flex;align-items:center;gap:10px;}
-.scat-pill{font-size:11px;font-weight:600;padding:5px 12px;border-radius:20px;white-space:nowrap;flex-shrink:0;min-width:88px;text-align:center;}
+.scat-pill{font-size:11px;font-weight:600;padding:5px 12px;border-radius:20px;white-space:nowrap;flex-shrink:0;min-width:88px;text-align:center;text-transform:uppercase;letter-spacing:1px;}
 .scat-bar-wrap{flex:1;height:3px;background:#131708;border-radius:3px;overflow:hidden;}
 .scat-bar-fill{height:100%;border-radius:3px;}
 .scat-val{font-size:13px;min-width:44px;text-align:right;font-weight:600;}
