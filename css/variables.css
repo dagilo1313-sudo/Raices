@@ -199,9 +199,10 @@
 
 /* ── Fantasy overrides — elementos específicos ── */
 
-/* Fuentes en fantasy */
+/* Fuentes en fantasy — tamaños aumentados */
+[data-theme="fantasy"] { font-size: 15px; }
 [data-theme="fantasy"] .logo,
-[data-theme="fantasy"] .logo-animated { font-family: 'Cinzel Decorative', serif; font-size: 24px; letter-spacing: 0; }
+[data-theme="fantasy"] .logo-animated { font-family: 'Cinzel Decorative', serif; font-size: 27px; letter-spacing: 0; }
 [data-theme="fantasy"] .logo-animated {
   background: linear-gradient(90deg, #c9a84c, #a87fe8, #c9a84c);
   background-size: 200% auto;
@@ -209,26 +210,26 @@
   animation: logoShimmer 4s linear infinite;
 }
 [data-theme="fantasy"] .logo-sub { font-style: italic; font-family: 'Crimson Pro', serif; }
-[data-theme="fantasy"] .nav-item { font-family: 'Cinzel Decorative', serif; font-size: 7px; letter-spacing: 1px; }
+[data-theme="fantasy"] .nav-item { font-family: 'Cinzel Decorative', serif; font-size: 9px; letter-spacing: 1px; }
 [data-theme="fantasy"] .section-label,
 [data-theme="fantasy"] .progress-title,
 [data-theme="fantasy"] .pf-group-lbl,
 [data-theme="fantasy"] .stats-sep-label,
 [data-theme="fantasy"] .cat-tab,
 [data-theme="fantasy"] .card-title,
-[data-theme="fantasy"] .viajero-stat-lbl { font-family: 'Cinzel Decorative', serif; font-size: 8px; letter-spacing: 1px; }
-[data-theme="fantasy"] .viajero-nombre { font-family: 'Cinzel Decorative', serif; font-size: 15px; }
-[data-theme="fantasy"] .viajero-clase { font-family: 'Cinzel Decorative', serif; font-style: italic; color: var(--accent2); }
-[data-theme="fantasy"] .viajero-nivel-badge { font-family: 'Cinzel Decorative', serif; font-size: 9px; background: rgba(201,168,76,0.08); border-color: rgba(201,168,76,0.3); letter-spacing: 1px; }
-[data-theme="fantasy"] .viajero-stat-num { font-family: 'Cinzel Decorative', serif; font-size: 20px; }
-[data-theme="fantasy"] .habit-name { font-family: 'Crimson Pro', serif; font-size: 15px; }
+[data-theme="fantasy"] .viajero-stat-lbl { font-family: 'Cinzel Decorative', serif; font-size: 10px; letter-spacing: 1px; }
+[data-theme="fantasy"] .viajero-nombre { font-family: 'Cinzel Decorative', serif; font-size: 18px; }
+[data-theme="fantasy"] .viajero-clase { font-family: 'Cinzel Decorative', serif; font-style: italic; color: var(--accent2); font-size: 13px; }
+[data-theme="fantasy"] .viajero-nivel-badge { font-family: 'Cinzel Decorative', serif; font-size: 11px; background: rgba(201,168,76,0.08); border-color: rgba(201,168,76,0.3); letter-spacing: 1px; }
+[data-theme="fantasy"] .viajero-stat-num { font-family: 'Cinzel Decorative', serif; font-size: 23px; }
+[data-theme="fantasy"] .habit-name { font-family: 'Crimson Pro', serif; font-size: 17px; }
 [data-theme="fantasy"] .habit-card.done .habit-name { font-style: italic; }
-[data-theme="fantasy"] .modal-title { font-family: 'Cinzel Decorative', serif; font-size: 16px; color: var(--accent); letter-spacing: 1px; }
+[data-theme="fantasy"] .modal-title { font-family: 'Cinzel Decorative', serif; font-size: 19px; color: var(--accent); letter-spacing: 1px; }
 [data-theme="fantasy"] .auth-logo { font-family: 'Cinzel Decorative', serif; }
-[data-theme="fantasy"] .auth-title { font-family: 'Cinzel Decorative', serif; font-size: 18px; color: var(--accent); }
-[data-theme="fantasy"] .btn { font-family: 'Cinzel Decorative', serif; font-size: 10px; letter-spacing: 1.5px; border-radius: 999px; }
-[data-theme="fantasy"] .pf-btn { font-family: 'Cinzel Decorative', serif; font-size: 10px; letter-spacing: 0.5px; border-radius: 999px; }
-[data-theme="fantasy"] .xp-badge { font-family: 'Crimson Pro', serif; font-style: italic; }
+[data-theme="fantasy"] .auth-title { font-family: 'Cinzel Decorative', serif; font-size: 21px; color: var(--accent); }
+[data-theme="fantasy"] .btn { font-family: 'Cinzel Decorative', serif; font-size: 12px; letter-spacing: 1.5px; border-radius: 999px; }
+[data-theme="fantasy"] .pf-btn { font-family: 'Cinzel Decorative', serif; font-size: 12px; letter-spacing: 0.5px; border-radius: 999px; }
+[data-theme="fantasy"] .xp-badge { font-family: 'Crimson Pro', serif; font-style: italic; font-size: 13px; }
 [data-theme="fantasy"] .xp-badge.xp-50 { color: var(--accent); background: rgba(201,168,76,0.12); border-color: rgba(201,168,76,0.3); }
 [data-theme="fantasy"] .xp-badge.xp-25 { color: var(--accent2); background: rgba(123,79,207,0.12); border-color: rgba(123,79,207,0.3); }
 
