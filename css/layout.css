@@ -128,9 +128,11 @@ header {
 .viajero-stat-lg { font-size: 34px; }
 .viajero-stat-md { font-size: 32px; }
 .viajero-stat-lbl {
-  font-size: 16px; color: var(--muted);
+  font-size: 12px; color: var(--muted);
   text-transform: uppercase; letter-spacing: 1px;
   margin-top: 4px;
+  font-family: 'Cinzel Decorative', serif;
+  font-weight: bolder;
 }
 .viajero-stat-momentum { border: 1px solid rgba(143,179,57,0.15); }
 .viajero-momentum-row { display: flex; align-items: baseline; justify-content: center; gap: 5px; }
