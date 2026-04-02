@@ -276,7 +276,7 @@ export const getInsight = () => {
   const done = todayHabits.filter(h => isCompleted(h.id, todayStr)).length;
   const xp = getTodayXP();
   if (!total) return { icon: '🌱', text: 'Los pequeños pasos de hoy son las raíces del mañana. ¡Empieza tu primer hábito!' };
-  if (done === total) return { icon: '🌳', text: `¡Día perfecto! +${xp} XP ganados hoy. Tus raíces crecen profundo.` };
+  if (done === total) return { icon: '🌳', text: `¡Día perfecto! +${xp} XP ganados hoy. ¡Estás imparable!` };
   if (!done) return { icon: '🌿', text: `Tienes ${total} hábito${total > 1 ? 's' : ''} esperando. ¡Cada acción suma XP!` };
   return { icon: '💧', text: `${done} de ${total} completados · +${xp} XP. Riega tus hábitos.` };
 };

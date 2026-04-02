@@ -6,9 +6,9 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Raíces">
+  <meta name="apple-mobile-web-app-title" content="La Forja de los Hábitos">
   <meta name="theme-color" content="#8fb339">
-  <title>Raíces — Tus Hábitos</title>
+  <title>La Forja de los Hábitos</title>
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="assets/favicon/apple-touch-icon.png">
   <link rel="icon" type="image/png" href="assets/favicon/apple-touch-icon.png">
@@ -67,7 +67,7 @@
       <div class="header-top" style="align-items:flex-end">
         <div>
           <canvas id="title-canvas" width="140" height="40" style="display:block"></canvas>
-          <div class="hoy-title-fantasy" style="display:none">Raíces</div>
+          <div class="hoy-title-fantasy" style="display:none">La Forja del Alma</div>
           <div class="hoy-sub-fantasy" style="display:none">Tu camino diario</div>
         </div>
         <div style="display:flex;align-items:center;gap:8px;padding-bottom:6px">
@@ -469,7 +469,7 @@
       <div class="rc-triple" style="border-top:none;padding-top:0">
         <div class="rc-ti">
           <div class="rc-ti-num" style="font-size:22px;color:var(--accent)" id="stat-dias-raices">—</div>
-          <div class="rc-ti-lbl">Días en Raíces</div>
+          <div class="rc-ti-lbl">Días en la app</div>
         </div>
         <div class="rc-ti" style="border-left:1px solid var(--border)">
           <div class="rc-ti-num" style="font-size:22px;color:var(--accent)" id="stat-mejor-dia">—</div>
@@ -791,8 +791,8 @@
     ctx.font='700 32px DM Sans,sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
     const grad=ctx.createLinearGradient(10,0,130,0);
     grad.addColorStop(0,G2);grad.addColorStop(.35,G);grad.addColorStop(.65,GO);grad.addColorStop(1,GO2);
-    ctx.fillStyle=grad;ctx.fillText('Raíces',W/2,H/2+1);
-    ctx.globalAlpha=Math.sin(t)*.04+.04;ctx.fillStyle='#f0d060';ctx.fillText('Raíces',W/2,H/2+1);ctx.globalAlpha=1;
+    ctx.fillStyle=grad;ctx.fillText('La Forja del Alma',W/2,H/2+1);
+    ctx.globalAlpha=Math.sin(t)*.04+.04;ctx.fillStyle='#f0d060';ctx.fillText('La Forja del Alma',W/2,H/2+1);ctx.globalAlpha=1;
     requestAnimationFrame(frame);
   }
   frame();

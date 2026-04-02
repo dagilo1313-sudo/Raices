@@ -1,8 +1,8 @@
 {
-  "name": "Raíces — Tu jardín de hábitos",
-  "short_name": "Raíces",
+  "name": "La Forja de los Hábitos",
+  "short_name": "La Forja de los Hábitos",
   "description": "Construye hábitos poderosos y gana XP cada día",
-  "start_url": "/Raices/",
+  "start_url": "/Forja/",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#0d0f0a",
