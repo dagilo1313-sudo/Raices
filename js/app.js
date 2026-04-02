@@ -274,8 +274,8 @@ window.selectDate = (dateStr) => {
   if (grid) {
     const selected = grid.querySelector('.cal-day.cal-selected .cal-day-inner');
     if (selected) {
-      const isGolden = selected.closest('.cal-day')?.classList.contains('cal-golden');
-      const isGreen = selected.closest('.cal-day')?.classList.contains('cal-green');
+      const isGolden = selected.closest('.cal-day')?.classList.contains('cal-purple');
+      const isGreen = selected.closest('.cal-day')?.classList.contains('cal-golden');
       const glowColor = isGolden ? 'rgba(196,168,79,0.5)' : isGreen ? 'rgba(143,179,57,0.5)' : 'rgba(143,179,57,0.3)';
       selected.animate([
         { filter: 'brightness(1)', boxShadow: 'none' },
