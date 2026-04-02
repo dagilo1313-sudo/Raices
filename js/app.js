@@ -251,7 +251,25 @@ window.closeRangosPanel = () => {
 };
 
 // ── Calendario ──
-window.selectDate = (dateStr) => { state.selectedDate = dateStr; renderHistorico(); };
+window.selectDate = (dateStr) => {
+  state.selectedDate = dateStr;
+  renderHistorico();
+  // Flash the selected day cell
+  const grid = document.getElementById('cal-grid');
+  if (grid) {
+    const selected = grid.querySelector('.cal-day.cal-selected .cal-day-inner');
+    if (selected) {
+      const isGolden = selected.closest('.cal-day')?.classList.contains('cal-golden');
+      const isGreen = selected.closest('.cal-day')?.classList.contains('cal-green');
+      const glowColor = isGolden ? 'rgba(196,168,79,0.5)' : isGreen ? 'rgba(143,179,57,0.5)' : 'rgba(143,179,57,0.3)';
+      selected.animate([
+        { filter: 'brightness(1)', boxShadow: 'none' },
+        { filter: 'brightness(1.8)', boxShadow: `0 0 12px ${glowColor}` },
+        { filter: 'brightness(1)', boxShadow: 'none' }
+      ], { duration: 400, easing: 'ease-out' });
+    }
+  }
+};
 window.calPrevMonth = async () => {
   const base = state.selectedDate || today();
   const d = new Date(base + 'T12:00:00');
@@ -457,6 +475,36 @@ window.onToggleTareas = () => {
   panel.style.display = isOpen ? 'none' : 'block';
   if (chevron) chevron.style.transform = isOpen ? '' : 'rotate(180deg)';
   if (toggle) toggle.classList.toggle('open', !isOpen);
+
+  // Flash glow on open
+  if (!isOpen && toggle) {
+    const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
+    const glowRgba = 'rgba(143,179,57,0.4)';
+    // Flash the toggle border
+    toggle.animate([
+      { boxShadow: '0 0 0 transparent' },
+      { boxShadow: `0 0 12px ${glowRgba}` },
+      { boxShadow: '0 0 0 transparent' }
+    ], { duration: 400, easing: 'ease-out' });
+    // Flash the title
+    const title = document.getElementById('tareas-titulo');
+    if (title) {
+      title.animate([
+        { textShadow: 'none' },
+        { textShadow: `0 0 10px ${glowRgba}` },
+        { textShadow: 'none' }
+      ], { duration: 400, easing: 'ease-out' });
+    }
+    // Flash nueva tarea button
+    setTimeout(() => {
+      const btn = panel.querySelector('.btn-primary, .btn-nueva-tarea');
+      if (btn) btn.animate([
+        { filter: 'brightness(1)', boxShadow: 'none' },
+        { filter: 'brightness(1.5)', boxShadow: `0 0 10px ${glowRgba}` },
+        { filter: 'brightness(1)', boxShadow: 'none' }
+      ], { duration: 400, easing: 'ease-out' });
+    }, 100);
+  }
 };
 
 window.onToggleTarea = async (id) => {

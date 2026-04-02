@@ -5,6 +5,36 @@ import {
 } from './state.js';
 import { getCompletadosForDate, getPlanificadosForDate, getXPTotalSnapshot, getXPGanadoPorCat, getXPMaxPorCat } from './habits.js';
 
+// ── Universal flash glow utility ──
+function flashGlow(el, color, duration = 400) {
+  if (!el) return;
+  const rgba = color || 'rgba(143,179,57,0.5)';
+  el.animate([
+    { filter: 'brightness(1)', boxShadow: '0 0 0 transparent' },
+    { filter: 'brightness(1.8)', boxShadow: `0 0 14px ${rgba}` },
+    { filter: 'brightness(1)', boxShadow: '0 0 0 transparent' }
+  ], { duration, easing: 'ease-out' });
+}
+
+function flashText(el, color, duration = 500) {
+  if (!el) return;
+  const c = color || 'rgba(143,179,57,0.7)';
+  el.animate([
+    { textShadow: 'none' },
+    { textShadow: `0 0 12px ${c}, 0 0 24px ${c}` },
+    { textShadow: 'none' }
+  ], { duration, easing: 'ease-out' });
+}
+
+function getCatColor(category) {
+  const el = document.createElement('div');
+  el.style.color = `var(--cat-${category})`;
+  document.body.appendChild(el);
+  const c = getComputedStyle(el).color;
+  el.remove();
+  return c;
+}
+
 export function renderAll() {
   renderDate();
   renderWeek();
@@ -312,6 +342,10 @@ export function renderWeek() {
   const strip = document.getElementById('week-strip');
   if (!strip) return;
   const days = ['D', 'L', 'M', 'X', 'J', 'V', 'S'];
+  // Track previous today state to flash on change
+  const prevTodayState = strip.dataset.todayState || '';
+  let todayState = '';
+
   const now = new Date(today() + 'T12:00:00'); // respeta modo debug
   let html = '';
   for (let i = 6; i >= 0; i--) {
@@ -333,6 +367,8 @@ export function renderWeek() {
       else if (isGray)       numClass += ' day-gray';
     }
 
+    if (isToday) todayState = isPerfect ? 'golden' : isGood ? 'green' : 'normal';
+
     // Clase del punto (sin punto si isGray — 0 completados)
     let dotClass = '';
     if (isPerfect)        dotClass = 'perfect';
@@ -349,6 +385,16 @@ export function renderWeek() {
       </div>`;
   }
   strip.innerHTML = html;
+  strip.dataset.todayState = todayState;
+
+  // Flash today's day cell if state changed
+  if (prevTodayState && prevTodayState !== todayState) {
+    const todayCell = strip.querySelector('.day-num.today');
+    if (todayCell) {
+      const glowColor = todayState === 'golden' ? 'rgba(196,168,79,0.6)' : todayState === 'green' ? 'rgba(143,179,57,0.6)' : 'rgba(143,179,57,0.4)';
+      flashGlow(todayCell, glowColor, 500);
+    }
+  }
 }
 
 // ── XP Bar ──
@@ -392,6 +438,7 @@ export function renderProgress() {
   const setBg = (id, bg) => { const el = document.getElementById(id); if (el) el.style.background = bg; };
 
   // Hábitos card
+  const prevDone = document.getElementById('hoy-sc-hab-val')?.textContent;
   set('hoy-sc-hab-val', total ? `${done}/${total}` : '0/0');
   set('hoy-sc-hab-pct', `${pct}%`);
   setColor('hoy-sc-hab-val', color);
@@ -401,7 +448,16 @@ export function renderProgress() {
   const habBar = document.getElementById('hoy-sc-hab-bar');
   if (habBar) habBar.style.width = pct + '%';
 
+  // Flash on change
+  const newDone = total ? `${done}/${total}` : '0/0';
+  if (prevDone && prevDone !== newDone) {
+    const glowColor = isPerfect ? 'rgba(196,168,79,0.5)' : 'rgba(143,179,57,0.5)';
+    flashText(document.getElementById('hoy-sc-hab-val'), glowColor, 500);
+    flashGlow(habBar, glowColor, 500);
+  }
+
   // XP card
+  const prevXP = document.getElementById('hoy-sc-xp-val')?.textContent;
   set('hoy-sc-xp-val', `+${xpHoy}`);
   set('hoy-sc-xp-pct', `${xpPct}%`);
   setColor('hoy-sc-xp-val', color);
@@ -410,6 +466,13 @@ export function renderProgress() {
   setBg('hoy-sc-xp-bar', barColor);
   const xpBar = document.getElementById('hoy-sc-xp-bar');
   if (xpBar) xpBar.style.width = xpPct + '%';
+
+  // Flash on change
+  if (prevXP && prevXP !== `+${xpHoy}`) {
+    const glowColor = isPerfect ? 'rgba(196,168,79,0.5)' : 'rgba(143,179,57,0.5)';
+    flashText(document.getElementById('hoy-sc-xp-val'), glowColor, 500);
+    flashGlow(xpBar, glowColor, 500);
+  }
 
   // Fantasy perfect day: toggle class on hoy-sc-cards and viajero xp fill
   const habCard = document.getElementById('hoy-sc-hab');
@@ -597,20 +660,29 @@ export function renderHabitToggle(id, isDone) {
         setTimeout(() => spark.remove(), dur + 50);
       }
     }
-    // Emoji glow shine
+    // Emoji glow shine (category color)
     const emoji = card.querySelector('.habit-emoji');
     if (emoji) {
-      emoji.style.animation = 'none';
-      emoji.offsetHeight;
-      emoji.style.animation = 'xpEmojiGlow 0.6s ease-out';
+      const habit = state.habits.find(h => h.id === id);
+      const catColor = habit ? getCatColor(habit.category || 'disciplina') : null;
+      const catRgba = catColor ? catColor.replace('rgb(', 'rgba(').replace(')', ',0.6)') : 'rgba(143,179,57,0.6)';
+      emoji.animate([
+        { filter: 'brightness(1)', transform: 'scale(1)' },
+        { filter: 'brightness(2.2) saturate(1.8)', transform: 'scale(1.12)' },
+        { filter: 'brightness(1)', transform: 'scale(1)' }
+      ], { duration: 400, easing: 'ease-out' });
+      flashGlow(emoji, catRgba, 400);
     }
     // Name glow shine
-    const name = card.querySelector('.habit-name');
-    if (name) {
-      const isFantasyName = document.documentElement.getAttribute('data-theme') === 'fantasy';
-      name.style.animation = 'none';
-      name.offsetHeight;
-      name.style.animation = (isFantasyName ? 'xpNameGlowGold' : 'xpNameGlow') + ' 0.6s ease-out';
+    const nameEl = card.querySelector('.habit-name');
+    if (nameEl) {
+      const accentRgba = document.documentElement.getAttribute('data-theme') === 'fantasy'
+        ? 'rgba(201,168,76,0.7)' : 'rgba(143,179,57,0.7)';
+      nameEl.animate([
+        { textShadow: 'none', transform: 'translateX(0)' },
+        { textShadow: `0 0 12px ${accentRgba}, 0 0 24px ${accentRgba}`, transform: 'translateX(2px)' },
+        { textShadow: 'none', transform: 'translateX(0)' }
+      ], { duration: 500, easing: 'ease-out' });
     }
   } else {
     card.classList.remove('done');
