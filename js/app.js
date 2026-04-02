@@ -65,13 +65,19 @@ window.switchView = (view) => {
 window.setFilter  = (filter) => {
   state.activeFilter = filter;
   renderAll();
-  // Flash glow on the newly active tab
+  // Flash glow on the newly active tab with its category color
   const tabs = document.getElementById('cat-tabs');
   if (tabs) {
     const activeTab = tabs.querySelector('.cat-tab[class*="active-"]');
     if (activeTab) {
-      activeTab.classList.add('cat-tab-flash');
-      setTimeout(() => activeTab.classList.remove('cat-tab-flash'), 400);
+      // Resolve the tab's color for the glow
+      const tabColor = getComputedStyle(activeTab).color;
+      const rgbaColor = tabColor.replace('rgb(', 'rgba(').replace(')', ',0.5)');
+      activeTab.animate([
+        { filter: 'brightness(1)' },
+        { filter: 'brightness(1.8)' },
+        { filter: 'brightness(1)' }
+      ], { duration: 350, easing: 'ease-out' });
     }
   }
 };
@@ -107,8 +113,8 @@ window.onToggleHabit = (id) => {
       const diaPerfecto = scheduled.length > 0 && scheduled.every(h => completedToday.includes(h.id));
       const nuevoBueno = result.despues && result.despues.esBueno && result.antes && !result.antes.esBueno && !diaPerfecto;
 
-      const isFantasyConfetti = document.documentElement.getAttribute('data-theme') === 'fantasy';
-      const perfectHue = isFantasyConfetti ? 270 : 44;
+      
+      const perfectHue = 270;
 
       if (diaPerfecto && result.subioNivel) {
         showConfetti(perfectHue);
@@ -147,12 +153,12 @@ window.onToggleHabit = (id) => {
 };
 
 function showDiaPerfectoNotif(onClose) {
-  const isFantasy = document.documentElement.getAttribute('data-theme') === 'fantasy';
-  const borderColor = isFantasy ? '#7b4fcf' : 'var(--accent2)';
-  const shadowColor = isFantasy ? 'rgba(123,79,207,0.2)' : 'rgba(196,168,79,0.12)';
-  const btnBg = isFantasy ? 'rgba(123,79,207,0.15)' : 'rgba(196,168,79,0.15)';
-  const btnColor = isFantasy ? '#7b4fcf' : 'var(--accent2)';
-  const emoji = isFantasy ? '⚔' : '🌳';
+  
+  const borderColor = '#7b4fcf';
+  const shadowColor = 'rgba(123,79,207,0.2)';
+  const btnBg = 'rgba(123,79,207,0.15)';
+  const btnColor = '#7b4fcf';
+  const emoji = '⚔';
   const el = document.createElement('div');
   el.id = 'dia-perfecto-notif';
   el.style.cssText = 'position:fixed;inset:0;z-index:300;background:rgba(0,0,0,0.65);display:flex;align-items:center;justify-content:center;padding:24px;animation:fadeIn 0.3s ease';
@@ -742,66 +748,22 @@ document.addEventListener('DOMContentLoaded', updateOfflineIndicator);
 // ── Sistema de temas (auto / light / dark / fantasy) ──
 const THEME_KEY = 'raices-theme';
 
-function applyTheme(pref) {
-  const root = document.documentElement;
-  // Aplicar data-theme
-  if (pref === 'light') {
-    root.setAttribute('data-theme', 'light');
-  } else if (pref === 'fantasy') {
-    root.setAttribute('data-theme', 'fantasy');
-  } else if (pref === 'dark') {
-    root.removeAttribute('data-theme');
-  } else {
-    // Auto — usar preferencia del sistema (solo dark o light, no fantasy)
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    if (prefersDark) root.removeAttribute('data-theme');
-    else root.setAttribute('data-theme', 'light');
-  }
-
-  // Actualizar radios del selector
-  ['auto','light','dark','fantasy'].forEach(t => {
-    const el = document.getElementById('theme-' + t);
-    if (!el) return;
-    if (t === pref) {
-      el.innerHTML = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="var(--accent)" stroke-width="1.5"/><circle cx="8" cy="8" r="4" fill="var(--accent)"/></svg>';
-    } else {
-      el.innerHTML = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="var(--muted)" stroke-width="1"/></svg>';
-    }
-  });
-
-  // Partículas fantasy — mostrar/ocultar
+function applyTheme() {
+  // Fantasy is the only theme — always show particles
   const g1 = document.getElementById('df-glow1');
   const g2 = document.getElementById('df-glow2');
-  if (g1) g1.style.display = pref === 'fantasy' ? 'block' : 'none';
-  if (g2) g2.style.display = pref === 'fantasy' ? 'block' : 'none';
+  if (g1) g1.style.display = 'block';
+  if (g2) g2.style.display = 'block';
   const particles = document.getElementById('df-particles');
-  if (particles) {
-    if (pref === 'fantasy' && !particles.children.length) {
-      initDFParticles();
-    } else if (pref !== 'fantasy') {
-      particles.innerHTML = '';
-    }
+  if (particles && !particles.children.length) {
+    initDFParticles();
   }
 }
 
-window.setTheme = async (pref) => {
-  localStorage.setItem(THEME_KEY, pref);
-  applyTheme(pref);
-  if (state.currentUser) {
-    try {
-      const { db } = await import('./firebase.js');
-      const { doc, updateDoc } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
-      await updateDoc(doc(db, 'users', state.currentUser.uid, 'profile', 'data'), { theme: pref });
-    } catch(e) { /* silencioso */ }
-  }
-};
+window.setTheme = async () => { applyTheme(); };
 
 function initTheme() {
-  const saved = localStorage.getItem(THEME_KEY) || 'dark';
-  applyTheme(saved);
-  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
-    if (localStorage.getItem(THEME_KEY) === 'auto') applyTheme('auto');
-  });
+  applyTheme();
 }
 
 // ── Dark Fantasy — partículas de fondo ──

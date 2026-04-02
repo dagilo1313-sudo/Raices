@@ -89,12 +89,7 @@ export function showConfetti(hueBase) {
 
 export function showXPFloat(habitId, xp) {
   // Color según peso del hábito
-  const isFantasy = document.documentElement.getAttribute('data-theme') === 'fantasy';
-  const color = xp >= 50
-    ? (isFantasy ? '#d4a843' : '#c4a84f')
-    : xp >= 25
-      ? (isFantasy ? '#aab4c8' : '#8fb339')
-      : (isFantasy ? '#cd7f50' : '#5a6b5a');
+  const color = xp >= 50 ? '#d4a843' : xp >= 25 ? '#aab4c8' : '#cd7f50';
 
   const card = document.getElementById('habit-' + habitId);
   let startX, startY;

@@ -18,10 +18,10 @@ export function openCreateModal() {
   selectedCategory = 'disciplina';
   selectedXP = 10;
   selectedDays = [];
-  const isFantasyModal = document.documentElement.getAttribute('data-theme') === 'fantasy';
-  document.getElementById('modal-title').textContent = isFantasyModal ? 'FORJA UN NUEVO HÁBITO' : 'Planta un nuevo hábito';
+  
+  document.getElementById('modal-title').textContent = 'FORJA UN NUEVO HÁBITO';
   document.getElementById('habit-name-input').value = '';
-  document.getElementById('btn-modal-submit').textContent = isFantasyModal ? 'Forjar hábito' : 'Plantar hábito 🌱';
+  document.getElementById('btn-modal-submit').textContent = 'Forjar hábito';
   renderModalInternals();
   window._lockScroll && window._lockScroll();
   document.getElementById('modal').classList.add('open');
@@ -81,8 +81,8 @@ export async function submitModal() {
     renderAll();
   } finally {
     btn.disabled = false;
-    const isFantasyBtn = document.documentElement.getAttribute('data-theme') === 'fantasy';
-    btn.textContent = editingId ? 'Guardar cambios ✓' : (isFantasyBtn ? 'Forjar hábito' : 'Plantar hábito 🌱');
+    
+    btn.textContent = editingId ? 'Guardar cambios ✓' : 'Forjar hábito';
   }
 }
 

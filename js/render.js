@@ -76,8 +76,8 @@ export function renderViajero() {
   const todayStr = today();
   const scheduledHoy = state.habits.filter(h => !h.archivado && isScheduledForDate(h, todayStr));
   const isPerfectToday = scheduledHoy.length > 0 && scheduledHoy.every(h => isCompleted(h.id, todayStr));
-  const isFantasyViajero = document.documentElement.getAttribute('data-theme') === 'fantasy';
-  const perfectColor = isFantasyViajero ? 'rgba(123,79,207,' : 'rgba(196,168,79,';
+  
+  const perfectColor = 'rgba(123,79,207,';
   const gold = isPerfectToday ? 'var(--accent2)' : '';
   const goldBorder = isPerfectToday ? perfectColor + '0.4)' : '';
   const goldBg = isPerfectToday ? perfectColor + '0.1)' : '';
@@ -219,17 +219,11 @@ export function renderViajero() {
   if (xpFillEl) {
     const xpPct = calc.esMaximo ? 100 : (calc.xpSiguiente > 0 ? Math.round(calc.xpActual / calc.xpSiguiente * 100) : 0);
     xpFillEl.style.width = xpPct + '%';
-    if (isPerfectToday && !isFantasyViajero) {
+    if (isPerfectToday) {
       xpFillEl.style.background = 'var(--accent2)';
-    } else if (isFantasyViajero && isPerfectToday) {
-      // Fantasy perfect day: solid purple
-      xpFillEl.style.background = 'var(--accent2)';
-    } else if (isFantasyViajero) {
-      // Fantasy normal: gradient proportional — gold at 0%, purple only appears near 100%
+    } else {
       const gradEnd = xpPct > 0 ? Math.round(100 / xpPct * 100) : 200;
       xpFillEl.style.background = `linear-gradient(to right, var(--accent) 0%, var(--accent2) ${gradEnd}%)`;
-    } else {
-      xpFillEl.style.background = '';
     }
   }
   // Label XP — xpActual / xpSiguiente
@@ -252,18 +246,18 @@ export function renderViajero() {
       ? '.viajero-card::before { background: var(--accent2) !important; }'
       : '.viajero-card::before { background: var(--accent) !important; }';
     // Fantasy: viajero card purple border on perfect day
-    viajeroCard.classList.toggle('fantasy-perfect-viajero', isPerfectToday && isFantasyViajero);
+    viajeroCard.classList.toggle('fantasy-perfect-viajero', isPerfectToday);
   }
 
   // Fantasy: avatar glow — gold normal, purple on perfect day
   const avatarWrap = document.querySelector('.viajero-avatar-wrap');
-  if (avatarWrap && isFantasyViajero) {
+  if (avatarWrap) {
     avatarWrap.classList.toggle('fantasy-perfect-avatar', isPerfectToday);
   }
 
   // Fantasy: separator swords
   const sepIcon = document.getElementById('hoy-sep-icon');
-  if (sepIcon) sepIcon.textContent = isFantasyViajero ? '⚔' : '◆';
+  if (sepIcon) sepIcon.textContent = '⚔';
 
   // Tareas toggle — dorado por CSS, púrpura en día perfecto
   const tareasToggle = document.getElementById('tareas-toggle');
@@ -274,7 +268,7 @@ export function renderViajero() {
     if (isPerfectToday) {
       // Perfect day: purple borders and title
       tareasToggle.style.borderColor = perfectColor + '0.5)';
-      if (tareasTitle) tareasTitle.style.color = isFantasyViajero ? 'var(--accent2)' : 'var(--accent2)';
+      if (tareasTitle) tareasTitle.style.color = 'var(--accent2)';
       if (tareasPanel) tareasPanel.style.borderColor = perfectColor + '0.5)';
       tareasToggle.dataset.glowColor = perfectColor + '0.4)';
     } else {
@@ -282,15 +276,15 @@ export function renderViajero() {
       tareasToggle.style.borderColor = '';
       if (tareasTitle) tareasTitle.style.color = '';
       if (tareasPanel) tareasPanel.style.borderColor = '';
-      tareasToggle.dataset.glowColor = isFantasyViajero ? 'rgba(201,168,76,0.4)' : 'rgba(196,168,79,0.4)';
+      tareasToggle.dataset.glowColor = 'rgba(201,168,76,0.4)';
     }
 
     // Botón Nueva — púrpura solo en día perfecto
     const btnNuevaReal = document.querySelector('#tareas-panel .btn-primary');
     if (btnNuevaReal) {
       if (isPerfectToday) {
-        btnNuevaReal.style.background = isFantasyViajero ? '#7b4fcf' : 'var(--accent2)';
-        btnNuevaReal.style.borderColor = isFantasyViajero ? '#7b4fcf' : 'var(--accent2)';
+        btnNuevaReal.style.background = '#7b4fcf';
+        btnNuevaReal.style.borderColor = '#7b4fcf';
         btnNuevaReal.style.color = 'var(--bg)';
       } else {
         btnNuevaReal.style.background = '';
@@ -299,7 +293,7 @@ export function renderViajero() {
       }
     }
     // Fantasy: toggle purple class on tareas
-    const fantasyPerfectTareas = isPerfectToday && isFantasyViajero;
+    const fantasyPerfectTareas = isPerfectToday;
     tareasToggle.classList.toggle('fantasy-perfect-tareas', fantasyPerfectTareas);
     if (tareasPanel) tareasPanel.classList.toggle('fantasy-perfect-tareas', fantasyPerfectTareas);
   }
@@ -444,13 +438,13 @@ export function renderProgress() {
   const xpMax = getMaxXPForDate(todayStr);
   const xpPct = xpMax > 0 ? Math.round(xpHoy / xpMax * 100) : 0;
 
-  const isFantasy = document.documentElement.getAttribute('data-theme') === 'fantasy';
+  
   const color = isPerfect ? 'var(--accent2)' : 'var(--accent)';
   const barColor = isPerfect
-    ? (isFantasy ? 'linear-gradient(to right,#5a3a9e,#7b4fcf)' : 'linear-gradient(to right,#c4a84f,#e8c96e)')
+    ? 'linear-gradient(to right,#5a3a9e,#7b4fcf)'
     : 'var(--accent)';
   const latColor = isPerfect
-    ? (isFantasy ? 'var(--accent2)' : '#c4a84f')
+    ? 'var(--accent2)'
     : 'var(--accent)';
 
   const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
@@ -498,7 +492,7 @@ export function renderProgress() {
   const habCard = document.getElementById('hoy-sc-hab');
   const xpCard = document.getElementById('hoy-sc-xp');
   const xpFill = document.querySelector('.viajero-xp-fill');
-  const fantasyPerfect = isPerfect && isFantasy;
+  const fantasyPerfect = isPerfect;
   if (habCard) habCard.classList.toggle('fantasy-perfect', fantasyPerfect);
   if (xpCard) xpCard.classList.toggle('fantasy-perfect', fantasyPerfect);
   if (xpFill) xpFill.classList.toggle('fantasy-perfect', fantasyPerfect);
@@ -659,12 +653,10 @@ export function renderHabitToggle(id, isDone) {
       badge.offsetHeight;
       badge.style.animation = 'xpBadgePop 0.4s cubic-bezier(0.34,1.56,0.64,1)';
       // Rising sparks
-      const isFantasyToggle = document.documentElement.getAttribute('data-theme') === 'fantasy';
+      
       const habit = state.habits.find(h => h.id === id);
       const xpVal = habit ? (habit.xp || 10) : 10;
-      const color = isFantasyToggle
-        ? (xpVal >= 50 ? '#d4a843' : xpVal >= 25 ? '#aab4c8' : '#cd7f50')
-        : (xpVal >= 50 ? '#c4a84f' : xpVal >= 25 ? '#8fb339' : '#6b7560');
+      const color = xpVal >= 50 ? '#d4a843' : xpVal >= 25 ? '#aab4c8' : '#cd7f50';
       const rect = badge.getBoundingClientRect();
       for (let i = 0; i < 10; i++) {
         const spark = document.createElement('div');
@@ -699,7 +691,7 @@ export function renderHabitToggle(id, isDone) {
     if (nameEl) {
       nameEl.animate([
         { filter: 'brightness(1)' },
-        { filter: 'brightness(1.8)' },
+        { filter: 'brightness(2.2)' },
         { filter: 'brightness(1)' }
       ], { duration: 500, easing: 'ease-out' });
     }
@@ -792,14 +784,14 @@ export async function renderStats() {
       loader.id = 'stats-loader';
       loader.style.cssText = 'display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;gap:18px';
 
-      const isFantasyStats = document.documentElement.getAttribute('data-theme') === 'fantasy';
-      const lRing1 = isFantasyStats ? 'rgba(123,79,207,0.25)' : 'rgba(143,179,57,0.25)';
-      const lRing2 = isFantasyStats ? 'rgba(123,79,207,0.12)' : 'rgba(143,179,57,0.12)';
-      const lGlow  = isFantasyStats ? 'rgba(123,79,207,0.05)' : 'rgba(143,179,57,0.05)';
-      const lEmoji = isFantasyStats ? '⚔' : '🌱';
-      const lText  = isFantasyStats ? 'Invocando registros' : 'Cargando historial';
-      const lColor = isFantasyStats ? 'var(--accent)' : 'var(--accent)';
-      const lFont  = isFantasyStats ? "font-family:'Cinzel Decorative',serif;font-size:11px;letter-spacing:4px;color:#c9a84c" : "font-size:13px;color:var(--accent);letter-spacing:2.5px";
+      
+      const lRing1 = 'rgba(123,79,207,0.25)';
+      const lRing2 = 'rgba(123,79,207,0.12)';
+      const lGlow  = 'rgba(123,79,207,0.05)';
+      const lEmoji = '⚔';
+      const lText  = 'Invocando registros';
+      const lColor = 'var(--accent)';
+      const lFont  = "font-family:'Cinzel Decorative',serif;font-size:11px;letter-spacing:4px;color:#c9a84c";
 
       loader.innerHTML = `
         <style>
@@ -828,17 +820,12 @@ export async function renderStats() {
         const ctx = cv.getContext('2d');
         const W = 200, H = 200, cx = W/2, cy = H/2;
 
-        const isFantasyOrbit = document.documentElement.getAttribute('data-theme') === 'fantasy';
-        const orbits = isFantasyOrbit
-          ? [
+        
+        const orbits = [
               { r: 38, n: 5,  speed: 0.014,  offset: 0,          size: 2.0, hue: 270, alpha: 0.9 },
               { r: 54, n: 8,  speed: -0.009, offset: Math.PI/4,  size: 1.5, hue: 44, alpha: 0.6 },
-            ]
-          : [
-              { r: 38, n: 5,  speed: 0.014,  offset: 0,          size: 2.0, hue: 44, alpha: 0.9 },
-              { r: 54, n: 8,  speed: -0.009, offset: Math.PI/4,  size: 1.5, hue: 38, alpha: 0.6 },
             ];
-        const orbitStrokeColor = isFantasyOrbit ? 'rgba(123,79,207,0.06)' : 'rgba(143,179,57,0.06)';
+        const orbitStrokeColor = 'rgba(123,79,207,0.06)';
 
         // Inicializar ángulos
         const particles = [];
@@ -1381,25 +1368,15 @@ function renderLifetimeStats() {
     }
     const bars=diasGrid.querySelectorAll('.sdia-bar');
     const labels=diasGrid.querySelectorAll('.sdia-name');
-    const isFantasyChart = document.documentElement.getAttribute('data-theme') === 'fantasy';
     last7.forEach((d,i)=>{
       if (bars[i]) {
-        const h=Math.max(4, d.ratio*100); // % real, no normalizado
+        const h=Math.max(4, d.ratio*100);
         bars[i].style.height=h+'%';
-        if (isFantasyChart) {
-          // Fantasy: gold(low) → purple(high)
-          const r=Math.round(201+(123-201)*d.ratio);
-          const g=Math.round(168+(79-168)*d.ratio);
-          const b=Math.round(76+(207-76)*d.ratio);
-          const op=0.4+d.ratio*0.6;
-          bars[i].style.background=`rgba(${r},${g},${b},${op})`;
-        } else {
-          const r=Math.round(143+(196-143)*d.ratio);
-          const g=Math.round(179+(168-179)*d.ratio);
-          const b=Math.round(57+(79-57)*d.ratio);
-          const op=0.35+d.ratio*0.65;
-          bars[i].style.background=`rgba(${r},${g},${b},${op})`;
-        }
+        const r=Math.round(201+(123-201)*d.ratio);
+        const g=Math.round(168+(79-168)*d.ratio);
+        const b=Math.round(76+(207-76)*d.ratio);
+        const op=0.4+d.ratio*0.6;
+        bars[i].style.background=`rgba(${r},${g},${b},${op})`;
       }
       if (labels[i]) labels[i].textContent=d.label;
     });
@@ -1560,14 +1537,14 @@ function renderStatsForDate(dateStr) {
   setGold('stat-day-pct', `${pct}% completado`);
   setGold('stat-day-xp-pct', `${xpPct}% del máximo`);
   // Barras de progreso del score card — doradas si día perfecto (púrpura en fantasy)
-  const isFantasyStats = document.documentElement.getAttribute('data-theme') === 'fantasy';
+  
   const barColor = isPerfectStats
-    ? (isFantasyStats ? 'linear-gradient(to right,#5a3a9e,#7b4fcf)' : 'linear-gradient(to right,#c4a84f,#e8c96e)')
+    ? 'linear-gradient(to right,#5a3a9e,#7b4fcf)'
     : 'var(--accent)';
   const barHab = document.getElementById('stat-day-bar');
   const barXp  = document.getElementById('stat-xp-bar');
-  if (barHab) { barHab.style.width = pct + '%'; barHab.style.background = barColor; barHab.classList.toggle('fantasy-perfect-bar', isPerfectStats && isFantasyStats); }
-  if (barXp)  { barXp.style.width  = xpPct + '%'; barXp.style.background = barColor; barXp.classList.toggle('fantasy-perfect-bar', isPerfectStats && isFantasyStats); }
+  if (barHab) { barHab.style.width = pct + '%'; barHab.style.background = barColor; barHab.classList.toggle('fantasy-perfect-bar', isPerfectStats); }
+  if (barXp)  { barXp.style.width  = xpPct + '%'; barXp.style.background = barColor; barXp.classList.toggle('fantasy-perfect-bar', isPerfectStats); }
 
   // Si no es hoy y no hay ningún dato para ese día → Día no registrado
   const sinRegistro = !isToday && completedIds.length === 0 && !getPlanificadosForDate(dateStr);

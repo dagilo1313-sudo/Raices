@@ -277,7 +277,7 @@ header {
 .habit-emoji-cat { opacity: 0.6; filter: saturate(0.5); transition: opacity 0.25s, filter 0.25s; }
 .habit-card.done .habit-emoji-cat { opacity: 1; filter: saturate(1.3) brightness(1.05); }
 .habit-info { flex: 1; min-width: 0; }
-.habit-name { font-size: 15px; font-weight: 500; color: var(--text); margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.habit-name { font-size: 15px; font-weight: 500; color: var(--text); margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: color 0.3s, filter 0.3s; }
 .habit-card.done .habit-name { color: var(--accent2); }
 .habit-meta { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
 .habit-streak-mini { font-size: 12px; color: var(--muted); }
@@ -319,7 +319,6 @@ header {
 .cat-tabs { display: flex; gap: 8px; padding: 0 24px; margin-bottom: 6px; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
 .cat-tabs::-webkit-scrollbar { display: none; }
 .cat-tab { flex-shrink: 0; padding: 6px 14px; border-radius: var(--radius-full); border: 1px solid var(--border); background: var(--card); color: var(--muted); font-size: 12px; font-weight: 500; cursor: pointer; transition: all 0.2s; font-family: var(--font-body); -webkit-tap-highlight-color: transparent; }
-.cat-tab.cat-tab-flash { animation: catTabFlash 0.4s ease-out; }
 .cat-tab.active-all { border-color: var(--accent); color: var(--accent); background: var(--glow); }
 .cat-tab.active-all-perfect { border-color: var(--accent2); color: var(--accent2); background: rgba(196,168,79,0.12); font-weight: 700; }
 
@@ -628,9 +627,9 @@ header {
 /* Theme radio selector */
 .theme-radio { width: 16px; height: 16px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
 
-/* ── Fantasy title — Raíces con letras doradas medievales ── */
-[data-theme="fantasy"] .logo,
-[data-theme="fantasy"] .logo-animated {
+/* ── Title — Raíces con letras doradas medievales ── */
+.logo,
+.logo-animated {
   font-family: 'Cinzel Decorative', serif !important;
   font-size: 28px !important;
   font-weight: 900 !important;
@@ -650,7 +649,7 @@ header {
   text-shadow: none !important;
   filter: drop-shadow(0 1px 2px rgba(201,168,76,0.4));
 }
-[data-theme="fantasy"] .logo-sub {
+.logo-sub {
   font-family: 'Crimson Pro', serif;
   font-style: italic;
   color: var(--muted);

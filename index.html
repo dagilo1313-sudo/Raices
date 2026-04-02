@@ -22,16 +22,6 @@
 </head>
 <body>
 
-<script>
-// Apply saved theme BEFORE first paint so loader matches
-(function(){
-  var t = localStorage.getItem('raices-theme') || 'dark';
-  if (t === 'light') document.documentElement.setAttribute('data-theme','light');
-  else if (t === 'fantasy') document.documentElement.setAttribute('data-theme','fantasy');
-  else if (t === 'auto' && !window.matchMedia('(prefers-color-scheme: dark)').matches) document.documentElement.setAttribute('data-theme','light');
-})();
-</script>
-
 <div id="loading-screen">
   <div style="display:flex;flex-direction:column;align-items:center;gap:32px">
     <div style="position:relative;width:100px;height:100px;display:flex;align-items:center;justify-content:center">
@@ -232,7 +222,7 @@
 
     <!-- Última sync discreta -->
     <div id="last-sync" style="text-align:center;font-size:12px;color:var(--muted);padding:4px 0 2px"></div>
-    <div style="text-align:center;font-size:11px;color:var(--muted);padding:0 0 12px;letter-spacing:2px">v7.8</div>
+    <div style="text-align:center;font-size:11px;color:var(--muted);padding:0 0 12px;letter-spacing:2px">v8.0</div>
   </div>
 
   <!-- ══ HÁBITOS ══ -->
@@ -605,39 +595,6 @@
         </div>
       </div>
 
-      <!-- Apariencia -->
-      <div class="pf-group">
-        <div class="pf-group-lbl">Apariencia</div>
-        <div class="pf-row" onclick="setTheme('auto')" style="cursor:pointer">
-          <div class="pf-row-left">
-            <div class="pf-row-title">Auto</div>
-            <div class="pf-row-sub">Sigue el sistema del dispositivo</div>
-          </div>
-          <div id="theme-auto" class="theme-radio"></div>
-        </div>
-        <div class="pf-row" onclick="setTheme('light')" style="cursor:pointer">
-          <div class="pf-row-left">
-            <div class="pf-row-title">Claro</div>
-            <div class="pf-row-sub">Blanco puro, verde y dorado</div>
-          </div>
-          <div id="theme-light" class="theme-radio"></div>
-        </div>
-        <div class="pf-row" onclick="setTheme('dark')" style="cursor:pointer">
-          <div class="pf-row-left">
-            <div class="pf-row-title">Oscuro</div>
-            <div class="pf-row-sub">Verde sobre negro profundo</div>
-          </div>
-          <div id="theme-dark" class="theme-radio"></div>
-        </div>
-        <div class="pf-row pf-row-last" onclick="setTheme('fantasy')" style="cursor:pointer">
-          <div class="pf-row-left">
-            <div class="pf-row-title">Dark Fantasy</div>
-            <div class="pf-row-sub">Dorado y púrpura · Cinzel</div>
-          </div>
-          <div id="theme-fantasy" class="theme-radio"></div>
-        </div>
-      </div>
-
       <!-- Herramientas -->
       <div class="pf-group" id="debug-card">
         <div class="pf-group-lbl">Herramientas</div>
@@ -843,15 +800,11 @@
 </script>
 <script>
 (function(){
-  var isFantasyLoader = document.documentElement.getAttribute('data-theme') === 'fantasy';
-
-  // Fantasy: swap emoji and text
-  if (isFantasyLoader) {
-    var lsEmoji = document.getElementById('ls-emoji');
-    if (lsEmoji) lsEmoji.textContent = '⚔';
-    var lsText = document.getElementById('ls-text');
-    if (lsText) lsText.textContent = 'FORJA TU DESTINO';
-  }
+  // Fantasy loader — always
+  var lsEmoji = document.getElementById('ls-emoji');
+  if (lsEmoji) lsEmoji.textContent = '⚔';
+  var lsText = document.getElementById('ls-text');
+  if (lsText) lsText.textContent = 'FORJA TU DESTINO';
 
   // Añadir animaciones CSS
   const s = document.createElement('style');
@@ -871,17 +824,11 @@
   const ctx = cv.getContext('2d');
   const W = 200, H = 200, cx = W/2, cy = H/2;
 
-  // Fantasy: purple/gold hues; Default: green/gold hues
-  const orbits = isFantasyLoader
-    ? [
+  const orbits = [
         { r: 38, n: 5,  speed: 0.030,  offset: 0,          size: 2.0, hue: 270, alpha: 0.9 },
         { r: 54, n: 8,  speed: -0.020, offset: Math.PI/4,  size: 1.5, hue: 44, alpha: 0.6 },
-      ]
-    : [
-        { r: 38, n: 5,  speed: 0.030,  offset: 0,          size: 2.0, hue: 44, alpha: 0.9 },
-        { r: 54, n: 8,  speed: -0.020, offset: Math.PI/4,  size: 1.5, hue: 38, alpha: 0.6 },
       ];
-  var orbitStroke = isFantasyLoader ? 'rgba(123,79,207,0.06)' : 'rgba(143,179,57,0.06)';
+  var orbitStroke = 'rgba(123,79,207,0.06)';
 
   const particles = [];
   orbits.forEach(o => {
