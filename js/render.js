@@ -280,13 +280,11 @@ export function renderViajero() {
     if (isPerfectToday) {
       // Perfect day: purple borders and title
       tareasToggle.style.borderColor = perfectColor + '0.5)';
-      if (tareasTitle) tareasTitle.style.color = 'var(--accent2)';
       if (tareasPanel) tareasPanel.style.borderColor = perfectColor + '0.5)';
       tareasToggle.dataset.glowColor = perfectColor + '0.4)';
     } else {
       // Normal: reset to CSS defaults (gold via --accent)
       tareasToggle.style.borderColor = '';
-      if (tareasTitle) tareasTitle.style.color = '';
       if (tareasPanel) tareasPanel.style.borderColor = '';
       tareasToggle.dataset.glowColor = 'rgba(201,168,76,0.4)';
     }
