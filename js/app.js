@@ -163,7 +163,7 @@ function showDiaPerfectoNotif(onClose) {
   el.id = 'dia-perfecto-notif';
   el.style.cssText = 'position:fixed;inset:0;z-index:300;background:rgba(0,0,0,0.65);display:flex;align-items:center;justify-content:center;padding:24px;animation:fadeIn 0.3s ease';
   el.innerHTML = `
-    <div style="background:var(--card2);border:1.5px solid ${borderColor};border-radius:20px;padding:28px 24px;text-align:center;max-width:300px;width:100%;animation:popIn 0.4s cubic-bezier(0.34,1.56,0.64,1);box-shadow:0 0 32px ${shadowColor}">
+    <div style="position:fixed;background:var(--card2);border:1.5px solid ${borderColor};border-radius:20px;padding:28px 24px;text-align:center;max-width:300px;width:100%;animation:popIn 0.4s cubic-bezier(0.34,1.56,0.64,1);box-shadow:0 0 32px ${shadowColor}">
       <div style="font-size:40px;margin-bottom:10px">${emoji}</div>
       <div style="font-size:25px;color:${btnColor};margin-bottom:6px;font-weight:700">¡Día perfecto!</div>
       <div style="font-size:16px;color:var(--muted);margin-bottom:20px;line-height:1.5">Has completado todos tus hábitos de hoy. ¡Tus raíces crecen profundo!</div>
@@ -202,12 +202,12 @@ function showLevelUpNotif(titulo, subtitulo, desc, color) {
   el.id = 'levelup-notif';
   el.style.cssText = 'position:fixed;inset:0;z-index:300;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;padding:24px;animation:fadeIn 0.3s ease';
   el.innerHTML = `
-    <div style="background:var(--card2);border:1px solid ${color};border-radius:20px;padding:32px 24px;text-align:center;max-width:320px;width:100%;animation:popIn 0.4s cubic-bezier(0.34,1.56,0.64,1);box-shadow:0 0 40px ${color}33">
+    <div style="position:fixed;background:var(--card2);border:1px solid ${color};border-radius:20px;padding:32px 24px;text-align:center;max-width:320px;width:100%;animation:popIn 0.4s cubic-bezier(0.34,1.56,0.64,1);box-shadow:0 0 40px ${color}33">
       <div style="font-size:48px;margin-bottom:12px">${subtitulo.split(' ')[0]}</div>
-      <div style="font-size:22px;color:${color};margin-bottom:8px;font-weight:700">${titulo}</div>
-      <div style="font-size:13px;color:var(--text);margin-bottom:6px;font-weight:600">${subtitulo}</div>
-      <div style="font-size:13px;color:var(--muted);margin-bottom:28px;line-height:1.5">${desc}</div>
-      <button onclick="document.getElementById('levelup-notif').remove()" style="background:${color};color:#fff;border:none;border-radius:var(--radius-full);padding:12px 32px;font-size:14px;font-weight:700;font-family:var(--font-body);cursor:pointer">¡A seguir!</button>
+      <div style="font-size:25px;color:${color};margin-bottom:8px;font-weight:700">${titulo}</div>
+      <div style="font-size:18px;text-transform:uppercase;color:var(--text);margin-bottom:6px;font-weight:600">${subtitulo}</div>
+      <div style="font-size:16px;color:var(--muted);margin-bottom:28px;line-height:1.5">${desc}</div>
+      <button onclick="document.getElementById('levelup-notif').remove()" style="background:${color};color:#fff;border:none;border-radius:var(--radius-full);padding:12px 32px;font-size:17px;font-weight:700;font-family:var(--font-body);cursor:pointer">¡A seguir!</button>
     </div>
     <style>@keyframes popIn{from{transform:scale(0.7);opacity:0}to{transform:scale(1);opacity:1}}</style>`;
   el.addEventListener('click', e => { if (e.target === el) el.remove(); });
@@ -222,7 +222,7 @@ window.onDeleteHabit = (id) => {
   const overlay = document.createElement('div');
   overlay.style.cssText = 'position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.65);display:flex;align-items:center;justify-content:center;padding:24px;animation:fadeIn 0.2s ease';
   overlay.innerHTML = `
-    <div style="background:var(--card2);border:1px solid var(--border);border-radius:20px;padding:28px 24px;max-width:320px;width:100%;text-align:center;animation:popIn 0.35s cubic-bezier(0.34,1.56,0.64,1)">
+    <div style="position:fixed;background:var(--card2);border:1px solid var(--border);border-radius:20px;padding:28px 24px;max-width:320px;width:100%;text-align:center;animation:popIn 0.35s cubic-bezier(0.34,1.56,0.64,1)">
       <div style="font-size:32px;margin-bottom:12px">🍂</div>
       <div style="font-size:17px;font-weight:700;color:var(--text);margin-bottom:8px">¿Eliminar hábito?</div>
       <div style="font-size:13px;color:var(--muted);margin-bottom:24px;line-height:1.5">
