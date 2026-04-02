@@ -67,7 +67,7 @@
       <div class="header-top" style="align-items:flex-end">
         <div>
           <canvas id="title-canvas" width="140" height="40" style="display:block"></canvas>
-          <div class="hoy-title-fantasy" style="display:none">La Forja del Alma</div>
+          <div class="hoy-title-fantasy" style="display:none">Raíces</div>
         </div>
         <div style="display:flex;align-items:center;gap:8px;padding-bottom:6px">
           <div id="conn-indicator" style="width:7px;height:7px;border-radius:50%;background:#8fb339;flex-shrink:0;transition:background .4s"></div>
@@ -111,11 +111,11 @@
           <div style="display:flex;align-items:flex-end;justify-content:space-between;position:relative;z-index:1">
             <div>
               <div class="viajero-stat-num viajero-stat-md" id="viajero-stat-perfectos" style="color:var(--accent2)">0</div>
-              <div style="font-size:14px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-top:3px">✦ perfectos</div>
+              <div style="font-size:12px;font-family:'Cinzel Decorative'; font-weight: bolder; color: var(--muted);letter-spacing:1px;text-transform:uppercase;margin-top:3px">✦ perfectos</div>
             </div>
             <div style="text-align:right">
               <div style="font-size:25px;font-weight:700;color:var(--accent);opacity:0.65;line-height:1" id="viajero-stat-buenos">0</div>
-              <div style="font-size:12px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-top:3px">buenos</div>
+              <div style="font-size:10px;font-family: 'Cinzel Decorative';font-weight: bolder; color: var(--muted);letter-spacing:1px;text-transform:uppercase;margin-top:3px">buenos</div>
             </div>
           </div>
         </div>
@@ -790,8 +790,8 @@
     ctx.font='700 32px DM Sans,sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
     const grad=ctx.createLinearGradient(10,0,130,0);
     grad.addColorStop(0,G2);grad.addColorStop(.35,G);grad.addColorStop(.65,GO);grad.addColorStop(1,GO2);
-    ctx.fillStyle=grad;ctx.fillText('La Forja del Alma',W/2,H/2+1);
-    ctx.globalAlpha=Math.sin(t)*.04+.04;ctx.fillStyle='#f0d060';ctx.fillText('La Forja del Alma',W/2,H/2+1);ctx.globalAlpha=1;
+    ctx.fillStyle=grad;ctx.fillText('Raíces',W/2,H/2+1);
+    ctx.globalAlpha=Math.sin(t)*.04+.04;ctx.fillStyle='#f0d060';ctx.fillText('Raíces',W/2,H/2+1);ctx.globalAlpha=1;
     requestAnimationFrame(frame);
   }
   frame();
