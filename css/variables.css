@@ -308,7 +308,7 @@
 /* ── Fantasy: HOY title — usar texto en vez de canvas ── */
 [data-theme="fantasy"] #title-canvas { display: none !important; }
 [data-theme="fantasy"] .hoy-title-fantasy { display: block !important; font-family: 'Cinzel Decorative', serif; font-size:38px; font-weight: 700; background: linear-gradient(90deg, #c9a84c, #a87fe8, #c9a84c); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: logoShimmer 4s linear infinite; }
-[data-theme="fantasy"] .hoy-sub-fantasy { display: block !important; font-family: 'Crimson Pro', serif; font-style: italic; color: var(--muted); font-size: 13px; margin-top: 2px; }
+[data-theme="fantasy"] .hoy-sub-fantasy { display: block !important; font-family: 'Crimson Pro', serif; font-style: italic; color: var(--muted); font-size: 15px; margin-top: 2px; letter-spacing: 3px;}
 
 /* ── Fantasy: Calendarios — día perfecto púrpura ── */
 /* Semana HOY */
