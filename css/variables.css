@@ -190,7 +190,7 @@
   --cat-identidad-border:    rgba(92,224,184,0.30);
 
   --xp-10: #5a5080;
-  --xp-25: #7b4fcf;
+  --xp-25: #5cb85c;
   --xp-50: #c9a84c;
 
   --font-display: 'Cinzel Decorative', serif;
@@ -374,3 +374,16 @@
 [data-theme="fantasy"] #loading-screen { background: #08060e; }
 [data-theme="fantasy"] { --ls-ring-color: rgba(123,79,207,0.25); --ls-ring2-color: rgba(123,79,207,0.12); --ls-glow-color: rgba(123,79,207,0.05); --ls-text-color: #6b6090; }
 [data-theme="fantasy"] .loading-sub { font-family: 'Cinzel Decorative', serif; font-size: 11px !important; letter-spacing: 4px !important; color: #c9a84c !important; }
+
+/* ── Fantasy: STATS — barras laterales Experiencia/Hábitos doradas ── */
+[data-theme="fantasy"] .racha-card.gold-bar-racha::before { background: var(--accent) !important; }
+
+/* ── Fantasy: Modal crear hábito — botón dorado ── */
+[data-theme="fantasy"] #btn-modal-submit { background: var(--accent) !important; color: var(--bg) !important; border-color: var(--accent) !important; }
+[data-theme="fantasy"] #btn-modal-submit:hover { background: #e0c05a !important; box-shadow: 0 0 12px rgba(201,168,76,0.3) !important; }
+
+/* ── Fantasy: XP 25 badge verde ── */
+[data-theme="fantasy"] .xp-badge.xp-25 { color: #5cb85c !important; background: rgba(92,184,92,0.12) !important; border-color: rgba(92,184,92,0.3) !important; }
+
+/* ── Fantasy: Modal chips categoría mayúscula ── */
+[data-theme="fantasy"] .chip.cat-chip { text-transform: uppercase; letter-spacing: 1px; font-size: 11px; }
