@@ -570,7 +570,7 @@ export function renderHabitToggle(id, isDone) {
   if (isDone) {
     card.classList.add('done');
 
-    // Fantasy: XP badge rising sparks + pop, emoji bounce
+    // Fantasy: XP badge rising sparks + pop, emoji & name glow
     if (isFantasyToggle) {
       const badge = card.querySelector('.xp-badge');
       if (badge) {
@@ -596,12 +596,19 @@ export function renderHabitToggle(id, isDone) {
           setTimeout(() => spark.remove(), dur + 50);
         }
       }
-      // Emoji bounce
+      // Emoji glow shine
       const emoji = card.querySelector('.habit-emoji');
       if (emoji) {
         emoji.style.animation = 'none';
         emoji.offsetHeight;
-        emoji.style.animation = 'xpEmojiBounce 0.5s cubic-bezier(0.34,1.56,0.64,1)';
+        emoji.style.animation = 'xpEmojiGlow 0.6s ease-out';
+      }
+      // Name glow shine
+      const name = card.querySelector('.habit-name');
+      if (name) {
+        name.style.animation = 'none';
+        name.offsetHeight;
+        name.style.animation = 'xpNameGlow 0.6s ease-out';
       }
     }
   } else {

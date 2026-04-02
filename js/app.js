@@ -90,7 +90,6 @@ window.onToggleHabit = (id) => {
 
   toggleHabit(id).then(async result => {
     if (result.xpGanado > 0) {
-      showXPFloat(id, result.xpGanado);
       const scheduled = state.habits.filter(h => !h.archivado && isScheduledForDate(h, todayStr));
       const completedToday = getCompletadosForDate(todayStr);
       const diaPerfecto = scheduled.length > 0 && scheduled.every(h => completedToday.includes(h.id));
