@@ -48,7 +48,7 @@
 }
 
 /* ── Fonts ── */
-.habit-name { font-family: 'Rubik', sans-serif; font-size: 15px; font-weight: 500; color: #e8e2f4; }
+.habit-name { font-family: 'Rubik', sans-serif; font-size: 15px; color: #e0c05a63; }
 .habit-card.done .habit-name { color: var(--accent); }
 .xp-badge { font-family: 'Crimson Pro', serif; font-style: italic; font-size: 13px; transition: color 0.3s, background 0.3s, border-color 0.3s, transform 0.3s, filter 0.3s; }
 .pf-btn { font-family: 'Cinzel Decorative', serif; font-size: 10px; letter-spacing: 0.5px; border-radius: 999px; }
