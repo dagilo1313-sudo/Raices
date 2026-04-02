@@ -552,10 +552,8 @@ function renderHabits() {
         ${habitIconHTML(h)}
         <div class="habit-info">
           <div class="habit-name">${h.name}</div>
-          <div class="habit-meta">
-            <span class="xp-badge xp-${h.xp || 10}">+${h.xp || 10} XP</span>
-          </div>
         </div>
+        <span class="xp-badge xp-${h.xp || 10}">+${h.xp || 10}</span>
         <div class="check-circle"><svg class="check-svg" width="10" height="10" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="#07090a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
       </div>`;
   });
