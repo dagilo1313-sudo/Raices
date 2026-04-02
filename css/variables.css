@@ -189,9 +189,9 @@
   --cat-identidad-bg:        rgba(92,224,184,0.10);
   --cat-identidad-border:    rgba(92,224,184,0.30);
 
-  --xp-10: #5a5080;
-  --xp-25: #76bd76;
-  --xp-50: #c9a84c;
+  --xp-10: #cd7f50;
+  --xp-25: #aab4c8;
+  --xp-50: #d4a843;
 
   --font-display: 'Cinzel Decorative', serif;
   --font-body:    'Crimson Pro', serif;
@@ -230,13 +230,13 @@
 [data-theme="fantasy"] .btn { font-family: 'Cinzel Decorative', serif; font-size: 10px; letter-spacing: 1.5px; border-radius: 999px; }
 [data-theme="fantasy"] .pf-btn { font-family: 'Cinzel Decorative', serif; font-size: 10px; letter-spacing: 0.5px; border-radius: 999px; }
 [data-theme="fantasy"] .xp-badge { font-family: 'Crimson Pro', serif; font-style: italic; font-size: 13px; transition: color 0.3s, background 0.3s, border-color 0.3s, transform 0.3s, filter 0.3s; }
-[data-theme="fantasy"] .xp-badge.xp-10 { color: rgba(90,80,128,0.4) !important; background: rgba(90,80,128,0.06) !important; border-color: rgba(90,80,128,0.15) !important; }
-[data-theme="fantasy"] .xp-badge.xp-25 { color: rgba(92,184,92,0.35) !important; background: rgba(92,184,92,0.06) !important; border-color: rgba(92,184,92,0.15) !important; }
-[data-theme="fantasy"] .xp-badge.xp-50 { color: rgba(201,168,76,0.35) !important; background: rgba(201,168,76,0.06) !important; border-color: rgba(201,168,76,0.15) !important; }
+[data-theme="fantasy"] .xp-badge.xp-10 { color: rgba(205,127,80,0.4) !important; background: rgba(205,127,80,0.06) !important; border-color: rgba(205,127,80,0.15) !important; }
+[data-theme="fantasy"] .xp-badge.xp-25 { color: rgba(170,180,200,0.4) !important; background: rgba(170,180,200,0.06) !important; border-color: rgba(170,180,200,0.15) !important; }
+[data-theme="fantasy"] .xp-badge.xp-50 { color: rgba(212,168,67,0.35) !important; background: rgba(212,168,67,0.06) !important; border-color: rgba(212,168,67,0.15) !important; }
 /* Lit up when habit is done */
-[data-theme="fantasy"] .habit-card.done .xp-badge.xp-10 { color: #5a5080 !important; background: rgba(90,80,128,0.12) !important; border-color: rgba(90,80,128,0.3) !important; }
-[data-theme="fantasy"] .habit-card.done .xp-badge.xp-25 { color: #5cb85c !important; background: rgba(92,184,92,0.12) !important; border-color: rgba(92,184,92,0.3) !important; }
-[data-theme="fantasy"] .habit-card.done .xp-badge.xp-50 { color: var(--accent) !important; background: rgba(201,168,76,0.12) !important; border-color: rgba(201,168,76,0.3) !important; }
+[data-theme="fantasy"] .habit-card.done .xp-badge.xp-10 { color: #cd7f50 !important; background: rgba(205,127,80,0.12) !important; border-color: rgba(205,127,80,0.3) !important; }
+[data-theme="fantasy"] .habit-card.done .xp-badge.xp-25 { color: #aab4c8 !important; background: rgba(170,180,200,0.12) !important; border-color: rgba(170,180,200,0.3) !important; }
+[data-theme="fantasy"] .habit-card.done .xp-badge.xp-50 { color: #d4a843 !important; background: rgba(212,168,67,0.15) !important; border-color: rgba(212,168,67,0.35) !important; }
 
 /* Navbar */
 [data-theme="fantasy"] .nav-bar { background: rgba(8,6,14,0.96); }

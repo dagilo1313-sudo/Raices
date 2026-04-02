@@ -77,9 +77,10 @@ export function renderViajero() {
   const scheduledHoy = state.habits.filter(h => !h.archivado && isScheduledForDate(h, todayStr));
   const isPerfectToday = scheduledHoy.length > 0 && scheduledHoy.every(h => isCompleted(h.id, todayStr));
   const isFantasyViajero = document.documentElement.getAttribute('data-theme') === 'fantasy';
+  const perfectColor = isFantasyViajero ? 'rgba(123,79,207,' : 'rgba(196,168,79,';
   const gold = isPerfectToday ? 'var(--accent2)' : '';
-  const goldBorder = isPerfectToday ? 'rgba(196,168,79,0.4)' : '';
-  const goldBg = isPerfectToday ? 'rgba(196,168,79,0.1)' : '';
+  const goldBorder = isPerfectToday ? perfectColor + '0.4)' : '';
+  const goldBg = isPerfectToday ? perfectColor + '0.1)' : '';
 
   const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
 
@@ -207,7 +208,7 @@ export function renderViajero() {
   setTriple('hoy-stat-pct', `${pctTriple}%`, accentColor);
   const triple = document.getElementById('hoy-triple');
   if (triple) {
-    triple.style.borderColor = isPerfectToday ? 'rgba(196,168,79,0.35)' : '';
+    triple.style.borderColor = isPerfectToday ? perfectColor + '0.35)' : '';
   }
   // XP label — dorado en día perfecto
   const xpLabelEl = document.getElementById('viajero-xp-label');
@@ -220,9 +221,11 @@ export function renderViajero() {
     xpFillEl.style.width = xpPct + '%';
     if (isPerfectToday && !isFantasyViajero) {
       xpFillEl.style.background = 'var(--accent2)';
+    } else if (isFantasyViajero && isPerfectToday) {
+      // Fantasy perfect day: solid purple
+      xpFillEl.style.background = 'var(--accent2)';
     } else if (isFantasyViajero) {
-      // Fantasy: gradient proportional — gold at 0%, purple only appears near 100%
-      // Scale the gradient so purple end maps to 100% of the full bar, not the fill
+      // Fantasy normal: gradient proportional — gold at 0%, purple only appears near 100%
       const gradEnd = xpPct > 0 ? Math.round(100 / xpPct * 100) : 200;
       xpFillEl.style.background = `linear-gradient(to right, var(--accent) 0%, var(--accent2) ${gradEnd}%)`;
     } else {
@@ -241,7 +244,7 @@ export function renderViajero() {
   // Barra lateral del viajero — dorada en día perfecto
   const viajeroCard = document.querySelector('.viajero-card');
   if (viajeroCard) {
-    viajeroCard.style.borderColor = isPerfectToday ? 'rgba(196,168,79,0.4)' : '';
+    viajeroCard.style.borderColor = isPerfectToday ? perfectColor + '0.4)' : '';
     // Barra lateral via style tag
     let latStyle = document.getElementById('viajero-lat-style');
     if (!latStyle) { latStyle = document.createElement('style'); latStyle.id = 'viajero-lat-style'; document.head.appendChild(latStyle); }
@@ -265,13 +268,13 @@ export function renderViajero() {
   // Tareas toggle — dorado en día perfecto (púrpura en fantasy)
   const tareasToggle = document.getElementById('tareas-toggle');
   if (tareasToggle) {
-    tareasToggle.style.borderColor = isPerfectToday ? 'rgba(196,168,79,0.5)' : '';
+    tareasToggle.style.borderColor = isPerfectToday ? perfectColor + '0.5)' : '';
     const tareasTitle = document.getElementById('tareas-titulo');
     if (tareasTitle) tareasTitle.style.color = accentColor;
-    // Panel expandido — borde y fondo dorado en día perfecto
+    // Panel expandido — borde dorado/púrpura en día perfecto
     const tareasPanel = document.getElementById('tareas-panel');
-    if (tareasPanel) tareasPanel.style.borderColor = isPerfectToday ? 'rgba(196,168,79,0.3)' : '';
-    // Botón Nueva — dorado en día perfecto
+    if (tareasPanel) tareasPanel.style.borderColor = isPerfectToday ? perfectColor + '0.3)' : '';
+    // Botón Nueva — dorado/púrpura en día perfecto
     const btnNueva = tareasToggle.closest('.section, div')?.querySelector('.btn-primary.btn-sm');
     const btnNuevaReal = document.querySelector('#tareas-panel .btn-primary');
     if (btnNuevaReal) {
@@ -643,7 +646,7 @@ export function renderHabitToggle(id, isDone) {
       const habit = state.habits.find(h => h.id === id);
       const xpVal = habit ? (habit.xp || 10) : 10;
       const color = isFantasyToggle
-        ? (xpVal >= 50 ? '#c9a84c' : xpVal >= 25 ? '#5cb85c' : '#5a5080')
+        ? (xpVal >= 50 ? '#d4a843' : xpVal >= 25 ? '#aab4c8' : '#cd7f50')
         : (xpVal >= 50 ? '#c4a84f' : xpVal >= 25 ? '#8fb339' : '#6b7560');
       const rect = badge.getBoundingClientRect();
       for (let i = 0; i < 6; i++) {

@@ -91,10 +91,10 @@ export function showXPFloat(habitId, xp) {
   // Color según peso del hábito
   const isFantasy = document.documentElement.getAttribute('data-theme') === 'fantasy';
   const color = xp >= 50
-    ? (isFantasy ? '#c9a84c' : '#c4a84f')
+    ? (isFantasy ? '#d4a843' : '#c4a84f')
     : xp >= 25
-      ? (isFantasy ? '#5cb85c' : '#8fb339')
-      : (isFantasy ? '#5a5080' : '#5a6b5a');
+      ? (isFantasy ? '#aab4c8' : '#8fb339')
+      : (isFantasy ? '#cd7f50' : '#5a6b5a');
 
   const card = document.getElementById('habit-' + habitId);
   let startX, startY;
