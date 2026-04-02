@@ -666,16 +666,17 @@ export function renderHabitToggle(id, isDone) {
         ? (xpVal >= 50 ? '#d4a843' : xpVal >= 25 ? '#aab4c8' : '#cd7f50')
         : (xpVal >= 50 ? '#c4a84f' : xpVal >= 25 ? '#8fb339' : '#6b7560');
       const rect = badge.getBoundingClientRect();
-      for (let i = 0; i < 6; i++) {
+      for (let i = 0; i < 10; i++) {
         const spark = document.createElement('div');
-        spark.style.cssText = `position:fixed;width:${2+Math.random()*3}px;height:${2+Math.random()*3}px;border-radius:50%;background:${color};pointer-events:none;z-index:9999;left:${rect.left+rect.width/2}px;top:${rect.top+rect.height/2}px`;
+        const size = 2.5 + Math.random() * 3.5;
+        spark.style.cssText = `position:fixed;width:${size}px;height:${size}px;border-radius:50%;background:${color};pointer-events:none;z-index:9999;left:${rect.left+rect.width/2}px;top:${rect.top+rect.height/2}px`;
         document.body.appendChild(spark);
-        const dx = (Math.random() - 0.5) * 24;
-        const dy = -(15 + Math.random() * 20);
-        const dur = 400 + Math.random() * 300;
+        const dx = (Math.random() - 0.5) * 40;
+        const dy = -(18 + Math.random() * 28);
+        const dur = 450 + Math.random() * 350;
         spark.animate([
-          { transform: 'translate(0,0) scale(1)', opacity: 1 },
-          { transform: `translate(${dx}px,${dy}px) scale(0.3)`, opacity: 0 }
+          { transform: 'translate(0,0) scale(1.2)', opacity: 1 },
+          { transform: `translate(${dx}px,${dy}px) scale(0)`, opacity: 0 }
         ], { duration: dur, easing: 'ease-out', fill: 'forwards' });
         setTimeout(() => spark.remove(), dur + 50);
       }
@@ -693,15 +694,13 @@ export function renderHabitToggle(id, isDone) {
       ], { duration: 400, easing: 'ease-out' });
       flashGlow(emoji, catRgba, 400);
     }
-    // Name glow shine
+    // Name glow shine — use filter to avoid overflow clipping
     const nameEl = card.querySelector('.habit-name');
     if (nameEl) {
-      const accentRgba = document.documentElement.getAttribute('data-theme') === 'fantasy'
-        ? 'rgba(201,168,76,0.7)' : 'rgba(143,179,57,0.7)';
       nameEl.animate([
-        { textShadow: 'none', transform: 'translateX(0)' },
-        { textShadow: `0 0 12px ${accentRgba}, 0 0 24px ${accentRgba}`, transform: 'translateX(2px)' },
-        { textShadow: 'none', transform: 'translateX(0)' }
+        { filter: 'brightness(1)' },
+        { filter: 'brightness(1.8)' },
+        { filter: 'brightness(1)' }
       ], { duration: 500, easing: 'ease-out' });
     }
   } else {
