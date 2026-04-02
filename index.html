@@ -73,26 +73,23 @@
 
   <!-- ══ HOY ══ -->
   <div class="view active" id="view-hoy">
-    <header>
-      <div class="header-top">
+    <header style="padding-bottom:0">
+      <div class="header-top" style="align-items:flex-end">
         <div>
           <canvas id="title-canvas" width="140" height="46" style="display:block"></canvas>
           <div class="hoy-title-fantasy" style="display:none">Raíces</div>
           <div class="hoy-sub-fantasy" style="display:none">Tu camino diario</div>
         </div>
+        <div style="display:flex;align-items:center;gap:8px;padding-bottom:6px">
+          <div id="conn-indicator" style="width:7px;height:7px;border-radius:50%;background:#8fb339;flex-shrink:0;transition:background .4s"></div>
+          <div class="date-badge" id="date-display"></div>
+        </div>
       </div>
     </header>
-
 
     <!-- Banner debug (visible solo en modo testing) -->
     <div id="debug-banner" class="debug-header-banner" style="display:none">
       ⚠️ Modo testing — sistema cree que hoy es <strong id="debug-banner-date"></strong>
-    </div>
-
-    <!-- Fecha encima del viajero -->
-    <div style="display:flex;justify-content:flex-end;align-items:center;gap:8px;padding:6px 24px 0">
-      <div id="conn-indicator" style="width:7px;height:7px;border-radius:50%;background:#8fb339;flex-shrink:0;transition:background .4s"></div>
-      <div class="date-badge" id="date-display"></div>
     </div>
 
     <!-- Viajero card -->

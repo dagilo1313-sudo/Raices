@@ -187,7 +187,16 @@ export function renderViajero() {
   if (xpFillEl) {
     const xpPct = calc.esMaximo ? 100 : (calc.xpSiguiente > 0 ? Math.round(calc.xpActual / calc.xpSiguiente * 100) : 0);
     xpFillEl.style.width = xpPct + '%';
-    xpFillEl.style.background = isPerfectToday ? 'var(--accent2)' : '';
+    if (isPerfectToday && !isFantasyViajero) {
+      xpFillEl.style.background = 'var(--accent2)';
+    } else if (isFantasyViajero) {
+      // Fantasy: gradient proportional — gold at 0%, purple only appears near 100%
+      // Scale the gradient so purple end maps to 100% of the full bar, not the fill
+      const gradEnd = xpPct > 0 ? Math.round(100 / xpPct * 100) : 200;
+      xpFillEl.style.background = `linear-gradient(to right, var(--accent) 0%, var(--accent2) ${gradEnd}%)`;
+    } else {
+      xpFillEl.style.background = '';
+    }
   }
   // Label XP — xpActual / xpSiguiente
   const xpLabelEl2 = document.getElementById('viajero-xp-label');

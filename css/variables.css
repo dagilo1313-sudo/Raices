@@ -248,9 +248,9 @@
 [data-theme="fantasy"] .prog-track,
 [data-theme="fantasy"] .viajero-xp-track { background: #1a1a3a; }
 
-/* Progress fill — purple to gold */
-[data-theme="fantasy"] .progress-fill,
-[data-theme="fantasy"] .viajero-xp-fill { background: linear-gradient(to right, var(--accent), var(--accent2)); }
+/* Progress fill — gold to purple */
+[data-theme="fantasy"] .progress-fill { background: linear-gradient(to right, var(--accent), var(--accent2)); }
+/* viajero-xp-fill gradient is set dynamically in JS (proportional to progress) */
 
 /* Días semana */
 [data-theme="fantasy"] .day-num.day-gray { border-color: #2a2245; color: #4a4070; background: rgba(42,34,69,0.2); }
@@ -303,7 +303,7 @@
 [data-theme="fantasy"] .hoy-sc-card.fantasy-perfect .hoy-sc-big,
 [data-theme="fantasy"] .hoy-sc-card.fantasy-perfect .hoy-sc-pct { color: var(--accent2) !important; }
 [data-theme="fantasy"] #habits-list.perfect-day .progress-fill { background: linear-gradient(to right, #5a3a9e, var(--accent2)) !important; }
-[data-theme="fantasy"] .viajero-xp-fill.fantasy-perfect { background: linear-gradient(to right, #5a3a9e, var(--accent2)) !important; }
+/* viajero-xp-fill perfect day handled in JS */
 
 /* ── Fantasy: HOY title — usar texto en vez de canvas ── */
 [data-theme="fantasy"] #title-canvas { display: none !important; }
