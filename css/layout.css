@@ -524,7 +524,7 @@ header {
 .riesgo-dias{font-size:10px;color:#e05c5c;font-weight:600;}
 
 /* ── Racha card (días perfectos / días buenos) ── */
-.racha-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px 18px;margin:0 24px 8px;position:relative;overflow:hidden;}
+.racha-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px 18px;margin:20px 24px 8px;position:relative;overflow:hidden;}
 .racha-card.gold-racha{border-color:rgba(196,168,79,0.2);}
 .racha-card.gold-racha::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent2);border-radius:3px 0 0 3px;}
 .racha-card.green-racha::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent);border-radius:3px 0 0 3px;}
