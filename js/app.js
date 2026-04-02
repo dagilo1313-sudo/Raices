@@ -476,17 +476,23 @@ window.onToggleTareas = () => {
   if (chevron) chevron.style.transform = isOpen ? '' : 'rotate(180deg)';
   if (toggle) toggle.classList.toggle('open', !isOpen);
 
-  // Flash glow on open
-  if (!isOpen && toggle) {
-    const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
+  // Flash glow on open — card border + title
+  if (!isOpen) {
     const glowRgba = 'rgba(143,179,57,0.4)';
-    // Flash the toggle border
-    toggle.animate([
-      { boxShadow: '0 0 0 transparent' },
-      { boxShadow: `0 0 12px ${glowRgba}` },
-      { boxShadow: '0 0 0 transparent' }
-    ], { duration: 400, easing: 'ease-out' });
-    // Flash the title
+    if (toggle) {
+      toggle.animate([
+        { boxShadow: '0 0 0 transparent' },
+        { boxShadow: `0 0 14px ${glowRgba}` },
+        { boxShadow: '0 0 0 transparent' }
+      ], { duration: 400, easing: 'ease-out' });
+    }
+    if (panel) {
+      panel.animate([
+        { boxShadow: '0 0 0 transparent' },
+        { boxShadow: `0 0 14px ${glowRgba}` },
+        { boxShadow: '0 0 0 transparent' }
+      ], { duration: 400, easing: 'ease-out' });
+    }
     const title = document.getElementById('tareas-titulo');
     if (title) {
       title.animate([
@@ -495,21 +501,21 @@ window.onToggleTareas = () => {
         { textShadow: 'none' }
       ], { duration: 400, easing: 'ease-out' });
     }
-    // Flash nueva tarea button
-    setTimeout(() => {
-      const btn = panel.querySelector('.btn-primary, .btn-nueva-tarea');
-      if (btn) btn.animate([
-        { filter: 'brightness(1)', boxShadow: 'none' },
-        { filter: 'brightness(1.5)', boxShadow: `0 0 10px ${glowRgba}` },
-        { filter: 'brightness(1)', boxShadow: 'none' }
-      ], { duration: 400, easing: 'ease-out' });
-    }, 100);
   }
 };
 
 window.onToggleTarea = async (id) => {
   await toggleTarea(id);
   renderTareas();
+  // Flash the counter badge
+  const counter = document.getElementById('tareas-count');
+  if (counter) {
+    counter.animate([
+      { filter: 'brightness(1)', boxShadow: 'none' },
+      { filter: 'brightness(1.6)', boxShadow: '0 0 10px rgba(143,179,57,0.4)' },
+      { filter: 'brightness(1)', boxShadow: 'none' }
+    ], { duration: 400, easing: 'ease-out' });
+  }
 };
 
 window.onAddTarea = () => {
