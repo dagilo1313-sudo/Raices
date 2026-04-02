@@ -391,13 +391,13 @@ body::before {
   display: flex; align-items: center; justify-content: space-between;
   padding: 10px 14px;
   background: var(--card);
-  border: 1px solid var(--accent2);
+  border: 1px solid var(--accent);
   border-radius: 10px;
   cursor: pointer;
   transition: border-color 0.2s, border-radius 0.2s, box-shadow 0.2s;
   user-select: none;
 }
-.tareas-toggle:hover { box-shadow: 0 0 8px rgba(196,168,79,0.2); }
+.tareas-toggle:hover { box-shadow: 0 0 8px rgba(201,168,76,0.2); }
 .tareas-toggle.open {
   border-radius: 10px 10px 0 0;
   border-bottom-color: var(--border);
@@ -405,7 +405,7 @@ body::before {
 
 .tareas-panel {
   background: var(--card);
-  border: 1px solid var(--accent2);
+  border: 1px solid var(--accent);
   border-top: none;
   border-radius: 0 0 10px 10px;
   overflow: hidden;

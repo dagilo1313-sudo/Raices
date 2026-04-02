@@ -265,30 +265,38 @@ export function renderViajero() {
   const sepIcon = document.getElementById('hoy-sep-icon');
   if (sepIcon) sepIcon.textContent = isFantasyViajero ? '⚔' : '◆';
 
-  // Tareas toggle — siempre dorado, púrpura en día perfecto (fantasy)
+  // Tareas toggle — dorado por CSS, púrpura en día perfecto
   const tareasToggle = document.getElementById('tareas-toggle');
   if (tareasToggle) {
     const tareasTitle = document.getElementById('tareas-titulo');
     const tareasPanel = document.getElementById('tareas-panel');
 
     if (isPerfectToday) {
+      // Perfect day: purple borders and title
       tareasToggle.style.borderColor = perfectColor + '0.5)';
-      if (tareasTitle) tareasTitle.style.color = 'var(--accent2)';
+      if (tareasTitle) tareasTitle.style.color = isFantasyViajero ? 'var(--accent2)' : 'var(--accent2)';
       if (tareasPanel) tareasPanel.style.borderColor = perfectColor + '0.5)';
-      // Hover color
-      tareasToggle.dataset.glowColor = perfectColor + '0.3)';
+      tareasToggle.dataset.glowColor = perfectColor + '0.4)';
     } else {
+      // Normal: reset to CSS defaults (gold via --accent)
       tareasToggle.style.borderColor = '';
       if (tareasTitle) tareasTitle.style.color = '';
       if (tareasPanel) tareasPanel.style.borderColor = '';
-      tareasToggle.dataset.glowColor = 'rgba(196,168,79,0.3)';
+      tareasToggle.dataset.glowColor = isFantasyViajero ? 'rgba(201,168,76,0.4)' : 'rgba(196,168,79,0.4)';
     }
 
-    // Botón Nueva — púrpura en día perfecto
+    // Botón Nueva — púrpura solo en día perfecto
     const btnNuevaReal = document.querySelector('#tareas-panel .btn-primary');
     if (btnNuevaReal) {
-      btnNuevaReal.style.background = isPerfectToday ? 'var(--accent2)' : '';
-      btnNuevaReal.style.color = isPerfectToday ? 'var(--bg)' : '';
+      if (isPerfectToday) {
+        btnNuevaReal.style.background = isFantasyViajero ? '#7b4fcf' : 'var(--accent2)';
+        btnNuevaReal.style.borderColor = isFantasyViajero ? '#7b4fcf' : 'var(--accent2)';
+        btnNuevaReal.style.color = 'var(--bg)';
+      } else {
+        btnNuevaReal.style.background = '';
+        btnNuevaReal.style.borderColor = '';
+        btnNuevaReal.style.color = '';
+      }
     }
     // Fantasy: toggle purple class on tareas
     const fantasyPerfectTareas = isPerfectToday && isFantasyViajero;
