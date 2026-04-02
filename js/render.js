@@ -352,8 +352,14 @@ export function renderProgress() {
   const xpMax = getMaxXPForDate(todayStr);
   const xpPct = xpMax > 0 ? Math.round(xpHoy / xpMax * 100) : 0;
 
+  const isFantasy = document.documentElement.getAttribute('data-theme') === 'fantasy';
   const color = isPerfect ? 'var(--accent2)' : 'var(--accent)';
-  const barColor = isPerfect ? 'linear-gradient(to right,#c4a84f,#e8c96e)' : 'var(--accent)';
+  const barColor = isPerfect
+    ? (isFantasy ? 'linear-gradient(to right,#5a3a9e,#7b4fcf)' : 'linear-gradient(to right,#c4a84f,#e8c96e)')
+    : 'var(--accent)';
+  const latColor = isPerfect
+    ? (isFantasy ? 'var(--accent2)' : '#c4a84f')
+    : 'var(--accent)';
 
   const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
   const setColor = (id, c) => { const el = document.getElementById(id); if (el) el.style.color = c; };
@@ -364,7 +370,7 @@ export function renderProgress() {
   set('hoy-sc-hab-pct', `${pct}%`);
   setColor('hoy-sc-hab-val', color);
   setColor('hoy-sc-hab-pct', color);
-  setBg('hoy-sc-bar-lat-hab', isPerfect ? '#c4a84f' : 'var(--accent)');
+  setBg('hoy-sc-bar-lat-hab', latColor);
   setBg('hoy-sc-hab-bar', barColor);
   const habBar = document.getElementById('hoy-sc-hab-bar');
   if (habBar) habBar.style.width = pct + '%';
@@ -374,10 +380,19 @@ export function renderProgress() {
   set('hoy-sc-xp-pct', `${xpPct}%`);
   setColor('hoy-sc-xp-val', color);
   setColor('hoy-sc-xp-pct', color);
-  setBg('hoy-sc-bar-lat-xp', isPerfect ? '#c4a84f' : 'var(--accent)');
+  setBg('hoy-sc-bar-lat-xp', latColor);
   setBg('hoy-sc-xp-bar', barColor);
   const xpBar = document.getElementById('hoy-sc-xp-bar');
   if (xpBar) xpBar.style.width = xpPct + '%';
+
+  // Fantasy perfect day: toggle class on hoy-sc-cards and viajero xp fill
+  const habCard = document.getElementById('hoy-sc-hab');
+  const xpCard = document.getElementById('hoy-sc-xp');
+  const xpFill = document.querySelector('.viajero-xp-fill');
+  const fantasyPerfect = isPerfect && isFantasy;
+  if (habCard) habCard.classList.toggle('fantasy-perfect', fantasyPerfect);
+  if (xpCard) xpCard.classList.toggle('fantasy-perfect', fantasyPerfect);
+  if (xpFill) xpFill.classList.toggle('fantasy-perfect', fantasyPerfect);
 }
 
 // ── Tareas ──

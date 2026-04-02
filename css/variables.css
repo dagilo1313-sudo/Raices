@@ -281,3 +281,24 @@
 
 /* Separador ornamental */
 [data-theme="fantasy"] .seccion-separador { font-family: 'Cinzel Decorative', serif; color: #2a2245; letter-spacing: 8px; }
+
+/* ── Fantasy: Stats — mejor racha colores ── */
+[data-theme="fantasy"] #stat-perf-racha-mejor { color: #5a3a9e !important; }
+[data-theme="fantasy"] #stat-buenos-racha-mejor { color: #9a7a2a !important; }
+
+/* ── Fantasy: HOY — día perfecto → púrpura ── */
+[data-theme="fantasy"] #habits-list.perfect-day .habit-card.done { border-color: rgba(123,79,207,0.35) !important; background: linear-gradient(135deg, var(--card) 0%, rgba(123,79,207,0.07) 100%) !important; }
+[data-theme="fantasy"] #habits-list.perfect-day .habit-card.done::before { background: var(--accent2) !important; }
+[data-theme="fantasy"] #habits-list.perfect-day .habit-card.done .habit-name { color: var(--accent2) !important; }
+[data-theme="fantasy"] #habits-list.perfect-day .habit-card.done .check-circle { background: var(--accent2) !important; border-color: var(--accent2) !important; box-shadow: 0 0 10px rgba(123,79,207,0.4) !important; }
+[data-theme="fantasy"] .hoy-sc-card.fantasy-perfect .hoy-sc-bar-lat { background: var(--accent2) !important; }
+[data-theme="fantasy"] .hoy-sc-card.fantasy-perfect .hoy-sc-fill { background: linear-gradient(to right, #5a3a9e, #7b4fcf) !important; }
+[data-theme="fantasy"] .hoy-sc-card.fantasy-perfect .hoy-sc-big,
+[data-theme="fantasy"] .hoy-sc-card.fantasy-perfect .hoy-sc-pct { color: var(--accent2) !important; }
+[data-theme="fantasy"] #habits-list.perfect-day .progress-fill { background: linear-gradient(to right, #5a3a9e, var(--accent2)) !important; }
+[data-theme="fantasy"] .viajero-xp-fill.fantasy-perfect { background: linear-gradient(to right, #5a3a9e, var(--accent2)) !important; }
+
+/* ── Fantasy: HOY title — usar texto en vez de canvas ── */
+[data-theme="fantasy"] #title-canvas { display: none !important; }
+[data-theme="fantasy"] .hoy-title-fantasy { display: block !important; font-family: 'Cinzel Decorative', serif; font-size: 29px; font-weight: 700; background: linear-gradient(90deg, #c9a84c, #a87fe8, #c9a84c); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: logoShimmer 4s linear infinite; }
+[data-theme="fantasy"] .hoy-sub-fantasy { display: block !important; font-family: 'Crimson Pro', serif; font-style: italic; color: var(--muted); font-size: 13px; margin-top: 2px; }
