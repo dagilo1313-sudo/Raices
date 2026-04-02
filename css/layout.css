@@ -528,6 +528,7 @@ header {
 .racha-card.gold-racha{border-color:rgba(196,168,79,0.2);}
 .racha-card.gold-racha::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent2);border-radius:3px 0 0 3px;}
 .racha-card.green-racha::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent);border-radius:3px 0 0 3px;}
+.racha-card.gold-bar-racha::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent2);border-radius:3px 0 0 3px;}
 .rc-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
 .rc-title{font-size:9px;letter-spacing:2px;text-transform:uppercase;font-weight:600;}
 .rc-total-badge{font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;border:1px solid;}

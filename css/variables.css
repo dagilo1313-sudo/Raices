@@ -270,10 +270,17 @@
 }
 @keyframes dfLinePulse { 0%,100%{opacity:0;transform:translateY(-100%)} 50%{opacity:1;transform:translateY(100%)} }
 
-/* Avatar glow — purple only in fantasy */
+/* Avatar glow — gold normal, purple on perfect day */
 [data-theme="fantasy"] .viajero-avatar-wrap,
-[data-theme="fantasy"] .user-avatar { animation: dfAvatarGlow 3s ease-in-out infinite; }
-@keyframes dfAvatarGlow {
+[data-theme="fantasy"] .user-avatar { animation: dfAvatarGlowGold 3s ease-in-out infinite; }
+[data-theme="fantasy"] .viajero-avatar-wrap.fantasy-perfect-avatar,
+[data-theme="fantasy"] .fantasy-perfect-avatar .user-avatar { animation: dfAvatarGlowPurple 3s ease-in-out infinite; }
+@keyframes dfAvatarGlowGold {
+  0%,100% { box-shadow: 0 0 0 0 rgba(201,168,76,0); border-color: #c9a84c; }
+  40%     { box-shadow: 0 0 0 5px rgba(201,168,76,0.15), 0 0 12px rgba(201,168,76,0.10); border-color: #c9a84c; }
+  60%     { box-shadow: 0 0 0 7px rgba(201,168,76,0.12), 0 0 16px rgba(201,168,76,0.08); border-color: #e0c05a; }
+}
+@keyframes dfAvatarGlowPurple {
   0%,100% { box-shadow: 0 0 0 0 rgba(123,79,207,0); border-color: #7b4fcf; }
   40%     { box-shadow: 0 0 0 5px rgba(123,79,207,0.15), 0 0 12px rgba(123,79,207,0.10); border-color: #7b4fcf; }
   60%     { box-shadow: 0 0 0 7px rgba(168,127,232,0.12), 0 0 16px rgba(168,127,232,0.08); border-color: #a87fe8; }
@@ -334,10 +341,10 @@
 [data-theme="fantasy"] .tareas-panel.fantasy-perfect-tareas .tarea-item.done .tarea-check { background: var(--accent2) !important; border-color: var(--accent2) !important; }
 [data-theme="fantasy"] .tareas-panel.fantasy-perfect-tareas .btn-primary { background: var(--accent2) !important; color: var(--bg) !important; }
 
-/* ── Fantasy: HOY — cat-tabs día perfecto → dorado ── */
-[data-theme="fantasy"] .cat-tab.active-all-perfect { border-color: var(--accent) !important; color: var(--accent) !important; background: rgba(201,168,76,0.12) !important; }
+/* ── Fantasy: HOY — cat-tabs día perfecto → púrpura ── */
+[data-theme="fantasy"] .cat-tab.active-all-perfect { border-color: var(--accent2) !important; color: var(--accent2) !important; background: rgba(123,79,207,0.12) !important; }
 [data-theme="fantasy"] .cat-tabs.perfect-day .cat-tab.active-all-perfect,
-[data-theme="fantasy"] .cat-tabs.perfect-day .cat-tab[class*="active-"] { border-color: var(--accent) !important; color: var(--accent) !important; background: rgba(201,168,76,0.08) !important; }
+[data-theme="fantasy"] .cat-tabs.perfect-day .cat-tab[class*="active-"] { border-color: var(--accent2) !important; color: var(--accent2) !important; background: rgba(123,79,207,0.08) !important; }
 
 /* ── Fantasy: HOY — tareas hover púrpura en día perfecto ── */
 [data-theme="fantasy"] .tareas-toggle.fantasy-perfect-tareas:hover { border-color: var(--accent2) !important; box-shadow: 0 0 12px rgba(123,79,207,0.25) !important; }
@@ -356,3 +363,9 @@
 
 /* ── Fantasy: HOY separador — espadas ── */
 [data-theme="fantasy"] .hoy-separator-icon { font-size: 12px !important; }
+
+/* ── Fantasy: HOY — botón nueva tarea dorado ── */
+[data-theme="fantasy"] #tareas-panel .btn-primary { background: var(--accent) !important; color: var(--bg) !important; border-color: var(--accent) !important; }
+[data-theme="fantasy"] #tareas-panel .btn-primary:hover { background: #e0c05a !important; box-shadow: 0 0 10px rgba(201,168,76,0.3) !important; }
+[data-theme="fantasy"] .tareas-panel.fantasy-perfect-tareas .btn-primary { background: var(--accent2) !important; color: var(--bg) !important; border-color: var(--accent2) !important; }
+[data-theme="fantasy"] .tareas-panel.fantasy-perfect-tareas .btn-primary:hover { background: #9a6ae0 !important; box-shadow: 0 0 10px rgba(123,79,207,0.3) !important; }

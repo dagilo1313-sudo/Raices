@@ -215,6 +215,12 @@ export function renderViajero() {
     viajeroCard.classList.toggle('fantasy-perfect-viajero', isPerfectToday && isFantasyViajero);
   }
 
+  // Fantasy: avatar glow — gold normal, purple on perfect day
+  const avatarWrap = document.querySelector('.viajero-avatar-wrap');
+  if (avatarWrap && isFantasyViajero) {
+    avatarWrap.classList.toggle('fantasy-perfect-avatar', isPerfectToday);
+  }
+
   // Fantasy: separator swords
   const sepIcon = document.getElementById('hoy-sep-icon');
   if (sepIcon) sepIcon.textContent = isFantasyViajero ? '⚔' : '◆';
