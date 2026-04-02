@@ -93,7 +93,7 @@ export function showXPFloat(habitId, xp) {
   const color = xp >= 50
     ? (isFantasy ? '#c9a84c' : '#c4a84f')
     : xp >= 25
-      ? (isFantasy ? '#7b4fcf' : '#8fb339')
+      ? (isFantasy ? '#5cb85c' : '#8fb339')
       : (isFantasy ? '#5a5080' : '#5a6b5a');
 
   const card = document.getElementById('habit-' + habitId);

@@ -12,7 +12,7 @@ window._unlockScroll = unlockScroll;
 
 import { initAuth, toggleAuthMode, handleAuth, showForgotPassword, showLoginForm, sendResetEmail, showChangePassword, hideChangePassword, changePassword, logout } from './auth.js';
 import { toggleHabit, deleteHabit, saveCompletions, resetAllData, resetProgress, createTarea, toggleTarea, borrarTareasCompletadas, getCompletadosForDate, loadAllCompletions, loadMonthCompletions, rellenarDiasVacios, loadMonthsForDate, saveDebugDate, clearDebugDate } from './habits.js';
-import { renderAll, renderHabitsList, renderTareas, renderHistorico, renderStats, renderRangosPanel, renderHabitToggle, renderProgress, renderViajero, renderXPBar } from './render.js';
+import { renderAll, renderHabitsList, renderTareas, renderHistorico, renderStats, renderRangosPanel, renderHabitToggle, renderProgress, renderViajero, renderXPBar, renderWeek } from './render.js';
 import { showToast, showConfetti, showXPFloat, switchView } from './ui.js';
 import { openCreateModal, openEditModal, closeModal, closeModalOutside, submitModal, selectEmoji, selectNoIcon, selectCategory, selectXP, toggleDay, selectAllDays, openIconPicker, closeIconPicker, confirmIconPicker, clearIconPicker } from './modal.js';
 import { state, getCompletionMessage, today, CLASES, isScheduledForDate } from './state.js';
@@ -94,6 +94,8 @@ window.onToggleHabit = (id) => {
       const scheduled = state.habits.filter(h => !h.archivado && isScheduledForDate(h, todayStr));
       const completedToday = getCompletadosForDate(todayStr);
       const diaPerfecto = scheduled.length > 0 && scheduled.every(h => completedToday.includes(h.id));
+      const nuevoBueno = result.despues && result.despues.esBueno && result.antes && !result.antes.esBueno && !diaPerfecto;
+
       if (diaPerfecto && result.subioNivel) {
         showConfetti();
         showDiaPerfectoNotif(() => {
@@ -102,6 +104,8 @@ window.onToggleHabit = (id) => {
         });
       } else if (diaPerfecto) {
         showConfetti(); showDiaPerfectoNotif(null);
+      } else if (nuevoBueno) {
+        showDiaBuenoNotif();
       } else if (result.subioRango) {
         showConfetti();
         const claseData = CLASES[result.calcDespues.clase];
@@ -118,10 +122,11 @@ window.onToggleHabit = (id) => {
   const ahoraCompletado = !eraCompletado;
   renderHabitToggle(id, ahoraCompletado);
 
-  // 4. Actualizar contadores (progreso, viajero, XP bar) — sin tocar la lista
+  // 4. Actualizar contadores (progreso, viajero, XP bar, week strip) — sin tocar la lista
   renderProgress();
   renderViajero();
   renderXPBar();
+  renderWeek();
 
   // 5. Guardar en Firestore en background
   saveCompletions().catch(err => logError('saveCompletions', err));
@@ -144,6 +149,23 @@ function showDiaPerfectoNotif(onClose) {
     if (onClose) onClose();
   });
   el.addEventListener('click', e => { if (e.target === el) { el.remove(); if (onClose) onClose(); } });
+  document.body.appendChild(el);
+}
+
+function showDiaBuenoNotif() {
+  const el = document.createElement('div');
+  el.id = 'dia-bueno-notif';
+  el.style.cssText = 'position:fixed;inset:0;z-index:300;background:rgba(0,0,0,0.65);display:flex;align-items:center;justify-content:center;padding:24px;animation:fadeIn 0.3s ease';
+  el.innerHTML = `
+    <div style="background:var(--card2);border:1.5px solid var(--accent);border-radius:20px;padding:28px 24px;text-align:center;max-width:300px;width:100%;animation:popIn 0.4s cubic-bezier(0.34,1.56,0.64,1);box-shadow:0 0 32px rgba(143,179,57,0.12)">
+      <div style="font-size:40px;margin-bottom:10px">🌿</div>
+      <div style="font-size:18px;color:var(--accent);margin-bottom:6px;font-weight:700">¡Día bueno!</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.5">Has superado el 80% de eficiencia XP hoy. ¡Buen trabajo, viajero!</div>
+      <button id="btn-dia-bueno-ok" style="background:rgba(143,179,57,0.15);color:var(--accent);border:1.5px solid var(--accent);border-radius:var(--radius-full);padding:10px 28px;font-size:13px;font-weight:700;font-family:var(--font-body);cursor:pointer;transition:background 0.2s">¡Sigue así!</button>
+    </div>
+    <style>@keyframes popIn{from{transform:scale(0.7);opacity:0}to{transform:scale(1);opacity:1}}</style>`;
+  el.querySelector('#btn-dia-bueno-ok').addEventListener('click', () => el.remove());
+  el.addEventListener('click', e => { if (e.target === el) el.remove(); });
   document.body.appendChild(el);
 }
 

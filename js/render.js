@@ -308,7 +308,7 @@ function getDayState(ds, habitsSource) {
   return { hasDone, isPerfect, isGood, isGray, isGrayDot, isGrayGreen, completedIds, scheduled };
 }
 
-function renderWeek() {
+export function renderWeek() {
   const strip = document.getElementById('week-strip');
   if (!strip) return;
   const days = ['D', 'L', 'M', 'X', 'J', 'V', 'S'];

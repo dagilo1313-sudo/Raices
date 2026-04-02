@@ -222,16 +222,20 @@
 [data-theme="fantasy"] .viajero-clase { font-family: 'Cinzel Decorative', serif; font-style: italic; color: var(--accent2); font-size: 13px; }
 [data-theme="fantasy"] .viajero-nivel-badge { font-family: 'Cinzel Decorative', serif; font-size: 11px; background: rgba(201,168,76,0.08); border-color: rgba(201,168,76,0.3); letter-spacing: 1px; }
 [data-theme="fantasy"] .viajero-stat-num { font-family: 'Cinzel Decorative', serif; font-size: 25px; }
-[data-theme="fantasy"] .habit-name { font-family: 'Crimson Pro', serif; font-size: 17px; }
+[data-theme="fantasy"] .habit-name { font-family: 'Manrope', sans-serif; font-size: 15px; font-weight: 500; }
 [data-theme="fantasy"] .habit-card.done .habit-name { font-style: normal; }
 [data-theme="fantasy"] .modal-title { font-family: 'Cinzel Decorative', serif; font-size: 19px; color: var(--accent); letter-spacing: 1px; }
 [data-theme="fantasy"] .auth-logo { font-family: 'Cinzel Decorative', serif; }
 [data-theme="fantasy"] .auth-title { font-family: 'Cinzel Decorative', serif; font-size: 21px; color: var(--accent); }
 [data-theme="fantasy"] .btn { font-family: 'Cinzel Decorative', serif; font-size: 10px; letter-spacing: 1.5px; border-radius: 999px; }
 [data-theme="fantasy"] .pf-btn { font-family: 'Cinzel Decorative', serif; font-size: 10px; letter-spacing: 0.5px; border-radius: 999px; }
-[data-theme="fantasy"] .xp-badge { font-family: 'Crimson Pro', serif; font-style: italic; font-size: 13px; }
-[data-theme="fantasy"] .xp-badge.xp-50 { color: var(--accent); background: rgba(201,168,76,0.12); border-color: rgba(201,168,76,0.3); }
-[data-theme="fantasy"] .xp-badge.xp-25 { color: var(--accent2); background: rgba(123,79,207,0.12); border-color: rgba(123,79,207,0.3); }
+[data-theme="fantasy"] .xp-badge { font-family: 'Crimson Pro', serif; font-style: italic; font-size: 13px; color: #3a3560 !important; background: rgba(42,34,69,0.3) !important; border-color: #2a2245 !important; transition: color 0.3s, background 0.3s, border-color 0.3s; }
+[data-theme="fantasy"] .xp-badge.xp-50 { color: #3a3560 !important; background: rgba(42,34,69,0.3) !important; border-color: #2a2245 !important; }
+[data-theme="fantasy"] .xp-badge.xp-25 { color: #3a3560 !important; background: rgba(42,34,69,0.3) !important; border-color: #2a2245 !important; }
+/* Lit up when habit is done */
+[data-theme="fantasy"] .habit-card.done .xp-badge.xp-10 { color: #5a5080 !important; background: rgba(90,80,128,0.12) !important; border-color: rgba(90,80,128,0.3) !important; }
+[data-theme="fantasy"] .habit-card.done .xp-badge.xp-25 { color: #5cb85c !important; background: rgba(92,184,92,0.12) !important; border-color: rgba(92,184,92,0.3) !important; }
+[data-theme="fantasy"] .habit-card.done .xp-badge.xp-50 { color: var(--accent) !important; background: rgba(201,168,76,0.12) !important; border-color: rgba(201,168,76,0.3) !important; }
 
 /* Navbar */
 [data-theme="fantasy"] .nav-bar { background: rgba(8,6,14,0.96); }
@@ -383,7 +387,7 @@
 [data-theme="fantasy"] #btn-modal-submit:hover { background: #e0c05a !important; box-shadow: 0 0 12px rgba(201,168,76,0.3) !important; }
 
 /* ── Fantasy: XP 25 badge verde ── */
-[data-theme="fantasy"] .xp-badge.xp-25 { color: #5cb85c !important; background: rgba(92,184,92,0.12) !important; border-color: rgba(92,184,92,0.3) !important; }
+/* xp-25 badge colors now handled by done/not-done rules above */
 
 /* ── Fantasy: Modal chips categoría mayúscula ── */
 [data-theme="fantasy"] .chip.cat-chip { text-transform: uppercase; letter-spacing: 1px; font-size: 11px; }

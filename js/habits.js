@@ -401,7 +401,7 @@ export async function toggleHabit(id) {
     }
 
     await updateDoc(profileRef(), updates);
-    return { xpGanado, subioNivel, subioRango, calcDespues };
+    return { xpGanado, subioNivel, subioRango, calcDespues, antes, despues };
 
   } else {
     // Desmarcar
