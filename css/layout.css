@@ -451,21 +451,21 @@ header {
 /* Cat cards */
 .scat-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px 18px;margin:0 24px 8px;position:relative;overflow:hidden;}
 .scat-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:3px 0 0 3px;background:var(--accent);}
-.scat-title{font-size:12px;font-weight:500;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:14px;}
+.scat-title{font-size:15px;font-weight:500;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:14px;}
 .scat-desc{font-size:11px;color:var(--dim);font-style:italic;margin-bottom:12px;}
 .scats-grid{display:flex;flex-direction:column;gap:10px;}
 .scat-row{display:flex;align-items:center;gap:10px;}
-.scat-pill{font-size:11px;font-weight:600;padding:5px 12px;border-radius:20px;white-space:nowrap;flex-shrink:0;min-width:115px;text-align:center;text-transform:uppercase;letter-spacing:1px;}
+.scat-pill{font-size:12px;font-weight:600;padding:5px 12px;border-radius:20px;white-space:nowrap;flex-shrink:0;min-width:115px;text-align:center;text-transform:uppercase;letter-spacing:1px;}
 .scat-bar-wrap{flex:1;height:3px;background:#131708;border-radius:3px;overflow:hidden;}
 .scat-bar-fill{height:100%;border-radius:3px;}
-.scat-val{font-size:13px;min-width:44px;text-align:right;font-weight:600;}
+.scat-val{font-size:17px;min-width:44px;text-align:right;font-weight:600;}
 
 /* Días de semana barras */
 .sdias-grid{display:flex;gap:6px;}
 .sdia{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;}
 .sdia-bar-wrap{width:100%;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:48px;}
 .sdia-bar{width:100%;border-radius:3px 3px 0 0;min-height:2px;background:rgba(143,179,57,0.6);}
-.sdia-name{font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;}
+.sdia-name{font-size:11px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;}
 
 /* ── Score card histórico ── */
 .score-card{display:flex;margin:0 24px 16px;border-radius:14px;overflow:hidden;border:1px solid var(--border);}
@@ -501,7 +501,7 @@ header {
 /* ── Recorrido ── */
 .rec-row{display:flex;align-items:center;justify-content:space-between;padding:13px 18px;border-bottom:1px solid var(--border);}
 .rec-row:last-child{border-bottom:none;}
-.rec-lbl{font-size:12px;color:var(--muted);}
+.rec-lbl{font-size:15px;color:var(--muted);}
 .rec-val{font-size:16px;font-weight:700;text-align:right;}
 .rec-sub{font-size:10px;color:var(--dim);text-align:right;margin-top:1px;}
 
@@ -510,10 +510,10 @@ header {
 .insight-row+.insight-row{border-top:1px solid var(--border);}
 .insight-left{display:flex;align-items:center;gap:9px;}
 .insight-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
-.insight-lbl{font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:2px;}
-.insight-name{font-size:13px;font-weight:500;color:var(--text);}
-.insight-val{font-size:16px;font-weight:700;text-align:right;}
-.insight-sub{font-size:10px;color:var(--muted);text-align:right;margin-top:1px;}
+.insight-lbl{font-size:11px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:2px;}
+.insight-name{font-size:15px;font-weight:500;color:var(--text);}
+.insight-val{font-size:17px;font-weight:700;text-align:right;}
+.insight-sub{font-size:12px;color:var(--muted);text-align:right;margin-top:1px;}
 
 /* ── Hábitos en riesgo ── */
 .riesgo-row{display:flex;align-items:center;justify-content:space-between;padding:9px 0;gap:12px;}
