@@ -46,6 +46,7 @@ export function renderViajero() {
   const todayStr = today();
   const scheduledHoy = state.habits.filter(h => !h.archivado && isScheduledForDate(h, todayStr));
   const isPerfectToday = scheduledHoy.length > 0 && scheduledHoy.every(h => isCompleted(h.id, todayStr));
+  const isFantasyViajero = document.documentElement.getAttribute('data-theme') === 'fantasy';
   const gold = isPerfectToday ? 'var(--accent2)' : '';
   const goldBorder = isPerfectToday ? 'rgba(196,168,79,0.4)' : '';
   const goldBg = isPerfectToday ? 'rgba(196,168,79,0.1)' : '';
@@ -206,9 +207,6 @@ export function renderViajero() {
       : `${calc.xpActual.toLocaleString('es-ES')} / ${calc.xpSiguiente.toLocaleString('es-ES')} XP`;
     xpLabelEl2.style.color = accentColor;
   }
-
-  // Fantasy theme check
-  const isFantasyViajero = document.documentElement.getAttribute('data-theme') === 'fantasy';
 
   // Barra lateral del viajero — dorada en día perfecto
   const viajeroCard = document.querySelector('.viajero-card');
@@ -661,6 +659,15 @@ export async function renderStats() {
       loader.id = 'stats-loader';
       loader.style.cssText = 'display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;gap:18px';
 
+      const isFantasyStats = document.documentElement.getAttribute('data-theme') === 'fantasy';
+      const lRing1 = isFantasyStats ? 'rgba(123,79,207,0.25)' : 'rgba(143,179,57,0.25)';
+      const lRing2 = isFantasyStats ? 'rgba(123,79,207,0.12)' : 'rgba(143,179,57,0.12)';
+      const lGlow  = isFantasyStats ? 'rgba(123,79,207,0.05)' : 'rgba(143,179,57,0.05)';
+      const lEmoji = isFantasyStats ? '⚔' : '🌱';
+      const lText  = isFantasyStats ? 'Invocando registros' : 'Cargando historial';
+      const lColor = isFantasyStats ? 'var(--accent)' : 'var(--accent)';
+      const lFont  = isFantasyStats ? "font-family:'Cinzel Decorative',serif;font-size:11px;letter-spacing:4px;color:#c9a84c" : "font-size:13px;color:var(--accent);letter-spacing:2.5px";
+
       loader.innerHTML = `
         <style>
           @keyframes stats-txt-fade{0%,100%{opacity:0.3}50%{opacity:1}}
@@ -669,14 +676,14 @@ export async function renderStats() {
           @keyframes stats-ring2{0%,100%{opacity:0.05;transform:scale(1)}50%{opacity:0.12;transform:scale(1.13)}}
         </style>
         <div style="position:relative;width:100px;height:100px;display:flex;align-items:center;justify-content:center">
-          <div style="position:absolute;inset:0;border-radius:50%;border:1px solid rgba(143,179,57,0.25);animation:stats-ring1 2s ease-in-out infinite"></div>
-          <div style="position:absolute;inset:-14px;border-radius:50%;border:1px solid rgba(143,179,57,0.12);animation:stats-ring2 2s ease-in-out infinite 0.5s"></div>
-          <div style="position:absolute;inset:8px;border-radius:50%;background:rgba(143,179,57,0.05)"></div>
+          <div style="position:absolute;inset:0;border-radius:50%;border:1px solid ${lRing1};animation:stats-ring1 2s ease-in-out infinite"></div>
+          <div style="position:absolute;inset:-14px;border-radius:50%;border:1px solid ${lRing2};animation:stats-ring2 2s ease-in-out infinite 0.5s"></div>
+          <div style="position:absolute;inset:8px;border-radius:50%;background:${lGlow}"></div>
           <canvas id="stats-orbit-canvas" width="200" height="200" style="position:absolute;inset:-50px;width:200px;height:200px;pointer-events:none"></canvas>
-          <div style="font-size:30px;position:relative;z-index:2;animation:stats-leaf-bounce 2s ease-in-out infinite">🌱</div>
+          <div style="font-size:30px;position:relative;z-index:2;animation:stats-leaf-bounce 2s ease-in-out infinite">${lEmoji}</div>
         </div>
         <div style="display:flex;flex-direction:column;align-items:center;gap:5px">
-          <div style="font-size:13px;color:var(--accent);letter-spacing:2.5px;text-transform:uppercase;animation:stats-txt-fade 1.8s ease-in-out infinite">Cargando historial</div>
+          <div style="${lFont};text-transform:uppercase;animation:stats-txt-fade 1.8s ease-in-out infinite">${lText}</div>
         </div>`;
 
       header?.insertAdjacentElement('afterend', loader);
@@ -688,11 +695,17 @@ export async function renderStats() {
         const ctx = cv.getContext('2d');
         const W = 200, H = 200, cx = W/2, cy = H/2;
 
-        // Dos anillos orbitales más pequeños y discretos
-        const orbits = [
-          { r: 38, n: 5,  speed: 0.014,  offset: 0,          size: 2.0, hue: 44, alpha: 0.9 },
-          { r: 54, n: 8,  speed: -0.009, offset: Math.PI/4,  size: 1.5, hue: 38, alpha: 0.6 },
-        ];
+        const isFantasyOrbit = document.documentElement.getAttribute('data-theme') === 'fantasy';
+        const orbits = isFantasyOrbit
+          ? [
+              { r: 38, n: 5,  speed: 0.014,  offset: 0,          size: 2.0, hue: 270, alpha: 0.9 },
+              { r: 54, n: 8,  speed: -0.009, offset: Math.PI/4,  size: 1.5, hue: 44, alpha: 0.6 },
+            ]
+          : [
+              { r: 38, n: 5,  speed: 0.014,  offset: 0,          size: 2.0, hue: 44, alpha: 0.9 },
+              { r: 54, n: 8,  speed: -0.009, offset: Math.PI/4,  size: 1.5, hue: 38, alpha: 0.6 },
+            ];
+        const orbitStrokeColor = isFantasyOrbit ? 'rgba(123,79,207,0.06)' : 'rgba(143,179,57,0.06)';
 
         // Inicializar ángulos
         const particles = [];
@@ -718,7 +731,7 @@ export async function renderStats() {
           orbits.forEach(o => {
             ctx.beginPath();
             ctx.arc(cx, cy, o.r, 0, Math.PI * 2);
-            ctx.strokeStyle = `rgba(143,179,57,0.06)`;
+            ctx.strokeStyle = orbitStrokeColor;
             ctx.lineWidth = 1;
             ctx.stroke();
           });
