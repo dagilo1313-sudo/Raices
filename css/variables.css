@@ -166,10 +166,10 @@
   --border:  #2a2245;
   --dim:     #1a1a3a;
   --text:    #d4c9f0;
-  --muted:   #6b6090;
-  --accent:  #c9a84c;
-  --accent2: #9761ff;
-  --accent3: #a8862a;
+  --muted:   #887bb1;
+  --accent:  #e1bb50;
+  --accent2: #b590fc;
+  --accent3: #c2a34d;
   --danger:  #f54040;
   --glow:    rgba(201,168,76,0.15);
 
@@ -190,7 +190,7 @@
   --cat-identidad-border:    rgba(92,224,184,0.30);
 
   --xp-10: #5a5080;
-  --xp-25: #5cb85c;
+  --xp-25: #76bd76;
   --xp-50: #c9a84c;
 
   --font-display: 'Cinzel Decorative', serif;
