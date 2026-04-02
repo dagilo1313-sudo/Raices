@@ -154,6 +154,10 @@
 }
 
 /* ══ Dark Fantasy theme ══ */
+/* Swap de roles:
+   --accent  (verde en dark)  → dorado  #c9a84c  (el "verde" del fantasy)
+   --accent2 (dorado en dark) → púrpura #7b4fcf  (el "dorado/especial" del fantasy)
+   --accent3 (verde oscuro)   → púrpura oscuro   */
 [data-theme="fantasy"] {
   --bg:      #08060e;
   --surface: #0d0b18;
@@ -164,10 +168,10 @@
   --text:    #d4c9f0;
   --muted:   #6b6090;
   --accent:  #c9a84c;
-  --accent2: #a87fe8;
-  --accent3: #7b4fcf;
+  --accent2: #7b4fcf;
+  --accent3: #a8862a;
   --danger:  #8b1a1a;
-  --glow:    rgba(201,168,76,0.12);
+  --glow:    rgba(201,168,76,0.15);
 
   --cat-fisico:              #e05c5c;
   --cat-fisico-bg:           rgba(224,92,92,0.10);
@@ -225,6 +229,8 @@
 [data-theme="fantasy"] .btn { font-family: 'Cinzel Decorative', serif; font-size: 10px; letter-spacing: 1.5px; border-radius: 999px; }
 [data-theme="fantasy"] .pf-btn { font-family: 'Cinzel Decorative', serif; font-size: 10px; letter-spacing: 0.5px; border-radius: 999px; }
 [data-theme="fantasy"] .xp-badge { font-family: 'Crimson Pro', serif; font-style: italic; }
+[data-theme="fantasy"] .xp-badge.xp-50 { color: var(--accent); background: rgba(201,168,76,0.12); border-color: rgba(201,168,76,0.3); }
+[data-theme="fantasy"] .xp-badge.xp-25 { color: var(--accent2); background: rgba(123,79,207,0.12); border-color: rgba(123,79,207,0.3); }
 
 /* Navbar */
 [data-theme="fantasy"] .nav-bar { background: rgba(8,6,14,0.96); }
@@ -243,7 +249,7 @@
 
 /* Progress fill — purple to gold */
 [data-theme="fantasy"] .progress-fill,
-[data-theme="fantasy"] .viajero-xp-fill { background: linear-gradient(to right, #7b4fcf, #c9a84c); }
+[data-theme="fantasy"] .viajero-xp-fill { background: linear-gradient(to right, var(--accent3), var(--accent)); }
 
 /* Días semana */
 [data-theme="fantasy"] .day-num.day-gray { border-color: #2a2245; color: #4a4070; background: rgba(42,34,69,0.2); }
@@ -258,7 +264,7 @@
 [data-theme="fantasy"] .viajero-card::after {
   content: '';
   position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
-  background: linear-gradient(to bottom, transparent, rgba(201,168,76,0.8), transparent);
+  background: linear-gradient(to bottom, transparent, rgba(201,168,76,0.7), transparent);
   animation: dfLinePulse 3s ease-in-out infinite;
 }
 @keyframes dfLinePulse { 0%,100%{opacity:0;transform:translateY(-100%)} 50%{opacity:1;transform:translateY(100%)} }

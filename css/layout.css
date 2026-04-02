@@ -620,3 +620,32 @@ header {
 
 /* Theme radio selector */
 .theme-radio { width: 16px; height: 16px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+
+/* ── Fantasy title — Raíces con letras doradas medievales ── */
+[data-theme="fantasy"] .logo,
+[data-theme="fantasy"] .logo-animated {
+  font-family: 'Cinzel Decorative', serif !important;
+  font-size: 28px !important;
+  font-weight: 900 !important;
+  letter-spacing: 2px !important;
+  -webkit-text-fill-color: transparent !important;
+  background: linear-gradient(180deg,
+    #f0d060 0%,
+    #c9a84c 25%,
+    #e8c840 50%,
+    #a07828 75%,
+    #c9a84c 100%
+  ) !important;
+  background-size: 100% 100% !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  animation: none !important;
+  text-shadow: none !important;
+  filter: drop-shadow(0 1px 2px rgba(201,168,76,0.4));
+}
+[data-theme="fantasy"] .logo-sub {
+  font-family: 'Crimson Pro', serif;
+  font-style: italic;
+  color: var(--muted);
+  letter-spacing: 3px;
+}
