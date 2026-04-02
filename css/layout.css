@@ -259,7 +259,7 @@ header {
 .day-dot.gray    { background: #3a3e32; }
 
 /* ── Habit card ── */
-.habit-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 7px 14px; margin-bottom: 6px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: border-color 0.25s, background 0.25s; position: relative; overflow: hidden; animation: slideIn 0.3s ease; }
+.habit-card { background: var(--card); border: 1.5px solid var(--border); border-radius: var(--radius-lg); padding: 7px 14px; margin-bottom: 6px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: border-color 0.25s, background 0.25s; position: relative; overflow: hidden; animation: slideIn 0.3s ease; }
 .habit-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--border); border-radius: 3px 0 0 3px; transition: background 0.3s; }
 .habit-card[data-cat="fisico"]::before { background: var(--cat-fisico-border); }
 .habit-card[data-cat="disciplina"]::before { background: var(--cat-disciplina-border); }
@@ -287,7 +287,7 @@ header {
 .habit-card.done .check-circle { background: var(--accent); border-color: var(--accent); transform: scale(1.15); box-shadow: 0 0 18px rgba(201, 168, 76, 0.4); }
 .habit-card.done .check-circle .check-svg { opacity: 1; transform: scale(1) rotate(0deg); }
 /* ── Día perfecto: todo en dorado ── */
-#habits-list.perfect-day .habit-card.done { border-color: rgba(196,168,79,0.35); background: linear-gradient(135deg, var(--card) 0%, rgba(196,168,79,0.07) 100%); }
+#habits-list.perfect-day .habit-card.done { border-color: var(--accent2); background: linear-gradient(135deg, var(--card) 0%, rgba(196,168,79,0.07) 100%); }
 #habits-list.perfect-day .habit-card.done::before { background: var(--accent2); }
 #habits-list.perfect-day .habit-card.done .habit-name { color: var(--accent2); }
 #habits-list.perfect-day .habit-card.done .habit-emoji-cat { opacity: 1; filter: saturate(1); }
@@ -318,7 +318,7 @@ header {
 /* ── Category filter tabs ── */
 .cat-tabs { display: flex; gap: 8px; padding: 0 24px; margin-bottom: 6px; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
 .cat-tabs::-webkit-scrollbar { display: none; }
-.cat-tab { flex-shrink: 0; padding: 6px 14px; border-radius: var(--radius-full); border: 1px solid var(--border); background: var(--card); color: var(--muted); font-size: 12px; font-weight: bolder; cursor: pointer; transition: all 0.2s; font-family: var(--font-body); letter-spacing: 2px; -webkit-tap-highlight-color: transparent; }
+.cat-tab { flex-shrink: 0; padding: 6px 14px; border-radius: var(--radius-full); border: 1px solid var(--border); background: var(--card); color: var(--muted); font-size: 12px; font-weight: bolder; cursor: pointer; transition: all 0.2s; font-family: var(--font-body); text-transform: uppercase; letter-spacing: 2px; -webkit-tap-highlight-color: transparent; }
 .cat-tab.active-all { border-color: var(--accent); color: var(--accent); background: var(--glow); }
 .cat-tab.active-all-perfect { border-color: var(--accent2); color: var(--accent2); background: rgba(196,168,79,0.12); font-weight: 700; }
 
