@@ -16,7 +16,7 @@ function validarContenido(data) {
   if (typeof data !== 'object' || data === null)
     return 'El archivo no es un objeto JSON válido.';
   if (!data.version || !String(data.version).startsWith('raices-'))
-    return 'No parece un backup de La Forja de los Hábitos (campo version inválido).';
+    return 'No parece un backup de Raíces (campo version inválido).';
   if (!data.exportadoEn)
     return 'Falta el campo exportadoEn.';
   if (!data.perfil || typeof data.perfil !== 'object')
