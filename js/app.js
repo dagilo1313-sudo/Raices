@@ -107,14 +107,17 @@ window.onToggleHabit = (id) => {
       const diaPerfecto = scheduled.length > 0 && scheduled.every(h => completedToday.includes(h.id));
       const nuevoBueno = result.despues && result.despues.esBueno && result.antes && !result.antes.esBueno && !diaPerfecto;
 
+      const isFantasyConfetti = document.documentElement.getAttribute('data-theme') === 'fantasy';
+      const perfectHue = isFantasyConfetti ? 270 : 44;
+
       if (diaPerfecto && result.subioNivel) {
-        showConfetti();
+        showConfetti(perfectHue);
         showDiaPerfectoNotif(() => {
           const claseData = CLASES[result.calcDespues.clase];
           showLevelUpNotif(result.subioRango ? '¡Nuevo rango desbloqueado!' : `¡Subiste al nivel ${result.calcDespues.nivel}!`, `${claseData.emoji} ${claseData.nombre}`, `+${result.xpGanado} XP · Sigue así, viajero.`, claseData.color);
         });
       } else if (diaPerfecto) {
-        showConfetti(); showDiaPerfectoNotif(null);
+        showConfetti(perfectHue); showDiaPerfectoNotif(null);
       } else if (nuevoBueno) {
         showDiaBuenoNotif();
       } else if (result.subioRango) {

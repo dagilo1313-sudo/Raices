@@ -20,7 +20,8 @@ export function showToast(msg) {
 }
 
 // ── Confetti ──
-export function showConfetti() {
+export function showConfetti(hueBase) {
+  const h = hueBase || 44;
   const dpr = Math.min(window.devicePixelRatio || 1, 2);
   const CW = window.innerWidth, CH = window.innerHeight;
   const cv = document.createElement('canvas');
@@ -30,12 +31,11 @@ export function showConfetti() {
   const ctx = cv.getContext('2d');
   ctx.scale(dpr, dpr);
   const cx = CW/2, cy = CH * 0.42;
-  // Burst orbital: 3 anillos de partículas que explotan hacia afuera
   const rings = [
-    { n:10, r1:110, speed:5.0, delay:0,  hue:44 },
-    { n:14, r1:160, speed:3.8, delay:40, hue:38 },
-    { n:7,  r1:75,  speed:6.2, delay:10, hue:50 },
-    { n:5,  r1:200, speed:2.8, delay:70, hue:42 },
+    { n:10, r1:110, speed:5.0, delay:0,  hue:h },
+    { n:14, r1:160, speed:3.8, delay:40, hue:h-6 },
+    { n:7,  r1:75,  speed:6.2, delay:10, hue:h+6 },
+    { n:5,  r1:200, speed:2.8, delay:70, hue:h-2 },
   ];
   const ps = [];
   rings.forEach(ring => {
