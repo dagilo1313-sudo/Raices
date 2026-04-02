@@ -92,10 +92,10 @@ header {
   100% { box-shadow: 0 0 0 0 rgba(143,179,57,0), 0 0 0 0 rgba(196,168,79,0); border-color: var(--accent); }
 }
 .viajero-info { flex: 1; }
-.viajero-clase { font-size: 9px; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 2px; }
-.viajero-nombre { font-family: var(--font-body); font-size: 18px; color: var(--text); font-weight: 400; line-height: 1.2; }
+.viajero-clase { font-size: 12px; font-weight:700;color: var(--muted); text-transform: uppercase; margin-bottom: 2px; }
+.viajero-nombre { font-family: 'CINZEL DECORATIVE'; font-size: 24px; color: var(--text); font-weight: 400; line-height: 1.2; }
 .viajero-nivel-badge {
-  font-size: 11px; color: var(--accent);
+  font-size: 16px; color: var(--accent);
   background: transparent;
   border: 1px solid rgba(143,179,57,0.25);
   border-radius: var(--radius-full);
@@ -127,9 +127,9 @@ header {
   font-weight: 700;
 }
 .viajero-stat-lg { font-size: 34px; }
-.viajero-stat-md { font-size: 24px; }
+.viajero-stat-md { font-size: 32px; }
 .viajero-stat-lbl {
-  font-size: 10px; color: var(--muted);
+  font-size: 16px; color: var(--muted);
   text-transform: uppercase; letter-spacing: 1px;
   margin-top: 4px;
 }

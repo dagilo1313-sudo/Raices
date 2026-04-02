@@ -163,7 +163,7 @@ function showDiaPerfectoNotif(onClose) {
   el.id = 'dia-perfecto-notif';
   el.style.cssText = 'position:fixed;inset:0;z-index:300;background:rgba(0,0,0,0.65);display:flex;align-items:center;justify-content:center;padding:24px;animation:fadeIn 0.3s ease';
   el.innerHTML = `
-    <div style="position:fixed;background:var(--card2);border:1.5px solid ${borderColor};border-radius:20px;padding:28px 24px;text-align:center;max-width:300px;width:100%;animation:popIn 0.4s cubic-bezier(0.34,1.56,0.64,1);box-shadow:0 0 32px ${shadowColor}">
+    <div style="background:var(--card2);border:1.5px solid ${borderColor};border-radius:20px;padding:28px 24px;text-align:center;max-width:300px;width:100%;animation:popIn 0.4s cubic-bezier(0.34,1.56,0.64,1);box-shadow:0 0 32px ${shadowColor}">
       <div style="font-size:40px;margin-bottom:10px">${emoji}</div>
       <div style="font-size:25px;color:${btnColor};margin-bottom:6px;font-weight:700">¡Día perfecto!</div>
       <div style="font-size:16px;color:var(--muted);margin-bottom:20px;line-height:1.5">Has completado todos tus hábitos de hoy. ¡Tus raíces crecen profundo!</div>
@@ -202,7 +202,7 @@ function showLevelUpNotif(titulo, subtitulo, desc, color) {
   el.id = 'levelup-notif';
   el.style.cssText = 'position:fixed;inset:0;z-index:300;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;padding:24px;animation:fadeIn 0.3s ease';
   el.innerHTML = `
-    <div style="position:fixed;background:var(--card2);border:1px solid ${color};border-radius:20px;padding:32px 24px;text-align:center;max-width:320px;width:100%;animation:popIn 0.4s cubic-bezier(0.34,1.56,0.64,1);box-shadow:0 0 40px ${color}33">
+    <div style=">background:var(--card2);border:1px solid ${color};border-radius:20px;padding:32px 24px;text-align:center;max-width:320px;width:100%;animation:popIn 0.4s cubic-bezier(0.34,1.56,0.64,1);box-shadow:0 0 40px ${color}33">
       <div style="font-size:48px;margin-bottom:12px">${subtitulo.split(' ')[0]}</div>
       <div style="font-size:25px;color:${color};margin-bottom:8px;font-weight:700">${titulo}</div>
       <div style="font-size:18px;text-transform:uppercase;color:var(--text);margin-bottom:6px;font-weight:600">${subtitulo}</div>
