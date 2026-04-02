@@ -283,7 +283,7 @@ header {
 .habit-meta { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
 .habit-streak-mini { font-size: 12px; color: var(--muted); }
 .habit-actions { display: flex; gap: 6px; flex-shrink: 0; }
-.check-circle { width: 17px; height: 17px; border-radius: 50%; border: 1.7px, #e0c05a63; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: border-color 0.25s, background 0.25s, transform 0.3s cubic-bezier(0.34,1.56,0.64,1); }
+.check-circle { width: 17px; height: 17px; border-radius: 50%; border: 1.7px solid rgba(201,168,76,0.4); display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: border-color 0.25s, background 0.25s, transform 0.3s cubic-bezier(0.34,1.56,0.64,1); }
 .check-circle .check-svg { opacity: 0; transform: scale(0) rotate(-20deg); transition: opacity 0.2s 0.05s, transform 0.25s 0.05s cubic-bezier(0.34,1.56,0.64,1); }
 .habit-card.done .check-circle { background: var(--accent); border-color: var(--accent); transform: scale(1.15); box-shadow: 0 0 18px rgba(201, 168, 76, 0.4); }
 .habit-card.done .check-circle .check-svg { opacity: 1; transform: scale(1) rotate(0deg); }

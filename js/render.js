@@ -88,7 +88,7 @@ export function renderViajero() {
   const nombreEl = document.getElementById('viajero-nombre');
   if (nombreEl) {
     nombreEl.textContent = state.perfil.nombre || 'David';
-    nombreEl.style.color = claseData.color;
+    nombreEl.style.color = 'var(--accent)';
   }
   const claseEl = document.getElementById('viajero-clase');
   if (claseEl) { claseEl.textContent = claseData.nombre; claseEl.style.color = claseData.color + '8c'; }
@@ -214,10 +214,12 @@ export function renderViajero() {
   const xpLabelEl = document.getElementById('viajero-xp-label');
   if (xpLabelEl) xpLabelEl.style.color = accentColor;
 
+  // Calcular porcentaje de nivel
+  const xpPct = calc.esMaximo ? 100 : (calc.xpSiguiente > 0 ? Math.round(calc.xpActual / calc.xpSiguiente * 100) : 0);
+
   // Barra XP fill — width según progreso al siguiente nivel + dorada en día perfecto
   const xpFillEl = document.getElementById('viajero-xp-fill');
   if (xpFillEl) {
-    const xpPct = calc.esMaximo ? 100 : (calc.xpSiguiente > 0 ? Math.round(calc.xpActual / calc.xpSiguiente * 100) : 0);
     xpFillEl.style.width = xpPct + '%';
     if (isPerfectToday) {
       xpFillEl.style.background = 'var(--accent2)';
@@ -226,12 +228,12 @@ export function renderViajero() {
       xpFillEl.style.background = `linear-gradient(to right, var(--accent) 0%, var(--accent2) ${gradEnd}%)`;
     }
   }
-  // Label XP — xpActual / xpSiguiente
+  // Label XP — xpActual / xpSiguiente · pct%
   const xpLabelEl2 = document.getElementById('viajero-xp-label');
   if (xpLabelEl2) {
     xpLabelEl2.textContent = calc.esMaximo
       ? 'Máximo alcanzado'
-      : `${calc.xpActual.toLocaleString('es-ES')} / ${calc.xpSiguiente.toLocaleString('es-ES')} XP`;
+      : `${calc.xpActual.toLocaleString('es-ES')} / ${calc.xpSiguiente.toLocaleString('es-ES')} · ${xpPct}%`;
     xpLabelEl2.style.color = accentColor;
   }
 
@@ -258,6 +260,16 @@ export function renderViajero() {
   // Fantasy: separator swords
   const sepIcon = document.getElementById('hoy-sep-icon');
   if (sepIcon) sepIcon.textContent = '⚔';
+
+  // Separator lines + icon — purple on perfect day, gold otherwise
+  const sepContainer = document.querySelector('.hoy-separator');
+  if (sepContainer) {
+    const lines = sepContainer.querySelectorAll('div[style*="height:3px"]');
+    const icon = sepContainer.querySelector('.hoy-separator-icon');
+    const sepColor = isPerfectToday ? 'rgba(123,79,207,0.5)' : '#a8862abd';
+    lines.forEach(l => l.style.background = sepColor);
+    if (icon) icon.style.color = sepColor;
+  }
 
   // Tareas toggle — dorado por CSS, púrpura en día perfecto
   const tareasToggle = document.getElementById('tareas-toggle');
