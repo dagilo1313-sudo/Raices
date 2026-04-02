@@ -75,11 +75,9 @@ header {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-bottom: 14px;
 }
 .viajero-avatar-wrap {
-  width: 60px; height: 60px; border-radius: 50%;
-  margin: 0px 6px 0px;
+  width: 55px; height: 55px; border-radius: 50%;
   border: 2px solid var(--accent);
   background: var(--card2);
   display: flex; align-items: center; justify-content: center;
@@ -94,9 +92,9 @@ header {
 }
 .viajero-info { flex: 1; }
 .viajero-clase { font-size: 15px; font-weight:700;color: var(--muted); text-transform: uppercase; margin-bottom: 2px; }
-.viajero-nombre { font-family: 'CINZEL DECORATIVE'; font-size: 28px; color: var(--accent); font-weight: bolder; line-height: 1.2; }
+.viajero-nombre { font-family: 'CINZEL DECORATIVE'; font-size: 24px; color: var(--accent); font-weight: bolder; line-height: 1.2; }
 .viajero-nivel-badge {
-  font-size: 16px; color: var(--accent);
+  font-size: 14px; color: var(--accent);
   background: transparent;
   border: 1px solid rgba(143,179,57,0.25);
   border-radius: var(--radius-full);
@@ -143,7 +141,7 @@ header {
   font-size: 13px; color: var(--muted);
   margin-bottom: 6px;
 }
-.viajero-xp-hdr span:last-child { color: var(--accent); margin: 16px 0 6px }
+.viajero-xp-hdr span:last-child { color: var(--accent); }
 .viajero-xp-track {
   height: 5px; background: var(--card2);
   border-radius: 5px; overflow: hidden;
