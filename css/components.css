@@ -406,7 +406,7 @@ body::before {
 }
 
 .btn-borrar-tareas {
-  font-size: 11px; font-weight: 600;
+  font-size: 13px; font-weight: 600;
   color: var(--danger); background: transparent;
   border: 1px solid rgba(179,92,79,0.3);
   border-radius: 6px; padding: 5px 12px;

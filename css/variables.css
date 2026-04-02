@@ -10,7 +10,7 @@
   --accent: #a8d840;
   --accent2: #e8c840;
   --accent3: #8ac035;
-  --danger: #b35c4f;
+  --danger: #f54040;
   --glow: rgba(143, 179, 57, 0.15);
 
   /* Categorías */
@@ -63,7 +63,7 @@
   --accent: #7cb832;
   --accent2: #f0c830;
   --accent3: #689c28;
-  --danger: #a03830;
+  --danger: #f54040;
   --glow: rgba(114, 160, 48, 0.15);
 
   --cat-fisico: #f05a54;
@@ -170,7 +170,7 @@
   --accent:  #c9a84c;
   --accent2: #9761ff;
   --accent3: #a8862a;
-  --danger:  #8b1a1a;
+  --danger:  #f54040;
   --glow:    rgba(201,168,76,0.15);
 
   --cat-fisico:              #e05c5c;
@@ -217,7 +217,7 @@
 [data-theme="fantasy"] .stats-sep-label,
 [data-theme="fantasy"] .cat-tab,
 [data-theme="fantasy"] .card-title,
-[data-theme="fantasy"] .viajero-stat-lbl { font-family: 'Cinzel Decorative', serif; font-size: 12px; letter-spacing: 1px; }
+[data-theme="fantasy"] .viajero-stat-lbl { font-family: var(--font-body); font-size: 14px; letter-spacing: 1px; }
 [data-theme="fantasy"] .viajero-nombre { font-family: 'Cinzel Decorative', serif; font-size: 18px; }
 [data-theme="fantasy"] .viajero-clase { font-family: 'Cinzel Decorative', serif; font-style: italic; color: var(--accent2); font-size: 13px; }
 [data-theme="fantasy"] .viajero-nivel-badge { font-family: 'Cinzel Decorative', serif; font-size: 11px; background: rgba(201,168,76,0.08); border-color: rgba(201,168,76,0.3); letter-spacing: 1px; }
@@ -227,8 +227,8 @@
 [data-theme="fantasy"] .modal-title { font-family: 'Cinzel Decorative', serif; font-size: 19px; color: var(--accent); letter-spacing: 1px; }
 [data-theme="fantasy"] .auth-logo { font-family: 'Cinzel Decorative', serif; }
 [data-theme="fantasy"] .auth-title { font-family: 'Cinzel Decorative', serif; font-size: 21px; color: var(--accent); }
-[data-theme="fantasy"] .btn { font-family: 'Cinzel Decorative', serif; font-size: 12px; letter-spacing: 1.5px; border-radius: 999px; }
-[data-theme="fantasy"] .pf-btn { font-family: 'Cinzel Decorative', serif; font-size: 12px; letter-spacing: 0.5px; border-radius: 999px; }
+[data-theme="fantasy"] .btn { font-family: 'Cinzel Decorative', serif; font-size: 10px; letter-spacing: 1.5px; border-radius: 999px; }
+[data-theme="fantasy"] .pf-btn { font-family: 'Cinzel Decorative', serif; font-size: 10px; letter-spacing: 0.5px; border-radius: 999px; }
 [data-theme="fantasy"] .xp-badge { font-family: 'Crimson Pro', serif; font-style: italic; font-size: 13px; }
 [data-theme="fantasy"] .xp-badge.xp-50 { color: var(--accent); background: rgba(201,168,76,0.12); border-color: rgba(201,168,76,0.3); }
 [data-theme="fantasy"] .xp-badge.xp-25 { color: var(--accent2); background: rgba(123,79,207,0.12); border-color: rgba(123,79,207,0.3); }
