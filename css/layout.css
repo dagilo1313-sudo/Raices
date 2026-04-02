@@ -245,7 +245,7 @@ header {
 }
 
 /* ── Week strip ── */
-.week-strip { display: flex; justify-content: space-between; margin: 0 24px 10px; gap: 6px; }
+.week-strip { display: flex; justify-content: space-between; margin: 0 24px 16px; gap: 6px; }
 .day-cell { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
 .day-name { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
 .day-num { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 500; color: var(--muted); border: 1px solid transparent; transition: all 0.2s; }
@@ -324,16 +324,18 @@ header {
 .cat-tab.active-all-perfect { border-color: var(--accent2); color: var(--accent2); background: rgba(196,168,79,0.12); font-weight: 700; }
 
 /* Perfect-day en stats */
-#stats-day-habits.perfect-day .habit-card.done { border-color: rgba(196,168,79,0.35); background: linear-gradient(135deg, #110e1e 0%, #0d0b18 100%); }
-
+#stats-day-habits.perfect-day .habit-card.done { border-color: var(--border); background: linear-gradient(135deg, var(--card) 0%, rgba(123,79,207,0.07) 100%); }
 #stats-day-habits.perfect-day .habit-card.done .habit-name { color: var(--accent2); }
-#stats-day-habits.perfect-day .habit-card.done .check-circle { background: var(--accent2); border-color: var(--accent2); color: #0d0f0a; box-shadow: 0 0 12px rgba(196,168,79,0.4); }
+#stats-day-habits.perfect-day .habit-card.done .habit-emoji-cat { opacity: 1; filter: saturate(1); }
+#stats-day-habits.perfect-day .habit-card.done .check-circle { background: var(--accent2); border-color: var(--accent2); box-shadow: 0 0 10px rgba(123,79,207,0.4); }
+#stats-day-habits.perfect-day .habit-card.done .check-circle .check-svg polyline { stroke: #07090a; }
 
 /* Perfect-day en renderCatStats */
-#cat-stats-list.perfect-day-cats .habit-card.done { border-color: rgba(196,168,79,0.35); background: linear-gradient(135deg, var(--card) 0%, rgba(196,168,79,0.07) 100%); }
-
+#cat-stats-list.perfect-day-cats .habit-card.done { border-color: var(--border); background: linear-gradient(135deg, var(--card) 0%, rgba(123,79,207,0.07) 100%); }
 #cat-stats-list.perfect-day-cats .habit-card.done .habit-name { color: var(--accent2); }
-#cat-stats-list.perfect-day-cats .habit-card.done .check-circle { background: var(--accent2); border-color: var(--accent2); color: #0d0f0a; box-shadow: 0 0 12px rgba(196,168,79,0.4); }
+#cat-stats-list.perfect-day-cats .habit-card.done .habit-emoji-cat { opacity: 1; filter: saturate(1); }
+#cat-stats-list.perfect-day-cats .habit-card.done .check-circle { background: var(--accent2); border-color: var(--accent2); box-shadow: 0 0 10px rgba(123,79,207,0.4); }
+#cat-stats-list.perfect-day-cats .habit-card.done .check-circle .check-svg polyline { stroke: #07090a; }
 /* Cat tabs always respect category colors, even on perfect day */
 .cat-tab.active-fisico       { border-color: var(--cat-fisico);       color: var(--cat-fisico);       background: var(--cat-fisico-bg); }
 .cat-tab.active-disciplina   { border-color: var(--cat-disciplina);   color: var(--cat-disciplina);   background: var(--cat-disciplina-bg); }

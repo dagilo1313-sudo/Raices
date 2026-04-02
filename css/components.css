@@ -174,8 +174,8 @@ body::before {
 .cal-day.cal-future .cal-day-inner { color: var(--border); }
 
 /* Estados del día en calendario */
-.cal-day.cal-purple .cal-day-inner { background: rgba(123,79,207,0.2) !important; border-color: var(--accent2); font-weight: 700; }
-.cal-day.cal-golden .cal-day-inner  { background: rgba(196, 168, 79, 0.2); color: var(--accent); border-color: var(--accent); font-weight: 600; }
+.cal-day.cal-golden .cal-day-inner { background: rgba(196,168,79,0.2); color: var(--accent2); border-color: var(--accent2); font-weight: 700; }
+.cal-day.cal-green .cal-day-inner  { background: rgba(143,179,57,0.15); color: var(--accent); border-color: var(--accent); font-weight: 600; }
 .cal-day.cal-gray .cal-day-inner { border-color: var(--border); color: var(--muted); background: rgba(0,0,0,0.04); }
 
 .cal-dot { width: 4px; height: 4px; border-radius: 50%; }

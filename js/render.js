@@ -937,8 +937,8 @@ function renderCalendar(activeDate) {
     let stateClass = '';
     let dotColor = '';
     if (!isFuture) {
-      if (isPerfect)        { stateClass = 'cal-purple'; dotColor = 'gold'; }
-      else if (isGood)      { stateClass = 'cal-golden';  dotColor = 'green'; }
+      if (isPerfect)        { stateClass = 'cal-golden'; dotColor = 'gold'; }
+      else if (isGood)      { stateClass = 'cal-green';  dotColor = 'green'; }
       else if (isGrayGreen) { stateClass = 'cal-gray';   dotColor = 'green'; }
       else if (isGrayDot)   { stateClass = 'cal-gray';   dotColor = 'gray'; }
       else if (isGray)      { stateClass = 'cal-gray'; } // sin punto

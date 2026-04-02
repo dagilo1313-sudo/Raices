@@ -98,7 +98,7 @@
 /* ── Calendarios — perfecto púrpura ── */
 .day-num.day-golden { background: rgba(123,79,207,0.2); color: var(--accent2); border-color: var(--accent2); }
 .day-dot.perfect { background: var(--accent2); }
-.cal-day.cal-purple .cal-day-inner { background: rgba(123,79,207,0.2); color: var(--accent2); border-color: var(--accent2); }
+.cal-day.cal-golden .cal-day-inner { background: rgba(123,79,207,0.2); color: var(--accent2); border-color: var(--accent2); }
 .cal-dot-gold { background: var(--accent2); }
 .sc-fill.fantasy-perfect-bar { background: linear-gradient(to right, #5a3a9e, #7b4fcf); }
 
