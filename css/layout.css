@@ -323,7 +323,7 @@ header {
 .cat-tab.active-all-perfect { border-color: var(--accent2); color: var(--accent2); background: rgba(196,168,79,0.12); font-weight: 700; }
 
 /* Perfect-day en stats */
-#stats-day-habits.perfect-day .habit-card.done { border-color: rgba(196,168,79,0.35); background: linear-gradient(135deg, var(--card) 0%, rgba(196,168,79,0.07) 100%); }
+#stats-day-habits.perfect-day .habit-card.done { border-color: rgba(196,168,79,0.35); background: linear-gradient(135deg, #110e1e 0%, #0d0b18 100%); }
 #stats-day-habits.perfect-day .habit-card.done::before { background: var(--accent2); }
 #stats-day-habits.perfect-day .habit-card.done .habit-name { color: var(--accent2); }
 #stats-day-habits.perfect-day .habit-card.done .check-circle { background: var(--accent2); border-color: var(--accent2); color: #0d0f0a; box-shadow: 0 0 12px rgba(196,168,79,0.4); }
