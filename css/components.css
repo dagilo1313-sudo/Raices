@@ -156,11 +156,11 @@ body::before {
 /* ── Calendario stats ── */
 .cal-wrapper { margin: 0 24px 20px; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; }
 .cal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
-.cal-title { font-family: var(--font-body); font-size: 16px; color: var(--text); text-transform: capitalize; }
+.cal-title { font-family: var(--font-body); font-size: 20px; color: var(--text); text-transform: capitalize; }
 .cal-nav { display: flex; gap: 8px; align-items: center; }
 .cal-nav-btn { background: var(--card2); border: 1px solid var(--border); border-radius: var(--radius-sm); width: 28px; height: 28px; color: var(--muted); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px; transition: all 0.2s; }
 .cal-nav-btn:hover { border-color: var(--accent); color: var(--accent); }
-.cal-today-btn { background: var(--glow); border: 1px solid var(--border); border-radius: var(--radius-full); padding: 4px 10px; font-size: 11px; color: var(--accent); cursor: pointer; font-family: var(--font-body); transition: all 0.2s; }
+.cal-today-btn { background: var(--glow); border: 1px solid var(--border); border-radius: var(--radius-full); padding: 4px 10px; font-size: 15px; color: var(--accent); cursor: pointer; font-family: var(--font-body); transition: all 0.2s; }
 .cal-today-btn:hover { border-color: var(--accent); }
 .cal-weekdays { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; margin-bottom: 6px; }
 .cal-weekday { text-align: center; font-size: 10px; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; padding: 4px 0; }
