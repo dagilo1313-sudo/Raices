@@ -97,7 +97,7 @@ body::before {
 
 /* ── Group label por categoría ── */
 .cat-group-label {
-  font-size: 11px; font-weight: 700; letter-spacing: 2px;
+  font-size: 12px; font-weight: 700;
   text-transform: uppercase; padding: 6px 12px;
   display: inline-flex; align-items: center; gap: 6px;
   border-radius: var(--radius-full);
@@ -175,7 +175,7 @@ body::before {
 
 /* Estados del día en calendario */
 .cal-day.cal-golden .cal-day-inner { background: rgba(123,79,207,0.2) !important; color: var(--accent2); border-color: var(--accent2); font-weight: 700; margin-bottom: 5px; }
-.cal-day.cal-green .cal-day-inner  { background: rgba(231, 220, 99, 0.674); color: var(--accent); border-color: var(--accent); font-weight: 600; }
+.cal-day.cal-green .cal-day-inner  { background: rgb(231 220 99 / 25%); color: var(--accent); border-color: var(--accent); font-weight: 600; }
 .cal-day.cal-gray .cal-day-inner { border-color: var(--border); color: var(--muted); background: rgba(0,0,0,0.04); }
 
 .cal-dot { width: 4px; height: 4px; border-radius: 50%; }

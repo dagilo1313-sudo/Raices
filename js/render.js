@@ -1624,7 +1624,7 @@ function renderStatsDayHabits(dateStr, completedIds, scheduledHabits) { // compl
       lastCat = h.category;
     }
     html += `
-      <div class="habit-card ${done?'done':''}" style="cursor:default">
+      <div class="habit-card ${done?'done':''}" data-cat="${h.category || 'disciplina'}" style="cursor:default">
         ${habitIconHTML(h)}
         <div class="habit-info">
           <div class="habit-name">${h.name}</div>
@@ -1700,7 +1700,7 @@ function renderCatStats(dateStr, habitsSource) {
       const isDone = completedIds2.includes(h.id);
       const cat = CATEGORIES[h.category] || CATEGORIES.disciplina;
       return `
-        <div class="habit-card ${isDone?'done':''}" style="cursor:default;margin-bottom:6px">
+        <div class="habit-card ${isDone?'done':''}" data-cat="${h.category || 'disciplina'}" style="cursor:default;margin-bottom:6px">
           ${habitIconHTML(h)}
           <div class="habit-info">
             <div class="habit-name">${h.name}</div>
