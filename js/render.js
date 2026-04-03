@@ -264,11 +264,13 @@ export function renderViajero() {
   // Separator lines + icon — purple on perfect day, gold otherwise
   const sepContainer = document.querySelector('.hoy-separator');
   if (sepContainer) {
-    const lines = sepContainer.querySelectorAll('div[style*="height:3px"]');
-    const icon = sepContainer.querySelector('.hoy-separator-icon');
-    const sepColor = isPerfectToday ? 'rgba(123,79,207,0.5)' : '#a8862abd';
-    lines.forEach(l => l.style.background = sepColor);
-    if (icon) icon.style.color = sepColor;
+    const sepColor = isPerfectToday ? 'rgba(123,79,207,0.5)' : 'rgba(168,134,42,0.74)';
+    // Get the two line divs (first and last child divs, not the span)
+    const children = sepContainer.children;
+    for (let i = 0; i < children.length; i++) {
+      if (children[i].tagName === 'DIV') children[i].style.background = sepColor;
+      if (children[i].tagName === 'SPAN') children[i].style.color = sepColor;
+    }
   }
 
   // Tareas toggle — dorado por CSS, púrpura en día perfecto
@@ -668,33 +670,31 @@ export function renderHabitToggle(id, isDone) {
       const xpVal = habit ? (habit.xp || 10) : 10;
       const color = xpVal >= 50 ? '#d4a843' : xpVal >= 25 ? '#aab4c8' : '#cd7f50';
       const rect = badge.getBoundingClientRect();
-      for (let i = 0; i < 10; i++) {
+      for (let i = 0; i < 16; i++) {
         const spark = document.createElement('div');
-        const size = 2.5 + Math.random() * 3.5;
-        spark.style.cssText = `position:fixed;width:${size}px;height:${size}px;border-radius:50%;background:${color};pointer-events:none;z-index:9999;left:${rect.left+rect.width/2}px;top:${rect.top+rect.height/2}px`;
+        const size = 2 + Math.random() * 5;
+        spark.style.cssText = `position:fixed;width:${size}px;height:${size}px;border-radius:50%;background:${color};pointer-events:none;z-index:9999;left:${rect.left+rect.width/2}px;top:${rect.top+rect.height/2}px;box-shadow:0 0 ${size*2}px ${color}`;
         document.body.appendChild(spark);
-        const dx = (Math.random() - 0.5) * 40;
-        const dy = -(18 + Math.random() * 28);
-        const dur = 450 + Math.random() * 350;
+        const angle = (i / 16) * Math.PI * 2 + (Math.random() - 0.5) * 0.6;
+        const dist = 20 + Math.random() * 35;
+        const dx = Math.cos(angle) * dist;
+        const dy = Math.sin(angle) * dist - 12;
+        const dur = 500 + Math.random() * 400;
         spark.animate([
-          { transform: 'translate(0,0) scale(1.2)', opacity: 1 },
+          { transform: 'translate(0,0) scale(1.5)', opacity: 1 },
           { transform: `translate(${dx}px,${dy}px) scale(0)`, opacity: 0 }
-        ], { duration: dur, easing: 'ease-out', fill: 'forwards' });
+        ], { duration: dur, easing: 'cubic-bezier(0.25,0.46,0.45,0.94)', fill: 'forwards' });
         setTimeout(() => spark.remove(), dur + 50);
       }
     }
-    // Emoji glow shine (category color)
+    // Emoji glow shine (subtle)
     const emoji = card.querySelector('.habit-emoji');
     if (emoji) {
-      const habit = state.habits.find(h => h.id === id);
-      const catColor = habit ? getCatColor(habit.category || 'disciplina') : null;
-      const catRgba = catColor ? catColor.replace('rgb(', 'rgba(').replace(')', ',0.6)') : 'rgba(143,179,57,0.6)';
       emoji.animate([
         { filter: 'brightness(1)', transform: 'scale(1)' },
-        { filter: 'brightness(2.2) saturate(1.8)', transform: 'scale(1.12)' },
+        { filter: 'brightness(1.4) saturate(1.2)', transform: 'scale(1.05)' },
         { filter: 'brightness(1)', transform: 'scale(1)' }
-      ], { duration: 400, easing: 'ease-out' });
-      flashGlow(emoji, catRgba, 400);
+      ], { duration: 500, easing: 'ease-out' });
     }
     // Name glow shine — use filter to avoid overflow clipping
     const nameEl = card.querySelector('.habit-name');
@@ -1628,10 +1628,8 @@ function renderStatsDayHabits(dateStr, completedIds, scheduledHabits) { // compl
         ${habitIconHTML(h)}
         <div class="habit-info">
           <div class="habit-name">${h.name}</div>
-          <div class="habit-meta">
-            ${isToday ? `<span class="xp-badge xp-${h.xp}">+${h.xp} XP</span>` : ''}
-          </div>
         </div>
+        <span class="xp-badge xp-${h.xp || 10}">+${h.xp || 10}</span>
         <div class="check-circle" style="flex-shrink:0"><svg class="check-svg" width="10" height="10" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="#07090a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
       </div>`;
   });
@@ -1704,11 +1702,8 @@ function renderCatStats(dateStr, habitsSource) {
           ${habitIconHTML(h)}
           <div class="habit-info">
             <div class="habit-name">${h.name}</div>
-            <div class="habit-meta">
-              <span class="cat-badge cat-${h.category}">${cat.label}</span>
-              ${isToday ? `<span class="xp-badge xp-${h.xp}">+${h.xp} XP</span>` : ''}
-            </div>
           </div>
+          <span class="xp-badge xp-${h.xp || 10}">+${h.xp || 10}</span>
           <div class="check-circle" style="flex-shrink:0"><svg class="check-svg" width="10" height="10" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="#07090a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
         </div>`;
     }).join('');
