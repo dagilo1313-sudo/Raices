@@ -2,7 +2,7 @@
   "name": "Raíces",
   "short_name": "Raíces",
   "description": "Construye hábitos poderosos y gana XP cada día",
-  "start_url": "/Forja/",
+  "start_url": "/Raices/",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#0d0f0a",
