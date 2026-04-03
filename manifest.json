@@ -2,11 +2,11 @@
   "name": "Raíces",
   "short_name": "Raíces",
   "description": "Construye hábitos poderosos y gana XP cada día",
-  "start_url": "/Raices/",
+  "start_url": "./",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#0d0f0a",
-  "theme_color": "#8fb339",
+  "background_color": "#08060e",
+  "theme_color": "#c9a84c",
   "icons": [
     {
       "src": "assets/favicon/web-app-manifest-192x192.png",

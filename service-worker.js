@@ -1,25 +1,27 @@
-const CACHE = 'raices-hybrid-v1b';
+const CACHE = 'raices-v9.2';
 const ASSETS = [
-  '/Raices/',
-  '/Raices/index.html',
-  '/Raices/css/variables.css',
-  '/Raices/css/components.css',
-  '/Raices/css/layout.css',
-  '/Raices/js/app.js',
-  '/Raices/js/firebase.js',
-  '/Raices/js/state.js',
-  '/Raices/js/auth.js',
-  '/Raices/js/habits.js',
-  '/Raices/js/render.js',
-  '/Raices/js/modal.js',
-  '/Raices/js/ui.js',
-  '/Raices/manifest.json',
+  './',
+  './index.html',
+  './css/variables.css',
+  './css/components.css',
+  './css/layout.css',
+  './js/app.js',
+  './js/firebase.js',
+  './js/state.js',
+  './js/auth.js',
+  './js/habits.js',
+  './js/render.js',
+  './js/modal.js',
+  './js/ui.js',
+  './js/resumen.js',
+  './manifest.json',
 ];
 
 self.addEventListener('install', e => {
   e.waitUntil(
     caches.open(CACHE).then(cache => cache.addAll(ASSETS))
   );
+  self.skipWaiting();
 });
 
 self.addEventListener('activate', e => {
@@ -28,12 +30,12 @@ self.addEventListener('activate', e => {
       Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
     )
   );
+  self.clients.claim();
 });
 
 self.addEventListener('fetch', e => {
-  // Solo cachear assets propios, no Firebase
-  if (e.request.url.includes('firebase') || e.request.url.includes('google')) return;
+  if (e.request.url.includes('firebase') || e.request.url.includes('google') || e.request.url.includes('gstatic')) return;
   e.respondWith(
-    caches.match(e.request).then(cached => cached || fetch(e.request))
+    fetch(e.request).catch(() => caches.match(e.request))
   );
 });
