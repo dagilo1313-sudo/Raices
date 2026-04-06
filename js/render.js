@@ -259,7 +259,7 @@ export function renderViajero() {
 
   // Fantasy: separator swords
   const sepIcon = document.getElementById('hoy-sep-icon');
-  if (sepIcon) sepIcon.textContent = '⚔';
+  if (sepIcon) sepIcon.textContent = '✦';
 
   // Separator lines + icon — purple on perfect day, gold otherwise
   const sepContainer = document.querySelector('.hoy-separator');
