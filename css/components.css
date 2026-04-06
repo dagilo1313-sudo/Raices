@@ -388,6 +388,7 @@ body::before {
 
 /* ── Tareas ── */
 .tareas-toggle {
+  margin-top: 20px;
   display: flex; align-items: center; justify-content: space-between;
   padding: 10px 14px;
   background: var(--card);
