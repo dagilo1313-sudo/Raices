@@ -487,7 +487,7 @@ header {
 .score-half.xp-half .sc-fill{background:var(--accent);}
 .sc-lbl{font-size:15px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;}
 .sc-num{font-size:32px;font-weight:700;line-height:1;}
-.sc-pct{font-size:15px;opacity:0.65;}
+.sc-pct{font-size:16px;opacity:0.65;}
 .sc-bar{height:3px;background:#131708;border-radius:3px;overflow:hidden;margin-top:2px;}
 .sc-fill{height:100%;border-radius:3px;transition:width 0.5s ease;}
 
