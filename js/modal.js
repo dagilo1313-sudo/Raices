@@ -19,9 +19,9 @@ export function openCreateModal() {
   selectedXP = 10;
   selectedDays = [];
   
-  document.getElementById('modal-title').textContent = 'FORJA UN NUEVO HÁBITO';
+  document.getElementById('modal-title').textContent = 'Nuevo hábito';
   document.getElementById('habit-name-input').value = '';
-  document.getElementById('btn-modal-submit').textContent = 'Forjar hábito';
+  document.getElementById('btn-modal-submit').textContent = 'Crear';
   renderModalInternals();
   window._lockScroll && window._lockScroll();
   document.getElementById('modal').classList.add('open');
@@ -82,7 +82,7 @@ export async function submitModal() {
   } finally {
     btn.disabled = false;
     
-    btn.textContent = editingId ? 'Guardar cambios ✓' : 'Forjar hábito';
+    btn.textContent = editingId ? 'Guardar cambios ✓' : 'Crear';
   }
 }
 

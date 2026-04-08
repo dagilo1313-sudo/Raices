@@ -8,7 +8,7 @@ import { getCompletadosForDate, getPlanificadosForDate, getXPTotalSnapshot, getX
 // ── Universal flash glow utility ──
 function flashGlow(el, color, duration = 400) {
   if (!el) return;
-  const rgba = color || 'rgba(143,179,57,0.5)';
+  const rgba = color || 'rgba(255,122,61,0.5)';
   el.animate([
     { filter: 'brightness(1)', boxShadow: '0 0 0 transparent' },
     { filter: 'brightness(1.8)', boxShadow: `0 0 14px ${rgba}` },
@@ -18,7 +18,7 @@ function flashGlow(el, color, duration = 400) {
 
 function flashText(el, color, duration = 500) {
   if (!el) return;
-  const c = color || 'rgba(143,179,57,0.7)';
+  const c = color || 'rgba(255,122,61,0.7)';
   el.animate([
     { textShadow: 'none' },
     { textShadow: `0 0 12px ${c}, 0 0 24px ${c}` },
@@ -77,7 +77,7 @@ export function renderViajero() {
   const scheduledHoy = state.habits.filter(h => !h.archivado && isScheduledForDate(h, todayStr));
   const isPerfectToday = scheduledHoy.length > 0 && scheduledHoy.every(h => isCompleted(h.id, todayStr));
   
-  const perfectColor = 'rgba(123,79,207,';
+  const perfectColor = 'rgba(255,122,61,';
   const gold = isPerfectToday ? 'var(--accent2)' : '';
   const goldBorder = isPerfectToday ? perfectColor + '0.4)' : '';
   const goldBg = isPerfectToday ? perfectColor + '0.1)' : '';
@@ -259,13 +259,12 @@ export function renderViajero() {
 
   // Fantasy: separator swords
   const sepIcon = document.getElementById('hoy-sep-icon');
-  if (sepIcon) sepIcon.textContent = '✦';
+  if (sepIcon) sepIcon.textContent = '◉';
 
-  // Separator lines + icon — purple on perfect day, gold otherwise
+  // Separator lines + icon — coral on perfect day, soft on normal days
   const sepContainer = document.querySelector('.hoy-separator');
   if (sepContainer) {
-    const sepColor = isPerfectToday ? 'rgba(123,79,207,0.5)' : 'rgba(168,134,42,0.74)';
-    // Get the two line divs (first and last child divs, not the span)
+    const sepColor = isPerfectToday ? 'rgba(255,122,61,0.6)' : 'rgba(0,0,0,0.12)';
     const children = sepContainer.children;
     for (let i = 0; i < children.length; i++) {
       if (children[i].tagName === 'DIV') children[i].style.background = sepColor;
@@ -288,16 +287,16 @@ export function renderViajero() {
       // Normal: reset to CSS defaults (gold via --accent)
       tareasToggle.style.borderColor = '';
       if (tareasPanel) tareasPanel.style.borderColor = '';
-      tareasToggle.dataset.glowColor = 'rgba(201,168,76,0.4)';
+      tareasToggle.dataset.glowColor = 'rgba(255,122,61,0.4)';
     }
 
     // Botón Nueva — púrpura solo en día perfecto
     const btnNuevaReal = document.querySelector('#tareas-panel .btn-primary');
     if (btnNuevaReal) {
       if (isPerfectToday) {
-        btnNuevaReal.style.background = '#7b4fcf';
-        btnNuevaReal.style.borderColor = '#7b4fcf';
-        btnNuevaReal.style.color = 'var(--bg)';
+        btnNuevaReal.style.background = 'linear-gradient(90deg,#ff9a3d,#ff5a7a)';
+        btnNuevaReal.style.borderColor = 'transparent';
+        btnNuevaReal.style.color = '#fff';
       } else {
         btnNuevaReal.style.background = '';
         btnNuevaReal.style.borderColor = '';
@@ -417,7 +416,7 @@ export function renderWeek() {
   if (prevTodayState && prevTodayState !== todayState) {
     const todayCell = strip.querySelector('.day-num.today');
     if (todayCell) {
-      const glowColor = todayState === 'golden' ? 'rgba(196,168,79,0.6)' : todayState === 'green' ? 'rgba(143,179,57,0.6)' : 'rgba(143,179,57,0.4)';
+      const glowColor = todayState === 'golden' ? 'rgba(255,122,61,0.6)' : todayState === 'green' ? 'rgba(255,122,61,0.6)' : 'rgba(255,122,61,0.4)';
       flashGlow(todayCell, glowColor, 500);
     }
   }
@@ -453,7 +452,7 @@ export function renderProgress() {
   
   const color = isPerfect ? 'var(--accent2)' : 'var(--accent)';
   const barColor = isPerfect
-    ? 'linear-gradient(to right,#5a3a9e,#7b4fcf)'
+    ? 'linear-gradient(to right,#ff9a3d,#ff5a7a)'
     : 'var(--accent)';
   const latColor = isPerfect
     ? 'var(--accent2)'
@@ -477,7 +476,7 @@ export function renderProgress() {
   // Flash on change
   const newDone = total ? `${done}/${total}` : '0/0';
   if (prevDone && prevDone !== newDone) {
-    const glowColor = isPerfect ? 'rgba(196,168,79,0.5)' : 'rgba(143,179,57,0.5)';
+    const glowColor = isPerfect ? 'rgba(255,122,61,0.5)' : 'rgba(255,122,61,0.5)';
     flashText(document.getElementById('hoy-sc-hab-val'), glowColor, 500);
     flashGlow(habBar, glowColor, 500);
   }
@@ -495,7 +494,7 @@ export function renderProgress() {
 
   // Flash on change
   if (prevXP && prevXP !== `+${xpHoy}`) {
-    const glowColor = isPerfect ? 'rgba(196,168,79,0.5)' : 'rgba(143,179,57,0.5)';
+    const glowColor = isPerfect ? 'rgba(255,122,61,0.5)' : 'rgba(255,122,61,0.5)';
     flashText(document.getElementById('hoy-sc-xp-val'), glowColor, 500);
     flashGlow(xpBar, glowColor, 500);
   }
@@ -668,7 +667,7 @@ export function renderHabitToggle(id, isDone) {
       
       const habit = state.habits.find(h => h.id === id);
       const xpVal = habit ? (habit.xp || 10) : 10;
-      const color = xpVal >= 50 ? '#d4a843' : xpVal >= 25 ? '#aab4c8' : '#cd7f50';
+      const color = xpVal >= 50 ? '#ff7a3d' : xpVal >= 25 ? '#5ac8fa' : '#8e8e93';
       const rect = badge.getBoundingClientRect();
       for (let i = 0; i < 16; i++) {
         const spark = document.createElement('div');
@@ -795,13 +794,13 @@ export async function renderStats() {
       loader.style.cssText = 'display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;gap:18px';
 
       
-      const lRing1 = 'rgba(123,79,207,0.25)';
-      const lRing2 = 'rgba(123,79,207,0.12)';
-      const lGlow  = 'rgba(123,79,207,0.05)';
-      const lEmoji = '⚔';
-      const lText  = 'Invocando registros';
+      const lRing1 = 'rgba(255,122,61,0.25)';
+      const lRing2 = 'rgba(255,90,122,0.12)';
+      const lGlow  = 'rgba(255,122,61,0.06)';
+      const lEmoji = '◉';
+      const lText  = 'Cargando estadísticas';
       const lColor = 'var(--accent)';
-      const lFont  = "font-family:'Cinzel Decorative',serif;font-size:11px;letter-spacing:4px;color:#c9a84c";
+      const lFont  = "font-family:-apple-system,Inter,sans-serif;font-size:11px;letter-spacing:0.5px;font-weight:600;color:#ff7a3d";
 
       loader.innerHTML = `
         <style>
@@ -832,10 +831,10 @@ export async function renderStats() {
 
         
         const orbits = [
-              { r: 38, n: 5,  speed: 0.014,  offset: 0,          size: 2.0, hue: 270, alpha: 0.9 },
-              { r: 54, n: 8,  speed: -0.009, offset: Math.PI/4,  size: 1.5, hue: 44, alpha: 0.6 },
+              { r: 38, n: 5,  speed: 0.014,  offset: 0,          size: 2.0, hue: 18, alpha: 0.9 },
+              { r: 54, n: 8,  speed: -0.009, offset: Math.PI/4,  size: 1.5, hue: 350, alpha: 0.6 },
             ];
-        const orbitStrokeColor = 'rgba(123,79,207,0.06)';
+        const orbitStrokeColor = 'rgba(255,122,61,0.08)';
 
         // Inicializar ángulos
         const particles = [];
@@ -1382,10 +1381,10 @@ function renderLifetimeStats() {
       if (bars[i]) {
         const h=Math.max(4, d.ratio*100);
         bars[i].style.height=h+'%';
-        const r=Math.round(201+(123-201)*d.ratio);
-        const g=Math.round(168+(79-168)*d.ratio);
-        const b=Math.round(76+(207-76)*d.ratio);
-        const op=0.4+d.ratio*0.6;
+        const r=Math.round(255+(255-255)*d.ratio);
+        const g=Math.round(154+(90-154)*d.ratio);
+        const b=Math.round(61+(122-61)*d.ratio);
+        const op=0.5+d.ratio*0.5;
         bars[i].style.background=`rgba(${r},${g},${b},${op})`;
       }
       if (labels[i]) labels[i].textContent=d.label;
@@ -1549,7 +1548,7 @@ function renderStatsForDate(dateStr) {
   // Barras de progreso del score card — doradas si día perfecto (púrpura en fantasy)
   
   const barColor = isPerfectStats
-    ? 'linear-gradient(to right,#5a3a9e,#7b4fcf)'
+    ? 'linear-gradient(to right,#ff9a3d,#ff5a7a)'
     : 'var(--accent)';
   const barHab = document.getElementById('stat-day-bar');
   const barXp  = document.getElementById('stat-xp-bar');

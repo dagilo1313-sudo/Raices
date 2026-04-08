@@ -114,7 +114,7 @@ window.onToggleHabit = (id) => {
       const nuevoBueno = result.despues && result.despues.esBueno && result.antes && !result.antes.esBueno && !diaPerfecto;
 
       
-      const perfectHue = 270;
+      const perfectHue = 18;
 
       if (diaPerfecto && result.subioNivel) {
         showConfetti(perfectHue);
@@ -125,7 +125,7 @@ window.onToggleHabit = (id) => {
       } else if (diaPerfecto) {
         showConfetti(perfectHue); showDiaPerfectoNotif(null);
       } else if (nuevoBueno) {
-        showConfetti(44); showDiaBuenoNotif();
+        showConfetti(35); showDiaBuenoNotif();
       } else if (result.subioRango) {
         showConfetti();
         const claseData = CLASES[result.calcDespues.clase];
@@ -153,23 +153,19 @@ window.onToggleHabit = (id) => {
 };
 
 function showDiaPerfectoNotif(onClose) {
-  
-  const borderColor = '#7b4fcf';
-  const shadowColor = 'rgba(123,79,207,0.2)';
-  const btnBg = 'rgba(123,79,207,0.15)';
-  const btnColor = '#7b4fcf';
-  const emoji = '⚔';
   const el = document.createElement('div');
   el.id = 'dia-perfecto-notif';
-  el.style.cssText = 'position:fixed;inset:0;z-index:300;background:rgba(0,0,0,0.65);display:flex;align-items:center;justify-content:center;padding:24px;animation:fadeIn 0.3s ease';
+  el.style.cssText = 'position:fixed;inset:0;z-index:300;background:rgba(0,0,0,0.35);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:24px;animation:fadeIn 0.3s ease';
   el.innerHTML = `
-    <div style="background:var(--card2);border:1.5px solid ${borderColor};border-radius:20px;padding:28px 24px;text-align:center;max-width:300px;width:100%;animation:popIn 0.4s cubic-bezier(0.34,1.56,0.64,1);box-shadow:0 0 32px ${shadowColor}">
-      <div style="font-size:40px;margin-bottom:10px">${emoji}</div>
-      <div style="font-size:25px;color:${btnColor};margin-bottom:6px;font-weight:700">¡Día perfecto!</div>
-      <div style="font-size:16px;color:var(--muted);margin-bottom:20px;line-height:1.5">Has completado todos tus hábitos de hoy. ¡Estás imparable!</div>
-      <button id="btn-dia-perfecto-ok" style="background:${btnBg};color:${btnColor};border:1.5px solid ${borderColor};border-radius:var(--radius-full);padding:10px 28px;font-size:17px;font-weight:700;font-family:var(--font-body);cursor:pointer;transition:background 0.2s">¡Genial!</button>
+    <div style="background:rgba(255,255,255,0.92);backdrop-filter:saturate(180%) blur(30px);-webkit-backdrop-filter:saturate(180%) blur(30px);border:0.5px solid rgba(255,255,255,0.95);border-radius:24px;padding:32px 28px;text-align:center;max-width:320px;width:100%;animation:popIn 0.4s cubic-bezier(0.34,1.56,0.64,1);box-shadow:0 20px 60px rgba(255,122,61,0.18),0 1px 0 rgba(255,255,255,0.5) inset">
+      <div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#ff9a3d,#ff5a7a);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;box-shadow:0 8px 24px rgba(255,122,61,0.3)">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <div style="font-size:24px;color:#000;margin-bottom:6px;font-weight:800;letter-spacing:-0.5px">¡Día perfecto!</div>
+      <div style="font-size:15px;color:#8e8e93;margin-bottom:24px;line-height:1.4;font-weight:500">Has completado todos tus hábitos de hoy. ¡Estás imparable!</div>
+      <button id="btn-dia-perfecto-ok" style="background:linear-gradient(90deg,#ff9a3d,#ff5a7a);color:#fff;border:none;border-radius:14px;padding:14px 32px;font-size:16px;font-weight:700;font-family:-apple-system,Inter,sans-serif;cursor:pointer;width:100%;letter-spacing:-0.2px;box-shadow:0 4px 14px rgba(255,122,61,0.3)">Continuar</button>
     </div>
-    <style>@keyframes popIn{from{transform:scale(0.7);opacity:0}to{transform:scale(1);opacity:1}}</style>`;
+    <style>@keyframes popIn{from{transform:scale(0.85);opacity:0}to{transform:scale(1);opacity:1}}@keyframes fadeIn{from{opacity:0}to{opacity:1}}</style>`;
   el.querySelector('#btn-dia-perfecto-ok').addEventListener('click', () => {
     el.remove();
     if (onClose) onClose();
@@ -181,15 +177,17 @@ function showDiaPerfectoNotif(onClose) {
 function showDiaBuenoNotif() {
   const el = document.createElement('div');
   el.id = 'dia-bueno-notif';
-  el.style.cssText = 'position:fixed;inset:0;z-index:300;background:rgba(0,0,0,0.65);display:flex;align-items:center;justify-content:center;padding:24px;animation:fadeIn 0.3s ease';
+  el.style.cssText = 'position:fixed;inset:0;z-index:300;background:rgba(0,0,0,0.35);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:24px;animation:fadeIn 0.3s ease';
   el.innerHTML = `
-    <div style="background:var(--card2);border:1.5px solid var(--accent);border-radius:20px;padding:28px 24px;text-align:center;max-width:300px;width:100%;animation:popIn 0.4s cubic-bezier(0.34,1.56,0.64,1);box-shadow:0 0 32px rgba(143,179,57,0.12)">
-      <div style="font-size:40px;margin-bottom:10px">🌿</div>
-      <div style="font-size:25px;color:var(--accent);margin-bottom:6px;font-weight:700">¡Día bueno!</div>
-      <div style="font-size:16px;color:var(--muted);margin-bottom:20px;line-height:1.5">Has superado el 80% de eficiencia XP hoy. ¡Buen trabajo, viajero!</div>
-      <button id="btn-dia-bueno-ok" style="background:rgba(143,179,57,0.15);color:var(--accent);border:1.5px solid var(--accent);border-radius:var(--radius-full);padding:10px 28px;font-size:17px;font-weight:700;font-family:var(--font-body);cursor:pointer;transition:background 0.2s">¡Sigue así!</button>
+    <div style="background:rgba(255,255,255,0.92);backdrop-filter:saturate(180%) blur(30px);-webkit-backdrop-filter:saturate(180%) blur(30px);border:0.5px solid rgba(255,255,255,0.95);border-radius:24px;padding:32px 28px;text-align:center;max-width:320px;width:100%;animation:popIn 0.4s cubic-bezier(0.34,1.56,0.64,1);box-shadow:0 20px 60px rgba(255,154,61,0.15),0 1px 0 rgba(255,255,255,0.5) inset">
+      <div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#ffc870,#ff9a3d);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;box-shadow:0 8px 24px rgba(255,154,61,0.3)">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      </div>
+      <div style="font-size:24px;color:#000;margin-bottom:6px;font-weight:800;letter-spacing:-0.5px">¡Día bueno!</div>
+      <div style="font-size:15px;color:#8e8e93;margin-bottom:24px;line-height:1.4;font-weight:500">Has superado el 80% de eficiencia XP hoy. ¡Buen trabajo!</div>
+      <button id="btn-dia-bueno-ok" style="background:linear-gradient(90deg,#ffc870,#ff9a3d);color:#fff;border:none;border-radius:14px;padding:14px 32px;font-size:16px;font-weight:700;font-family:-apple-system,Inter,sans-serif;cursor:pointer;width:100%;letter-spacing:-0.2px;box-shadow:0 4px 14px rgba(255,154,61,0.3)">Continuar</button>
     </div>
-    <style>@keyframes popIn{from{transform:scale(0.7);opacity:0}to{transform:scale(1);opacity:1}}</style>`;
+    <style>@keyframes popIn{from{transform:scale(0.85);opacity:0}to{transform:scale(1);opacity:1}}@keyframes fadeIn{from{opacity:0}to{opacity:1}}</style>`;
   el.querySelector('#btn-dia-bueno-ok').addEventListener('click', () => el.remove());
   el.addEventListener('click', e => { if (e.target === el) el.remove(); });
   document.body.appendChild(el);
@@ -200,16 +198,18 @@ function showLevelUpNotif(titulo, subtitulo, desc, color) {
   if (existing) existing.remove();
   const el = document.createElement('div');
   el.id = 'levelup-notif';
-  el.style.cssText = 'position:fixed;inset:0;z-index:300;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;padding:24px;animation:fadeIn 0.3s ease';
+  el.style.cssText = 'position:fixed;inset:0;z-index:300;background:rgba(0,0,0,0.4);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:24px;animation:fadeIn 0.3s ease';
   el.innerHTML = `
-    <div style="background:var(--card2);border:1px solid ${color};border-radius:20px;padding:32px 24px;text-align:center;max-width:320px;width:100%;animation:popIn 0.4s cubic-bezier(0.34,1.56,0.64,1);box-shadow:0 0 40px ${color}33">
-      <div style="font-size:48px;margin-bottom:12px">${subtitulo.split(' ')[0]}</div>
-      <div style="font-size:25px;color:${color};margin-bottom:8px;font-weight:700">${titulo}</div>
-      <div style="font-size:18px;text-transform:uppercase;color:var(--text);margin-bottom:6px;font-weight:600">${subtitulo}</div>
-      <div style="font-size:16px;color:var(--muted);margin-bottom:28px;line-height:1.5">${desc}</div>
-      <button onclick="document.getElementById('levelup-notif').remove()" style="background:${color};color:#fff;border:none;border-radius:var(--radius-full);padding:12px 32px;font-size:17px;font-weight:700;font-family:var(--font-body);cursor:pointer">¡A seguir!</button>
+    <div style="background:rgba(255,255,255,0.92);backdrop-filter:saturate(180%) blur(30px);-webkit-backdrop-filter:saturate(180%) blur(30px);border:0.5px solid rgba(255,255,255,0.95);border-radius:24px;padding:36px 28px;text-align:center;max-width:340px;width:100%;animation:popIn 0.4s cubic-bezier(0.34,1.56,0.64,1);box-shadow:0 24px 60px rgba(255,122,61,0.22),0 1px 0 rgba(255,255,255,0.5) inset">
+      <div style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#ff9a3d,#ff5a7a);display:flex;align-items:center;justify-content:center;margin:0 auto 18px;box-shadow:0 10px 28px rgba(255,122,61,0.35)">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 L15 9 L22 9 L17 14 L19 22 L12 18 L5 22 L7 14 L2 9 L9 9 Z"/></svg>
+      </div>
+      <div style="font-size:26px;color:#000;margin-bottom:8px;font-weight:800;letter-spacing:-0.6px">${titulo}</div>
+      <div style="font-size:15px;color:#ff7a3d;margin-bottom:8px;font-weight:700;letter-spacing:-0.1px">${subtitulo}</div>
+      <div style="font-size:14px;color:#8e8e93;margin-bottom:28px;line-height:1.5;font-weight:500">${desc}</div>
+      <button onclick="document.getElementById('levelup-notif').remove()" style="background:linear-gradient(90deg,#ff9a3d,#ff5a7a);color:#fff;border:none;border-radius:14px;padding:14px 32px;font-size:16px;font-weight:700;font-family:-apple-system,Inter,sans-serif;cursor:pointer;width:100%;letter-spacing:-0.2px;box-shadow:0 4px 14px rgba(255,122,61,0.3)">Continuar</button>
     </div>
-    <style>@keyframes popIn{from{transform:scale(0.7);opacity:0}to{transform:scale(1);opacity:1}}</style>`;
+    <style>@keyframes popIn{from{transform:scale(0.85);opacity:0}to{transform:scale(1);opacity:1}}@keyframes fadeIn{from{opacity:0}to{opacity:1}}</style>`;
   el.addEventListener('click', e => { if (e.target === el) el.remove(); });
   document.body.appendChild(el);
 }
@@ -276,7 +276,7 @@ window.selectDate = (dateStr) => {
     if (selected) {
       const isGolden = selected.closest('.cal-day')?.classList.contains('cal-golden');
       const isGreen = selected.closest('.cal-day')?.classList.contains('cal-green');
-      const glowColor = isGolden ? 'rgba(196,168,79,0.5)' : isGreen ? 'rgba(143,179,57,0.5)' : 'rgba(143,179,57,0.3)';
+      const glowColor = isGolden ? 'rgba(255,122,61,0.5)' : isGreen ? 'rgba(255,122,61,0.5)' : 'rgba(255,122,61,0.3)';
       selected.animate([
         { filter: 'brightness(1)', boxShadow: 'none' },
         { filter: 'brightness(1.8)', boxShadow: `0 0 12px ${glowColor}` },
@@ -493,7 +493,7 @@ window.onToggleTareas = () => {
 
   // Flash glow on open with correct color
   if (!isOpen) {
-    const glowRgba = toggle.dataset.glowColor || 'rgba(196,168,79,0.3)';
+    const glowRgba = toggle.dataset.glowColor || 'rgba(255,122,61,0.3)';
     // Flash toggle
     if (toggle) {
       toggle.animate([
@@ -530,7 +530,7 @@ window.onToggleTarea = async (id) => {
   if (counter) {
     counter.animate([
       { filter: 'brightness(1)', boxShadow: 'none' },
-      { filter: 'brightness(1.6)', boxShadow: '0 0 10px rgba(143,179,57,0.4)' },
+      { filter: 'brightness(1.6)', boxShadow: '0 0 10px rgba(255,122,61,0.4)' },
       { filter: 'brightness(1)', boxShadow: 'none' }
     ], { duration: 400, easing: 'ease-out' });
   }
@@ -544,12 +544,12 @@ window.onAddTarea = () => {
       <div style="font-size:16px;font-weight:700;color:var(--text);margin-bottom:18px;text-align:center">Nueva tarea</div>
       <input class="input-field" id="nueva-tarea-input" placeholder="Nombre de la tarea..." maxlength="80" style="margin-bottom:12px">
       <div style="display:flex;gap:8px;margin-bottom:20px">
-        <button id="btn-normal" onclick="setUrgencia(false)" style="flex:1;padding:10px;border-radius:var(--radius-md);border:1px solid rgba(143,179,57,0.3);background:var(--glow);color:var(--accent);font-family:var(--font-body);font-size:13px;cursor:pointer;font-weight:600">Normal</button>
+        <button id="btn-normal" onclick="setUrgencia(false)" style="flex:1;padding:10px;border-radius:var(--radius-md);border:1px solid rgba(255,122,61,0.3);background:var(--glow);color:var(--accent);font-family:var(--font-body);font-size:13px;cursor:pointer;font-weight:600">Normal</button>
         <button id="btn-urgente" onclick="setUrgencia(true)" style="flex:1;padding:10px;border-radius:var(--radius-md);border:1px solid rgba(179,92,79,0.3);background:transparent;color:var(--muted);font-family:var(--font-body);font-size:13px;cursor:pointer">Urgente</button>
       </div>
       <div style="display:flex;gap:8px">
         <button id="btn-cancel-tarea" style="flex:1;background:transparent;border:1px solid var(--border);border-radius:var(--radius-md);padding:10px;font-size:13px;color:var(--muted);font-family:var(--font-body);cursor:pointer">Cancelar</button>
-        <button onclick="submitTarea()" style="flex:1;background:rgba(143,179,57,0.15);color:var(--accent);border:1px solid rgba(143,179,57,0.4);border-radius:var(--radius-md);padding:10px;font-size:13px;font-weight:700;font-family:var(--font-body);cursor:pointer">Añadir</button>
+        <button onclick="submitTarea()" style="flex:1;background:rgba(255,122,61,0.15);color:var(--accent);border:1px solid rgba(255,122,61,0.4);border-radius:var(--radius-md);padding:10px;font-size:13px;font-weight:700;font-family:var(--font-body);cursor:pointer">Añadir</button>
       </div>
       <style>@keyframes popIn{from{transform:scale(0.8);opacity:0}to{transform:scale(1);opacity:1}}</style>
     </div>`;
@@ -559,7 +559,7 @@ window.onAddTarea = () => {
   let esUrgente = false;
   window.setUrgencia = (u) => {
     esUrgente = u;
-    document.getElementById('btn-normal').style.cssText = `flex:1;padding:10px;border-radius:var(--radius-md);border:1px solid ${u?'var(--border)':'rgba(143,179,57,0.3)'};background:${u?'transparent':'var(--glow)'};color:${u?'var(--muted)':'var(--accent)'};font-family:var(--font-body);font-size:13px;cursor:pointer;font-weight:${u?'400':'600'}`;
+    document.getElementById('btn-normal').style.cssText = `flex:1;padding:10px;border-radius:var(--radius-md);border:1px solid ${u?'var(--border)':'rgba(255,122,61,0.3)'};background:${u?'transparent':'var(--glow)'};color:${u?'var(--muted)':'var(--accent)'};font-family:var(--font-body);font-size:13px;cursor:pointer;font-weight:${u?'400':'600'}`;
     document.getElementById('btn-urgente').style.cssText = `flex:1;padding:10px;border-radius:var(--radius-md);border:1px solid ${u?'rgba(179,92,79,0.5)':'rgba(179,92,79,0.3)'};background:${u?'rgba(179,92,79,0.1)':'transparent'};color:${u?'#b35c4f':'var(--muted)'};font-family:var(--font-body);font-size:13px;cursor:pointer;font-weight:${u?'600':'400'}`;
   };
   window.submitTarea = async () => {
@@ -636,12 +636,12 @@ window.onToggleDebug = async () => {
     const popup = document.createElement('div');
     popup.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.8);display:flex;align-items:center;justify-content:center;padding:24px';
     popup.innerHTML = `
-      <div style="background:var(--card2);border:1px solid rgba(143,179,57,0.3);border-radius:16px;padding:28px 24px;max-width:320px;width:100%;text-align:center">
+      <div style="background:var(--card2);border:1px solid rgba(255,122,61,0.3);border-radius:16px;padding:28px 24px;max-width:320px;width:100%;text-align:center">
         <div style="font-size:28px;margin-bottom:12px">✅</div>
         <div style="font-size:16px;font-weight:700;color:var(--accent);margin-bottom:8px">Debugger desactivado</div>
         <div style="font-size:13px;color:var(--muted);margin-bottom:6px">Volvemos a la fecha actual</div>
         <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:20px">${realDate}</div>
-        <button onclick="this.closest('div[style]').remove(); window._unlockScroll && window._unlockScroll(); window.location.reload();" style="width:100%;background:rgba(143,179,57,0.15);border:1.5px solid rgba(143,179,57,0.4);border-radius:var(--radius-md);padding:12px;font-size:14px;font-weight:700;color:var(--accent);font-family:var(--font-body);cursor:pointer">
+        <button onclick="this.closest('div[style]').remove(); window._unlockScroll && window._unlockScroll(); window.location.reload();" style="width:100%;background:rgba(255,122,61,0.15);border:1.5px solid rgba(255,122,61,0.4);border-radius:var(--radius-md);padding:12px;font-size:14px;font-weight:700;color:var(--accent);font-family:var(--font-body);cursor:pointer">
           Pulsa para recargar ↻
         </button>
       </div>`;
@@ -674,12 +674,12 @@ window.onDebugDateChange = async (dateStr) => {
   if (!loaderEl) {
     loaderEl = document.createElement('div');
     loaderEl.id = 'debug-fill-loader';
-    loaderEl.style.cssText = 'margin-top:12px;padding:12px 14px;background:rgba(143,179,57,0.08);border:1px solid rgba(143,179,57,0.2);border-radius:var(--radius-md);font-size:12px;color:var(--muted);display:flex;flex-direction:column;gap:6px';
+    loaderEl.style.cssText = 'margin-top:12px;padding:12px 14px;background:rgba(255,122,61,0.08);border:1px solid rgba(255,122,61,0.2);border-radius:var(--radius-md);font-size:12px;color:var(--muted);display:flex;flex-direction:column;gap:6px';
     debugCard?.appendChild(loaderEl);
   }
 
   const setMsg = (msg) => {
-    if (loaderEl) loaderEl.innerHTML = '<div style="display:flex;align-items:center;gap:8px"><div style="width:12px;height:12px;border:2px solid rgba(143,179,57,0.3);border-top-color:var(--accent);border-radius:50%;animation:spin 0.7s linear infinite;flex-shrink:0"></div><span>' + msg + '</span></div><style>@keyframes spin{to{transform:rotate(360deg)}}</style>';
+    if (loaderEl) loaderEl.innerHTML = '<div style="display:flex;align-items:center;gap:8px"><div style="width:12px;height:12px;border:2px solid rgba(255,122,61,0.3);border-top-color:var(--accent);border-radius:50%;animation:spin 0.7s linear infinite;flex-shrink:0"></div><span>' + msg + '</span></div><style>@keyframes spin{to{transform:rotate(360deg)}}</style>';
   };
   const setSuccess = (msg) => {
     if (loaderEl) loaderEl.innerHTML = '<div style="color:var(--accent);font-size:12px">✓ ' + msg + '</div>';
@@ -716,15 +716,15 @@ window.onDebugDateChange = async (dateStr) => {
   popup.id = 'debug-done-popup';
   popup.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.8);display:flex;align-items:center;justify-content:center;padding:24px';
   popup.innerHTML = `
-    <div style="background:var(--card2);border:1px solid rgba(196,168,79,0.35);border-radius:16px;padding:28px 24px;max-width:320px;width:100%;text-align:center">
+    <div style="background:var(--card2);border:1px solid rgba(255,122,61,0.35);border-radius:16px;padding:28px 24px;max-width:320px;width:100%;text-align:center">
       <div style="font-size:28px;margin-bottom:12px">🧪</div>
       <div style="font-size:16px;font-weight:700;color:var(--accent2);margin-bottom:8px">Modo testing activo</div>
       <div style="font-size:13px;color:var(--text);margin-bottom:6px">Ahora estamos en</div>
       <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:16px">${label}</div>
-      <div style="font-size:12px;color:var(--muted);line-height:1.5;margin-bottom:20px;padding:10px 12px;background:rgba(143,179,57,0.06);border-radius:8px;border:1px solid rgba(143,179,57,0.12)">
+      <div style="font-size:12px;color:var(--muted);line-height:1.5;margin-bottom:20px;padding:10px 12px;background:rgba(255,122,61,0.06);border-radius:8px;border:1px solid rgba(255,122,61,0.12)">
         Se han rellenado los días vacíos entre el último día registrado y esta fecha con hábitos sin completar.
       </div>
-      <button onclick="document.getElementById('debug-done-popup').remove(); window._unlockScroll && window._unlockScroll(); window.location.reload();" style="width:100%;background:rgba(196,168,79,0.15);border:1.5px solid rgba(196,168,79,0.5);border-radius:var(--radius-md);padding:12px;font-size:14px;font-weight:700;color:var(--accent2);font-family:var(--font-body);cursor:pointer">
+      <button onclick="document.getElementById('debug-done-popup').remove(); window._unlockScroll && window._unlockScroll(); window.location.reload();" style="width:100%;background:rgba(255,122,61,0.15);border:1.5px solid rgba(255,122,61,0.5);border-radius:var(--radius-md);padding:12px;font-size:14px;font-weight:700;color:var(--accent2);font-family:var(--font-body);cursor:pointer">
         Pulsa para recargar ↻
       </button>
     </div>`;
@@ -771,7 +771,7 @@ function initDFParticles() {
   const container = document.getElementById('df-particles');
   if (!container) return;
   container.innerHTML = '';
-  const colors = ['#7b4fcf','#c9a84c','#a87fe8','#8b1a1a','#5a4090'];
+  const colors = ['#ff5a7a','#ff7a3d','#ffc870','#ff5a7a','#ff9a3d'];
   for (let i = 0; i < 20; i++) {
     const p = document.createElement('div');
     p.className = 'df-p';

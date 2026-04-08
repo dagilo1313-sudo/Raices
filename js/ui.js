@@ -21,7 +21,7 @@ export function showToast(msg) {
 
 // ── Confetti ──
 export function showConfetti(hueBase) {
-  const h = hueBase || 44;
+  const h = hueBase || 18;
   const dpr = Math.min(window.devicePixelRatio || 1, 2);
   const CW = window.innerWidth, CH = window.innerHeight;
   const cv = document.createElement('canvas');
@@ -88,8 +88,8 @@ export function showConfetti(hueBase) {
 }
 
 export function showXPFloat(habitId, xp) {
-  // Color según peso del hábito
-  const color = xp >= 50 ? '#d4a843' : xp >= 25 ? '#aab4c8' : '#cd7f50';
+  // Color según peso del hábito (paleta liquid glass)
+  const color = xp >= 50 ? '#ff7a3d' : xp >= 25 ? '#5ac8fa' : '#8e8e93';
 
   const card = document.getElementById('habit-' + habitId);
   let startX, startY;
