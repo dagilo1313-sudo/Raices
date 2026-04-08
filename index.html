@@ -7,20 +7,25 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Raíces">
-  <meta name="theme-color" content="#8fb339">
+  <meta name="theme-color" content="#ff7a3d">
   <title>Raíces</title>
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="assets/favicon/apple-touch-icon.png">
   <link rel="icon" type="image/png" href="assets/favicon/apple-touch-icon.png">
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&family=Syne:wght@700;800&display=swap" rel="stylesheet">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Rubik:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/variables.css">
   <link rel="stylesheet" href="css/components.css">
   <link rel="stylesheet" href="css/layout.css">
 </head>
 <body>
+
+<!-- Liquid glass background halos -->
+<div id="lg-bg" aria-hidden="true">
+  <div class="lg-halo lg-halo-1"></div>
+  <div class="lg-halo lg-halo-2"></div>
+</div>
 
 <div id="loading-screen">
   <div style="display:flex;flex-direction:column;align-items:center;gap:32px">
@@ -97,7 +102,7 @@
       <!-- Barra XP entre avatar y stats -->
       <div class="viajero-xp-bar-wrap">
         <div style="text-align:right;margin-top:3px">
-          <span id="viajero-xp-label" style="font-size:14px;font-family:'Crimson Pro',serif;font-style:italic;color:var(--accent); margin-right: 5px;">0 / 100 · 0%</span>
+          <span id="viajero-xp-label" style="font-size:14px;font-family:'Inter',sans-serif;font-style:normal;color:var(--accent); margin-right: 5px;">0 / 100 · 0%</span>
         </div>
         <div class="viajero-xp-track">
           <div class="viajero-xp-fill" id="viajero-xp-fill"></div>
@@ -110,11 +115,11 @@
           <div style="display:flex;align-items:flex-end;justify-content:space-between;position:relative;z-index:1">
             <div>
               <div class="viajero-stat-num viajero-stat-md" id="viajero-stat-perfectos" style="color:var(--accent2)">0</div>
-              <div style="font-size:12px;font-family:'Cinzel Decorative'; font-weight: bolder; color: var(--muted);letter-spacing:1px;text-transform:uppercase;margin-top:3px">Perfectos</div>
+              <div style="font-size:12px;font-family:'Inter',sans-serif; font-weight: 600; color: var(--muted);letter-spacing:1px;text-transform:uppercase;margin-top:3px">Perfectos</div>
             </div>
             <div style="text-align:right">
               <div style="font-size:25px;font-weight:700;color:var(--accent);opacity:0.65;line-height:1" id="viajero-stat-buenos">0</div>
-              <div style="font-size:10px;font-family: 'Cinzel Decorative';font-weight: bolder; color: var(--muted);letter-spacing:1px;text-transform:uppercase;margin-top:3px">buenos</div>
+              <div style="font-size:10px;font-family:'Inter',sans-serif;font-weight: 600; color: var(--muted);letter-spacing:1px;text-transform:uppercase;margin-top:3px">buenos</div>
             </div>
           </div>
         </div>
@@ -122,7 +127,7 @@
           <div style="display:flex;align-items:flex-end;justify-content:space-between">
             <div>
               <div class="viajero-stat-num viajero-stat-md" id="viajero-stat-nofumar" style="color:var(--accent)">—</div>
-              <div style="font-size:12px;font-family:'Cinzel Decorative';font-weight:bolder; color: var(--muted);letter-spacing:1px;text-transform:uppercase;margin-top:3px">Sin fumar</div>
+              <div style="font-size:12px;font-family:'Inter',sans-serif;font-weight:600; color: var(--muted);letter-spacing:1px;text-transform:uppercase;margin-top:3px">Sin fumar</div>
             </div>
           </div>
         </div>
@@ -172,7 +177,7 @@
       <!-- Toggle header -->
       <div id="tareas-toggle" class="tareas-toggle" onclick="onToggleTareas()">
         <div style="display:flex;align-items:center;gap:10px">
-          <span style="font-size:15px;font-family:'Cinzel Decorative';font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:2px" id="tareas-titulo">Tareas</span>
+          <span style="font-size:15px;font-family:'Inter',sans-serif;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:0.5px" id="tareas-titulo">Tareas</span>
           <span id="tareas-count" style="font-size:14px;color:var(--muted);background:var(--card2);border:0.5px solid var(--border);border-radius:20px;padding:2px 8px">Sin tareas</span>
         </div>
         <span id="tareas-chevron" style="font-size:10px;color:var(--muted);transition:transform 0.25s">▼</span>
@@ -220,7 +225,7 @@
 
     <!-- Última sync discreta -->
     <div id="last-sync" style="text-align:center;font-size:14px;color:var(--muted);padding:4px 0 2px"></div>
-    <div style="text-align:center;font-size:14x;color:var(--muted);padding:0 0 12px;letter-spacing:2px">v10.1</div>
+    <div style="text-align:center;font-size:14x;color:var(--muted);padding:0 0 12px;letter-spacing:2px">LG v1</div>
   </div>
 
   <!-- ══ HÁBITOS ══ -->
@@ -798,11 +803,11 @@
 </script>
 <script>
 (function(){
-  // Fantasy loader — always
+  // Liquid glass loader
   var lsEmoji = document.getElementById('ls-emoji');
-  if (lsEmoji) lsEmoji.textContent = '⚔';
+  if (lsEmoji) lsEmoji.textContent = '◉';
   var lsText = document.getElementById('ls-text');
-  if (lsText) lsText.textContent = 'FORJA TU DESTINO';
+  if (lsText) lsText.textContent = 'CARGANDO';
 
   // Añadir animaciones CSS
   const s = document.createElement('style');
@@ -823,10 +828,10 @@
   const W = 200, H = 200, cx = W/2, cy = H/2;
 
   const orbits = [
-        { r: 38, n: 5,  speed: 0.030,  offset: 0,          size: 2.0, hue: 270, alpha: 0.9 },
-        { r: 54, n: 8,  speed: -0.020, offset: Math.PI/4,  size: 1.5, hue: 44, alpha: 0.6 },
+        { r: 38, n: 5,  speed: 0.030,  offset: 0,          size: 2.0, hue: 18, alpha: 0.9 },
+        { r: 54, n: 8,  speed: -0.020, offset: Math.PI/4,  size: 1.5, hue: 350, alpha: 0.6 },
       ];
-  var orbitStroke = 'rgba(123,79,207,0.06)';
+  var orbitStroke = 'rgba(255,122,61,0.08)';
 
   const particles = [];
   orbits.forEach(o => {

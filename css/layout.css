@@ -661,3 +661,620 @@ header {
   letter-spacing: 3px;
   margin-bottom: 15px;
 }
+
+/* ═══════════════════════════════════════════════════════════
+   ── LIQUID GLASS OVERRIDE — entrega A ──
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── App container ── */
+.app { position: relative; z-index: 1; }
+
+/* ── Loading screen — fondo gradient liquid glass ── */
+#loading-screen {
+  background: var(--bg-grad) !important;
+}
+#auth-screen {
+  background: var(--bg-grad) !important;
+}
+.auth-logo {
+  font-family: var(--font-display) !important;
+  font-size: 38px !important;
+  font-weight: 800 !important;
+  letter-spacing: -1.2px !important;
+  color: var(--text) !important;
+  -webkit-text-fill-color: var(--text) !important;
+  background: none !important;
+  filter: none !important;
+}
+.auth-tagline {
+  font-family: var(--font-body) !important;
+  color: var(--muted) !important;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+}
+.auth-box {
+  background: var(--glass) !important;
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 0.5px solid var(--glass-border) !important;
+  border-radius: var(--radius-xl) !important;
+  box-shadow: 0 1px 0 rgba(255,255,255,0.5) inset;
+}
+.auth-title {
+  font-family: var(--font-display) !important;
+  font-weight: 700 !important;
+  color: var(--text) !important;
+  font-size: 22px !important;
+  letter-spacing: -0.3px !important;
+}
+
+/* ── Header — large title iOS style ── */
+header {
+  padding: calc(52px + env(safe-area-inset-top, 0px)) 22px 8px !important;
+}
+.logo,
+.logo-animated,
+.hoy-title-fantasy {
+  font-family: var(--font-display) !important;
+  font-size: 34px !important;
+  font-weight: 800 !important;
+  letter-spacing: -1.2px !important;
+  color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
+  background: none !important;
+  filter: none !important;
+  text-shadow: none !important;
+  line-height: 1 !important;
+  animation: none !important;
+}
+.logo-sub,
+.hoy-sub-fantasy {
+  font-family: var(--font-body) !important;
+  font-style: normal !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  color: var(--muted) !important;
+  letter-spacing: -0.1px !important;
+  text-transform: none !important;
+  margin-top: 4px !important;
+  margin-bottom: 0 !important;
+}
+.date-badge {
+  background: var(--glass) !important;
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 0.5px solid var(--glass-border) !important;
+  color: var(--muted) !important;
+  font-weight: 500 !important;
+  font-size: 12px !important;
+}
+.user-avatar {
+  background: var(--glass) !important;
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 0.5px solid var(--glass-border) !important;
+  color: var(--accent) !important;
+  font-weight: 700 !important;
+  animation: lgAvatarGlowCoral 3s ease-in-out infinite !important;
+}
+
+/* ── Viajero card — glass surface ── */
+.viajero-card {
+  background: var(--glass) !important;
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 0.5px solid var(--glass-border) !important;
+  border-radius: var(--radius-xl) !important;
+  box-shadow: 0 1px 0 rgba(255,255,255,0.5) inset;
+  margin: 0 22px 14px !important;
+  padding: 18px !important;
+}
+.viajero-card::before {
+  display: none !important;
+}
+.viajero-card::after {
+  display: none !important;
+}
+.viajero-avatar-wrap {
+  background: var(--glass) !important;
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border) !important;
+  animation: lgAvatarGlowCoral 3s ease-in-out infinite !important;
+}
+.viajero-clase {
+  font-family: var(--font-body) !important;
+  font-size: 11px !important;
+  color: var(--muted) !important;
+  font-weight: 600 !important;
+  text-transform: none !important;
+  letter-spacing: -0.1px !important;
+  margin-bottom: 0 !important;
+}
+.viajero-nombre {
+  font-family: var(--font-display) !important;
+  font-size: 26px !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.8px !important;
+  color: #000000 !important;
+  line-height: 1.1 !important;
+}
+.viajero-nivel-badge {
+  background: rgba(255,122,61,0.12) !important;
+  border: 0.5px solid rgba(255,122,61,0.3) !important;
+  color: var(--accent) !important;
+  font-weight: 700 !important;
+  font-size: 12px !important;
+  font-family: var(--font-body) !important;
+}
+.viajero-nivel-badge:hover {
+  background: rgba(255,122,61,0.18) !important;
+  border-color: var(--accent) !important;
+}
+.viajero-stat {
+  background: rgba(255,255,255,0.45) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 0.5px solid rgba(255,255,255,0.7) !important;
+  border-radius: var(--radius-md) !important;
+}
+.viajero-stat-num {
+  font-family: var(--font-body) !important;
+  font-weight: 800 !important;
+  color: #000 !important;
+  letter-spacing: -0.5px !important;
+}
+.viajero-stat-lbl {
+  font-family: var(--font-body) !important;
+  font-weight: 600 !important;
+  font-size: 11px !important;
+  text-transform: none !important;
+  letter-spacing: -0.1px !important;
+  color: var(--muted) !important;
+}
+.viajero-stat-momentum {
+  border: 0.5px solid rgba(255,255,255,0.7) !important;
+}
+.viajero-xp-track {
+  background: rgba(0,0,0,0.06) !important;
+  height: 6px !important;
+  border-radius: 3px !important;
+}
+.viajero-xp-fill {
+  background: var(--accent-grad) !important;
+  border-radius: 3px !important;
+}
+.viajero-xp-hdr {
+  font-family: var(--font-body) !important;
+  font-weight: 600 !important;
+}
+.viajero-xp-hdr span:last-child { color: var(--accent) !important; }
+
+/* ── Separador entre secciones ── */
+.seccion-separador {
+  font-family: var(--font-body) !important;
+  color: rgba(0,0,0,0.18) !important;
+  letter-spacing: 4px !important;
+  font-weight: 600 !important;
+}
+
+/* ── Habit card ── */
+.habit-card {
+  background: var(--glass) !important;
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 0.5px solid var(--glass-border) !important;
+  border-radius: var(--radius-md) !important;
+  padding: 12px 14px !important;
+  margin-bottom: 7px !important;
+}
+.habit-card::before {
+  width: 3px !important;
+  border-radius: 0 !important;
+}
+.habit-card.done {
+  background: rgba(255,255,255,0.7) !important;
+  border-color: rgba(255,255,255,0.95) !important;
+}
+.habit-emoji {
+  background: rgba(255,255,255,0.5) !important;
+  border: 0.5px solid rgba(255,255,255,0.7) !important;
+  border-radius: var(--radius-sm) !important;
+}
+.habit-name {
+  font-family: var(--font-body) !important;
+  font-size: 15px !important;
+  font-weight: 600 !important;
+  color: #1c1c1e !important;
+  letter-spacing: -0.2px !important;
+}
+.habit-card.done .habit-name {
+  color: var(--muted) !important;
+}
+.check-circle {
+  border: 1.8px solid var(--muted-2) !important;
+  width: 22px !important;
+  height: 22px !important;
+}
+.habit-card.done .check-circle {
+  background: var(--accent-grad-135) !important;
+  border-color: var(--accent) !important;
+  box-shadow: 0 2px 8px rgba(255,122,61,0.3) !important;
+}
+.habit-card.done .check-circle .check-svg polyline {
+  stroke: #fff !important;
+}
+
+/* ── Stats grid (genérico) ── */
+.stat-card {
+  background: var(--glass) !important;
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 0.5px solid var(--glass-border) !important;
+  border-radius: var(--radius-xl) !important;
+}
+.stat-label {
+  font-family: var(--font-body) !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.1px !important;
+  text-transform: none !important;
+  color: var(--muted) !important;
+  font-size: 12px !important;
+}
+
+/* ── Triple HOY (3 stats arriba) ── */
+.hoy-triple {
+  background: var(--glass) !important;
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 0.5px solid var(--glass-border) !important;
+  border-radius: var(--radius-lg) !important;
+}
+.hoy-triple-value {
+  font-family: var(--font-body) !important;
+  font-weight: 800 !important;
+  color: #000 !important;
+  letter-spacing: -0.4px !important;
+}
+.hoy-triple-label {
+  font-family: var(--font-body) !important;
+  text-transform: none !important;
+  letter-spacing: -0.1px !important;
+  font-weight: 600 !important;
+  color: var(--muted) !important;
+  font-size: 10px !important;
+}
+.hoy-triple-sep {
+  background: rgba(0,0,0,0.08) !important;
+}
+
+/* ── Stats lifetime row ── */
+.stats-lifetime {
+  background: var(--glass) !important;
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 0.5px solid var(--glass-border) !important;
+  border-radius: var(--radius-xl) !important;
+}
+.lifetime-value {
+  font-family: var(--font-body) !important;
+  font-weight: 800 !important;
+  color: #000 !important;
+  letter-spacing: -0.4px !important;
+}
+.lifetime-label {
+  font-family: var(--font-body) !important;
+  text-transform: none !important;
+  letter-spacing: -0.1px !important;
+  font-weight: 600 !important;
+  color: var(--muted) !important;
+  font-size: 10px !important;
+}
+.lifetime-divider {
+  background: rgba(0,0,0,0.08) !important;
+}
+
+/* ── Cat tabs ── */
+.cat-tab {
+  background: var(--glass) !important;
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 0.5px solid var(--glass-border) !important;
+  color: var(--muted) !important;
+  font-family: var(--font-body) !important;
+  font-weight: 600 !important;
+  text-transform: none !important;
+  letter-spacing: -0.1px !important;
+  font-size: 12px !important;
+  padding: 7px 14px !important;
+}
+.cat-tab.active-all {
+  background: rgba(255,122,61,0.12) !important;
+  border-color: var(--accent) !important;
+  color: var(--accent) !important;
+}
+.cat-tab.active-all-perfect {
+  background: rgba(255,90,122,0.12) !important;
+  border-color: var(--accent-2) !important;
+  color: var(--accent-2) !important;
+}
+
+/* ── Navbar inferior — glass blur ── */
+.nav-bar {
+  background: rgba(255,255,255,0.7) !important;
+  backdrop-filter: saturate(180%) blur(30px) !important;
+  -webkit-backdrop-filter: saturate(180%) blur(30px) !important;
+  border-top: 0.5px solid rgba(0,0,0,0.08) !important;
+}
+.nav-item {
+  color: var(--muted) !important;
+  font-family: var(--font-body) !important;
+  font-weight: 500 !important;
+  text-transform: none !important;
+  letter-spacing: -0.1px !important;
+  font-size: 11px !important;
+}
+.nav-item.active { color: var(--accent) !important; }
+
+/* ── Stats screen (generic) ── */
+.stats-sep-line { background: rgba(0,0,0,0.08) !important; }
+.stats-sep-label {
+  font-family: var(--font-body) !important;
+  font-weight: 700 !important;
+  color: var(--muted) !important;
+  text-transform: uppercase !important;
+  font-size: 10px !important;
+  letter-spacing: 0.5px !important;
+}
+.smrow, .smdouble, .snarr-card, .shero-row, .scat-card, .racha-card {
+  background: var(--glass) !important;
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 0.5px solid var(--glass-border) !important;
+  border-radius: var(--radius-xl) !important;
+}
+.smrow-num, .snarr-big, .shero-num {
+  font-family: var(--font-body) !important;
+  font-weight: 800 !important;
+  letter-spacing: -1px !important;
+  color: var(--accent) !important;
+}
+.smrow-label, .snarr-ctx, .shero-label {
+  font-family: var(--font-body) !important;
+  font-weight: 600 !important;
+  color: var(--text) !important;
+}
+.smhalf-num {
+  font-family: var(--font-body) !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.5px !important;
+}
+.smhalf-lbl {
+  font-family: var(--font-body) !important;
+  text-transform: none !important;
+  letter-spacing: -0.1px !important;
+  color: var(--muted) !important;
+}
+.scat-title {
+  font-family: var(--font-body) !important;
+  text-transform: none !important;
+  letter-spacing: -0.1px !important;
+  font-weight: 700 !important;
+  color: var(--text) !important;
+}
+.scat-pill {
+  font-family: var(--font-body) !important;
+  font-weight: 700 !important;
+  text-transform: none !important;
+  letter-spacing: -0.1px !important;
+}
+.spill {
+  font-family: var(--font-body) !important;
+  background: rgba(255,122,61,0.1) !important;
+  border-color: rgba(255,122,61,0.3) !important;
+  color: var(--accent) !important;
+}
+.scat-bar-wrap, .sdia-bar-wrap { background: rgba(0,0,0,0.05) !important; }
+.sdia-bar { background: var(--accent) !important; }
+.sdia-name {
+  font-family: var(--font-body) !important;
+  text-transform: none !important;
+  letter-spacing: -0.1px !important;
+  color: var(--muted) !important;
+}
+
+/* ── Racha card ── */
+.rc-title {
+  font-family: var(--font-body) !important;
+  text-transform: none !important;
+  letter-spacing: -0.1px !important;
+  font-weight: 700 !important;
+  color: var(--text) !important;
+}
+.rc-racha-lbl, .rc-ti-lbl {
+  font-family: var(--font-body) !important;
+  text-transform: none !important;
+  letter-spacing: -0.1px !important;
+  color: var(--muted) !important;
+}
+.rc-racha-val, .rc-ti-num {
+  font-family: var(--font-body) !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.8px !important;
+  color: #000 !important;
+}
+.rc-divider-v, .xpm-divider {
+  background: rgba(0,0,0,0.08) !important;
+}
+
+/* XP main block */
+.xpm-lbl, .xpm-row-lbl, .xpm-row-slbl, .xpm-row-unit {
+  font-family: var(--font-body) !important;
+  text-transform: none !important;
+  letter-spacing: -0.1px !important;
+  color: var(--muted) !important;
+}
+.xpm-big, .xpm-row-val {
+  font-family: var(--font-body) !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.6px !important;
+  color: var(--accent) !important;
+}
+
+/* ── Perfil rows ── */
+.pf-group {
+  background: var(--glass) !important;
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 0.5px solid var(--glass-border) !important;
+  border-radius: var(--radius-xl) !important;
+}
+.pf-group-danger {
+  border-color: rgba(255,59,48,0.25) !important;
+}
+.pf-group-lbl {
+  font-family: var(--font-body) !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  color: var(--muted) !important;
+  padding: 14px 18px 6px !important;
+}
+.pf-row {
+  border-bottom: 0.5px solid rgba(0,0,0,0.06) !important;
+}
+.pf-row-title {
+  font-family: var(--font-body) !important;
+  font-weight: 600 !important;
+  font-size: 15px !important;
+  color: var(--text) !important;
+}
+.pf-row-sub {
+  font-family: var(--font-body) !important;
+  color: var(--muted) !important;
+  font-size: 13px !important;
+}
+.pf-btn {
+  font-family: var(--font-body) !important;
+  font-weight: 600 !important;
+}
+.pf-btn-ghost {
+  background: rgba(255,122,61,0.1) !important;
+  border: 0.5px solid rgba(255,122,61,0.3) !important;
+  color: var(--accent) !important;
+}
+.pf-btn-danger {
+  background: rgba(255,59,48,0.08) !important;
+  border: 0.5px solid rgba(255,59,48,0.3) !important;
+  color: var(--danger) !important;
+}
+
+/* ── Tareas toggle ── */
+.tareas-toggle {
+  background: var(--glass) !important;
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 0.5px solid var(--glass-border) !important;
+  border-radius: var(--radius-md) !important;
+}
+.tareas-toggle:hover {
+  border-color: var(--accent) !important;
+}
+.tareas-panel {
+  background: var(--glass) !important;
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 0.5px solid var(--glass-border) !important;
+}
+#tareas-titulo {
+  font-family: var(--font-body) !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  font-size: 12px !important;
+}
+.tarea-check {
+  border: 1.8px solid var(--muted-2) !important;
+}
+.tarea-item.done .tarea-check {
+  background: var(--accent-grad-135) !important;
+  border-color: var(--accent) !important;
+  box-shadow: 0 2px 8px rgba(255,122,61,0.25) !important;
+}
+
+/* ── Modales (crear/editar hábito) ── */
+.modal-overlay {
+  background: rgba(0,0,0,0.35) !important;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.modal {
+  background: rgba(255,255,255,0.92) !important;
+  backdrop-filter: var(--glass-blur-strong);
+  -webkit-backdrop-filter: var(--glass-blur-strong);
+  border: 0.5px solid var(--glass-border) !important;
+  border-radius: var(--radius-xl) !important;
+  color: var(--text) !important;
+}
+.modal h2, .modal-title {
+  font-family: var(--font-display) !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.5px !important;
+  color: var(--text) !important;
+  text-transform: none !important;
+}
+.modal label, .modal-label {
+  font-family: var(--font-body) !important;
+  font-weight: 600 !important;
+  color: var(--muted) !important;
+  text-transform: none !important;
+  letter-spacing: -0.1px !important;
+}
+.modal input, .modal textarea, .modal select {
+  background: rgba(255,255,255,0.7) !important;
+  border: 0.5px solid rgba(0,0,0,0.1) !important;
+  border-radius: var(--radius-md) !important;
+  color: var(--text) !important;
+  font-family: var(--font-body) !important;
+}
+.modal input:focus, .modal textarea:focus, .modal select:focus {
+  border-color: var(--accent) !important;
+  box-shadow: 0 0 0 3px rgba(255,122,61,0.15) !important;
+  outline: none !important;
+}
+
+/* ── Theme cards (perfil → apariencia, si existe) ── */
+.theme-card {
+  background: var(--glass) !important;
+  border: 0.5px solid var(--glass-border) !important;
+}
+.theme-card.active {
+  border-color: var(--accent) !important;
+}
+.theme-lbl { color: var(--muted) !important; font-family: var(--font-body) !important; }
+.theme-card.active .theme-lbl { color: var(--accent) !important; }
+
+/* Eliminar particles fantasy del fondo */
+.df-bg-glow, .df-bg-glow2, .df-particles {
+  display: none !important;
+}
+
+/* Eliminar custom-text en HOY si lo hay con cinzel */
+.hoy-title-fantasy {
+  color: #000 !important;
+  -webkit-text-fill-color: #000 !important;
+  background: none !important;
+  filter: none !important;
+}
+
+/* Forzar fuentes Inter en TODO el documento (último recurso) */
+body, body * {
+  font-family: var(--font-body);
+}
+.viajero-nombre, .logo, .logo-animated, .auth-logo, .hoy-title-fantasy, .modal h2, .modal-title {
+  font-family: var(--font-display) !important;
+}
+

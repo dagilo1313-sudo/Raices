@@ -547,3 +547,82 @@ body::before {
   height: 18px;
   flex-shrink: 0;
 }
+
+/* ═══════════════════════════════════════════════════════════
+   ── LIQUID GLASS OVERRIDE — entrega A ──
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── Body / fondo base con gradiente cálido ── */
+body {
+  background: var(--bg-grad) !important;
+  background-attachment: fixed !important;
+  color: var(--text) !important;
+  font-family: var(--font-body) !important;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Halos del fondo (los pinta el div #lg-bg) */
+#lg-bg {
+  position: fixed; inset: 0;
+  pointer-events: none; z-index: 0;
+  overflow: hidden;
+}
+.lg-halo {
+  position: absolute;
+  width: 320px; height: 320px;
+  border-radius: 50%;
+  filter: blur(20px);
+}
+.lg-halo-1 {
+  background: radial-gradient(circle, #ffd0a8 0%, transparent 70%);
+  top: 80px; right: -60px;
+  opacity: 0.7;
+}
+.lg-halo-2 {
+  background: radial-gradient(circle, #c8d8ff 0%, transparent 70%);
+  bottom: 280px; left: -80px;
+  opacity: 0.7;
+}
+
+/* Eliminar el old radial verde */
+body::before {
+  background: none !important;
+}
+
+/* ── Botones primarios — gradiente coral con texto blanco ── */
+.btn-primary {
+  background: var(--accent-grad) !important;
+  color: #fff !important;
+  border: none !important;
+  box-shadow: 0 1px 2px rgba(255,122,61,0.15);
+}
+.btn-primary:hover:not(:disabled) {
+  background: var(--accent-grad) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(255,122,61,0.25) !important;
+}
+.btn-primary:active:not(:disabled) { animation: lgBtnFlashCoral 0.35s ease-out; }
+@keyframes lgBtnFlashCoral {
+  0%   { box-shadow: 0 0 0 0 rgba(255,122,61,0.45); }
+  100% { box-shadow: 0 0 0 16px rgba(255,122,61,0); }
+}
+.btn-secondary {
+  background: var(--glass) !important;
+  color: var(--text-2) !important;
+  border: 0.5px solid var(--glass-border) !important;
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+}
+.btn-secondary:hover:not(:disabled) {
+  border-color: var(--accent) !important;
+  color: var(--accent) !important;
+}
+.btn-danger {
+  background: rgba(255,255,255,0.55) !important;
+  color: var(--danger) !important;
+  border: 0.5px solid rgba(255,59,48,0.3) !important;
+  backdrop-filter: var(--glass-blur);
+}
+.btn-danger:hover:not(:disabled) { background: rgba(255,59,48,0.08) !important; }
+
