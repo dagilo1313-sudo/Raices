@@ -30,9 +30,9 @@
 <div id="loading-screen">
   <div style="display:flex;flex-direction:column;align-items:center;gap:32px">
     <div style="position:relative;width:100px;height:100px;display:flex;align-items:center;justify-content:center">
-      <div style="position:absolute;inset:0;border-radius:50%;border:1px solid var(--ls-ring-color,rgba(143,179,57,0.25))" id="ls-ring1"></div>
-      <div style="position:absolute;inset:-14px;border-radius:50%;border:1px solid var(--ls-ring2-color,rgba(143,179,57,0.12))" id="ls-ring2"></div>
-      <div style="position:absolute;inset:8px;border-radius:50%;background:var(--ls-glow-color,rgba(143,179,57,0.05))"></div>
+      <div style="position:absolute;inset:0;border-radius:50%;border:1px solid var(--ls-ring-color,rgba(255,154,61,0.25))" id="ls-ring1"></div>
+      <div style="position:absolute;inset:-14px;border-radius:50%;border:1px solid var(--ls-ring2-color,rgba(255,154,61,0.12))" id="ls-ring2"></div>
+      <div style="position:absolute;inset:8px;border-radius:50%;background:var(--ls-glow-color,rgba(255,154,61,0.05))"></div>
       <canvas id="loading-canvas" width="200" height="200" style="position:absolute;inset:-50px;width:200px;height:200px;pointer-events:none"></canvas>
       <div style="font-size:30px;position:relative;z-index:2" id="ls-emoji">🌱</div>
     </div>
@@ -225,7 +225,7 @@
 
     <!-- Última sync discreta -->
     <div id="last-sync" style="text-align:center;font-size:14px;color:var(--muted);padding:4px 0 2px"></div>
-    <div style="text-align:center;font-size:14x;color:var(--muted);padding:0 0 12px;letter-spacing:2px">LG v1</div>
+    <div style="text-align:center;font-size:14x;color:var(--muted);padding:0 0 12px;letter-spacing:2px">LG v1.1</div>
   </div>
 
   <!-- ══ HÁBITOS ══ -->
@@ -262,7 +262,7 @@
     <div class="racha-card gold-racha">
       <div class="rc-header">
         <div class="rc-title" style="color:var(--accent2)">Días perfectos</div>
-        <div class="rc-total-badge" style="color:var(--accent2);background:rgba(196,168,79,0.1);border-color:rgba(196,168,79,0.25)" id="stat-dias-perfectos-badge">— total</div>
+        <div class="rc-total-badge" style="color:var(--accent2);background:rgba(255,90,122,0.1);border-color:rgba(255,90,122,0.25)" id="stat-dias-perfectos-badge">— total</div>
       </div>
       <div class="rc-main">
         <div class="rc-racha-block">
@@ -296,7 +296,7 @@
     <div class="racha-card green-racha">
       <div class="rc-header">
         <div class="rc-title" style="color:var(--accent)">Días buenos</div>
-        <div class="rc-total-badge" style="color:var(--accent);background:rgba(143,179,57,0.1);border-color:rgba(143,179,57,0.25)" id="stat-dias-buenos-badge">— total</div>
+        <div class="rc-total-badge" style="color:var(--accent);background:rgba(255,154,61,0.1);border-color:rgba(255,154,61,0.25)" id="stat-dias-buenos-badge">— total</div>
       </div>
       <div class="rc-main">
         <div class="rc-racha-block">
@@ -306,7 +306,7 @@
         <div class="rc-divider-v"></div>
         <div class="rc-racha-block">
           <div class="rc-racha-lbl">Mejor racha</div>
-          <div class="rc-racha-val" style="color:rgba(196,168,79,0.55);" id="stat-buenos-racha-mejor">—</div>
+          <div class="rc-racha-val" style="color:rgba(255,90,122,0.55);" id="stat-buenos-racha-mejor">—</div>
         </div>
       </div>
       <div class="rc-dots" id="rc-dots-buenos"></div>
@@ -327,7 +327,7 @@
     </div>
 
     <!-- EXPERIENCIA -->
-    <div class="racha-card gold-bar-racha" style="border-color:rgba(143,179,57,0.2)">
+    <div class="racha-card gold-bar-racha" style="border-color:rgba(255,154,61,0.2)">
       <div class="rc-header">
         <div class="rc-title" style="color:var(--accent)">Experiencia</div>
         <div class="snarr-trend" id="stat-tendencia-xp"></div>
@@ -408,7 +408,7 @@
 
     <!-- HÁBITOS -->
     <!-- Card narrativa hábitos — estilo racha -->
-    <div class="racha-card gold-bar-racha" style="border-color:rgba(143,179,57,0.2)">
+    <div class="racha-card gold-bar-racha" style="border-color:rgba(255,154,61,0.2)">
       <div class="rc-header">
         <div class="rc-title" style="color:var(--accent)">Hábitos</div>
         <div class="snarr-trend" id="stat-tendencia-hab"></div>
@@ -607,14 +607,14 @@
             <div class="pf-row-sub">Simula una fecha distinta</div>
           </div>
           <div style="display:flex;align-items:center;gap:8px">
-            <div id="debug-active-banner" style="display:none;font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;background:rgba(196,168,79,0.12);border:1px solid rgba(196,168,79,0.25);color:var(--accent2)">Activo · <span id="debug-date-label"></span></div>
+            <div id="debug-active-banner" style="display:none;font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;background:rgba(255,90,122,0.12);border:1px solid rgba(255,90,122,0.25);color:var(--accent2)">Activo · <span id="debug-date-label"></span></div>
             <div class="toggle-switch" id="debug-toggle" onclick="onToggleDebug()"><div class="toggle-knob"></div></div>
           </div>
         </div>
         <div id="debug-date-wrap" style="display:none;padding:0 18px 14px">
           <div style="display:flex;gap:8px">
             <input type="date" class="input-field" id="debug-date-input" style="flex:1">
-            <button onclick="onConfirmDebugDate()" style="background:rgba(196,168,79,0.15);border:1.5px solid rgba(196,168,79,0.4);border-radius:var(--radius-md);padding:0 16px;font-size:13px;font-weight:700;color:var(--accent2);font-family:var(--font-body);cursor:pointer;white-space:nowrap">Ir ↗</button>
+            <button onclick="onConfirmDebugDate()" style="background:rgba(255,90,122,0.15);border:1.5px solid rgba(255,90,122,0.4);border-radius:var(--radius-md);padding:0 16px;font-size:13px;font-weight:700;color:var(--accent2);font-family:var(--font-body);cursor:pointer;white-space:nowrap">Ir ↗</button>
           </div>
         </div>
       </div>

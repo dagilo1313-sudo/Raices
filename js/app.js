@@ -220,9 +220,9 @@ window.onDeleteHabit = (id) => {
   const habit = state.habits.find(h => h.id === id);
   if (!habit) return;
   const overlay = document.createElement('div');
-  overlay.style.cssText = 'position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.65);display:flex;align-items:center;justify-content:center;padding:24px;animation:fadeIn 0.2s ease';
+  overlay.style.cssText = 'position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.35);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:24px;animation:fadeIn 0.2s ease';
   overlay.innerHTML = `
-    <div style="position:fixed;background:var(--card2);border:1px solid var(--border);border-radius:20px;padding:28px 24px;max-width:320px;width:100%;text-align:center;animation:popIn 0.35s cubic-bezier(0.34,1.56,0.64,1)">
+    <div style="position:fixed;background:rgba(255,255,255,0.92);backdrop-filter:saturate(180%) blur(30px);-webkit-backdrop-filter:saturate(180%) blur(30px);border:0.5px solid rgba(255,255,255,0.95);box-shadow:0 20px 60px rgba(0,0,0,0.15);border-radius:20px;padding:28px 24px;max-width:320px;width:100%;text-align:center;animation:popIn 0.35s cubic-bezier(0.34,1.56,0.64,1)">
       <div style="font-size:32px;margin-bottom:12px">🍂</div>
       <div style="font-size:17px;font-weight:700;color:var(--text);margin-bottom:8px">¿Eliminar hábito?</div>
       <div style="font-size:13px;color:var(--muted);margin-bottom:24px;line-height:1.5">
@@ -313,9 +313,9 @@ window.calGoToday = () => { state.selectedDate = null; renderHistorico(); };
 function showConfirmPopup({ title, desc, btnLabel, btnClass, keyword, onConfirm }) {
   const kw = keyword || 'Confirmar';
   const ov = document.createElement('div');
-  ov.style.cssText = 'position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.65);display:flex;align-items:center;justify-content:center;padding:24px;animation:fadeIn 0.2s ease';
+  ov.style.cssText = 'position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.35);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:24px;animation:fadeIn 0.2s ease';
   ov.innerHTML = `
-    <div style="background:var(--card2);border:1px solid var(--border);border-radius:20px;padding:28px 24px;max-width:320px;width:100%;text-align:center;animation:popIn 0.35s cubic-bezier(0.34,1.56,0.64,1)">
+    <div style="background:rgba(255,255,255,0.92);backdrop-filter:saturate(180%) blur(30px);-webkit-backdrop-filter:saturate(180%) blur(30px);border:0.5px solid rgba(255,255,255,0.95);box-shadow:0 20px 60px rgba(0,0,0,0.15);border-radius:20px;padding:28px 24px;max-width:320px;width:100%;text-align:center;animation:popIn 0.35s cubic-bezier(0.34,1.56,0.64,1)">
       <div style="font-size:16px;font-weight:700;color:var(--text);margin-bottom:8px">${title}</div>
       <div style="font-size:13px;color:var(--muted);margin-bottom:6px;line-height:1.5">${desc}</div>
       <div style="font-size:12px;color:var(--muted);margin-bottom:16px">Para continuar escribe <em style="color:var(--text)">"${kw}"</em></div>
@@ -347,7 +347,7 @@ function showReloadPopup(emoji, title, msg) {
   const popup = document.createElement('div');
   popup.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.8);display:flex;align-items:center;justify-content:center;padding:24px';
   popup.innerHTML = `
-    <div style="background:var(--card2);border:1px solid rgba(229,92,92,0.3);border-radius:16px;padding:28px 24px;max-width:320px;width:100%;text-align:center">
+    <div style="background:rgba(255,255,255,0.92);backdrop-filter:saturate(180%) blur(30px);-webkit-backdrop-filter:saturate(180%) blur(30px);border:0.5px solid rgba(255,59,48,0.3);box-shadow:0 20px 60px rgba(255,59,48,0.18);border-radius:16px;padding:28px 24px;max-width:320px;width:100%;text-align:center">
       <div style="font-size:28px;margin-bottom:12px">${emoji}</div>
       <div style="font-size:16px;font-weight:700;color:var(--text);margin-bottom:8px">${title}</div>
       <div style="font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.5">${msg}</div>
@@ -362,9 +362,9 @@ function showReloadPopup(emoji, title, msg) {
 function showPasswordConfirm({ title, desc, onConfirm }) {
   lockScroll();
   const ov = document.createElement('div');
-  ov.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.75);display:flex;align-items:center;justify-content:center;padding:24px';
+  ov.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.4);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:24px';
   ov.innerHTML = `
-    <div style="background:var(--card2);border:1px solid rgba(229,92,92,0.3);border-radius:20px;padding:28px 24px;max-width:320px;width:100%;text-align:center">
+    <div style="background:rgba(255,255,255,0.92);backdrop-filter:saturate(180%) blur(30px);-webkit-backdrop-filter:saturate(180%) blur(30px);border:0.5px solid rgba(255,59,48,0.3);box-shadow:0 20px 60px rgba(255,59,48,0.18);border-radius:20px;padding:28px 24px;max-width:320px;width:100%;text-align:center">
       <div style="font-size:22px;margin-bottom:12px">⚠️</div>
       <div style="font-size:16px;font-weight:700;color:var(--text);margin-bottom:8px">${title}</div>
       <div style="font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.5">${desc}</div>
@@ -445,10 +445,10 @@ window.confirmarRestaurarPopup = () => showConfirmPopup({
 window.showChangeNombre = () => {
   const ov = document.createElement('div');
   ov.id = 'change-nombre-overlay';
-  ov.style.cssText = 'position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.65);display:flex;align-items:center;justify-content:center;padding:24px;animation:fadeIn 0.2s ease';
+  ov.style.cssText = 'position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.35);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:24px;animation:fadeIn 0.2s ease';
   const current = state.perfil.nombre || '';
   ov.innerHTML = `
-    <div style="background:var(--card2);border:1px solid var(--border);border-radius:20px;padding:28px 24px;max-width:320px;width:100%;animation:popIn 0.35s cubic-bezier(0.34,1.56,0.64,1)">
+    <div style="background:rgba(255,255,255,0.92);backdrop-filter:saturate(180%) blur(30px);-webkit-backdrop-filter:saturate(180%) blur(30px);border:0.5px solid rgba(255,255,255,0.95);box-shadow:0 20px 60px rgba(0,0,0,0.15);border-radius:20px;padding:28px 24px;max-width:320px;width:100%;animation:popIn 0.35s cubic-bezier(0.34,1.56,0.64,1)">
       <div style="font-size:16px;font-weight:700;color:var(--text);margin-bottom:18px;text-align:center">Cambiar nombre</div>
       <div class="msg-error" id="cn-error" style="margin-bottom:8px;display:none"></div>
       <div class="msg-success" id="cn-success" style="margin-bottom:8px;display:none"></div>
@@ -538,9 +538,9 @@ window.onToggleTarea = async (id) => {
 
 window.onAddTarea = () => {
   const overlay = document.createElement('div');
-  overlay.style.cssText = 'position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.65);display:flex;align-items:center;justify-content:center;padding:24px;animation:fadeIn 0.2s ease';
+  overlay.style.cssText = 'position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.35);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:24px;animation:fadeIn 0.2s ease';
   overlay.innerHTML = `
-    <div style="background:var(--card2);border:1px solid var(--border);border-radius:20px;padding:28px 24px;max-width:320px;width:100%;animation:popIn 0.35s cubic-bezier(0.34,1.56,0.64,1)">
+    <div style="background:rgba(255,255,255,0.92);backdrop-filter:saturate(180%) blur(30px);-webkit-backdrop-filter:saturate(180%) blur(30px);border:0.5px solid rgba(255,255,255,0.95);box-shadow:0 20px 60px rgba(0,0,0,0.15);border-radius:20px;padding:28px 24px;max-width:320px;width:100%;animation:popIn 0.35s cubic-bezier(0.34,1.56,0.64,1)">
       <div style="font-size:16px;font-weight:700;color:var(--text);margin-bottom:18px;text-align:center">Nueva tarea</div>
       <input class="input-field" id="nueva-tarea-input" placeholder="Nombre de la tarea..." maxlength="80" style="margin-bottom:12px">
       <div style="display:flex;gap:8px;margin-bottom:20px">
@@ -583,9 +583,9 @@ window.onBorrarCompletadas = () => {
   const completadas = state.tareas.filter(t => t.done).length;
   if (!completadas) { showToast('No hay tareas completadas'); return; }
   const overlay = document.createElement('div');
-  overlay.style.cssText = 'position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;padding:24px;animation:fadeIn 0.2s ease';
+  overlay.style.cssText = 'position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.35);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:24px;animation:fadeIn 0.2s ease';
   overlay.innerHTML = `
-    <div style="background:var(--card2);border:1px solid var(--border);border-radius:16px;padding:24px;max-width:300px;width:100%;text-align:center">
+    <div style="background:rgba(255,255,255,0.92);backdrop-filter:saturate(180%) blur(30px);-webkit-backdrop-filter:saturate(180%) blur(30px);border:0.5px solid rgba(255,255,255,0.95);box-shadow:0 20px 60px rgba(0,0,0,0.15);border-radius:16px;padding:24px;max-width:300px;width:100%;text-align:center">
       <div style="font-size:16px;font-weight:600;color:var(--text);margin-bottom:8px">¿Borrar completadas?</div>
       <div style="font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.5">Se eliminarán ${completadas} tarea${completadas>1?'s':''} completada${completadas>1?'s':''}. Las pendientes se conservan.</div>
       <div style="display:flex;gap:8px">
@@ -636,7 +636,7 @@ window.onToggleDebug = async () => {
     const popup = document.createElement('div');
     popup.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.8);display:flex;align-items:center;justify-content:center;padding:24px';
     popup.innerHTML = `
-      <div style="background:var(--card2);border:1px solid rgba(255,122,61,0.3);border-radius:16px;padding:28px 24px;max-width:320px;width:100%;text-align:center">
+      <div style="background:rgba(255,255,255,0.92);backdrop-filter:saturate(180%) blur(30px);-webkit-backdrop-filter:saturate(180%) blur(30px);border:0.5px solid rgba(255,255,255,0.95);box-shadow:0 20px 60px rgba(255,122,61,0.18);border-radius:16px;padding:28px 24px;max-width:320px;width:100%;text-align:center">
         <div style="font-size:28px;margin-bottom:12px">✅</div>
         <div style="font-size:16px;font-weight:700;color:var(--accent);margin-bottom:8px">Debugger desactivado</div>
         <div style="font-size:13px;color:var(--muted);margin-bottom:6px">Volvemos a la fecha actual</div>
@@ -716,7 +716,7 @@ window.onDebugDateChange = async (dateStr) => {
   popup.id = 'debug-done-popup';
   popup.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.8);display:flex;align-items:center;justify-content:center;padding:24px';
   popup.innerHTML = `
-    <div style="background:var(--card2);border:1px solid rgba(255,122,61,0.35);border-radius:16px;padding:28px 24px;max-width:320px;width:100%;text-align:center">
+    <div style="background:rgba(255,255,255,0.92);backdrop-filter:saturate(180%) blur(30px);-webkit-backdrop-filter:saturate(180%) blur(30px);border:0.5px solid rgba(255,255,255,0.95);box-shadow:0 20px 60px rgba(255,122,61,0.18);border-radius:16px;padding:28px 24px;max-width:320px;width:100%;text-align:center">
       <div style="font-size:28px;margin-bottom:12px">🧪</div>
       <div style="font-size:16px;font-weight:700;color:var(--accent2);margin-bottom:8px">Modo testing activo</div>
       <div style="font-size:13px;color:var(--text);margin-bottom:6px">Ahora estamos en</div>
